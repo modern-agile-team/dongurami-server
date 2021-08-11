@@ -108,9 +108,10 @@
 
 <br/>
 <br/>
+       
 ## 📄 데이터베이스 ERD
 
-![image](https://user-images.githubusercontent.com/75289370/120154537-f59c2c80-c22a-11eb-89b1-5b9ebd5f19b0.png)
+![image](https://www.notion.so/Back-05a2161af5d24386a13ac2dd27e7edab#42a8020f3702483eb2295a78b4795285)
        
 <br/>
 <br/>
