@@ -111,7 +111,8 @@
        
 ## 📄 데이터베이스 ERD
 
-![image](<img width="981" alt="스크린샷 2021-08-11 오전 10 44 51" src="https://user-images.githubusercontent.com/79014269/128977665-ddc5dc3d-3a93-4018-b66c-4a04d97ce1ef.png">)
+<img width="981" alt="스크린샷 2021-08-11 오전 10 44 51" src="https://user-images.githubusercontent.com/79014269/128978313-f1106646-7bd3-408d-b50b-15195db899a2.png">
+
        
 <br/>
 <br/>
