@@ -8,15 +8,16 @@
 <br/>
 <br />
 
-## ❗️바로가기
-
 * <a href="#-기술-스택">기술 스택</a>  
 
 * <a href="#-Git-Flow">Git Flow</a> 
 
+* <a href="#-데이터베이스-ERD">ERD</a> 
+
 * <a href="#-커밋-전략">커밋</a>  
   
-* <a href="#-협업">협업</a>   
+* <a href="#-협업">협업</a> 
+
 <br/>
 <br/>
 <br/>
@@ -107,7 +108,12 @@
 
 <br/>
 <br/>
+## 📄 데이터베이스 ERD
 
+![image](https://user-images.githubusercontent.com/75289370/120154537-f59c2c80-c22a-11eb-89b1-5b9ebd5f19b0.png)
+       
+<br/>
+<br/>
 ## 📄 커밋 전략
 
 ![image](https://user-images.githubusercontent.com/75289370/120154537-f59c2c80-c22a-11eb-89b1-5b9ebd5f19b0.png)
