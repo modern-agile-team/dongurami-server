@@ -12,14 +12,14 @@
 
 * <a href="#-기술-스택">기술 스택</a>  
 
-* <a href="#📄 Git-Flow">Git Flow</a> 
+* <a href="#-Git-Flow">Git Flow</a> 
 
-* <a href="#📄 커밋-전략">커밋</a>  
+* <a href="#-커밋-전략">커밋</a>  
   
-* <a href="#📄 협업">협업</a>   
+* <a href="#-협업">협업</a>   
 <br/>
 <br/>
-<br />
+<br/>
 
 ## 👨‍💻 기술 스택
 
