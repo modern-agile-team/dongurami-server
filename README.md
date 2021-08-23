@@ -88,13 +88,6 @@
   </tr>
 </table>
 
-### 디자이너
-
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/dongeun323"><img src="https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F0092e45d-317f-4956-8e5c-2512d461a77e%2F%EB%8F%99%EC%9D%80%EB%8B%98_%ED%8E%B8%EC%A7%91%EB%B3%B8.jpg?table=block&id=f7563d18-8aa1-4019-87f8-a078d653cbf4&spaceId=065109dd-4d22-4e3f-9455-ff3805b7d264&width=2160&userId=601054f0-a611-49e0-84b9-04831ec920f4&cache=v2" width="100px;" alt=""/><br /><sub><b>김동은</b></sub></a><br /><a href="https://github.com/dongeun323" title="Packaging/porting to new platform">디자이너</a></td>
-  </tr>
-</table>
        
      
 <br/>
