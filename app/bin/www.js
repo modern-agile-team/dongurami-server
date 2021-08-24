@@ -1,7 +1,4 @@
-const app = require('../app');
+// 임시 파일
+// 테스트
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`${PORT}번에서 서버 시작`);
-});
+'Ddd';
