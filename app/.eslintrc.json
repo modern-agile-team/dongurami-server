@@ -2,7 +2,6 @@
   "extends": ["airbnb-base", "eslint:recommended", "plugin:prettier/recommended"],
   "plugins": ["prettier"],
   "rules": {
-    "import/no-unresolved": "off",
     "prettier/prettier":  [
       "error",
       {
@@ -21,24 +20,3 @@
     "es6": true
   }
 }
-// {
-//   "extends": ["airbnb-base", "eslint:recommended", "plugin:prettier/recommended"],
-//   "plugins": ["prettier"],
-//   "rules": {
-//     "prettier/prettier": [
-//       "error",
-//       {
-//         "endOfLine": "auto"
-//       }
-//     ],
-//     "no-undef": "off",
-//     "no-console": "off"
-//   },
-//   "ignorePatterns": ["node_modules/"],
-//   "parserOptions": {
-//     "ecmaVersion": 2021
-//   },
-//   "env": {
-//     "es6": true
-//   }
-// }
