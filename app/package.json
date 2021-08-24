@@ -2,7 +2,7 @@
   "name": "dongurami-server",
   "version": "1.0.0",
   "description": "### 인덕대학교 학생들을 동아리 서비스",
-  "main": "test.js",
+  "main": "app.js",
   "scripts": {
     "dev": "nodemon ./bin/www.js",
     "test": "echo \"Error: no test specified\" && exit 1"
