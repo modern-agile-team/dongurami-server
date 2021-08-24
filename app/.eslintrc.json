@@ -2,7 +2,14 @@
   "extends": ["airbnb-base", "eslint:recommended", "plugin:prettier/recommended"],
   "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": "error",
+    "import/no-unresolved": "off",
+    "prettier/prettier":  [
+      "error",
+      {
+      "endOfLine": "auto",
+      "singleQuote": true
+      }
+    ],
     "no-undef": "off",
     "no-console": "off"
   },

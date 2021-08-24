@@ -4,6 +4,7 @@
   "description": "### 인덕대학교 학생들을 동아리 서비스",
   "main": "test.js",
   "scripts": {
+    "dev": "nodemon ./bin/www.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -36,5 +37,11 @@
     "husky": "^4.3.8",
     "lint-staged": "^11.1.2",
     "prettier": "^2.3.2"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mariadb": "^2.5.4",
+    "nodemon": "^2.0.12"
   }
 }
