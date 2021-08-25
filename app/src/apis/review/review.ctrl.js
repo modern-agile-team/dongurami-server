@@ -16,6 +16,13 @@ const process = {
   },
 };
 
+try {
+  console.log(hello);
+} catch (err) {
+  throw err;
+} finally {
+  console.log(err);
+}
 module.exports = {
   process,
 };
