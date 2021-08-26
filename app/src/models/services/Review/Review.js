@@ -1,30 +1,37 @@
 'use strict';
 
 const ReviewStorage = require('./ReviewStorage');
+const Auth = require('../Auth/Auth');
 
 class Review {
-  constructor(body) {
-    this.body = body;
-    this.params = params;
+  constructor(req) {
+    this.body = req.body;
+    this.params = req.params;
+    this.token = req.headers['x-access-token'];
+    console.log(this.token);
   }
 
-  createByClubNum() {
+  async createByClubNum() {
     const review = this.body;
     const paramsClubNum = this.params.clubNum;
-    try {
-      // 토큰에 있는 id값을 가져와야 함.
-      const clubNum = ReviewStorage.getClubNum(review.id);
-      console.log(clubNum);
-      if (paramsClubNum === undefined)
-        return { success: false, msg: '요청하신 경로가 잘못되었습니다.' };
-
-      if (clubNum === paramsClubNum) {
-        const response = ReviewStorage.saveReview(review);
-        return response;
+    const payload = Auth.verifyToken(this.token);
+    console.log(payload);
+    if (payload.clubNum === paramsClubNum) {
+      try {
+        const { success } = await ReviewStorage.saveReview(review, payload);
+        console.log(success);
+        if (success) {
+          return { success: true, msg: '후기 작성이 완료되었습니다.' };
+        }
+        return {
+          success: false,
+          msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요',
+        };
+      } catch (err) {
+        return { success: false, msg: '에러 발생' };
       }
-      return { success: false, msg: '해당 동아리 권한이 없습니다.' };
-    } catch (error) {
-      return { success: false, msg: err.sqlMessage };
+    } else {
+      return { success: false, msg: '해당 동아리에 권한이 없습니다.' };
     }
   }
 }

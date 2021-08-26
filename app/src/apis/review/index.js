@@ -6,6 +6,9 @@ const router = express.Router();
 const ctrl = require('./review.ctrl');
 
 // 후기 작성.
+router.post('/home/review', ctrl.process.createToken);
 router.post('/home/review/:clubNum', ctrl.process.createByClubNum);
 
 // 후기 불러오기.
+
+module.exports = router;
