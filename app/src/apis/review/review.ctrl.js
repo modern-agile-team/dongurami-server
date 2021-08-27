@@ -26,7 +26,7 @@ const process = {
     return res.status(400).json(response);
   },
 
-  findAll: async (req, res) => {
+  findAllReview: async (req, res) => {
     const reviewList = await ReviewStorage.findAllReview();
     return res.status(200).json(reviewList);
   },
