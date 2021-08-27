@@ -10,7 +10,6 @@ module.exports.createToken = (user) => {
     name: user.name,
     clubNum: user.clubNum,
   };
-  console.log(payload);
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
   return token;
 };

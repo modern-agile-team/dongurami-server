@@ -3,20 +3,20 @@
 const mariadb = require('../../../config/mariadb');
 
 class reviewStorage {
-  static async saveReview(reviewInfo, payload) {
-    console.log(reviewInfo, payload);
+  static async saveReview(reviewInfo) {
+    console.log(reviewInfo);
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query =
-        'INSERT INTO reviews(student_id, club_no, description,  score) VALUES (?, ?, ?, ?);';
+        'INSERT INTO reviews (club_no, student_id, description, score) VALUES (?, ?, ?, ?);';
       await conn.query(query, [
-        payload.id,
-        payload.clubNum,
+        reviewInfo.clubNum,
+        reviewInfo.id,
         reviewInfo.description,
         reviewInfo.score,
       ]);
-      return { success: true };
+      return true;
     } catch (error) {
       throw error;
     } finally {
@@ -25,6 +25,4 @@ class reviewStorage {
   }
 }
 
-module.export = {
-  reviewStorage,
-};
+module.exports = reviewStorage;
