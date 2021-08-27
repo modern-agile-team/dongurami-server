@@ -33,7 +33,8 @@ class Review {
           msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요',
         };
       } catch (err) {
-        return { success: false, msg: 'db에러' };
+        // 에러 발생에 대한 API를 따로 만들어 줘야 함.
+        return { success: false, msg: 'DB에러 발생' };
       }
     } else {
       return { success: false, msg: '해당 동아리에 권한이 없습니다.' };
