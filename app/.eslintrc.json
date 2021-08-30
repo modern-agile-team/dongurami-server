@@ -3,6 +3,7 @@
   "plugins": ["prettier"],
   "rules": {
     "strict": "off",
+    "no-useless-catch": "off",
     "prettier/prettier":  [
       "error",
       {
