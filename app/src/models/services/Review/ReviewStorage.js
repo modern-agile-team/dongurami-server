@@ -23,13 +23,35 @@ class reviewStorage {
     }
   }
 
-  static async findAllReview() {
+  static async findReview(userInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'SELECT club_no FROM reviews WHERE student_id = ?';
+      const review = await conn.query(query, [userInfo.studentId]);
+      let isReview = true;
+
+      for (let i = 0; i < review.length; i += 1) {
+        if (review[i].club_no === userInfo.clubNum) {
+          isReview = false;
+          break;
+        }
+      }
+      return isReview;
+    } catch (error) {
+      throw error;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllReview(clubNum) {
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query =
-        'SELECT student_id, description, score, in_date FROM reviews';
-      const reviewList = await conn.query(query, []);
+        'SELECT student_id, description, score, in_date FROM reviews WHERE club_no = ?';
+      const reviewList = await conn.query(query, [clubNum]);
       console.log(reviewList);
       return reviewList;
     } catch (error) {

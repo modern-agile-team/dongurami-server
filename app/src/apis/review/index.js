@@ -10,6 +10,6 @@ router.post('/home/review', ctrl.process.createToken);
 // 동아리 부원이 맞다면 리뷰를 작성할 수 있는 API
 router.post('/home/review/:clubNum', ctrl.process.createByClubNum);
 // 모든 후기를 보여주는 API
-router.get('/home/review/:clubNum', ctrl.process.findAll);
+router.post('/home/review/:clubNum', ctrl.process.findByClubNum);
 
 module.exports = router;
