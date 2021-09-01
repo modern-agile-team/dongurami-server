@@ -20,19 +20,34 @@ class Student {
         const studentInfo = { client, passwordSalt, hash };
         const response = await StudentStorage.save(studentInfo);
         if (response) {
-          return { success: true, msg: '회원가입성공' };
+          return { success: true, msg: '회원가입에 성공하셨습니다.' };
         }
-        return { success: false, msg: '알수 없는 에러' };
+        return {
+          success: false,
+          msg: '회원가입에 실패하셨습니다. 서버 개발자에게 문의해주세요.',
+        };
       }
       if (inspector.id === client.id) {
-        return { saveable: false, msg: '이미 등록된 아이디입니다.' };
+        return {
+          saveable: false,
+          msg: '이미 가입된 아이디입니다. 다른 아이디를 사용해주세요.',
+        };
       }
       if (inspector.email === client.email) {
-        return { saveable: false, msg: '이미 등록된 이메일입니다.' };
+        return {
+          saveable: false,
+          msg: '이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.',
+        };
       }
-      return { success: false, msg: '알수 없는 에러' };
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
     } catch (err) {
-      return { success: false, msg: '외안되?' };
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
     }
   }
 
