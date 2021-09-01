@@ -1,3 +1,5 @@
+'use strict';
+
 const mariadb = require('../../../config/mariadb');
 
 class reviewStorage {
@@ -59,4 +61,5 @@ class reviewStorage {
     }
   }
 }
+
 module.exports = reviewStorage;
