@@ -7,4 +7,8 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const root = require('./src/apis/signup');
+
+app.use('/', root);
+
 module.exports = app;
