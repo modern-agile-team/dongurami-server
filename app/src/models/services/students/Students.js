@@ -1,5 +1,8 @@
 'use strict';
 
+const bcrypt = require('bcrypt');
+
+const saltRounds = 10;
 const StudentStorage = require('./StudentStorage');
 
 class Student {
@@ -7,31 +10,15 @@ class Student {
     this.body = body;
   }
 
-  // async list() {
-  //   const client = this.body;
-  //   const student = await StudentStorage.getStudentInfo(client.id);
-  //   console.log(student);
-  // }
-
-  // async login() {
-  //   const client = this.body;
-  //   const student = await StudentStorage.findOneById(client.id);
-  //   if (student) {
-  //     if (student.id === client.id && student.password === client.password) {
-  //       return { success: true };
-  //     }
-  //     return { success: false, msg: 'password wrong' };
-  //   }
-  //   return { success: false, msg: 'not user' };
-  // }
-
   async signup() {
     const client = this.body;
+    const passwordSalt = bcrypt.genSaltSync(saltRounds);
+    const hash = bcrypt.hashSync(client.password, passwordSalt);
     try {
       const inspector = await this.inspectIdAndEmail();
-
       if (inspector === undefined) {
-        const response = await StudentStorage.save(client);
+        const studentInfo = { client, passwordSalt, hash };
+        const response = await StudentStorage.save(studentInfo);
         if (response) {
           return { success: true, msg: '회원가입성공' };
         }

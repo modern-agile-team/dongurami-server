@@ -9,6 +9,6 @@ app.use(express.urlencoded({ extended: true }));
 
 const root = require('./src/apis/signup');
 
-app.use('/', root);
+app.use('/api', root);
 
 module.exports = app;
