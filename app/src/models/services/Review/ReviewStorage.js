@@ -25,7 +25,7 @@ class reviewStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = 'SELECT club_no FROM reviews WHERE student_id = ?';
+      const query = 'SELECT club_no FROM reviews WHERE student_id = ?;';
       const review = await conn.query(query, [userInfo.studentId]);
       let isReview = true;
 
