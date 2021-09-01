@@ -7,7 +7,10 @@ const process = {
   signup: async (req, res) => {
     const student = new Student(req.body);
     const response = await student.signup();
-    return res.json(response);
+    if (response.success) {
+      return res.status(200).json(response);
+    }
+    return res.status(400).json(response);
   },
 };
 
