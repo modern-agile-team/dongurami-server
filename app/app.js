@@ -7,7 +7,7 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const root = require('./src/apis/CircleHome');
+const Home = require('./src/apis/CircleHome');
 
-app.use('/', root);
+app.use('/api/club/', Home);
 module.exports = app;
