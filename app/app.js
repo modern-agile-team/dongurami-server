@@ -7,4 +7,7 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const review = require('./src/apis/review');
+
+app.use('/', review);
 module.exports = app;
