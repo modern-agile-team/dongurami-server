@@ -23,7 +23,7 @@ class reviewStorage {
     }
   }
 
-  static async findReview(userInfo) {
+  static async findAllByReview(userInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
@@ -45,15 +45,15 @@ class reviewStorage {
     }
   }
 
-  static async findAllReview(clubNum) {
+  static async findOneByReview(clubNum) {
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query =
         'SELECT student_id, description, score, in_date FROM reviews WHERE club_no = ?';
       const reviewList = await conn.query(query, [clubNum]);
-      console.log(reviewList);
-      return reviewList;
+
+      return { success: true, reviewList };
     } catch (error) {
       throw error;
     } finally {
