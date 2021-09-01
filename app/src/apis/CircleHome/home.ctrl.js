@@ -12,15 +12,13 @@ const process = {
     }
     return res.json({ success: `${false}in ctrl.js` });
   },
-  enroll: async (req, res) => {
+  updateClubInfo: async (req, res) => {
     const home = new Home(req);
-    const response = await home.Club();
-    if (response.result) {
-      return res.json({
-        success,
-      });
+    const response = await home.saveClub();
+    if (response) {
+      return res.json({ success: true });
     }
-    return res.json({ success: false });
+    return res.json({ success: false, 여기: 'ctrl.js' });
   },
 };
 

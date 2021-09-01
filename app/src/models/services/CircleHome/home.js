@@ -21,19 +21,22 @@ class Home {
     return console.log('어디선가 잘못 되었군...');
   }
 
-  async Club() {
+  async saveClub() {
     const data = this.body;
+    const { params } = this;
     try {
       const clubInfo = {
         introduce: data.introduce,
         logo_url: data.logo_url,
         file_id: data.file_id,
+        clubNum: params.clubNum,
       };
       const result = await homeStorage.saveClub(clubInfo);
-      console.log(result);
+      return result;
     } catch (err) {
       console.log(err);
     }
+    return console.log('뭐가 문제징');
   }
 }
 
