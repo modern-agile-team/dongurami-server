@@ -29,6 +29,8 @@ class Board {
     const category = boardCategory[this.params.category];
     const boardNum = this.params.num;
 
+    console.log(typeof boardNum);
+
     if (category === undefined)
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
 

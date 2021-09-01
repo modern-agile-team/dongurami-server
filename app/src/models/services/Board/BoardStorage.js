@@ -48,6 +48,8 @@ class BoardStorage {
 
       const board = await conn.query(query, [category, boardNum]);
 
+      console.log(board[0]);
+
       return board;
     } catch (err) {
       console.log(err);
