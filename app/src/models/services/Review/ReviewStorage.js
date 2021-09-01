@@ -27,7 +27,7 @@ class reviewStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = 'SELECT club_no FROM reviews WHERE student_id = ?';
+      const query = 'SELECT club_no FROM reviews WHERE student_id = ?;';
       const review = await conn.query(query, [userInfo.studentId]);
       let isReview = true;
 
@@ -50,7 +50,7 @@ class reviewStorage {
     try {
       conn = await mariadb.getConnection();
       const query =
-        'SELECT student_id, description, score, in_date FROM reviews WHERE club_no = ?';
+        'SELECT student_id, description, score, in_date FROM reviews WHERE club_no = ?;';
       const reviewList = await conn.query(query, [clubNum]);
 
       return { success: true, reviewList };
