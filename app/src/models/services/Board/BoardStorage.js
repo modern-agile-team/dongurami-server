@@ -9,7 +9,7 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.title, st.id, st.name, clubs.club_name, clubs.category, bo.in_date, img.url, img.file_id, bo.hit
+      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileID, bo.hit
       FROM boards AS bo
       LEFT JOIN images AS img
       ON bo.no = img.board_no
@@ -23,7 +23,6 @@ class BoardStorage {
 
       return boardList;
     } catch (err) {
-      console.log(err);
       throw err;
     } finally {
       conn?.release();
@@ -36,7 +35,7 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, st.id, st.name, bo.title, bo.description, clubs.club_name, clubs.category, bo.in_date, img.url, img.file_id, bo.hit
+      const query = `SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
       FROM boards AS bo
       LEFT JOIN images AS img
       ON bo.no = img.board_no
@@ -48,11 +47,8 @@ class BoardStorage {
 
       const board = await conn.query(query, [category, boardNum]);
 
-      console.log(board[0]);
-
       return board;
     } catch (err) {
-      console.log(err);
       throw err;
     } finally {
       conn?.release();
