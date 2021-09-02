@@ -1,6 +1,6 @@
 'use strict';
 
-const Student = require('../../models/services/students/Students');
+const Student = require('../../models/services/Student/Student');
 
 const process = {
   // 회원가입
@@ -8,7 +8,7 @@ const process = {
     const student = new Student(req.body);
     const response = await student.signup();
     if (response.success) {
-      return res.status(200).json(response);
+      return res.status(201).json(response);
     }
     return res.status(400).json(response);
   },
