@@ -11,32 +11,30 @@ class Home {
   async findOneByClubNum() {
     const { clubNum } = this.params;
     try {
-      const homes = await homeStorage.findOneByClubNum(clubNum);
-      if (homes) {
-        return { success: true, homes };
+      const { success, result } = await homeStorage.findOneByClubNum(clubNum);
+      if (success) {
+        return { success: true, result };
       }
+      return { success: false, msg: result };
     } catch (err) {
-      return { success: false };
+      return { success: false, msg: '개발자에게 문의해주세요' };
     }
-    return console.log('어디선가 잘못 되었군...');
   }
 
   async saveClub() {
     const data = this.body;
-    const { params } = this;
     try {
       const clubInfo = {
         introduce: data.introduce,
-        logo_url: data.logo_url,
-        file_id: data.file_id,
-        clubNum: params.clubNum,
+        logoUrl: data.logoUrl,
+        fileId: data.fileId,
+        clubNum: this.params.clubNum,
       };
       const result = await homeStorage.saveClub(clubInfo);
       return result;
     } catch (err) {
-      console.log(err);
+      return { success: false, msg: '개발자에게 문의해주세요' };
     }
-    return console.log('뭐가 문제징');
   }
 }
 
