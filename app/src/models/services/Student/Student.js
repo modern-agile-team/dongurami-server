@@ -54,6 +54,7 @@ class Student {
       return {
         saveable: false,
         msg: '알 수 없는 오류입니다. 서버개발자에게 문의하세요',
+        error: err,
       };
     }
     return {
