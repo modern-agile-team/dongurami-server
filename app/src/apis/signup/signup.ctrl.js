@@ -4,9 +4,9 @@ const Student = require('../../models/services/Student/Student');
 
 const process = {
   // 회원가입
-  signup: async (req, res) => {
+  signUp: async (req, res) => {
     const student = new Student(req.body);
-    const response = await student.signup();
+    const response = await student.signUp();
     if (response.success) {
       return res.status(201).json(response);
     }

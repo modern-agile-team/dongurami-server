@@ -3,9 +3,9 @@
 const express = require('express');
 
 const router = express.Router();
-const ctrl = require('./signup.ctrl');
+const ctrl = require('./signUp.ctrl');
 
 // 회원가입 API
-router.post('/signup', ctrl.process.signup);
+router.post('/signUp', ctrl.process.signUp);
 
 module.exports = router;

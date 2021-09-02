@@ -10,7 +10,7 @@ class Student {
     this.body = body;
   }
 
-  async signup() {
+  async signUp() {
     const client = this.body;
     const passwordSalt = bcrypt.genSaltSync(saltRounds);
     const hash = bcrypt.hashSync(client.password, passwordSalt);
@@ -50,6 +50,10 @@ class Student {
           msg: '이미 가입된 이메일입니다. 다른 이메일를 사용해주세요.',
         };
       }
+      return {
+        saveable: false,
+        msg: '서버 에러입니다. 서버개발자에게 문의하세요',
+      };
     } catch (err) {
       return {
         saveable: false,
@@ -57,10 +61,6 @@ class Student {
         error: err,
       };
     }
-    return {
-      saveable: false,
-      msg: '서버 에러입니다. 서버개발자에게 문의하세요',
-    };
   }
 }
 
