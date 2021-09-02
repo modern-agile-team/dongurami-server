@@ -8,6 +8,7 @@ const process = {
   // 로그인 시 토큰이 생성될 것임.
   createToken: (req, res) => {
     const jwt = Auth.createToken(req.body);
+
     if (!jwt) {
       return res
         .status(401)
@@ -22,6 +23,7 @@ const process = {
   createByReview: async (req, res) => {
     const review = new Review(req);
     const response = await review.createByReivew();
+
     if (response.success) {
       return res.status(201).json(response);
     }
@@ -32,6 +34,7 @@ const process = {
   findOneByClubNum: async (req, res) => {
     const review = new Review(req);
     const response = await review.findOneByClubNum();
+
     if (response.success) {
       return res.status(200).json(response);
     }
@@ -42,6 +45,7 @@ const process = {
   updateById: async (req, res) => {
     const review = new Review(req);
     const response = await review.updateById();
+
     if (response.success) {
       return res.status(201).json(response);
     }
@@ -52,6 +56,7 @@ const process = {
   deleteByNum: async (req, res) => {
     const review = new Review(req);
     const response = await review.deleteByNum();
+
     if (response.success) {
       return res.status(201).json(response);
     }

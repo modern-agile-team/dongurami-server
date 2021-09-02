@@ -43,7 +43,7 @@ class Review {
           return {
             success: false,
             msg: '서버 에러입니다. 서버 개발자에게 문의해주세요.',
-            error: `${err}`,
+            error: err,
           };
         }
       }
@@ -72,19 +72,17 @@ class Review {
       return {
         success: false,
         msg: '서버 에러입니다. 서버 개발자에게 문의해주세요.',
-        error: `${err}`,
+        error: err,
       };
     }
   }
 
   async updateById() {
     const review = this.body;
-    const paramsClubNum = Number(this.params.clubNum);
-    const payload = Auth.verifyToken(this.token);
+    const paramsNum = Number(this.params.num);
 
     const reviewInfo = {
-      clubNum: paramsClubNum,
-      id: payload.id,
+      num: paramsNum,
       description: review.description,
       score: review.score,
     };
@@ -106,7 +104,7 @@ class Review {
       return {
         success: false,
         msg: '서버 에러입니다. 서버 개발자에게 문의해주세요.',
-        error: `${err}`,
+        error: err,
       };
     }
   }
@@ -128,7 +126,7 @@ class Review {
       return {
         success: false,
         msg: '서버 에러입니다. 서버 개발자에게 문의해주세요.',
-        error: `${err}`,
+        error: err,
       };
     }
   }

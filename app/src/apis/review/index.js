@@ -12,7 +12,7 @@ router.post('/:clubNum', ctrl.process.createByReview);
 // 모든 후기를 보여주는 API
 router.get('/:clubNum', ctrl.process.findOneByClubNum);
 // 등록된 후기 수정 API
-router.post('/:clubNum', ctrl.process.updateById);
+router.put('/:clubNum/:num', ctrl.process.updateById);
 // 등록된 후기 삭제 API
 router.delete('/:clubNum/:num', ctrl.process.deleteByNum);
 
