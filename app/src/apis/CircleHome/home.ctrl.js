@@ -19,9 +19,7 @@ const process = {
     if (response) {
       return res.status(204).json(response);
     }
-    return res
-      .status(500)
-      .json({ success: false, msg: '예상치 못한 오류가 발생했습니다.' });
+    return res.status(500).json(response);
   },
 };
 

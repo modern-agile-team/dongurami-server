@@ -7,7 +7,7 @@ class homeStorage {
     const conn = await mariadb.getConnection();
     try {
       const query =
-        'select name, logo_url, file_id, introduce from clubs where no= ?';
+        'select name, logo_url AS logoUrl, file_id AS fileId, introduce from clubs where no= ?';
       const query2 =
         'SELECT gender FROM students INNER JOIN members ON students.id = members.student_id WHERE club_no =? AND gender = 1';
       const query3 =
@@ -29,7 +29,6 @@ class homeStorage {
         result[0].genderMan = (await conn.query(query2, clubNum)).length;
         // 여자인 회원수 clubInfo 추가
         result[0].genderWomen = (await conn.query(query3, clubNum)).length;
-        // console.log({ success: true, result });
         return { success: true, result };
       }
       // 동아리 존재 x
@@ -53,7 +52,7 @@ class homeStorage {
         clubInfo.fileId,
         clubInfo.clubNum,
       ]);
-      return true;
+      return ture;
     } catch (err) {
       throw err;
     } finally {
