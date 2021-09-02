@@ -16,8 +16,8 @@ class reviewStorage {
         reviewInfo.score,
       ]);
       return true;
-    } catch (error) {
-      throw error;
+    } catch (err) {
+      throw err;
     } finally {
       conn?.release();
     }
@@ -27,19 +27,20 @@ class reviewStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = 'SELECT club_no FROM reviews WHERE student_id = ?;';
+      const query =
+        'SELECT club_no AS clubNum FROM reviews WHERE student_id = ?;';
       const review = await conn.query(query, [userInfo.studentId]);
       let isReview = true;
 
       for (let i = 0; i < review.length; i += 1) {
-        if (review[i].club_no === userInfo.clubNum) {
+        if (review[i].clubNum === userInfo.clubNum) {
           isReview = false;
           break;
         }
       }
       return isReview;
-    } catch (error) {
-      throw error;
+    } catch (err) {
+      throw err;
     } finally {
       conn?.release();
     }
@@ -50,12 +51,12 @@ class reviewStorage {
     try {
       conn = await mariadb.getConnection();
       const query =
-        'SELECT no, student_id, description, score, in_date FROM reviews WHERE club_no = ?;';
+        'SELECT no, student_id AS studentId, description, score, in_date AS inDate FROM reviews WHERE club_no = ?;';
       const reviewList = await conn.query(query, [clubNum]);
 
       return { success: true, reviewList };
-    } catch (error) {
-      throw error;
+    } catch (err) {
+      throw err;
     } finally {
       conn?.release();
     }
@@ -66,17 +67,16 @@ class reviewStorage {
     try {
       conn = await mariadb.getConnection();
       const query =
-        'UPDATE reviews SET description = ? score = ? WHERE club_no = ? AND student_id = ?;';
+        'UPDATE reviews SET description = ?, score = ? WHERE no = ?;';
       await conn.query(query, [
         reviewInfo.description,
         reviewInfo.score,
-        reviewInfo.clubNum,
-        reviewInfo.id,
+        reviewInfo.num,
       ]);
 
       return true;
-    } catch (error) {
-      throw error;
+    } catch (err) {
+      throw err;
     } finally {
       conn?.release();
     }
@@ -90,8 +90,8 @@ class reviewStorage {
       await conn.query(query, [reviewNum]);
 
       return true;
-    } catch (error) {
-      throw error;
+    } catch (err) {
+      throw err;
     } finally {
       conn?.release();
     }
