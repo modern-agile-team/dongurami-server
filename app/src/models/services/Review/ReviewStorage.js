@@ -23,7 +23,7 @@ class reviewStorage {
     }
   }
 
-  static async findAllByReview(userInfo) {
+  static async findAllById(userInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
@@ -45,15 +45,51 @@ class reviewStorage {
     }
   }
 
-  static async findOneByReview(clubNum) {
+  static async findOneByClubNum(clubNum) {
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query =
-        'SELECT student_id, description, score, in_date FROM reviews WHERE club_no = ?;';
+        'SELECT no, student_id, description, score, in_date FROM reviews WHERE club_no = ?;';
       const reviewList = await conn.query(query, [clubNum]);
 
       return { success: true, reviewList };
+    } catch (error) {
+      throw error;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateById(reviewInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query =
+        'UPDATE reviews SET description = ? score = ? WHERE club_no = ? AND student_id = ?;';
+      await conn.query(query, [
+        reviewInfo.description,
+        reviewInfo.score,
+        reviewInfo.clubNum,
+        reviewInfo.id,
+      ]);
+
+      return true;
+    } catch (error) {
+      throw error;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteByNum(reviewNum) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'DELETE FROM reviews WHERE no = ?;';
+      await conn.query(query, [reviewNum]);
+
+      return true;
     } catch (error) {
       throw error;
     } finally {
