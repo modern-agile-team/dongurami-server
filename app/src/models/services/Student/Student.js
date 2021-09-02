@@ -29,10 +29,11 @@ class Student {
 
   async inspectIdAndEmail() {
     const client = this.body;
-    const student = await StudentStorage.findOneByIdAndEmail(
-      client.id,
-      client.email
-    );
+    const clientInfo = {
+      id: client.id,
+      email: client.email,
+    };
+    const student = await StudentStorage.findOneByIdAndEmail(clientInfo);
 
     try {
       if (student === undefined) {

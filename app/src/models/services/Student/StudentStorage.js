@@ -25,12 +25,15 @@ class StudentStorage {
     }
   }
 
-  static async findOneByIdAndEmail(id, email) {
+  static async findOneByIdAndEmail(clientInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query = 'SELECT id, email FROM students WHERE id = ? OR email = ?;';
-      const idEmailList = await conn.query(query, [id, email]);
+      const idEmailList = await conn.query(query, [
+        clientInfo.id,
+        clientInfo.email,
+      ]);
       return idEmailList[0];
     } catch (err) {
       throw err;
