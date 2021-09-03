@@ -1,6 +1,5 @@
 'use strict';
 
-// const mariadb = require('../../config/mariadb');
 const Home = require('../../models/services/CircleHome/home');
 
 const process = {
@@ -29,7 +28,7 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     return res.status(500).json(response);
-    // 수정 권한이 없는 사람이 수정을 요청했을 때 생기는 오류 -> 토큰 만들어 진 후 수저 예정
+    // 수정 권한이 없는 사람이 수정을 요청했을 때 생기는 오류 -> 토큰 만들어 진 후 수정 예정
   },
 };
 
