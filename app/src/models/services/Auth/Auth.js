@@ -1,6 +1,5 @@
 'use strict';
 
-// const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 const { SECRET_KEY } = process.env;
@@ -14,7 +13,6 @@ class Auth {
       isAdmin: student.admin_flag,
       clubNum,
     };
-
     return jwt.sign(payload, SECRET_KEY, {
       algorithm: 'HS256',
       expiresIn: '1d',
@@ -23,14 +21,13 @@ class Auth {
   }
 
   static async verifyJWT(token) {
-    const decoded = jwt.verify(token, SECRET_KEY);
-    return decoded;
+    try {
+      const decoded = jwt.verify(token, SECRET_KEY);
+      return decoded;
+    } catch (err) {
+      return err;
+    }
   }
 }
-
-module.exports.verifyToken = (token) => {
-  const decoded = jwt.verify(token, SECRET_KEY);
-  return decoded;
-};
 
 module.exports = Auth;

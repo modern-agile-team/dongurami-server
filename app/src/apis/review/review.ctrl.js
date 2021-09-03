@@ -30,7 +30,7 @@ const process = {
     if (response.isError) {
       return res.status(400).json(response);
     }
-    return res.status(500).json(response);
+    return res.status(500).json(response.clinetMsg);
   },
 
   // 모든 후기 리스트를 보여줌.
@@ -44,7 +44,7 @@ const process = {
     if (response.isError) {
       return res.status(400).json(response);
     }
-    return res.status(500).json(response);
+    return res.status(500).json(response.clientMsg);
   },
 
   // 등록된 후기 글 수정.
@@ -58,7 +58,7 @@ const process = {
     if (response.isError) {
       return res.status(400).json(response);
     }
-    return res.status(500).json(response);
+    return res.status(500).json(response.clientMsg);
   },
 
   // 등록된 후기 글 삭제.
@@ -72,7 +72,7 @@ const process = {
     if (response.isError) {
       return res.status(400).json(response);
     }
-    return res.status(500).json(response);
+    return res.status(500).json(response.clientMsg);
   },
 };
 
