@@ -1,24 +1,24 @@
 'use strict';
 
-const CommentStorage = require('./CommentStorage');
+const ImageStorage = require('./ImageStorage');
+const Error = require('../../utils/Error');
 
-class Comment {
+class Image {
   constructor(req) {
-    this.body = req.body;
     this.params = req.params;
   }
 
-  async findAllByBoardNum() {
+  async findAllByBoardImg() {
     const boardNum = this.params.num;
 
     try {
-      const comments = await CommentStorage.findAllByBoardNum(boardNum);
+      const image = ImageStorage.findAllByBoardImg(boardNum);
 
-      return comments;
+      return image;
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
   }
 }
 
-module.exports = Comment;
+module.exports = Image;

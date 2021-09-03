@@ -35,10 +35,8 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
+      const query = `SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, bo.hit
       FROM boards AS bo
-      LEFT JOIN images AS img
-      ON bo.no = img.board_no
       JOIN students AS st
       ON bo.student_id = st.id
       JOIN clubs

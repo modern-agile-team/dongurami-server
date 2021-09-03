@@ -2,12 +2,12 @@
 
 const BoardStorage = require('./BoardStorage');
 const boardCategory = require('../Category/board');
+const Error = require('../../utils/Error');
 
 class Board {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
-    this.query = req.query;
   }
 
   async findAllByCategoryNum() {
@@ -16,12 +16,15 @@ class Board {
     if (category === undefined)
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
 
+    if (category >= 5)
+      return { success: false, msg: '잘못된 URL의 접근입니다' };
+
     try {
       const boards = await BoardStorage.findAllByCategoryNum(category);
 
       return { success: true, msg: '게시판 조회 성공', boards };
     } catch (err) {
-      return err;
+      return Error.ctrl('서버 에러입니다. 서버 개발자에서 얘기해주세요.', err);
     }
   }
 
@@ -31,6 +34,9 @@ class Board {
 
     if (category === undefined)
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
+
+    if (category >= 5)
+      return { success: false, msg: '잘못된 URL의 접근입니다' };
 
     try {
       const board = await BoardStorage.findOneByBoardNum(category, boardNum);
@@ -42,7 +48,7 @@ class Board {
         };
       return { success: true, msg: '게시글 조회 성공', board };
     } catch (err) {
-      return err;
+      return Error.ctrl('서버 에러입니다. 서버 개발자에서 얘기해주세요.', err);
     }
   }
 }
