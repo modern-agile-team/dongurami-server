@@ -10,6 +10,57 @@ class Student {
     this.body = body;
   }
 
+  async login() {
+    const client = this.body;
+    const clientInfo = {
+      id: client.id,
+      password: client.password,
+    };
+    const inspector = await StudentStorage.inspectId(clientInfo);
+    const comparePassword = bcrypt.compareSync(
+      clientInfo.password,
+      inspector.result.password
+    );
+    console.log(inspector);
+    try {
+      if (inspector === undefined) {
+        return { success: false, msg: '가입된 아이디 x' };
+      }
+      if (comparePassword) {
+        return { success: true, msg: '로그인에 성공하셨습니다.' };
+      }
+      return {
+        success: false,
+        msg: '로그인에 실패하셨습니다. 아이디 또는 비밀번호를 다시 확인해주세요.',
+      };
+    } catch (err) {
+      throw err;
+    }
+    // try {
+    //   if (inspector) {
+    //     if (comparePassword) {
+    //       return { success: true, msg: '로그인에 성공하셨습니다.' };
+    //     }
+    //     return {
+    //       success: false,
+    //       msg: '로그인에 실패하셨습니다. 아이디 또는 비밀번호를 다시 확인해주세요.',
+    //     };
+    //   }
+    //   if (inspector.result === undefined) {
+    //     return {
+    //       success: false,
+    //       msg: '로그인에 실패하셨습니다. 아이디 또는 비밀번호를 다시 확인해주세요.',
+    //     };
+    //   }
+    //   return { success: false, msg: 'abc' };
+    // } catch (err) {
+    //   return Error.ctrl(
+    //     '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+    //     err
+    //   );
+    // }
+  }
+
   async signUp() {
     const client = this.body;
     const saltRounds = 10;

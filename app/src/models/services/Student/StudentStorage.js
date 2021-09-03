@@ -3,6 +3,25 @@
 const mariadb = require('../../../config/mariadb');
 
 class StudentStorage {
+  static async inspectId(clientInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query =
+        'SELECT id, password, name, email, admin_flag, profile_image_url FROM students WHERE id = ?;';
+      const result = await conn.query(query, [
+        clientInfo.id,
+        clientInfo.password,
+      ]);
+      console.log(result[0]);
+      return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async save(studentInfo) {
     let conn;
     try {
