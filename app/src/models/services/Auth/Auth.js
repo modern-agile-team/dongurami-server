@@ -9,13 +9,13 @@ class Auth {
       id: student.id,
       name: student.name,
       email: student.email,
-      profilePath: student.profile_path,
+      profilePath: student.profile_iamage_path,
       isAdmin: student.admin_flag,
       clubNum,
     };
     return jwt.sign(payload, SECRET_KEY, {
       algorithm: 'HS256',
-      expiresIn: '1d',
+      expiresIn: '60s',
       issuer: 'wooahan agile',
     });
   }
