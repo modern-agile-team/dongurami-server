@@ -12,4 +12,5 @@ const review = require('./src/apis/review');
 
 app.use('/api/club/review', review);
 app.use('/api/club', home);
+
 module.exports = app;
