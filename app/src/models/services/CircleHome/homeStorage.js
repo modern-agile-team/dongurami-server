@@ -12,11 +12,10 @@ class homeStorage {
         'SELECT name, logo_url AS logoUrl, file_id AS fileId, introduce FROM clubs WHERE no = ?;';
       // 동아리 성별 수 조회
       const gender = `SELECT SUM(M) AS man, SUM(W) AS women FROM 
-      ( SELECT 
-      (CASE gender WHEN 1 THEN 1 ELSE 0 END) AS M, 
-      (CASE gender WHEN 2 THEN 1 ELSE 0 END) AS W 
-      FROM (SELECT gender FROM students INNER JOIN members ON students.id = members.student_id WHERE club_no = ?) AS collectMember
-      )AS collectGender`;
+        (SELECT (CASE gender WHEN 1 THEN 1 ELSE 0 END) AS M, 
+        (CASE gender WHEN 2 THEN 1 ELSE 0 END) AS W 
+        FROM (SELECT gender FROM students INNER JOIN members ON students.id = members.student_id WHERE club_no = ?) 
+        AS collectMember) AS collectGender;`;
       // 동아리 존재 여부
       const existClub = 'SELECT no FROM clubs WHERE no = ?;';
       const club = await conn.query(existClub, clubNum);
