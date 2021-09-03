@@ -2,7 +2,6 @@
 
 const bcrypt = require('bcrypt');
 
-const saltRounds = 10;
 const StudentStorage = require('./StudentStorage');
 const Error = require('../../utils/Error');
 
@@ -13,6 +12,7 @@ class Student {
 
   async signUp() {
     const client = this.body;
+    const saltRounds = 10;
     const passwordSalt = bcrypt.genSaltSync(saltRounds);
     const hash = bcrypt.hashSync(client.password, passwordSalt);
     const inspector = await this.inspectIdAndEmail();
