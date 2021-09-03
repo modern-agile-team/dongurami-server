@@ -1,6 +1,7 @@
 'use strict';
 
 const ReviewStorage = require('./ReviewStorage');
+const Error = require('../../utils/Error');
 const Auth = require('../Auth/Auth');
 
 class Review {
@@ -40,11 +41,10 @@ class Review {
             msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
           };
         } catch (err) {
-          return {
-            success: false,
-            msg: '서버 에러입니다. 서버 개발자에게 문의해주세요.',
-            error: err,
-          };
+          return Error.ctrl(
+            '서버 에러입니다. 서버 개발자에게 문의해주세요.',
+            err
+          );
         }
       }
       return { success: false, msg: '이미 후기를 작성했습니다.' };
@@ -69,11 +69,7 @@ class Review {
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
-      return {
-        success: false,
-        msg: '서버 에러입니다. 서버 개발자에게 문의해주세요.',
-        error: err,
-      };
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
 
@@ -101,11 +97,7 @@ class Review {
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
-      return {
-        success: false,
-        msg: '서버 에러입니다. 서버 개발자에게 문의해주세요.',
-        error: err,
-      };
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
 
@@ -123,11 +115,7 @@ class Review {
         msg: '후기를 삭제하지 못했습니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
-      return {
-        success: false,
-        msg: '서버 에러입니다. 서버 개발자에게 문의해주세요.',
-        error: err,
-      };
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
 }
