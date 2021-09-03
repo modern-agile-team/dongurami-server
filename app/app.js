@@ -7,9 +7,9 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const Home = require('./src/apis/CircleHome');
+const home = require('./src/apis/CircleHome');
 const review = require('./src/apis/review');
 
 app.use('/api/club/review', review);
-app.use('/api/club', Home);
+app.use('/api/club', home);
 module.exports = app;
