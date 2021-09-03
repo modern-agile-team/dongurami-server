@@ -7,4 +7,5 @@ const ctrl = require('./home.ctrl');
 
 router.get('/home/:clubNum', ctrl.process.findOneByClubNum);
 router.put('/home/:clubNum', ctrl.process.updateClubInfo);
+
 module.exports = router;

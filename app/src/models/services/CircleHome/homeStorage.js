@@ -7,35 +7,33 @@ class homeStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      const query =
-        'SELECT name, logo_url AS logoUrl, file_id AS fileId, introduce from clubs where no= ?;';
-      const query2 =
-        'SELECT gender FROM students INNER JOIN members ON students.id = members.student_id WHERE club_no =? AND gender = 1;';
-      const query3 =
-        'SELECT gender FROM students INNER JOIN members ON students.id = members.student_id WHERE club_no =? AND gender = 2;';
-      // 존재하는 동아리인지 판별
-      const clubs = await conn.query('SELECT no FROM clubs;');
-      let isClub = false;
+      // 동아리 정보 조회
+      const findClubInfo =
+        'SELECT name, logo_url AS logoUrl, file_id AS fileId, introduce FROM clubs WHERE no = ?;';
+      // 동아리 성별 수 조회
+      const gender = `SELECT SUM(M) AS man, SUM(W) AS women FROM 
+      ( SELECT 
+      (CASE gender WHEN 1 THEN 1 ELSE 0 END) AS M, 
+      (CASE gender WHEN 2 THEN 1 ELSE 0 END) AS W 
+      FROM (SELECT gender FROM students INNER JOIN members ON students.id = members.student_id WHERE club_no = ?) AS collectMember
+      )AS collectGender`;
+      // 동아리 존재 여부
+      const existClub = 'SELECT no FROM clubs WHERE no = ?;';
+      const club = await conn.query(existClub, clubNum);
 
-      for (let i = 0; i < clubs.length; i += 1) {
-        if (clubs[i].no === Number(clubNum)) {
-          isClub = true;
-          break;
-        }
+      if (club[0] === undefined) {
+        // 동아리 존재 x
+        return { success: false, result: '존재하지 않는 동아리입니다.' };
       }
       // 동아리가 존재한다면
-      if (isClub) {
-        // clubInfo 조회
-        const result = await conn.query(query, clubNum);
+      // clubInfo 조회
+      const result = await conn.query(findClubInfo, clubNum);
+      const cntGender = await conn.query(gender, clubNum);
 
-        // 남자인 회원수 clubInfo 추가
-        result[0].genderMan = (await conn.query(query2, clubNum)).length;
-        // 여자인 회원수 clubInfo 추가
-        result[0].genderWomen = (await conn.query(query3, clubNum)).length;
-        return { success: true, result };
-      }
-      // 동아리 존재 x
-      return { success: false, result: '존재하지 않는 동아리입니다.' };
+      result[0].genderMan = cntGender[0].man;
+      result[0].genderWomen = cntGender[0].women;
+
+      return { success: true, result };
     } catch (err) {
       throw err;
     } finally {
@@ -47,7 +45,7 @@ class homeStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = `UPDATE clubs SET introduce =?, logo_url =?, file_id =?  WHERE no=?;`;
+      const query = `UPDATE clubs SET introduce = ?, logo_url = ?, file_id = ?  WHERE no = ?;`;
 
       // club 소개, 로고 변경 시 업데이트
       await conn.query(query, [
@@ -56,6 +54,7 @@ class homeStorage {
         clubInfo.fileId,
         clubInfo.clubNum,
       ]);
+
       return true;
     } catch (err) {
       throw err;
