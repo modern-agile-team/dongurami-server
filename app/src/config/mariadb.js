@@ -1,3 +1,5 @@
+'use strict';
+
 const db = require('mariadb');
 
 const mariadb = db.createPool({
