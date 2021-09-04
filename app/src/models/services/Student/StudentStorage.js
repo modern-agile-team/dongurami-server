@@ -13,7 +13,6 @@ class StudentStorage {
         clientInfo.id,
         clientInfo.password,
       ]);
-      console.log(result[0]);
       return result[0];
     } catch (err) {
       throw err;
