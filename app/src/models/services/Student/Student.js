@@ -16,7 +16,7 @@ class Student {
       id: client.id,
       password: client.password,
     };
-    const inspector = await StudentStorage.inspectId(clientInfo);
+    const inspector = await StudentStorage.findOneById(clientInfo);
 
     try {
       if (inspector === undefined) {
@@ -33,7 +33,7 @@ class Student {
       }
       return {
         success: false,
-        msg: '로그인에 실패하셨습니다. 아이디 또는 비밀번호를 다시 확인해주세요.',
+        msg: '잘못된 비밀번호입니다.',
       };
     } catch (err) {
       return Error.ctrl(

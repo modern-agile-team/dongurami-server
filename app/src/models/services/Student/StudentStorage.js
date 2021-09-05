@@ -3,7 +3,7 @@
 const mariadb = require('../../../config/mariadb');
 
 class StudentStorage {
-  static async inspectId(clientInfo) {
+  static async findOneById(clientInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
