@@ -6,7 +6,9 @@ const router = express.Router();
 const ctrl = require('./root.ctrl');
 const auth = require('../../middlewares/auth-check');
 
-router.get('/auth', auth.loggined, ctrl.authResponse);
-router.get('/un-auth', auth.notLoggined, ctrl.unAuthResponse);
+router.get('/auth', auth.loggined, ctrl.auth.resUserInfo);
+router.get('/un-auth', auth.notLoggined, ctrl.auth.resNoneUserInfo);
 
-modules.exports = router;
+router.post('/sign-up', ctrl.process.signUp);
+
+module.exports = router;
