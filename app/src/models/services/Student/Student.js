@@ -76,13 +76,13 @@ class Student {
       if (student.id === client.id) {
         return {
           saveable: false,
-          msg: '이미 가입된 아이디입니다. 다른 아이디를 사용해주세요.',
+          msg: '이미 가입된 아이디입니다.',
         };
       }
       if (student.email === client.email) {
         return {
           saveable: false,
-          msg: '이미 가입된 이메일입니다. 다른 이메일를 사용해주세요.',
+          msg: '이미 가입된 이메일입니다.',
         };
       }
       return {
