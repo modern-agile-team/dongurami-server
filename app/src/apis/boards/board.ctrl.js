@@ -21,6 +21,7 @@ const process = {
     const response = await board.findOneByBoardNum();
 
     if (response.success) {
+      const updateBoardHit = await board.updateOnlyHitByNum();
       response.images = await image.findAllByBoardImg();
       response.comments = await comment.findAllByBoardNum();
 
@@ -30,7 +31,13 @@ const process = {
       if (response.images.isError)
         return res.status(500).json(response.clientMsg);
 
-      if (response.success) return res.status(200).json(response);
+      if (updateBoardHit.isError)
+        return res.status(500).json(updateBoardHit.clientMsg);
+
+      if (response.success) {
+        response.board[0].hit += 1;
+        return res.status(200).json(response);
+      }
     }
     if (response.isError) return res.status(500).json(response.clientMsg);
     return res.status(400).json(response);

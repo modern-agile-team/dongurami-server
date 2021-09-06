@@ -48,7 +48,19 @@ class Board {
         };
       return { success: true, msg: '게시글 조회 성공', board };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에서 얘기해주세요.', err);
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async updateOnlyHitByNum() {
+    const boardNum = this.params.num;
+
+    try {
+      await BoardStorage.updateOnlyHitByNum(boardNum);
+
+      return { success: true, msg: '조회수 1 증가' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
   }
 }

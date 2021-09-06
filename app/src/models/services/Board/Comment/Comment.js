@@ -1,6 +1,7 @@
 'use strict';
 
 const CommentStorage = require('./CommentStorage');
+const Error = require('../../../utils/Error');
 
 class Comment {
   constructor(req) {

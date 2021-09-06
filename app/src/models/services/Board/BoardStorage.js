@@ -9,10 +9,10 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileID, bo.hit
+      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
       FROM boards AS bo
       LEFT JOIN images AS img
-      ON bo.no = img.board_no
+      ON bo.no = (WHERE boards.no = img.board_no)
       JOIN students AS st
       ON bo.student_id = st.id
       JOIN clubs
@@ -46,6 +46,25 @@ class BoardStorage {
       const board = await conn.query(query, [category, boardNum]);
 
       return board;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateOnlyHitByNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'UPDATE boards SET hit = hit + 1, modify_date = modify_date WHERE no = ?;';
+
+      await conn.query(query, [boardNum]);
+
+      return;
     } catch (err) {
       throw err;
     } finally {
