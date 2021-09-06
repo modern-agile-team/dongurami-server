@@ -10,6 +10,39 @@ class Student {
     this.body = body;
   }
 
+  async login() {
+    const client = this.body;
+
+    try {
+      const clientInfo = {
+        id: client.id,
+        password: client.password,
+      };
+      const inspector = await StudentStorage.findOneById(clientInfo);
+      const comparePassword = bcrypt.compareSync(
+        clientInfo.password,
+        inspector.password
+      );
+
+      if (inspector === undefined) {
+        return { success: false, msg: '가입된 아이디가 아닙니다.' };
+      }
+
+      if (comparePassword) {
+        return { success: true, msg: '로그인에 성공하셨습니다.' };
+      }
+      return {
+        success: false,
+        msg: '잘못된 비밀번호입니다.',
+      };
+    } catch (err) {
+      return Error.ctrl(
+        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+        err
+      );
+    }
+  }
+
   async signUp() {
     const client = this.body;
     const saltRounds = 10;
@@ -30,26 +63,27 @@ class Student {
 
   async inspectIdAndEmail() {
     const client = this.body;
-    const clientInfo = {
-      id: client.id,
-      email: client.email,
-    };
-    const student = await StudentStorage.findOneByIdAndEmail(clientInfo);
 
     try {
+      const clientInfo = {
+        id: client.id,
+        email: client.email,
+      };
+      const student = await StudentStorage.findOneByIdAndEmail(clientInfo);
+
       if (student === undefined) {
         return { saveable: true };
       }
       if (student.id === client.id) {
         return {
           saveable: false,
-          msg: '이미 가입된 아이디입니다. 다른 아이디를 사용해주세요.',
+          msg: '이미 가입된 아이디입니다.',
         };
       }
       if (student.email === client.email) {
         return {
           saveable: false,
-          msg: '이미 가입된 이메일입니다. 다른 이메일를 사용해주세요.',
+          msg: '이미 가입된 이메일입니다.',
         };
       }
       return {
