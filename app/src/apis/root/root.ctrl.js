@@ -3,9 +3,7 @@
 const Student = require('../../models/services/Student/Student');
 
 // const auth = {
-//   resUserInfo: (req, res) => {
-
-//   },
+//   resUserInfo: (req, res) => {},
 
 //   resNoneUserInfo: (req, res) => {},
 // };
