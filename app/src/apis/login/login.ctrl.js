@@ -1,11 +1,11 @@
 'use strict';
 
-const Studnet = require('../../models/services/Student/Student');
+const Student = require('../../models/services/Student/Student');
 
 const process = {
   // 로그인
   login: async (req, res) => {
-    const student = new Studnet(req.body);
+    const student = new Student(req.body);
     const response = await student.login();
 
     if (response.success) {

@@ -12,21 +12,21 @@ class Student {
 
   async login() {
     const client = this.body;
-    const clientInfo = {
-      id: client.id,
-      password: client.password,
-    };
-    const inspector = await StudentStorage.findOneById(clientInfo);
 
     try {
-      if (inspector === undefined) {
-        return { success: false, msg: '가입된 아이디가 아닙니다.' };
-      }
-
+      const clientInfo = {
+        id: client.id,
+        password: client.password,
+      };
+      const inspector = await StudentStorage.findOneById(clientInfo);
       const comparePassword = bcrypt.compareSync(
         clientInfo.password,
         inspector.password
       );
+
+      if (inspector === undefined) {
+        return { success: false, msg: '가입된 아이디가 아닙니다.' };
+      }
 
       if (comparePassword) {
         return { success: true, msg: '로그인에 성공하셨습니다.' };
@@ -63,13 +63,14 @@ class Student {
 
   async inspectIdAndEmail() {
     const client = this.body;
-    const clientInfo = {
-      id: client.id,
-      email: client.email,
-    };
-    const student = await StudentStorage.findOneByIdAndEmail(clientInfo);
 
     try {
+      const clientInfo = {
+        id: client.id,
+        email: client.email,
+      };
+      const student = await StudentStorage.findOneByIdAndEmail(clientInfo);
+
       if (student === undefined) {
         return { saveable: true };
       }
