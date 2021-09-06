@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const { SECRET_KEY } = process.env;
 class Auth {
+  // clubNum은 동그라미에서 동아리 가입 승인이 완료된 후 재로그인 할 때 생성된다.
   static async createJWT(student, clubNum) {
     const payload = {
       id: student.id,
@@ -15,7 +16,7 @@ class Auth {
     };
     return jwt.sign(payload, SECRET_KEY, {
       algorithm: 'HS256',
-      expiresIn: '60s',
+      expiresIn: '1d',
       issuer: 'wooahan agile',
     });
   }
