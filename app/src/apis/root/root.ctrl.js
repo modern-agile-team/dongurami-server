@@ -2,11 +2,27 @@
 
 const Student = require('../../models/services/Student/Student');
 
-// const auth = {
-//   resUserInfo: (req, res) => {},
+const auth = {
+  resUserInfo: (req, res) => {
+    const studentInfo = req.auth;
 
-//   resNoneUserInfo: (req, res) => {},
-// };
+    delete studentInfo.iat;
+    delete studentInfo.exp;
+
+    return res.status(200).json({
+      success: true,
+      msg: '로그인이 된 사용자입니다.',
+      studentInfo,
+    });
+  },
+
+  resNoneUserInfo: (req, res) => {
+    return res.status(200).json({
+      success: true,
+      msg: '로그인이 안 된 사용자입니다.',
+    });
+  },
+};
 
 const process = {
   login: async (req, res) => {

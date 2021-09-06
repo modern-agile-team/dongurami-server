@@ -9,7 +9,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const auth = require('./src/apis/root');
 const review = require('./src/apis/review');
-const home = require('./src/apis/CircleHome');
+const home = require('./src/apis/circle-home');
 
 app.use('/api', auth);
 app.use('/api/club/review', review);
