@@ -24,7 +24,6 @@ class Auth {
   static async verifyJWT(token) {
     try {
       const decoded = jwt.verify(token, SECRET_KEY);
-      console.log(decoded);
       return decoded;
     } catch (err) {
       return err;

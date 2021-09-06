@@ -31,8 +31,9 @@ class Student {
       );
 
       if (comparePassword) {
-        console.log(inspector);
-        const jwt = await Auth.createJWT(inspector);
+        const clubNum = await StudentStorage.findOneByLoginedId(clientInfo.id);
+        const jwt = await Auth.createJWT(inspector, clubNum);
+
         return { success: true, msg: '로그인에 성공하셨습니다.', jwt };
       }
       return {
