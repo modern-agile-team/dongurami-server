@@ -28,11 +28,11 @@ class Schedule {
 
   async createSchedule() {
     const data = this.body;
-    const { clubNum } = this.params;
+    const { params } = this;
 
     try {
       const scheduleInfo = {
-        clubNo: clubNum,
+        clubNum: params.clubNum,
         studentId: data.studentId,
         colorCode: data.colorCode,
         title: data.title,

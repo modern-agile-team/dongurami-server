@@ -32,8 +32,7 @@ class scheduleStorage {
       const query = `INSERT INTO schedules (club_no, student_id, color_code, title, description, start_date, end_date, important)
       VALUE (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-      await conn.query(
-        query,
+      await conn.query(query, [
         scheduleInfo.clubNum,
         scheduleInfo.studentId,
         scheduleInfo.colorCode,
@@ -41,8 +40,8 @@ class scheduleStorage {
         scheduleInfo.description,
         scheduleInfo.startDate,
         scheduleInfo.endDate,
-        scheduleInfo.important
-      );
+        scheduleInfo.important,
+      ]);
 
       return true;
     } catch (err) {
