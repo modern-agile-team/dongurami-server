@@ -3,9 +3,11 @@
 const Studnet = require('../../models/services/Student/Student');
 
 const process = {
+  // 로그인
   login: async (req, res) => {
     const student = new Studnet(req.body);
     const response = await student.login();
+
     if (response.success) {
       return res.status(200).json(response);
     }

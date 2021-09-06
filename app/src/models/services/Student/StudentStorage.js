@@ -9,10 +9,7 @@ class StudentStorage {
       conn = await mariadb.getConnection();
       const query =
         'SELECT id, password, name, email, admin_flag, profile_image_url FROM students WHERE id = ?;';
-      const result = await conn.query(query, [
-        clientInfo.id,
-        clientInfo.password,
-      ]);
+      const result = await conn.query(query, [clientInfo.id]);
       return result[0];
     } catch (err) {
       throw err;
