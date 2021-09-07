@@ -46,6 +46,7 @@
     "express-jsonwebtoken": "^1.0.9",
     "jsonwebtoken": "^8.5.1",
     "mariadb": "^2.5.4",
+    "nodemailer": "^6.6.3",
     "nodemon": "^2.0.12"
   }
 }
