@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require('express');
 const dotenv = require('dotenv');
 
@@ -10,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 const signUp = require('./src/apis/sign-up');
 const login = require('./src/apis/login');
 const review = require('./src/apis/review');
-const home = require('./src/apis/CircleHome');
+const home = require('./src/apis/circle-home');
 const findId = require('./src/apis/find-id');
 
 app.use('/api', signUp);

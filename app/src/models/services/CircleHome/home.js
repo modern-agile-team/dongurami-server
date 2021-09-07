@@ -1,6 +1,6 @@
 'use strict';
 
-const homeStorage = require('./homeStorage');
+const homeStorage = require('./HomeStorage');
 const Error = require('../../utils/Error');
 
 class Home {
