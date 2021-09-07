@@ -44,13 +44,13 @@ class Schedule {
 
       return { success: result };
     } catch (err) {
-      console.log(err);
       return Error.ctrl('개발자에게 문의해주세요', err);
     }
   }
 
   async updateSchedule() {
     const data = this.body;
+
     try {
       const scheduleInfo = {
         no: data.no,
@@ -60,7 +60,24 @@ class Schedule {
         endDate: data.endDate,
         period: data.period, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
       };
-      const result = ScheduleStorage.updateSchedule(scheduleInfo);
+      const result = await ScheduleStorage.updateSchedule(scheduleInfo);
+
+      return { success: result };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요', err);
+    }
+  }
+
+  async updateImportant() {
+    const data = this.body;
+    const { no } = this.params;
+
+    try {
+      const scheduleInfo = {
+        no,
+        important: data.important,
+      };
+      const result = await ScheduleStorage.updateImportant(scheduleInfo);
 
       return { success: result };
     } catch (err) {

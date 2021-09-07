@@ -20,7 +20,7 @@ app.use('/api', signUp);
 app.use('/api', login);
 app.use('/api/club/review', review);
 app.use('/api/club', home);
-app.use('/api/club', schedule);
+app.use('/api/club/schedule', schedule);
 app.use('/api', findId);
 
 module.exports = app;

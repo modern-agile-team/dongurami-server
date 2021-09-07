@@ -7,7 +7,7 @@ class ScheduleStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      const findScheduls = `SELECT no, color_code AS clolrCode, title, start_date AS startDate, end_date AS endDate, period, important 
+      const findScheduls = `SELECT no, color_code AS colrCode, title, start_date AS startDate, end_date AS endDate, period, important 
       FROM schedules
       WHERE LEFT(start_date,7) = LEFT(NOW(),7) AND club_no = ?
       ORDER BY start_date;`;
@@ -67,6 +67,22 @@ class ScheduleStorage {
         scheduleInfo.period,
         scheduleInfo.no,
       ]);
+
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateImportant(scheduleInfo) {
+    const conn = await mariadb.getConnection();
+
+    try {
+      const query = `UPDATE schedules SET important = ? WHERE no =?;`;
+
+      await conn.query(query, [scheduleInfo.important, scheduleInfo.no]);
 
       return true;
     } catch (err) {
