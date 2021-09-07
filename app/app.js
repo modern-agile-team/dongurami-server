@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 const signUp = require('./src/apis/sign-up');
 const login = require('./src/apis/login');
 const review = require('./src/apis/review');
-const home = require('./src/apis/CircleHome');
+const home = require('./src/apis/circle-home');
 const schedule = require('./src/apis/schedule');
 
 app.use('/api', signUp);

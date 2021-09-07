@@ -1,6 +1,6 @@
 'use strict';
 
-const scheduleStorage = require('./scheduleStorage');
+const ScheduleStorage = require('./ScheduleStorage');
 const Error = require('../../utils/Error');
 
 class Schedule {
@@ -13,7 +13,7 @@ class Schedule {
     const { clubNum } = this.params;
 
     try {
-      const { success, result } = await scheduleStorage.findAllByClubNum(
+      const { success, result } = await ScheduleStorage.findAllByClubNum(
         clubNum
       );
 
@@ -36,10 +36,31 @@ class Schedule {
         studentId: data.studentId,
         colorCode: data.colorCode,
         title: data.title,
-        description: data.description,
-        important: data.important,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        period: data.period,
       };
-      const result = await scheduleStorage.createSchedule(scheduleInfo);
+      const result = await ScheduleStorage.createSchedule(scheduleInfo);
+
+      return { success: result };
+    } catch (err) {
+      console.log(err);
+      return Error.ctrl('개발자에게 문의해주세요', err);
+    }
+  }
+
+  async updateSchedule() {
+    const data = this.body;
+    try {
+      const scheduleInfo = {
+        no: data.no,
+        colorCode: data.colorCode,
+        title: data.title,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        period: data.period, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
+      };
+      const result = ScheduleStorage.updateSchedule(scheduleInfo);
 
       return { success: result };
     } catch (err) {

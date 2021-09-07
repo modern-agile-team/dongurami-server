@@ -1,6 +1,6 @@
 'use strict';
 
-const homeStorage = require('./homeStorage');
+const homeStorage = require('./HomeStorage');
 const Error = require('../../utils/Error');
 
 class Home {
@@ -15,9 +15,7 @@ class Home {
     try {
       const { success, result } = await homeStorage.findOneByClubNum(clubNum);
 
-      if (success) {
-        return { success: true, result };
-      }
+      if (success) return { success: true, result };
 
       return { success: false, msg: result };
     } catch (err) {
