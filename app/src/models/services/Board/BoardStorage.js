@@ -3,6 +3,30 @@
 const mariadb = require('../../../config/mariadb');
 
 class BoardStorage {
+  static async createBoardNum(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `INSERT INTO boards (student_id, club_no, board_category_no, title, description) VALUES (?, ?, ?, ?, ?);`;
+
+      const board = await conn.query(query, [
+        boardInfo.id,
+        boardInfo.clubNo,
+        boardInfo.category,
+        boardInfo.title,
+        boardInfo.description,
+      ]);
+
+      return board.insertId;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findAllByCategoryNum(boardCategory) {
     let conn;
 
