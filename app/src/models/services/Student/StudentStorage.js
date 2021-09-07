@@ -61,7 +61,8 @@ class StudentStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = 'SELECT club_no AS clubNum WHERE student_id = ?;';
+      const query =
+        'SELECT club_no AS clubNum FROM members WHERE student_id = ?;';
       const clubList = await conn.query(query, [studentId]);
       const clubs = [];
 

@@ -1,8 +1,10 @@
+'use strict';
+
 const Auth = require('../models/services/Auth/Auth');
 
-module.exports.loggined = async (req, res, next) => {
+module.exports.logined = async (req, res, next) => {
   const token = req.headers['x-auth-token'] || '';
-  console.log(token);
+
   if (token.length === 0) {
     return res
       .status(401)
@@ -10,7 +12,7 @@ module.exports.loggined = async (req, res, next) => {
   }
 
   const auth = await Auth.verifyJWT(token);
-  console.log(auth.err);
+
   if (auth.err === 'jwt expired') {
     return res
       .status(401)
@@ -33,7 +35,7 @@ module.exports.loggined = async (req, res, next) => {
   return next();
 };
 
-module.exports.notLoggined = async (req, res, next) => {
+module.exports.notLogined = async (req, res, next) => {
   const token = req.headers['x-auth-token'] || '';
 
   if (token.length === 0) {
