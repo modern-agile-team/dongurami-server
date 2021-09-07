@@ -1,6 +1,6 @@
 'use strict';
 
-const homeStorage = require('./HomeStorage');
+const HomeStorage = require('./HomeStorage');
 const Error = require('../../utils/Error');
 
 class Home {
@@ -13,7 +13,7 @@ class Home {
     const { clubNum } = this.params;
 
     try {
-      const { success, result } = await homeStorage.findOneByClubNum(clubNum);
+      const { success, result } = await HomeStorage.findOneByClubNum(clubNum);
 
       if (success) return { success: true, result };
 
@@ -33,7 +33,7 @@ class Home {
         fileId: data.fileId,
         clubNum: this.params.clubNum,
       };
-      const result = await homeStorage.saveClub(clubInfo);
+      const result = await HomeStorage.saveClub(clubInfo);
 
       return result;
     } catch (err) {

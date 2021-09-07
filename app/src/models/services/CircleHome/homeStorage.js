@@ -2,7 +2,7 @@
 
 const mariadb = require('../../../config/mariadb');
 
-class homeStorage {
+class HomeStorage {
   static async findOneByClubNum(clubNum) {
     const conn = await mariadb.getConnection();
 
@@ -63,4 +63,4 @@ class homeStorage {
   }
 }
 
-module.exports = homeStorage;
+module.exports = HomeStorage;

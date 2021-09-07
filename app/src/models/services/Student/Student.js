@@ -10,6 +10,31 @@ class Student {
     this.body = body;
   }
 
+  async findId() {
+    const client = this.body;
+    try {
+      const clientInfo = {
+        name: client.name,
+        email: client.email,
+      };
+      const student = await StudentStorage.findOneByNameAndEmail(clientInfo);
+
+      if (student) {
+        return {
+          success: true,
+          msg: '해당하는 아이디를 확인했습니다.',
+          id: student.id,
+        };
+      }
+      return { success: false, msg: '해당하는 아이디가 없습니다.' };
+    } catch (err) {
+      return Error.ctrl(
+        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+        err
+      );
+    }
+  }
+
   async login() {
     const client = this.body;
 
