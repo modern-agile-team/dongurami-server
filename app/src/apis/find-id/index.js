@@ -6,6 +6,6 @@ const router = express.Router();
 const ctrl = require('./find-id.ctrl');
 
 // 아이디(학번) 찾기 API
-router.post('/find_id', ctrl.process.findId);
+router.post('/find-id', ctrl.process.findId);
 
 module.exports = router;
