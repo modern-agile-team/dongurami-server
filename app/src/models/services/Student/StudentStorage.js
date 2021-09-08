@@ -18,6 +18,23 @@ class StudentStorage {
     }
   }
 
+  static async findOneByNameAndEmail(clientInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'SELECT id FROM students WHERE name = ? AND email = ?;';
+      const result = await conn.query(query, [
+        clientInfo.name,
+        clientInfo.email,
+      ]);
+      return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async save(studentInfo) {
     let conn;
     try {

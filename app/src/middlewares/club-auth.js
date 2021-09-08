@@ -1,9 +1,8 @@
 'use strict';
 
-module.exports.joined = (req, res, next) => {
+const isjoined = (req, res, next) => {
   const paramsClubNum = req.params.clubNum;
-  const token = req.headers['x-auth-token'] || '';
-  const clubs = token.clubNum;
+  const clubs = req.auth.clubNum;
 
   if (!clubs.includes(paramsClubNum) || clubs.length === 0) {
     return res
@@ -16,16 +15,4 @@ module.exports.joined = (req, res, next) => {
   return next();
 };
 
-module.exports.notJoined = (req, res, next) => {
-  const paramsClubNum = req.params.clubNum;
-  const token = req.headers['x-auth-token'] || '';
-  const clubs = token.clubNum;
-
-  if (!clubs.includes(paramsClubNum) || clubs.length === 0) {
-    return next();
-  }
-
-  return res
-    .status(403)
-    .json({ success: false, msg: '해당 접근이 불가능합니다.' });
-};
+module.exports = { isjoined };
