@@ -18,24 +18,19 @@ class StudentStorage {
     }
   }
 
-  // static async findOneByEmail(clientInfo) {
-
-  // }
-
-  // static async findOneByIdAndEmail(clientInfo) {
-  //   let conn;
-  //   try {
-  //     conn = await mariadb.getConnection();
-  //     const query = 'SELECT password FROM students WHERE id = ? AND email = ?;';
-  //     const result = await conn.query(query, [clientInfo.id, clientInfo.email]);
-  //     console.log(result[0]);
-  //     return result[0];
-  //   } catch (err) {
-  //     //
-  //   } finally {
-  //     conn?.release();
-  //   }
-  // }
+  static async findOneByEmail(email) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'SELECT * FROM students WHERE email = ?;';
+      const result = await conn.query(query, email);
+      return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 
   static async findOneByNameAndEmail(clientInfo) {
     let conn;

@@ -120,6 +120,34 @@ class Student {
       );
     }
   }
+
+  // async isExistIdAndEmail() {
+  //   const client = this.body;
+
+  //   try {
+  //     const clientInfo = {
+  //       id: client.id,
+  //       email: client.email,
+  //     };
+  //     const student = await StudentStorage.findOneByIdAndEmail(clientInfo);
+
+  //     if (student) {
+  //       if (student.id !== client.id) {
+  //         return { isExist: false, msg: '등록되지 않은 아이디입니다.' };
+  //       }
+  //       if (student.email !== client.email) {
+  //         return { isExist: false, msg: '등록되지 않은 이메일입니다.' };
+  //       }
+  //       return { isExist: true, msg: '등록된 계정입니다.', student };
+  //     }
+  //     return { isExist: false, msg: '등록되지 않은 계정입니다.' };
+  //   } catch (err) {
+  //     return Error.ctrl(
+  //       '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+  //       err
+  //     );
+  //   }
+  // }
 }
 
 module.exports = Student;
