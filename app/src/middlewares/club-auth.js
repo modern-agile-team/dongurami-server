@@ -6,7 +6,7 @@ const clubJoinCheck = (req, res, next) => {
 
   if (!clubs.includes(paramsClubNum) || clubs.length === 0) {
     return res
-      .status(201)
+      .status(403)
       .json({ success: false, msg: '해당 동아리에 가입하지 않았습니다.' });
   }
 
