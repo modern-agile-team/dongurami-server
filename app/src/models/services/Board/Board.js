@@ -20,13 +20,12 @@ class Board {
     try {
       const request = this.body;
       const boardInfo = {
+        category,
         id: request.id,
         clubNo: request.clubNo,
-        category,
         title: request.title,
         description: request.description,
       };
-
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
       return { success: true, msg: '게시글 생성 성공', boardNum };

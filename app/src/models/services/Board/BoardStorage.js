@@ -9,12 +9,12 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO boards (student_id, club_no, board_category_no, title, description) VALUES (?, ?, ?, ?, ?);`;
+      const query = `INSERT INTO boards (board_category_no, student_id, club_no, title, description) VALUES (?, ?, ?, ?, ?);`;
 
       const board = await conn.query(query, [
+        boardInfo.category,
         boardInfo.id,
         boardInfo.clubNo,
-        boardInfo.category,
         boardInfo.title,
         boardInfo.description,
       ]);
