@@ -2,7 +2,7 @@
 
 const Auth = require('../models/services/Auth/Auth');
 
-const isLogined = async (req, res, next) => {
+const loginCheck = async (req, res, next) => {
   const token = req.headers['x-auth-token'] || '';
 
   if (token.length === 0) {
@@ -37,4 +37,4 @@ const isLogined = async (req, res, next) => {
   return next();
 };
 
-module.exports = { isLogined };
+module.exports = { loginCheck };

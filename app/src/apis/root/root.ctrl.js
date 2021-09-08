@@ -29,7 +29,7 @@ const process = {
     return res.status(409).json(response);
   },
 
-  loginCheck: (req, res) => {
+  resUserInfo: (req, res) => {
     const studentInfo = req.auth;
 
     delete studentInfo.iat;
@@ -40,6 +40,19 @@ const process = {
       msg: '로그인이 된 사용자입니다.',
       studentInfo,
     });
+  },
+
+  findId: async (req, res) => {
+    const student = new Student(req.body);
+    const response = await student.findId();
+
+    if (response.success) {
+      return res.status(201).json(response);
+    }
+    if (response.isError) {
+      return res.status(500).json(response.clientMsg);
+    }
+    return res.status(400).json(response);
   },
 };
 

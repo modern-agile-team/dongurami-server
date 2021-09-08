@@ -6,7 +6,7 @@ const router = express.Router();
 const ctrl = require('./home.ctrl');
 const loginAuth = require('../../middlewares/login-auth');
 
-router.get('/:clubNum', loginAuth.isLogined, ctrl.process.findOneByClubNum);
-router.put('/:clubNum', loginAuth.isLogined, ctrl.process.updateClubInfo);
+router.get('/:clubNum', loginAuth.loginCheck, ctrl.process.findOneByClubNum);
+router.put('/:clubNum', loginAuth.loginCheck, ctrl.process.updateClubInfo);
 
 module.exports = router;

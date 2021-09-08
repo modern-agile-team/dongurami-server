@@ -8,9 +8,13 @@ const process = {
     const review = new Review(req);
     const response = await review.createByReivew();
 
-    if (response.success) return res.status(201).json(response);
-    if (response.isError) return res.status(400).json(response);
-    return res.status(500).json(response.clinetMsg);
+    if (response.success) {
+      return res.status(201).json(response);
+    }
+    if (response.isError) {
+      return res.status(400).json(response.clinetMsg);
+    }
+    return res.status(500).json(response);
   },
 
   // 모든 후기 리스트를 보여줌.
@@ -18,9 +22,13 @@ const process = {
     const review = new Review(req);
     const response = await review.findOneByClubNum();
 
-    if (response.success) return res.status(200).json(response);
-    if (response.isError) return res.status(400).json(response);
-    return res.status(500).json(response.clientMsg);
+    if (response.success) {
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      return res.status(400).json(response.clientMsg);
+    }
+    return res.status(500).json(response);
   },
 
   // 등록된 후기 글 수정.
@@ -32,9 +40,9 @@ const process = {
       return res.status(201).json(response);
     }
     if (response.isError) {
-      return res.status(400).json(response);
+      return res.status(400).json(response.clientMsg);
     }
-    return res.status(500).json(response.clientMsg);
+    return res.status(500).json(response);
   },
 
   // 등록된 후기 글 삭제.
@@ -46,9 +54,9 @@ const process = {
       return res.status(201).json(response);
     }
     if (response.isError) {
-      return res.status(400).json(response);
+      return res.status(400).json(response.clientMsg);
     }
-    return res.status(500).json(response.clientMsg);
+    return res.status(500).json(response);
   },
 };
 
