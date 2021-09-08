@@ -77,7 +77,7 @@ class Board {
     }
   }
 
-  async updateOnlyByNum() {
+  async updateOneByNum() {
     try {
       const boardInfo = {
         title: this.body.title,
@@ -85,11 +85,23 @@ class Board {
         boardNum: this.params.num,
       };
 
-      await BoardStorage.updateOnlyByNum(boardInfo);
+      await BoardStorage.updateOneByNum(boardInfo);
 
       return { success: true, msg: '게시글 수정 성공' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
+    }
+  }
+
+  async deleteOneByNum() {
+    try {
+      const boardNum = this.params.num;
+
+      await BoardStorage.deleteOneByNum(boardNum);
+
+      return { success: true, msg: '게시글 삭제 성공' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
   }
 

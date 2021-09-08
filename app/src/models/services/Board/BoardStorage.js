@@ -78,7 +78,7 @@ class BoardStorage {
     }
   }
 
-  static async updateOnlyByNum(boardInfo) {
+  static async updateOneByNum(boardInfo) {
     let conn;
 
     try {
@@ -91,6 +91,24 @@ class BoardStorage {
         boardInfo.description,
         boardInfo.boardNum,
       ]);
+
+      return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteOneByNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `DELETE FROM boards WHERE no = ?;`;
+
+      await conn.query(query, [boardNum]);
 
       return;
     } catch (err) {
