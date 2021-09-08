@@ -91,6 +91,22 @@ class ScheduleStorage {
       conn?.release();
     }
   }
+
+  static async deleteSchedule(no) {
+    const conn = await mariadb.getConnection();
+
+    try {
+      const query = `DELETE FROM schedules WHERE no = ?;`;
+
+      await conn.query(query, [no]);
+
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = ScheduleStorage;

@@ -22,7 +22,7 @@ class Schedule {
       }
       return { success: false, msg: result };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요', err);
+      return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
 
@@ -44,16 +44,16 @@ class Schedule {
 
       return { success: result };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요', err);
+      return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
 
   async updateSchedule() {
     const data = this.body;
-
+    const { no } = this.params;
     try {
       const scheduleInfo = {
-        no: data.no,
+        no,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
@@ -64,7 +64,7 @@ class Schedule {
 
       return { success: result };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요', err);
+      return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
 
@@ -81,7 +81,19 @@ class Schedule {
 
       return { success: result };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요', err);
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async deleteSchedule() {
+    const { no } = this.params;
+
+    try {
+      const result = await ScheduleStorage.deleteSchedule(no);
+
+      return { success: result };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
 }
