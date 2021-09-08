@@ -1,24 +1,8 @@
 'use strict';
 
 const Review = require('../../models/services/Review/Review');
-const Auth = require('../../models/services/Auth/Auth');
 
 const process = {
-  // 테스트 토큰
-  // 로그인 시 토큰이 생성될 것임.
-  createToken: (req, res) => {
-    const jwt = Auth.createToken(req.body);
-
-    if (!jwt) {
-      return res
-        .status(401)
-        .json({ success: false, msg: 'JWT가 존재하지 않습니다.' });
-    }
-    return res
-      .status(201)
-      .json({ success: true, msg: 'JWT가 생성되었습니다.', jwt });
-  },
-
   // 후기 작성
   createByReview: async (req, res) => {
     const review = new Review(req);
@@ -26,6 +10,9 @@ const process = {
 
     if (response.success) {
       return res.status(201).json(response);
+    }
+    if (response.isError) {
+      return res.status(500).json(response.clinetMsg);
     }
     return res.status(400).json(response);
   },
@@ -38,6 +25,9 @@ const process = {
     if (response.success) {
       return res.status(200).json(response);
     }
+    if (response.isError) {
+      return res.status(500).json(response.clientMsg);
+    }
     return res.status(400).json(response);
   },
 
@@ -49,6 +39,9 @@ const process = {
     if (response.success) {
       return res.status(201).json(response);
     }
+    if (response.isError) {
+      return res.status(500).json(response.clientMsg);
+    }
     return res.status(400).json(response);
   },
 
@@ -59,6 +52,9 @@ const process = {
 
     if (response.success) {
       return res.status(201).json(response);
+    }
+    if (response.isError) {
+      return res.status(500).json(response.clientMsg);
     }
     return res.status(400).json(response);
   },
