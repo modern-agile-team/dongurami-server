@@ -1,7 +1,7 @@
 'use strict';
 
-const isjoined = (req, res, next) => {
-  const paramsClubNum = req.params.clubNum;
+const clubJoinCheck = (req, res, next) => {
+  const paramsClubNum = Number(req.params.clubNum);
   const clubs = req.auth.clubNum;
 
   if (!clubs.includes(paramsClubNum) || clubs.length === 0) {
@@ -10,9 +10,7 @@ const isjoined = (req, res, next) => {
       .json({ success: false, msg: '해당 동아리에 가입하지 않았습니다.' });
   }
 
-  req.clubNum = paramsClubNum;
-
   return next();
 };
 
-module.exports = { isjoined };
+module.exports = { clubJoinCheck };
