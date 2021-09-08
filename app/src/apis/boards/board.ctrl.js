@@ -63,9 +63,9 @@ const process = {
 
   updateOnlyByNum: async (req, res) => {
     const board = new Board(req);
-    const response = board.updateOnlyByNum();
+    const response = await board.updateOnlyByNum();
 
-    if (response.success) return res.status(204).json(response);
+    if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
     return res
       .status(400)
