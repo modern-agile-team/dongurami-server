@@ -49,11 +49,29 @@ class StudentStorage {
     }
   }
 
-  static async findOneByIdAndEmail(clientInfo) {
+  static async findOneByIdOrEmail(clientInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query = 'SELECT id, email FROM students WHERE id = ? OR email = ?;';
+      const idEmailList = await conn.query(query, [
+        clientInfo.id,
+        clientInfo.email,
+      ]);
+      return idEmailList[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findOneByIdAndEmail(clientInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query =
+        'SELECT id, email FROM students WHERE id = ? AND email = ?;';
       const idEmailList = await conn.query(query, [
         clientInfo.id,
         clientInfo.email,
@@ -79,6 +97,25 @@ class StudentStorage {
         studentInfo.client.email,
         studentInfo.passwordSalt,
         studentInfo.client.major,
+      ]);
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async modifypasswordSave(clientInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query =
+        'UPDATE students SET password = ?, password_salt = ? WHERE id = ?;';
+      await conn.query(query, [
+        clientInfo.hash,
+        clientInfo.passwordSalt,
+        clientInfo.id,
       ]);
       return true;
     } catch (err) {
