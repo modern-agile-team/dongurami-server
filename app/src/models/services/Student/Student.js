@@ -12,6 +12,7 @@ class Student {
 
   async findId() {
     const client = this.body;
+
     try {
       const clientInfo = {
         name: client.name,
@@ -39,19 +40,16 @@ class Student {
     const client = this.body;
 
     try {
-      const clientInfo = {
-        id: client.id,
-        password: client.password,
-      };
-      const inspector = await StudentStorage.findOneById(clientInfo);
-      const comparePassword = bcrypt.compareSync(
-        clientInfo.password,
-        inspector.password
-      );
+      const inspector = await StudentStorage.findOneById(client.id);
 
       if (inspector === undefined) {
         return { success: false, msg: '가입된 아이디가 아닙니다.' };
       }
+
+      const comparePassword = bcrypt.compareSync(
+        client.password,
+        inspector.password
+      );
 
       if (comparePassword) {
         return { success: true, msg: '로그인에 성공하셨습니다.' };

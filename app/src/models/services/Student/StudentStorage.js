@@ -3,13 +3,13 @@
 const mariadb = require('../../../config/mariadb');
 
 class StudentStorage {
-  static async findOneById(clientInfo) {
+  static async findOneById(id) {
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query =
         'SELECT id, password, name, email, admin_flag AS adminFlag, profile_image_url AS profileImageUrl FROM students WHERE id = ?;';
-      const result = await conn.query(query, [clientInfo.id]);
+      const result = await conn.query(query, id);
       return result[0];
     } catch (err) {
       throw err;
@@ -17,6 +17,25 @@ class StudentStorage {
       conn?.release();
     }
   }
+
+  // static async findOneByEmail(clientInfo) {
+
+  // }
+
+  // static async findOneByIdAndEmail(clientInfo) {
+  //   let conn;
+  //   try {
+  //     conn = await mariadb.getConnection();
+  //     const query = 'SELECT password FROM students WHERE id = ? AND email = ?;';
+  //     const result = await conn.query(query, [clientInfo.id, clientInfo.email]);
+  //     console.log(result[0]);
+  //     return result[0];
+  //   } catch (err) {
+  //     //
+  //   } finally {
+  //     conn?.release();
+  //   }
+  // }
 
   static async findOneByNameAndEmail(clientInfo) {
     let conn;
@@ -28,6 +47,23 @@ class StudentStorage {
         clientInfo.email,
       ]);
       return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findOneByIdAndEmail(clientInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'SELECT id, email FROM students WHERE id = ? OR email = ?;';
+      const idEmailList = await conn.query(query, [
+        clientInfo.id,
+        clientInfo.email,
+      ]);
+      return idEmailList[0];
     } catch (err) {
       throw err;
     } finally {
@@ -50,23 +86,6 @@ class StudentStorage {
         studentInfo.client.major,
       ]);
       return true;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findOneByIdAndEmail(clientInfo) {
-    let conn;
-    try {
-      conn = await mariadb.getConnection();
-      const query = 'SELECT id, email FROM students WHERE id = ? OR email = ?;';
-      const idEmailList = await conn.query(query, [
-        clientInfo.id,
-        clientInfo.email,
-      ]);
-      return idEmailList[0];
     } catch (err) {
       throw err;
     } finally {
