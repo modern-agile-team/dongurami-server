@@ -13,8 +13,9 @@ class Board {
   async createBoardNum() {
     const category = boardCategory[this.params.category];
 
-    if (category === undefined)
+    if (category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판입니다.' };
+    }
 
     try {
       const request = this.body;
@@ -37,9 +38,9 @@ class Board {
   async findAllByCategoryNum() {
     const category = boardCategory[this.params.category];
 
-    if (category === undefined)
+    if (category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
-
+    }
     if (category > 5) return { success: false, msg: '잘못된 URL의 접근입니다' };
 
     try {
@@ -53,15 +54,16 @@ class Board {
 
   async findOneByBoardNum() {
     const category = boardCategory[this.params.category];
-    const boardNum = this.params.num;
 
-    if (category === undefined)
+    if (category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
-
-    if (category >= 5)
+    }
+    if (category >= 5) {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
+    }
 
     try {
+      const boardNum = this.params.num;
       const board = await BoardStorage.findOneByBoardNum(category, boardNum);
 
       if (board[0] === undefined)
@@ -72,6 +74,22 @@ class Board {
       return { success: true, msg: '게시글 조회 성공', board };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async updateOnlyByNum() {
+    try {
+      const boardInfo = {
+        title: this.body.title,
+        description: this.body.description,
+        boardNum: this.params.num,
+      };
+
+      await BoardStorage.updateOnlyByNum(boardInfo);
+
+      return { success: true, msg: '게시글 수정 성공' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
     }
   }
 

@@ -78,6 +78,28 @@ class BoardStorage {
     }
   }
 
+  static async updateOnlyByNum(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `UPDATE boards SET title = ?, description = ? WHERE no = ?;`;
+
+      await conn.query(query, [
+        boardInfo.title,
+        boardInfo.description,
+        boardInfo.boardNum,
+      ]);
+
+      return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async updateOnlyHitByNum(boardNum) {
     let conn;
 
