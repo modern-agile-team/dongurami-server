@@ -43,7 +43,6 @@ class Schedule {
 
         return { success: true, result };
       }
-
       return { success: false, msg: '존재하지 않는 동아리입니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
