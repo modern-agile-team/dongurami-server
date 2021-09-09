@@ -11,7 +11,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.clientMsg);
+      return res.status(500).json(response.clinetMsg);
     }
     return res.status(404).json(response); // 존재하지 않는 동아리에 접근 시
   },
@@ -21,7 +21,7 @@ const process = {
     const response = await schedule.findAllByDate();
 
     if (response.success) {
-      return res.status(200).json(response.result);
+      return res.status(200).json(response);
     }
     if (response.isError) {
       return res.status(500).json(response.clinetMsg);
@@ -39,7 +39,9 @@ const process = {
     if (response.isError) {
       return res.status(500).json(response.clientMsg);
     }
-    return res.status(400).json('서버 개발자에게 문의해주세요.');
+    return res
+      .status(400)
+      .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
   },
 
   updateSchedule: async (req, res) => {
@@ -53,7 +55,9 @@ const process = {
     if (response.isError) {
       return res.status(500).json(response.clientMsg);
     }
-    return res.status(400).json('서버 개발자에게 문의해주세요.');
+    return res
+      .status(400)
+      .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
   },
 
   updateImportant: async (req, res) => {
@@ -67,7 +71,9 @@ const process = {
     if (response.isError) {
       return res.status(500).json(response.clientMsg);
     }
-    return res.status(400).json('서버 개발자에게 문의해주세요.');
+    return res
+      .status(400)
+      .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
   },
 
   deleteSchedule: async (req, res) => {
@@ -80,7 +86,9 @@ const process = {
     if (response.isError) {
       return res.status(500).json(response.clientMsg);
     }
-    return res.status(400).json('서버 개발자에게 문의해주세요.');
+    return res
+      .status(400)
+      .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
   },
 };
 

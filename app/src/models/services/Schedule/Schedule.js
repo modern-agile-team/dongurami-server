@@ -7,20 +7,21 @@ class Schedule {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
+    this.auth = req.auth;
   }
 
   async findAllByClubNum() {
     const { clubNum } = this.params;
 
     try {
-      const { success, result } = await ScheduleStorage.findAllByClubNum(
-        clubNum
-      );
+      const success = await ScheduleStorage.existClub(clubNum);
 
       if (success) {
+        const result = await ScheduleStorage.findAllByClubNum(clubNum);
+
         return { success: true, result };
       }
-      return { success: false, msg: result };
+      return { success: false, msg: '존재하지 않는 동아리입니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -35,14 +36,15 @@ class Schedule {
     };
 
     try {
-      const { success, result } = await ScheduleStorage.findAllByDate(
-        ScheduleInfo
-      );
+      const success = await ScheduleStorage.existClub(clubNum);
 
       if (success) {
+        const result = await ScheduleStorage.findAllByDate(ScheduleInfo);
+
         return { success: true, result };
       }
-      return { success: false, msg: result };
+
+      return { success: false, msg: '존재하지 않는 동아리입니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -51,11 +53,12 @@ class Schedule {
   async createSchedule() {
     const data = this.body;
     const { clubNum } = this.params;
+    const { id } = this.auth;
 
     try {
       const scheduleInfo = {
         clubNum,
-        studentId: data.studentId,
+        studentId: id,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,

@@ -3,24 +3,29 @@
 const mariadb = require('../../../config/mariadb');
 
 class ScheduleStorage {
+  static async existClub(clubNum) {
+    const conn = await mariadb.getConnection();
+    const existClub = 'SELECT no FROM clubs WHERE no = ?;';
+    const club = await conn.query(existClub, clubNum);
+
+    if (club[0] === undefined) {
+      return false;
+    }
+    return true;
+  }
+
   static async findAllByClubNum(clubNum) {
     const conn = await mariadb.getConnection();
 
     try {
       const query = `SELECT no, color_code AS colrCode, title, start_date AS startDate, end_date AS endDate, period, important 
       FROM schedules
-      WHERE LEFT(start_date,7) = LEFT(NOW(),7) AND club_no = ?
+      WHERE LEFT(start_date, 7) = LEFT(NOW(), 7) AND club_no = ?
       ORDER BY start_date;`;
-      const existClub = 'SELECT no FROM clubs WHERE no = ?;';
-      const club = await conn.query(existClub, clubNum);
-
-      if (club[0] === undefined) {
-        return { success: false, result: '존재하지 않는 동아리입니다.' };
-      }
 
       const result = await conn.query(query, clubNum);
 
-      return { success: true, result };
+      return result;
     } catch (err) {
       throw err;
     } finally {
@@ -36,19 +41,13 @@ class ScheduleStorage {
       FROM schedules 
       WHERE club_no = ? AND LEFT(start_date, 7) = ?
       ORDER BY start_date;`;
-      const existClub = 'SELECT no FROM clubs WHERE no = ?;';
-      const club = await conn.query(existClub, scheduleInfo.clubNum);
-
-      if (club[0] === undefined) {
-        return { success: false, result: '존재하지 않는 동아리입니다.' };
-      }
 
       const result = await conn.query(query, [
         scheduleInfo.clubNum,
         scheduleInfo.date,
       ]);
 
-      return { success: true, result };
+      return result;
     } catch (err) {
       throw err;
     } finally {
