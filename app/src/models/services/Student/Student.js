@@ -98,12 +98,13 @@ class Student {
           hash,
           passwordSalt,
         };
-        const student = await StudentStorage.modifypasswordSave(clientInfo);
+        const student = await StudentStorage.modifyPasswordSave(clientInfo);
+
         if (student) {
           return { success: true, msg: '비밀번호 변경을 성공하였습니다.' };
         }
       }
-      return inspector.success;
+      return inspector;
     } catch (err) {
       return Error.ctrl(
         '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
@@ -155,6 +156,8 @@ class Student {
     try {
       const { id } = req.auth;
       const student = await StudentStorage.findOneById(id);
+
+      // if (student === undefiend) 인지 검증을 해야하는지 ? why? 어차피 payload에서 온거면 아이디가 틀릴수가 없는디 ?
       const comparePassword = bcrypt.compareSync(
         client.password,
         student.password
