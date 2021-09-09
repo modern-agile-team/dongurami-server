@@ -50,11 +50,11 @@ class Schedule {
 
   async createSchedule() {
     const data = this.body;
-    const { params } = this;
+    const { clubNum } = this.params;
 
     try {
       const scheduleInfo = {
-        clubNum: params.clubNum,
+        clubNum,
         studentId: data.studentId,
         colorCode: data.colorCode,
         title: data.title,
@@ -62,6 +62,7 @@ class Schedule {
         endDate: data.endDate,
         period: data.period,
       };
+
       const result = await ScheduleStorage.createSchedule(scheduleInfo);
 
       return { success: result };
@@ -72,11 +73,10 @@ class Schedule {
 
   async updateSchedule() {
     const data = this.body;
-    const { clubNum } = this.params;
     const { no } = this.params;
+
     try {
       const scheduleInfo = {
-        clubNum,
         no,
         colorCode: data.colorCode,
         title: data.title,
@@ -84,6 +84,7 @@ class Schedule {
         endDate: data.endDate,
         period: data.period, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
       };
+
       const result = await ScheduleStorage.updateSchedule(scheduleInfo);
 
       return { success: result };
@@ -94,15 +95,14 @@ class Schedule {
 
   async updateImportant() {
     const data = this.body;
-    const { clubNum } = this.params;
     const { no } = this.params;
 
     try {
       const scheduleInfo = {
         no,
-        clubNum,
         important: data.important,
       };
+
       const result = await ScheduleStorage.updateImportant(scheduleInfo);
 
       return { success: result };
@@ -112,15 +112,10 @@ class Schedule {
   }
 
   async deleteSchedule() {
-    const { clubNum } = this.params;
     const { no } = this.params;
 
     try {
-      const scheduleInfo = {
-        no,
-        clubNum,
-      };
-      const result = await ScheduleStorage.deleteSchedule(scheduleInfo);
+      const result = await ScheduleStorage.deleteSchedule(no);
 
       return { success: result };
     } catch (err) {

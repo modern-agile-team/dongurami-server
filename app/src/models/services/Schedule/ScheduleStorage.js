@@ -34,7 +34,8 @@ class ScheduleStorage {
     try {
       const query = `SELECT no, color_code AS colorCode, title, start_date AS startDate, end_date AS endDate, period, important 
       FROM schedules 
-      WHERE club_no = ? AND LEFT(start_date, 7) = ?;`;
+      WHERE club_no = ? AND LEFT(start_date, 7) = ?
+      ORDER BY start_date;`;
       const existClub = 'SELECT no FROM clubs WHERE no = ?;';
       const club = await conn.query(existClub, scheduleInfo.clubNum);
 
@@ -84,7 +85,7 @@ class ScheduleStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      const query = `UPDATE schedules SET color_code = ?, title = ?, start_date = ?, end_date = ?, period = ? WHERE no = ? AND club_no = ?;`;
+      const query = `UPDATE schedules SET color_code = ?, title = ?, start_date = ?, end_date = ?, period = ? WHERE no = ?;`;
 
       await conn.query(query, [
         scheduleInfo.colorCode,
@@ -93,7 +94,6 @@ class ScheduleStorage {
         scheduleInfo.endDate,
         scheduleInfo.period,
         scheduleInfo.no,
-        scheduleInfo.clubNum,
       ]);
 
       return true;
@@ -109,17 +109,6 @@ class ScheduleStorage {
 
     try {
       const query = `UPDATE schedules SET important = ? WHERE no = ?;`;
-      const existSchedule =
-        'SELECT no FROM schedules WHERE no = ? AND club_no = ?;';
-      const schedule = await conn.query(existSchedule, [
-        scheduleInfo.no,
-        scheduleInfo.clubNum,
-      ]);
-
-      // 해당 동아리에 해당하는 일정이 없을 때
-      if (schedule[0] === undefined) {
-        return { success: false, result: '존재하지 않는 일정입니다.' };
-      }
 
       await conn.query(query, [scheduleInfo.important, scheduleInfo.no]);
 
@@ -131,24 +120,13 @@ class ScheduleStorage {
     }
   }
 
-  static async deleteSchedule(scheduleInfo) {
+  static async deleteSchedule(no) {
     const conn = await mariadb.getConnection();
-    const existSchedule =
-      'SELECT no FROM schedules WHERE no = ? AND club_no = ?;';
-    const schedule = await conn.query(existSchedule, [
-      scheduleInfo.no,
-      scheduleInfo.clubNum,
-    ]);
-
-    // 해당 동아리에 해당하는 일정이 없을 때
-    if (schedule[0] === undefined) {
-      return { success: false, result: '존재하지 않는 일정입니다.' };
-    }
 
     try {
       const query = `DELETE FROM schedules WHERE no = ?;`;
 
-      await conn.query(query, scheduleInfo.no);
+      await conn.query(query, no);
 
       return true;
     } catch (err) {
