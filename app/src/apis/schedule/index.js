@@ -11,7 +11,7 @@ router.get('/:clubNum', ctrl.process.findAllByClubNum);
 router.get('/:clubNum/:date', ctrl.process.findAllByDate);
 
 router.put('/:clubNum/:no', ctrl.process.updateSchedule);
-router.patch('/:clubNum/:no', ctrl.process.updateImportant);
+router.patch('/:clubNum/:no', ctrl.process.updateOnlyImportant);
 
 router.delete('/:clubNum/:no', ctrl.process.deleteSchedule);
 

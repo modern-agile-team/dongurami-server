@@ -95,7 +95,7 @@ class Schedule {
     }
   }
 
-  async updateImportant() {
+  async updateOnlyImportant() {
     const data = this.body;
     const { no } = this.params;
 
@@ -105,7 +105,7 @@ class Schedule {
         important: data.important,
       };
 
-      const result = await ScheduleStorage.updateImportant(scheduleInfo);
+      const result = await ScheduleStorage.updateOnlyImportant(scheduleInfo);
 
       return { success: result };
     } catch (err) {

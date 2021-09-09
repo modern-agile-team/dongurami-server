@@ -5,13 +5,19 @@ const mariadb = require('../../../config/mariadb');
 class ScheduleStorage {
   static async existClub(clubNum) {
     const conn = await mariadb.getConnection();
-    const existClub = 'SELECT no FROM clubs WHERE no = ?;';
-    const club = await conn.query(existClub, clubNum);
+    try {
+      const query = 'SELECT no FROM clubs WHERE no = ?;';
+      const club = await conn.query(query, clubNum);
 
-    if (club[0] === undefined) {
-      return false;
+      if (club[0] === undefined) {
+        return false;
+      }
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
     }
-    return true;
   }
 
   static async findAllByClubNum(clubNum) {
@@ -103,7 +109,7 @@ class ScheduleStorage {
     }
   }
 
-  static async updateImportant(scheduleInfo) {
+  static async updateOnlyImportant(scheduleInfo) {
     const conn = await mariadb.getConnection();
 
     try {

@@ -34,7 +34,7 @@ const process = {
     const response = await schedule.createSchedule();
 
     if (response.success) {
-      return res.status(200).json(response);
+      return res.status(201).json(response);
     }
     if (response.isError) {
       return res.status(500).json(response.clientMsg);
@@ -60,10 +60,10 @@ const process = {
       .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
   },
 
-  updateImportant: async (req, res) => {
+  updateOnlyImportant: async (req, res) => {
     // 일정 중요도 수정
     const schedule = new Schedule(req);
-    const response = await schedule.updateImportant();
+    const response = await schedule.updateOnlyImportant();
 
     if (response.success) {
       return res.status(200).json(response);
