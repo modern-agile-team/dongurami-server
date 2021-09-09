@@ -40,23 +40,19 @@ class Student {
     const client = this.body;
 
     try {
-      const clientInfo = {
-        id: client.id,
-        password: client.password,
-      };
-      const inspector = await StudentStorage.findOneById(clientInfo);
+      const inspector = await StudentStorage.findOneById(client.id);
 
       if (inspector === undefined) {
         return { success: false, msg: '가입된 아이디가 아닙니다.' };
       }
 
       const comparePassword = bcrypt.compareSync(
-        clientInfo.password,
+        client.password,
         inspector.password
       );
 
       if (comparePassword) {
-        const clubNum = await StudentStorage.findOneByLoginedId(clientInfo.id);
+        const clubNum = await StudentStorage.findOneByLoginedId(client.id);
         const jwt = await Auth.createJWT(inspector, clubNum);
 
         return { success: true, msg: '로그인에 성공하셨습니다.', jwt };
