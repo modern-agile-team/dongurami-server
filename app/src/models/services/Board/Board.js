@@ -40,7 +40,7 @@ class Board {
     if (category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
     }
-    if (category > 5) return { success: false, msg: '잘못된 URL의 접근입니다' };
+    if (category > 4) return { success: false, msg: '잘못된 URL의 접근입니다' };
 
     try {
       const boards = await BoardStorage.findAllByCategoryNum(category);
@@ -57,7 +57,7 @@ class Board {
     if (category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
     }
-    if (category >= 5) {
+    if (category > 4) {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
     }
 

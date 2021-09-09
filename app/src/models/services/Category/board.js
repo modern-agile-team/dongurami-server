@@ -7,5 +7,5 @@ module.exports = {
   promotion: 4,
   clubNotice: 5,
   clubActivity: 6,
-  persenal: 7,
+  personal: 7,
 };
