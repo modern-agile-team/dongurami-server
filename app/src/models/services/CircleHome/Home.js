@@ -15,8 +15,9 @@ class Home {
     try {
       const { success, result } = await HomeStorage.findOneByClubNum(clubNum);
 
-      if (success) return { success: true, result };
-
+      if (success) {
+        return { success: true, result };
+      }
       return { success: false, msg: result };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요', err);
