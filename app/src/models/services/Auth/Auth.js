@@ -23,8 +23,7 @@ class Auth {
 
   static async verifyJWT(token) {
     try {
-      const decoded = jwt.verify(token, SECRET_KEY);
-      return decoded;
+      return jwt.verify(token, SECRET_KEY);
     } catch (err) {
       return err;
     }
