@@ -106,7 +106,7 @@ class StudentStorage {
     }
   }
 
-  static async modifypasswordSave(clientInfo) {
+  static async modifyPasswordSave(clientInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
