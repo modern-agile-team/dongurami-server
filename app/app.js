@@ -9,16 +9,14 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const signUp = require('./src/apis/sign-up');
-const login = require('./src/apis/login');
+const board = require('./src/apis/boards');
+const root = require('./src/apis/root');
 const review = require('./src/apis/review');
 const home = require('./src/apis/circle-home');
-const findId = require('./src/apis/find-id');
 
-app.use('/api', signUp);
-app.use('/api', login);
+app.use('/api/board', board);
+app.use('/api', root);
 app.use('/api/club/review', review);
-app.use('/api/club', home);
-app.use('/api', findId);
+app.use('/api/club/home', home);
 
 module.exports = app;
