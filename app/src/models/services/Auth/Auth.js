@@ -7,12 +7,12 @@ class Auth {
   // clubNum은 동그라미에서 동아리 가입 승인이 완료된 후 재로그인 할 때 생성
   static async createJWT(student, clubNum) {
     const payload = {
+      clubNum,
       id: student.id,
       name: student.name,
       email: student.email,
       profilePath: student.profileImageUrl,
       isAdmin: student.adminFlag,
-      clubNum,
     };
     return jwt.sign(payload, SECRET_KEY, {
       algorithm: 'HS256',

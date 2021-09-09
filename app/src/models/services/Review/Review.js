@@ -14,7 +14,6 @@ class Review {
     const review = this.body;
     const paramsClubNum = Number(this.params.clubNum);
     const payload = this.auth;
-
     const userInfo = {
       studentId: payload.id,
       clubNum: paramsClubNum,
