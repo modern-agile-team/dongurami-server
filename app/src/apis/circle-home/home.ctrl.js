@@ -1,6 +1,6 @@
 'use strict';
 
-const Home = require('../../models/services/CircleHome/Home');
+const Home = require('../../models/services/CircleHome/home');
 
 const process = {
   findOneByClubNum: async (req, res) => {
