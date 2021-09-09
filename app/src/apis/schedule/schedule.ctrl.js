@@ -11,9 +11,21 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.errMsg);
+      return res.status(500).json(response.clientMsg);
     }
+    return res.status(400).json(response);
+  },
 
+  findAllByDate: async (req, res) => {
+    const schedule = new Schedule(req);
+    const response = await schedule.findAllByDate();
+
+    if (response.success) {
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      return res.status(500).json(response.clinetMsg);
+    }
     return res.status(400).json(response);
   },
 
@@ -27,8 +39,7 @@ const process = {
     if (response.isError) {
       return res.status(500).json(response.clientMsg);
     }
-
-    return res.status(500).json(response);
+    return res.status(400).json(response);
   },
 
   updateSchedule: async (req, res) => {
@@ -37,14 +48,12 @@ const process = {
     const response = await schedule.updateSchedule();
 
     if (response.success) {
-      console.log(response);
       return res.status(200).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.clinetMsg);
+      return res.status(500).json(response.clientMsg);
     }
-
-    return res.status(500).json(response);
+    return res.status(400).json(response);
   },
 
   updateImportant: async (req, res) => {
@@ -56,10 +65,9 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.cleintMsg);
+      return res.status(500).json(response.clientMsg);
     }
-
-    return res.status(500).json(response);
+    return res.status(400).json(response);
   },
 
   deleteSchedule: async (req, res) => {
@@ -73,7 +81,7 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
 
-    return res.status(500).json(response);
+    return res.status(400).json(response);
   },
 };
 

@@ -26,6 +26,28 @@ class Schedule {
     }
   }
 
+  async findAllByDate() {
+    const { clubNum } = this.params;
+    const { date } = this.params;
+    const ScheduleInfo = {
+      clubNum,
+      date,
+    };
+
+    try {
+      const { success, result } = await ScheduleStorage.findAllByDate(
+        ScheduleInfo
+      );
+
+      if (success) {
+        return { success: true, result };
+      }
+      return { success: false, msg: result };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
   async createSchedule() {
     const data = this.body;
     const { params } = this;
@@ -50,9 +72,11 @@ class Schedule {
 
   async updateSchedule() {
     const data = this.body;
+    const { clubNum } = this.params;
     const { no } = this.params;
     try {
       const scheduleInfo = {
+        clubNum,
         no,
         colorCode: data.colorCode,
         title: data.title,
@@ -70,11 +94,13 @@ class Schedule {
 
   async updateImportant() {
     const data = this.body;
+    const { clubNum } = this.params;
     const { no } = this.params;
 
     try {
       const scheduleInfo = {
         no,
+        clubNum,
         important: data.important,
       };
       const result = await ScheduleStorage.updateImportant(scheduleInfo);
@@ -86,10 +112,15 @@ class Schedule {
   }
 
   async deleteSchedule() {
+    const { clubNum } = this.params;
     const { no } = this.params;
 
     try {
-      const result = await ScheduleStorage.deleteSchedule(no);
+      const scheduleInfo = {
+        no,
+        clubNum,
+      };
+      const result = await ScheduleStorage.deleteSchedule(scheduleInfo);
 
       return { success: result };
     } catch (err) {

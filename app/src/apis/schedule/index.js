@@ -8,6 +8,7 @@ const ctrl = require('./schedule.ctrl');
 router.post('/:clubNum', ctrl.process.createSchedule);
 
 router.get('/:clubNum', ctrl.process.findAllByClubNum);
+router.get('/:clubNum/:date', ctrl.process.findAllByDate);
 
 router.put('/:clubNum/:no', ctrl.process.updateSchedule);
 router.patch('/:clubNum/:no', ctrl.process.updateImportant);
