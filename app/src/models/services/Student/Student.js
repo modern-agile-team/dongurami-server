@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 
 const StudentStorage = require('./StudentStorage');
 const Error = require('../../utils/Error');
+const Auth = require('../Auth/Auth');
 
 class Student {
   constructor(body) {
@@ -52,7 +53,10 @@ class Student {
       );
 
       if (comparePassword) {
-        return { success: true, msg: '로그인에 성공하셨습니다.' };
+        const clubNum = await StudentStorage.findOneByLoginedId(client.id);
+        const jwt = await Auth.createJWT(inspector, clubNum);
+
+        return { success: true, msg: '로그인에 성공하셨습니다.', jwt };
       }
       return {
         success: false,

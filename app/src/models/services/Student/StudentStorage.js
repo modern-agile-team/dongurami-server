@@ -18,20 +18,6 @@ class StudentStorage {
     }
   }
 
-  static async findOneByEmail(email) {
-    let conn;
-    try {
-      conn = await mariadb.getConnection();
-      const query = 'SELECT * FROM students WHERE email = ?;';
-      const result = await conn.query(query, email);
-      return result[0];
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
   static async findOneByNameAndEmail(clientInfo) {
     let conn;
     try {
@@ -42,6 +28,28 @@ class StudentStorage {
         clientInfo.email,
       ]);
       return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async save(studentInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query =
+        'INSERT INTO students (id, password, name, email, password_salt, major) VALUES (?, ?, ?, ?, ?, ?);';
+      await conn.query(query, [
+        studentInfo.client.id,
+        studentInfo.hash,
+        studentInfo.client.name,
+        studentInfo.client.email,
+        studentInfo.passwordSalt,
+        studentInfo.client.major,
+      ]);
+      return true;
     } catch (err) {
       throw err;
     } finally {
@@ -66,21 +74,33 @@ class StudentStorage {
     }
   }
 
-  static async save(studentInfo) {
+  static async findOneByLoginedId(studentId) {
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query =
-        'INSERT INTO students (id, password, name, email, password_salt, major) VALUES (?, ?, ?, ?, ?, ?);';
-      await conn.query(query, [
-        studentInfo.client.id,
-        studentInfo.hash,
-        studentInfo.client.name,
-        studentInfo.client.email,
-        studentInfo.passwordSalt,
-        studentInfo.client.major,
-      ]);
-      return true;
+        'SELECT club_no AS clubNum FROM members WHERE student_id = ?;';
+      const clubList = await conn.query(query, [studentId]);
+      const clubs = [];
+
+      for (let i = 0; i < clubList.length; i += 1) {
+        clubs.push(clubList[i].clubNum);
+      }
+      return clubs;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findOneByEmail(email) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'SELECT * FROM students WHERE email = ?;';
+      const result = await conn.query(query, email);
+      return result[0];
     } catch (err) {
       throw err;
     } finally {
