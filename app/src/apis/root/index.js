@@ -12,10 +12,6 @@ router.post('/sign-up', ctrl.process.signUp);
 
 router.post('/find-id', ctrl.process.findId);
 router.post('/find-password', loginAuth.loginCheck, ctrl.process.findPassword);
-router.post(
-  '/reset-password',
-  loginAuth.loginCheck,
-  ctrl.process.resetPassword
-);
+router.put('/reset-password', loginAuth.loginCheck, ctrl.process.resetPassword);
 
 module.exports = router;

@@ -7,28 +7,29 @@ const Error = require('../../utils/Error');
 const Auth = require('../Auth/Auth');
 
 class Student {
-  constructor(body) {
-    this.body = body;
+  constructor(req) {
+    this.body = req.body;
+    this.auth = req.auth;
   }
 
   async login() {
     const client = this.body;
 
     try {
-      const inspector = await StudentStorage.findOneById(client.id);
+      const checkedId = await StudentStorage.findOneById(client.id);
 
-      if (inspector === undefined) {
+      if (checkedId === undefined) {
         return { success: false, msg: '가입된 아이디가 아닙니다.' };
       }
 
       const comparePassword = bcrypt.compareSync(
         client.password,
-        inspector.password
+        checkedId.password
       );
 
       if (comparePassword) {
         const clubNum = await StudentStorage.findOneByLoginedId(client.id);
-        const jwt = await Auth.createJWT(inspector, clubNum);
+        const jwt = await Auth.createJWT(checkedId, clubNum);
 
         return { success: true, msg: '로그인에 성공하셨습니다.', jwt };
       }
@@ -49,9 +50,9 @@ class Student {
     const saltRounds = 10;
     const passwordSalt = bcrypt.genSaltSync(saltRounds);
     const hash = bcrypt.hashSync(client.password, passwordSalt);
-    const inspector = await this.inspectIdAndEmail();
+    const checkedIdAndEmail = await this.inspectIdAndEmail();
 
-    if (inspector.saveable) {
+    if (checkedIdAndEmail.saveable) {
       const studentInfo = { client, passwordSalt, hash };
       const response = await StudentStorage.save(studentInfo);
 
@@ -59,7 +60,7 @@ class Student {
         return { success: true, msg: '회원가입에 성공하셨습니다.' };
       }
     }
-    return inspector;
+    return checkedIdAndEmail;
   }
 
   async findId() {
@@ -90,15 +91,15 @@ class Student {
 
   async resetPassword() {
     const client = this.body;
-    const inspector = await this.inspectPassword();
+    const checkedPassword = await this.inspectPassword();
 
     try {
-      if (inspector.success) {
+      if (checkedPassword.success) {
         const saltRounds = 10;
         const passwordSalt = bcrypt.genSaltSync(saltRounds);
-        const hash = bcrypt.hashSync(client.password, passwordSalt);
+        const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt);
         const clientInfo = {
-          id: inspector.student.id,
+          id: checkedPassword.student.id,
           hash,
           passwordSalt,
         };
@@ -108,7 +109,7 @@ class Student {
           return { success: true, msg: '비밀번호 변경을 성공하였습니다.' };
         }
       }
-      return inspector;
+      return checkedPassword;
     } catch (err) {
       return Error.ctrl(
         '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
@@ -155,23 +156,28 @@ class Student {
   }
 
   async inspectPassword() {
-    const client = this.body; // 원비밀번호, 새로운비밀번호, 새로운 비밀번호확인
+    const client = this.body;
+    const studentInfo = this.auth;
 
     try {
-      const { id } = req.auth;
-      const student = await StudentStorage.findOneById(id);
-
-      // if (student === undefiend) 인지 검증을 해야하는지 ? why? 어차피 payload에서 온거면 아이디가 틀릴수가 없는디 ?
+      const studentInfoId = studentInfo.id;
+      const student = await StudentStorage.findOneById(studentInfoId);
       const comparePassword = bcrypt.compareSync(
         client.password,
         student.password
       );
 
       if (comparePassword) {
-        if (client.newPassword === client.checkNewPassword) {
-          return { success: true, msg: '비밀번호가 일치합니다.', student };
+        if (client.password !== client.newPassword) {
+          if (client.newPassword === client.checkNewPassword) {
+            return { success: true, msg: '비밀번호가 일치합니다.', student };
+          }
+          return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
         }
-        return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
+        return {
+          success: false,
+          msg: '기존 비밀번호와 다른 비밀번호를 설정해주세요.',
+        };
       }
       return { success: false, msg: '비밀번호가 틀렸습니다.' };
     } catch (err) {
@@ -181,35 +187,6 @@ class Student {
       );
     }
   }
-
-  // async isExistIdAndEmail() {
-  //   const client = this.body;
-
-  //   try {
-  //     const { id } = req.auth;
-  //     // const clientInfo = {
-  //     //   id: client.id,
-  //     //   email: client.email,
-  //     // };
-  //     // const student = await StudentStorage.findOneByIdAndEmail(clientInfo);
-
-  //     // if (student) {
-  //     //   if (student.id !== client.id) {
-  //     //     return { isExist: false, msg: '등록되지 않은 아이디입니다.' };
-  //     //   }
-  //     //   if (student.email !== client.email) {
-  //     //     return { isExist: false, msg: '등록되지 않은 이메일입니다.' };
-  //     //   }
-  //     //   return { isExist: true, msg: '등록된 계정입니다.', student };
-  //     // }
-  //     // return { isExist: false, msg: '등록되지 않은 계정입니다.' };
-  //   } catch (err) {
-  //     return Error.ctrl(
-  //       '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-  //       err
-  //     );
-  //   }
-  // }
 }
 
 module.exports = Student;
