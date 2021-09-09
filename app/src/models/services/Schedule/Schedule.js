@@ -65,9 +65,9 @@ class Schedule {
         period: data.period,
       };
 
-      const result = await ScheduleStorage.createSchedule(scheduleInfo);
+      await ScheduleStorage.createSchedule(scheduleInfo);
 
-      return { success: result };
+      return { success: true };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -87,9 +87,9 @@ class Schedule {
         period: data.period, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
       };
 
-      const result = await ScheduleStorage.updateSchedule(scheduleInfo);
+      await ScheduleStorage.updateSchedule(scheduleInfo);
 
-      return { success: result };
+      return { success: true };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -105,9 +105,9 @@ class Schedule {
         important: data.important,
       };
 
-      const result = await ScheduleStorage.updateOnlyImportant(scheduleInfo);
+      await ScheduleStorage.updateOnlyImportant(scheduleInfo);
 
-      return { success: result };
+      return { success: true };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -117,9 +117,9 @@ class Schedule {
     const { no } = this.params;
 
     try {
-      const result = await ScheduleStorage.deleteSchedule(no);
+      await ScheduleStorage.deleteSchedule(no);
 
-      return { success: result };
+      return { success: true };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }

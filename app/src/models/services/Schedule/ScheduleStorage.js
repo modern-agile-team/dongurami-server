@@ -78,7 +78,7 @@ class ScheduleStorage {
         scheduleInfo.period,
       ]);
 
-      return true;
+      return;
     } catch (err) {
       throw err;
     } finally {
@@ -101,7 +101,7 @@ class ScheduleStorage {
         scheduleInfo.no,
       ]);
 
-      return true;
+      return;
     } catch (err) {
       throw err;
     } finally {
@@ -117,7 +117,7 @@ class ScheduleStorage {
 
       await conn.query(query, [scheduleInfo.important, scheduleInfo.no]);
 
-      return true;
+      return;
     } catch (err) {
       throw err;
     } finally {
@@ -133,7 +133,7 @@ class ScheduleStorage {
 
       await conn.query(query, no);
 
-      return true;
+      return;
     } catch (err) {
       throw err;
     } finally {
