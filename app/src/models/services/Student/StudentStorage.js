@@ -73,6 +73,26 @@ class StudentStorage {
       conn?.release();
     }
   }
+
+  static async findOneByLoginedId(studentId) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query =
+        'SELECT club_no AS clubNum FROM members WHERE student_id = ?;';
+      const clubList = await conn.query(query, [studentId]);
+      const clubs = [];
+
+      for (let i = 0; i < clubList.length; i += 1) {
+        clubs.push(clubList[i].clubNum);
+      }
+      return clubs;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = StudentStorage;
