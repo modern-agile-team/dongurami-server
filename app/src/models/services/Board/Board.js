@@ -62,8 +62,11 @@ class Board {
     }
 
     try {
-      const boardNum = this.params.num;
-      const board = await BoardStorage.findOneByBoardNum(category, boardNum);
+      const boardInfo = {
+        category,
+        boardNum: this.params.num,
+      };
+      const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
       if (board[0] === undefined)
         return {

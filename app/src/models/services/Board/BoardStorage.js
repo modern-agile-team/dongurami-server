@@ -54,7 +54,7 @@ class BoardStorage {
     }
   }
 
-  static async findOneByBoardNum(category, boardNum) {
+  static async findOneByBoardNum(boardInfo) {
     let conn;
 
     try {
@@ -68,7 +68,10 @@ class BoardStorage {
       ON bo.club_no = clubs.no
       WHERE bo.board_category_no = ? AND bo.no = ?;`;
 
-      const board = await conn.query(query, [category, boardNum]);
+      const board = await conn.query(query, [
+        boardInfo.category,
+        boardInfo.boardNum,
+      ]);
 
       return board;
     } catch (err) {
