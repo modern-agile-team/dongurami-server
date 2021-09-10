@@ -2,12 +2,14 @@
 
 const express = require('express');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 const app = express();
 dotenv.config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 const board = require('./src/apis/boards');
 const root = require('./src/apis/root');
