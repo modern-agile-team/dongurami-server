@@ -13,7 +13,7 @@ const process = {
     if (response.success) {
       response.imgNums = await image.saveBoardImg(response.boardNum);
       if (response.imgNums.isError) {
-        return res.status(500).json(response.images.clientMsg);
+        return res.status(500).json(response.imgNums.clientMsg);
       }
       return res.status(201).json(response);
     }
