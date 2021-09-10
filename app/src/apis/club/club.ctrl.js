@@ -9,7 +9,9 @@ const process = {
     if (response.success) {
       return res.status(200).json(response);
     }
-    return res.status(500).json(response);
+    return res
+      .status(500)
+      .json({ success: false, msg: '개발자에게 문의 해 주세요.' });
   },
 };
 

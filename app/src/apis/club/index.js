@@ -3,7 +3,7 @@
 const express = require('express');
 
 const router = express.Router();
-const ctrl = require('./clubList.ctrl');
+const ctrl = require('./club.ctrl');
 
 router.get('/', ctrl.process.readClubList);
 
