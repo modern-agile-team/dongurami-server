@@ -12,7 +12,8 @@
       }
     ],
     "no-undef": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "no-restricted-syntax": "off"
   },
   "ignorePatterns": ["node_modules/"],
   "parserOptions": {
