@@ -50,7 +50,7 @@ class Student {
     const saltRounds = 10;
     const passwordSalt = bcrypt.genSaltSync(saltRounds);
     const hash = bcrypt.hashSync(client.password, passwordSalt);
-    const checkedIdAndEmail = await this.inspectIdAndEmail();
+    const checkedIdAndEmail = await this.checkIdAndEmail();
 
     if (checkedIdAndEmail.saveable) {
       const studentInfo = { client, passwordSalt, hash };
@@ -91,7 +91,7 @@ class Student {
 
   async resetPassword() {
     const client = this.body;
-    const checkedPassword = await this.inspectPassword();
+    const checkedPassword = await this.checkPassword();
 
     try {
       if (checkedPassword.success) {
@@ -118,7 +118,7 @@ class Student {
     }
   }
 
-  async inspectIdAndEmail() {
+  async checkIdAndEmail() {
     const client = this.body;
 
     try {
@@ -155,7 +155,7 @@ class Student {
     }
   }
 
-  async inspectPassword() {
+  async checkPassword() {
     const client = this.body;
     const studentInfo = this.auth;
 
