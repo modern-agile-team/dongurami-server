@@ -19,7 +19,29 @@ class adminoOptionStroage {
         members.push(memberList[i].name);
       }
 
-      return { success: true, leader: leader[0].leader, members };
+      return { findNameSuccess: true, leader: leader[0].leader, members };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllByClubNum(clubNum) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query =
+        'select students.name, club_admin_auth.function_no AS functionNum FROM students join club_admin_auth ON students.id = club_admin_auth.student_id AND club_admin_auth.club_no =1 ;';
+
+      const functionList = await conn.query(query, clubNum);
+      const functions = {};
+
+      // for (let i = 0; i < functionList.length; i += 1) {
+      //   functions[1] = functionList[i].functionNum);
+      // }
+      console.log(functions);
+      return { findFunctionSuccess: true, functionList };
     } catch (err) {
       throw err;
     } finally {

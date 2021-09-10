@@ -14,11 +14,14 @@ class AdminOption {
     const clubNum = Number(this.params.clubNum);
     // 1. 동아리원 학생과 회장 출력
     try {
-      const { success, members, leader } =
+      const { findNameSuccess, members, leader } =
         await AdminOptionStorage.findOneByClubNum(clubNum);
 
-      if (success) {
-        return { success: true, members, leader };
+      const { findFunctionSuccess, functionList } =
+        await AdminOptionStorage.findAllByClubNum(clubNum);
+
+      if (findNameSuccess && findFunctionSuccess) {
+        return { success: true, members, leader, functionList };
       }
       return { success: false, msg: '서버에러' };
     } catch (err) {
