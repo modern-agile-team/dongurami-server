@@ -57,6 +57,23 @@ class StudentStorage {
     }
   }
 
+  static async findOneByIdOrEmail(clientInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'SELECT id, email FROM students WHERE id = ? OR email = ?;';
+      const idEmailList = await conn.query(query, [
+        clientInfo.id,
+        clientInfo.email,
+      ]);
+      return idEmailList[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findOneByIdAndEmail(clientInfo) {
     let conn;
     try {
@@ -87,6 +104,39 @@ class StudentStorage {
         clubs.push(clubList[i].clubNum);
       }
       return clubs;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findOneByEmail(email) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'SELECT * FROM students WHERE email = ?;';
+      const result = await conn.query(query, email);
+      return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async modifyPasswordSave(clientInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query =
+        'UPDATE students SET password = ?, password_salt = ? WHERE id = ?;';
+      await conn.query(query, [
+        clientInfo.hash,
+        clientInfo.passwordSalt,
+        clientInfo.id,
+      ]);
+      return true;
     } catch (err) {
       throw err;
     } finally {
