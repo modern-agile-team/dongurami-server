@@ -1,7 +1,5 @@
 *DS_Store
 
-/app/src/config/email.js
-
 # Logs
 logs
 *.log
