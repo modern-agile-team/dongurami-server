@@ -3,7 +3,7 @@
 const mariadb = require('../../../config/mariadb');
 
 class ClubStorage {
-  static async findAll() {
+  static async readClubList() {
     const conn = await mariadb.getConnection();
 
     try {
