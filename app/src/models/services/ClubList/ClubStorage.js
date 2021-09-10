@@ -7,7 +7,8 @@ class ClubStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      const query = 'SELECT no, name, category, logo_url, file_id FROM clubs;';
+      const query =
+        'SELECT no, name, category, logo_url AS logoUrl, file_id AS fileId FROM clubs;';
       const result = await conn.query(query);
 
       return { success: true, result };

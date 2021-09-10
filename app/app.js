@@ -24,4 +24,5 @@ app.use('/api/club/review', review);
 app.use('/api/club/home', home);
 app.use('/api/club/schedule', schedule);
 app.use('/api/clubList', clubList);
+
 module.exports = app;
