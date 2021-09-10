@@ -1,6 +1,6 @@
 'use strict';
 
-const ClubStorage = require('../../models/services/ClubList/ClubStorage');
+const ClubStorage = require('../../models/services/Club/ClubStorage');
 
 const process = {
   readClubList: async (req, res) => {
