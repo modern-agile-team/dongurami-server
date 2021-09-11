@@ -16,5 +16,6 @@ router.patch(
   loginAuth.loginCheck,
   ctrl.process.resetPassword
 );
+router.patch('/find-password', ctrl.process.findPassword);
 
 module.exports = router;
