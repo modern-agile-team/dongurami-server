@@ -38,7 +38,7 @@ class Board {
     const criteriaRead = {
       category: boardCategory[this.params.category],
       sort: this.params.sort,
-      order: this.params.order,
+      order: this.params.order.toUpperCase(),
     };
 
     if (criteriaRead.category === undefined) {
