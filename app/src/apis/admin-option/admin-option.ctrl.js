@@ -1,15 +1,15 @@
 'use strict';
 
 const AdminOption = require('../../models/services/AdminOption/AdminOption');
-// const Application = require('../../models/services/Application2/Application2');
+const Application = require('../../models/services/Application2/Application2');
 
 const process = {
   findOneAdminByClubNum: async (req, res) => {
     const adminOption = new AdminOption(req);
-    // const application = new Application(req);
+    const application = new Application(req);
 
     const adminOptionRes = await adminOption.findOneByClubNum();
-    // const applicationRes = await application.findOneApplicationByClubNum();
+    const applicationRes = await application.findOneApplicationByClubNum();
 
     const response = { adminOptionRes, applicationRes };
 
