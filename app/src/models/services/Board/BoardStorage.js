@@ -43,7 +43,7 @@ class BoardStorage {
       ON bo.club_no = clubs.no
       WHERE bo.board_category_no = ?
       GROUP BY no
-      ORDER BY no DESC;`;
+      ORDER BY inDate DESC;`;
 
       const boardList = await conn.query(query, [boardCategory]);
 
