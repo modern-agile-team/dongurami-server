@@ -32,15 +32,10 @@ class adminoOptionStroage {
     try {
       conn = await mariadb.getConnection();
       const query =
-        'select students.name, club_admin_auth.function_no AS functionNum FROM students join club_admin_auth ON students.id = club_admin_auth.student_id AND club_admin_auth.club_no =1 ;';
+        'select students.name, club_admin_auth.function_no AS functionNum FROM students join club_admin_auth ON students.id = club_admin_auth.student_id AND club_admin_auth.club_no = ? ;';
 
       const functionList = await conn.query(query, clubNum);
-      const functions = {};
 
-      // for (let i = 0; i < functionList.length; i += 1) {
-      //   functions[1] = functionList[i].functionNum);
-      // }
-      console.log(functions);
       return { findFunctionSuccess: true, functionList };
     } catch (err) {
       throw err;
