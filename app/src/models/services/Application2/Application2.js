@@ -1,7 +1,7 @@
 'use strict';
 
 const ApplicationStorage2 = require('./ApplicationStorage2');
-// const Error = require('../../utils/Error');
+const Error = require('../../utils/Error');
 
 class Application2 {
   constructor(req) {
@@ -12,10 +12,15 @@ class Application2 {
 
   async findOneApplicationByClubNum() {
     const clubNum = Number(this.params.clubNum);
-    const { applicationInfo } =
-      await ApplicationStorage2.findOneApplicationByClubNum(clubNum);
 
-    return { success: true, applicationInfo };
+    try {
+      const { applicationInfo } =
+        await ApplicationStorage2.findOneApplicationByClubNum(clubNum);
+
+      return { success: true, applicationInfo };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
   }
 }
 

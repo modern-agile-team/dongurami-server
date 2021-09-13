@@ -16,11 +16,12 @@ const process = {
     return res.status(200).json(response);
   },
 
-  checkClubAdmin: async (req, res) => {
+  checkClubAdmin: async (req, res, next) => {
     const adminOption = new AdminOption(req);
     const response = await adminOption.checkClubAdmin();
 
-    return res.status(200).json(response);
+    if (response.success) next();
+    return res.status(401).json(response);
   },
 };
 

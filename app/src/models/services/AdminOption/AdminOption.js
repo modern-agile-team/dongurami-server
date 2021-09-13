@@ -12,7 +12,7 @@ class AdminOption {
 
   async findOneByClubNum() {
     const clubNum = Number(this.params.clubNum);
-    // 1. 동아리원 학생과 회장 출력
+
     try {
       const { findNameSuccess, members, leader } =
         await AdminOptionStorage.findOneByClubNum(clubNum);
@@ -27,7 +27,27 @@ class AdminOption {
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
-    // 2. 권한이 있는 학생들 출력
+  }
+
+  async checkClubAdmin() {
+    const payload = this.auth;
+
+    try {
+      const { response } = await AdminOptionStorage.findFunctionById(
+        payload.id
+      );
+
+      if (response === 1) {
+        return { success: true, msg: '권한 있음.' };
+      }
+
+      return {
+        success: false,
+        msg: '동아리 관리 페이지에 접근 권한이 없습니다.',
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
   }
 }
 
