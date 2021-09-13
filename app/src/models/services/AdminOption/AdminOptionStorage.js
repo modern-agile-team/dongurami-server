@@ -3,6 +3,24 @@
 const mariadb = require('../../../config/mariadb');
 
 class adminoOptionStroage {
+  static async findFunctionById(payloadId) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'SELECT club_admin_auth.student_id FROM function_categories JOIN club_admin_auth ON club_admin_auth.student_id = ?, AND function_categories.no = 1;';
+
+      const id = await conn.query(query, payloadId);
+
+      return { success: true, id };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findOneByClubNum(clubNum) {
     let conn;
     try {
