@@ -67,7 +67,7 @@ class Board {
         boardNum: this.params.num,
       };
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
-      console.log(board);
+
       if (board === undefined)
         return {
           success: false,

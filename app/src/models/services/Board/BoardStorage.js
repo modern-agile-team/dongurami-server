@@ -42,7 +42,8 @@ class BoardStorage {
       JOIN clubs
       ON bo.club_no = clubs.no
       WHERE bo.board_category_no = ?
-      GROUP BY no;`;
+      GROUP BY no
+      ORDER BY no DESC;`;
 
       const boardList = await conn.query(query, [boardCategory]);
 
