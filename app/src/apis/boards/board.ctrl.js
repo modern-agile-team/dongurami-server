@@ -53,7 +53,7 @@ const process = {
         return res.status(500).json(updateBoardHit.clientMsg);
       }
       if (response.success) {
-        response.board[0].hit += 1;
+        response.board.hit += 1;
         return res.status(200).json(response);
       }
     }

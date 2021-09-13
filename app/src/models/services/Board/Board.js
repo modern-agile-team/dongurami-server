@@ -67,8 +67,8 @@ class Board {
         boardNum: this.params.num,
       };
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
-
-      if (board[0] === undefined)
+      console.log(board);
+      if (board === undefined)
         return {
           success: false,
           msg: '해당 게시판에 존재하지 않는 글 입니다.',

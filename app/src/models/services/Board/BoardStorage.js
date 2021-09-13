@@ -73,7 +73,7 @@ class BoardStorage {
         boardInfo.boardNum,
       ]);
 
-      return board;
+      return board[0];
     } catch (err) {
       throw err;
     } finally {
