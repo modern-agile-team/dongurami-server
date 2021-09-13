@@ -3,7 +3,7 @@
 const ApplicationStorage2 = require('./ApplicationStorage2');
 // const Error = require('../../utils/Error');
 
-class Application {
+class Application2 {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
@@ -19,4 +19,4 @@ class Application {
   }
 }
 
-module.exports = Application;
+module.exports = Application2;
