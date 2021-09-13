@@ -27,7 +27,7 @@ class BoardStorage {
     }
   }
 
-  static async findAllByCategoryNum(boardCategory) {
+  static async findAllByCategoryNum(criteriaRead) {
     let conn;
 
     try {
@@ -43,9 +43,9 @@ class BoardStorage {
       ON bo.club_no = clubs.no
       WHERE bo.board_category_no = ?
       GROUP BY no
-      ORDER BY inDate DESC;`;
+      ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
 
-      const boardList = await conn.query(query, [boardCategory]);
+      const boardList = await conn.query(query, [criteriaRead.category]);
 
       return boardList;
     } catch (err) {

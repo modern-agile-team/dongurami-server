@@ -35,15 +35,21 @@ class Board {
   }
 
   async findAllByCategoryNum() {
-    const category = boardCategory[this.params.category];
+    const criteriaRead = {
+      category: boardCategory[this.params.category],
+      sort: this.params.sort,
+      order: this.params.order,
+    };
 
-    if (category === undefined) {
+    if (criteriaRead.category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
     }
-    if (category > 4) return { success: false, msg: '잘못된 URL의 접근입니다' };
+    if (criteriaRead.category > 4) {
+      return { success: false, msg: '잘못된 URL의 접근입니다' };
+    }
 
     try {
-      const boards = await BoardStorage.findAllByCategoryNum(category);
+      const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
 
       return { success: true, msg: '게시판 조회 성공', boards };
     } catch (err) {
