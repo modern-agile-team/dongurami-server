@@ -67,9 +67,10 @@ const process = {
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
-    return res
-      .status(400)
-      .json('알 수 없는 에러입니니다. 서버 개발자에게 얘기해주세요.');
+    return res.status(400).json({
+      success: false,
+      msg: '알 수 없는 에러입니니다. 서버 개발자에게 얘기해주세요.',
+    });
   },
 
   deleteOneByNum: async (req, res) => {
@@ -78,9 +79,10 @@ const process = {
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
-    return res
-      .status(400)
-      .json('알 수 없는 에러입니니다. 서버 개발자에게 얘기해주세요.');
+    return res.status(400).json({
+      success: false,
+      msg: '알 수 없는 에러입니니다. 서버 개발자에게 얘기해주세요.',
+    });
   },
 };
 
