@@ -37,7 +37,7 @@ const process = {
     const response = await board.findAllByPromotionCategory();
 
     if (response.success) return res.status(200).json(response);
-    return res.status(500).json(response);
+    return res.status(500).json(response.clientMsg);
   },
 
   findOneByBoardNum: async (req, res) => {
