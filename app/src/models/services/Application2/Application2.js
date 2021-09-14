@@ -10,14 +10,15 @@ class Application2 {
     this.auth = req.auth;
   }
 
-  async findOneApplicationByClubNum() {
+  async findOneByClubNum() {
     const clubNum = Number(this.params.clubNum);
 
     try {
-      const { applicationInfo } =
-        await ApplicationStorage2.findOneApplicationByClubNum(clubNum);
+      const { application } = await ApplicationStorage2.findOneByClubNum(
+        clubNum
+      );
 
-      return { success: true, applicationInfo };
+      return { success: true, application };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }

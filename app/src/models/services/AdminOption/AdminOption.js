@@ -38,15 +38,13 @@ class AdminOption {
     const clubNum = Number(this.params.clubNum);
 
     try {
-      const { findNameSuccess, members, leader } =
+      const { findNameSuccess, leader, memberAndAuthList } =
         await AdminOptionStorage.findOneByClubNum(clubNum);
 
-      const { findFunctionSuccess, functionList } =
-        await AdminOptionStorage.findAllByClubNum(clubNum);
-
-      if (findNameSuccess && findFunctionSuccess) {
-        return { success: true, members, leader, functionList };
+      if (findNameSuccess) {
+        return { success: true, leader, memberAndAuthList };
       }
+
       return { success: false, msg: '서버에러' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);

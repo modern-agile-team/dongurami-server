@@ -25,19 +25,22 @@ class adminoOptionStroage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const membersQuery =
-        'select students.name FROM students join members ON members.club_no = ? AND students.id = members.student_id;';
-      const leaderQuery = 'select clubs.leader FROM clubs WHERE clubs.no = ?;';
+      const memberAndAuthQuery = `SELECT students.name, students.id, IFNULL(function_categories.name, '권한 없음') AS functionName FROM students 
+        JOIN members ON members.club_no = ? AND students.id = members.student_id 
+        LEFT JOIN club_admin_auth ON club_admin_auth.club_no = members.club_no 
+        AND club_admin_auth.student_id = members.student_id 
+        LEFT JOIN function_categories ON club_admin_auth.function_no = function_categories.no;`;
+      const leaderQuery =
+        'select students.name from students JOIN clubs ON clubs.leader = students.name AND clubs.no = ?;';
 
-      const memberList = await conn.query(membersQuery, clubNum);
+      const memberAndAuthList = await conn.query(memberAndAuthQuery, clubNum);
       const leader = await conn.query(leaderQuery, clubNum);
-      const members = [];
 
-      for (let i = 0; i < memberList.length; i += 1) {
-        members.push(memberList[i].name);
-      }
-
-      return { findNameSuccess: true, leader: leader[0].leader, members };
+      return {
+        findNameSuccess: true,
+        leader: leader[0].name,
+        memberAndAuthList,
+      };
     } catch (err) {
       throw err;
     } finally {
