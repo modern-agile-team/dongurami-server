@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = {
-  wholeNotice: 1,
-  wholeFree: 2,
+  notice: 1,
+  free: 2,
   questionAndAnswer: 3,
   promotion: 4,
   clubNotice: 5,
