@@ -11,7 +11,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.clinetMsg);
+      return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     return res.status(404).json(response); // 존재하지 않는 동아리에 접근 시
   },
@@ -24,7 +24,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.clinetMsg);
+      return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     return res.status(404).json(response); // 존재하지 않는 동아리에 접근 시
   },
@@ -37,7 +37,7 @@ const process = {
       return res.status(201).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.clientMsg);
+      return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     return res
       .status(400)
@@ -53,7 +53,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.clientMsg);
+      return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     return res
       .status(400)
@@ -69,7 +69,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.clientMsg);
+      return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     return res
       .status(400)
@@ -84,7 +84,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.clientMsg);
+      return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     return res
       .status(400)
