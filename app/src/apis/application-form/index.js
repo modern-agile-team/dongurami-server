@@ -10,4 +10,8 @@ router.get('/:clubNum', loginAuth.loginCheck, ctrl.process.findAllByClubNum);
 
 router.post('/:clubNum', ctrl.process.createQuestion);
 
+router.put('/:clubNum', ctrl.process.updateQuestion);
+
+router.delete('/:clubNum', ctrl.process.deleteQuestion);
+
 module.exports = router;

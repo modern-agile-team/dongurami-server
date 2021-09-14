@@ -15,7 +15,14 @@ class Application {
     try {
       const result = await ApplicationStorage.findAllByClubNum(clubNum);
 
-      return { success: true, result };
+      if (result.success) {
+        return {
+          success: true,
+          leader: result.clubLeader[0].leader,
+          questions: result.questions,
+        };
+      }
+      return { success: result.success, msg: result.msg };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -31,6 +38,34 @@ class Application {
         questions,
       };
       const result = await ApplicationStorage.createQuestion(questionInfo);
+
+      return { success: result };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async updateQuestion() {
+    const data = this.body;
+
+    try {
+      const questionInfo = {
+        no: data.no,
+        description: data.description,
+      };
+      const result = await ApplicationStorage.updateQuestion(questionInfo);
+
+      return { success: result };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async deleteQuestion() {
+    const { no } = this.body;
+
+    try {
+      const result = await ApplicationStorage.deleteQuestion(no);
 
       return { success: result };
     } catch (err) {
