@@ -57,6 +57,25 @@ class Board {
     }
   }
 
+  async findAllByPromotionCategory() {
+    const criteriaRead = {
+      category: this.params.category,
+      sort: this.params.sort,
+      order: this.params.order.toUpperCase(),
+    };
+    console.log(criteriaRead.category);
+
+    try {
+      const boards = await BoardStorage.findAllByPromotionCategory(
+        criteriaRead
+      );
+
+      return { success: true, msg: '장르별 조회 성공', boards };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
   async findOneByBoardNum() {
     const category = boardCategory[this.params.category];
 

@@ -32,6 +32,14 @@ const process = {
     return res.status(404).json(response);
   },
 
+  findAllByPromotionCategory: async (req, res) => {
+    const board = new Board(req);
+    const response = await board.findAllByPromotionCategory();
+
+    if (response.success) return res.status(200).json(response);
+    return res.status(500).json(response);
+  },
+
   findOneByBoardNum: async (req, res) => {
     const board = new Board(req);
     const comment = new Comment(req);
