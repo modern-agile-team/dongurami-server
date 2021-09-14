@@ -63,7 +63,6 @@ class Board {
       sort: this.params.sort,
       order: this.params.order.toUpperCase(),
     };
-    console.log(criteriaRead.category);
 
     try {
       const boards = await BoardStorage.findAllByPromotionCategory(
