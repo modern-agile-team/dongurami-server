@@ -22,7 +22,7 @@ class Application {
           questions: result.questions,
         };
       }
-      return { success: result.success, msg: result.msg };
+      return { success: false, msg: '존재하지 않는 동아리입니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -30,13 +30,14 @@ class Application {
 
   async createQuestion() {
     const { clubNum } = this.params;
-    const { questions } = this.body;
+    const { description } = this.body;
 
     try {
       const questionInfo = {
         clubNum,
-        questions,
+        description,
       };
+
       const result = await ApplicationStorage.createQuestion(questionInfo);
 
       return { success: result };
@@ -47,10 +48,11 @@ class Application {
 
   async updateQuestion() {
     const data = this.body;
+    const { no } = this.params;
 
     try {
       const questionInfo = {
-        no: data.no,
+        no,
         description: data.description,
       };
       const result = await ApplicationStorage.updateQuestion(questionInfo);
@@ -62,7 +64,7 @@ class Application {
   }
 
   async deleteQuestion() {
-    const { no } = this.body;
+    const { no } = this.params;
 
     try {
       const result = await ApplicationStorage.deleteQuestion(no);

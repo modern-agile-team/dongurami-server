@@ -8,10 +8,15 @@ const loginAuth = require('../../middlewares/login-auth');
 
 router.get('/:clubNum', loginAuth.loginCheck, ctrl.process.findAllByClubNum);
 
-router.post('/:clubNum', ctrl.process.createQuestion);
+// Only 회장
+router.post('/:clubNum', loginAuth.loginCheck, ctrl.process.createQuestion);
 
-router.put('/:clubNum', ctrl.process.updateQuestion);
+router.put('/:clubNum/:no', loginAuth.loginCheck, ctrl.process.updateQuestion);
 
-router.delete('/:clubNum', ctrl.process.deleteQuestion);
+router.delete(
+  '/:clubNum/:no',
+  loginAuth.loginCheck,
+  ctrl.process.deleteQuestion
+);
 
 module.exports = router;

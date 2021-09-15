@@ -7,7 +7,7 @@ class ApplicationStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      const leader = 'SELECT leader From clubs WHERE no = ?;'; // 동아리 회장만 수정 가능 -> 동아리 회장 학번 조회
+      const leader = 'SELECT leader FROM clubs WHERE no = ?;'; // 동아리 회장만 수정 가능 -> 동아리 회장 학번 조회
       const qustion =
         'SELECT no, description FROM questions WHERE club_no = ?;';
       const existClub = 'SELECT no FROM clubs WHERE no = ?;';
@@ -15,7 +15,7 @@ class ApplicationStorage {
 
       if (club[0] === undefined) {
         // 동아리 존재 x
-        return { success: false, msg: '존재하지 않는 동아리입니다.' };
+        return { success: false };
       }
 
       const questions = await conn.query(qustion, clubNum);
@@ -33,15 +33,10 @@ class ApplicationStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      let query = 'INSERT INTO questions (club_no, description) VALUES';
+      const query =
+        'INSERT INTO questions (club_no, description) VALUE ( ?, ? );';
 
-      questionInfo.questions.forEach((x, idx) => {
-        if (idx === 0) query += `( "${questionInfo.clubNum}", "${x}")`;
-        else query += `,( "${questionInfo.clubNum}" , "${x}")`;
-      });
-      query += ';';
-
-      await conn.query(`${query}`);
+      await conn.query(query, [questionInfo.clubNum, questionInfo.description]);
 
       return true;
     } catch (err) {
@@ -55,7 +50,7 @@ class ApplicationStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      const query = 'UPDATE questions Set description = ? WHERE no = ?;';
+      const query = 'UPDATE questions SET description = ? WHERE no = ?;';
 
       await conn.query(query, [questionInfo.description, questionInfo.no]);
 
