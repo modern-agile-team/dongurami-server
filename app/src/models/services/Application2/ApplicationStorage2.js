@@ -8,15 +8,33 @@ class applicationStorage2 {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT s.name, s.id, s.major, s.grade, s.gender, s.phone_number
-        FROM applicants 
-        JOIN answers ON applicants.reading_flag = 0 AND applicants.student_id = answers.student_id AND applicants.club_no = ?
-        JOIN questions ON answers.question_no = questions.no
-        JOIN students AS s ON answers.student_id = s.id;`;
+      const applicantInfoQuery = `SELECT s.name, s.id, s.major, s.grade, s.gender, s.phone_number FROM students AS s 
+        JOIN applicants AS app ON app.club_no = ?
+        AND app.student_id = s.id AND app.reading_flag = 0;`;
 
-      const application = await conn.query(query, clubNum);
+      const questionAndAnswerQuery = `SELECT app.student_id, q.description AS question, a.description AS answer FROM answers AS a
+        JOIN applicants AS app ON a.student_id = app.student_id 
+        AND app.club_no = ? AND app.reading_flag = 0 
+        JOIN questions AS q ON a.question_no = q.no;`;
 
-      return { success: true, application };
+      const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
+      const AllquestionAndAnswer = await conn.query(
+        questionAndAnswerQuery,
+        clubNum
+      );
+      const questionAndAnswer = {};
+      questionAndAnswer.id = AllquestionAndAnswer[0].student_id;
+
+      for (let i = 0; i < AllquestionAndAnswer.length; i += 1) {
+        questionAndAnswer[AllquestionAndAnswer[i].question] =
+          AllquestionAndAnswer[i].answer;
+      }
+
+      return {
+        success: true,
+        applicantInfo: applicantInfo[0],
+        questionAndAnswer,
+      };
     } catch (err) {
       throw err;
     } finally {
