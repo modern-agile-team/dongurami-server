@@ -1,21 +1,28 @@
 'use strict';
 
 const express = require('express');
-const ctrl = require('./board.ctrl');
+const boardCtrl = require('./board.ctrl');
+const commentCtrl = require('./comment.ctrl');
 
 const router = express.Router();
 
-router.post('/:category', ctrl.process.createBoardNum);
+router.post('/:category', boardCtrl.process.createBoardNum);
+router.post('/:category/:num', commentCtrl.process.createCommentNum);
 
-router.get('/:category/:sort/:order', ctrl.process.findAllByCategoryNum);
+router.get('/:category/:sort/:order', boardCtrl.process.findAllByCategoryNum);
 router.get(
   '/promotion/:category/:sort/:order',
-  ctrl.process.findAllByPromotionCategory
+  boardCtrl.process.findAllByPromotionCategory
 );
-router.get('/:category/:num', ctrl.process.findOneByBoardNum);
+router.get('/:category/:num', boardCtrl.process.findOneByBoardNum);
 
-router.put('/:category/:num', ctrl.process.updateOneByNum);
+router.put('/:category/:num', boardCtrl.process.updateOneByNum);
+router.put('/:category/:num/:cmtNum', commentCtrl.process.updateByCommentNum);
 
-router.delete('/:category/:num', ctrl.process.deleteOneByNum);
+router.delete('/:category/:num', boardCtrl.process.deleteOneByNum);
+router.delete(
+  '/:category/:num/:cmtNum',
+  commentCtrl.process.deleteAllByGroupNum
+);
 
 module.exports = router;

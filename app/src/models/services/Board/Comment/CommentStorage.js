@@ -3,6 +3,28 @@
 const mariadb = require('../../../../config/mariadb');
 
 class CommentStorage {
+  static async createCommentNum(commentInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `INSERT INTO comments (board_no, student_id, description) VALUES (?, ?, ?);`;
+      const comment = await conn.query(query, [
+        commentInfo.boardNum,
+        commentInfo.id,
+        commentInfo.description,
+      ]);
+
+      return comment.insertId;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findAllByBoardNum(boardNum) {
     let conn;
 
@@ -19,6 +41,64 @@ class CommentStorage {
       const comments = await conn.query(query, [boardNum]);
 
       return comments;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateByCommentNum(cmtInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `UPDATE comments SET description = ? WHERE no = ? AND board_no = ?;`;
+
+      const cmt = await conn.query(query, [
+        cmtInfo.description,
+        cmtInfo.cmtNum,
+        cmtInfo.boardNum,
+      ]);
+
+      return cmt.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteAllByGroupNum(cmtInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `DELETE FROM comments WHERE group_no = ? AND board_no = ?;`;
+
+      const cmt = await conn.query(query, [cmtInfo.cmtNum, cmtInfo.boardNum]);
+
+      return cmt.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateOnlyGroupNum(groupNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `UPDATE comments SET group_no = ? WHERE no = ?;`;
+
+      await conn.query(query, [groupNum, groupNum]);
+
+      return;
     } catch (err) {
       throw err;
     } finally {
