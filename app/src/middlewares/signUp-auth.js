@@ -13,7 +13,7 @@ const signUpCheck = async (req, res, next) => {
   if (arr[0].length !== 9) {
     return res
       .status(400)
-      .json({ success: false, msg: '아이디가 11자리수가 아닙니다.' });
+      .json({ success: false, msg: '아이디가 9자리수가 아닙니다.' });
   }
 
   if (arr[0].indexOf(' ') !== -1) {
