@@ -25,7 +25,7 @@ class adminoOptionStroage {
     try {
       conn = await mariadb.getConnection();
 
-      const memberAndAuthQuery = `SELECT s.name, m.club_no, m.join_admin_flag, m.board_admin_flag FROM members AS m
+      const memberAndAuthQuery = `SELECT s.name, s.id, m.club_no, m.join_admin_flag, m.board_admin_flag FROM members AS m
       JOIN students AS s ON s.id = m.student_id AND m.club_no = ?;`;
       const leaderQuery =
         'select students.name from students JOIN clubs ON clubs.leader = students.name AND clubs.no = ?;';
@@ -45,22 +45,33 @@ class adminoOptionStroage {
     }
   }
 
-  static async findAllByClubNum(clubNum) {
+  static async findLeaderByClubNum(clubNum) {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query =
-        'select students.name, club_admin_auth.function_no AS functionNum FROM students join club_admin_auth ON students.id = club_admin_auth.student_id AND club_admin_auth.club_no = ? ;';
 
-      const functionList = await conn.query(query, clubNum);
+      const query = 'SELECT leader FROM clubs WHERE club_no = ?;';
+      const leader = await conn.query(query, clubNum);
 
-      return { findFunctionSuccess: true, functionList };
+      return leader;
     } catch (err) {
       throw err;
     } finally {
       conn?.release();
     }
   }
+
+  // static async updateAdminOptionById(adminOption) {
+  //   let conn;
+  //   try {
+  //     conn = await mariadb.getConnection();
+
+  //     let query = 'UPDATE members SET';
+
+  //     await conn.query(`${query}`);
+
+  //   }
+  // }
 }
 
 module.exports = adminoOptionStroage;

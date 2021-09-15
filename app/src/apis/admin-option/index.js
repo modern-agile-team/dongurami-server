@@ -14,5 +14,15 @@ router.get(
   ctrl.process.checkClubAdmin,
   ctrl.process.findOneByClubNum
 );
-// router.put('/:clubNum/', loginAuth.loginCheck, ctrl.process.updateById);
+router.put(
+  '/:clubNum/admin-function',
+  loginAuth.loginCheck,
+  ctrl.process.updateAdminOptionById
+);
+// router.put(
+//   '/:clubNum/applicants',
+//   loginAuth.loginCheck,
+//   ctrl.process.updateById
+// );
+
 module.exports = router;

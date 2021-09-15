@@ -36,6 +36,13 @@ const process = {
     }
     return res.status(500).json(response);
   },
+
+  updateAdminOptionById: async (req, res) => {
+    const adminOption = new AdminOption(req);
+    const response = await adminOption.updateAdminOptionById();
+
+    return res.status(201).json(response);
+  },
 };
 
 module.exports = {

@@ -12,7 +12,7 @@ class AdminOption {
 
   async checkClubAdmin() {
     const payload = this.auth;
-    const clubNum = Number(this.params.clubNum);
+    const { clubNum } = this.params;
 
     const adminInfo = {
       id: payload.id,
@@ -20,7 +20,7 @@ class AdminOption {
     };
     try {
       const response = await AdminOptionStorage.findOneById(adminInfo);
-      console.log(response);
+
       if (response === undefined) {
         return {
           success: false,
@@ -38,7 +38,7 @@ class AdminOption {
   }
 
   async findOneByClubNum() {
-    const clubNum = Number(this.params.clubNum);
+    const { clubNum } = this.params;
 
     try {
       const { success, leader, memberAndAuthList } =
@@ -55,6 +55,31 @@ class AdminOption {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
-}
 
+  async updateAdminOptionById() {
+    const payload = this.auth;
+    const { clubNum } = this.params;
+    const adminOption = this.body;
+
+    try {
+      const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
+
+      if (leader === payload.id) {
+        const response = await AdminOptionStorage.updateAdminOptionById(
+          adminOption
+        );
+        if (response.success) {
+          return { success: true, msg: '권한이 수정되었습니다.' };
+        }
+        return {
+          success: false,
+          msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+        };
+      }
+      return { success: false, msg: '회장만 접근이 가능합니다.' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+}
 module.exports = AdminOption;
