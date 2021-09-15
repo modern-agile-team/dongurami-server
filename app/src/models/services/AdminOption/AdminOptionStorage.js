@@ -3,15 +3,14 @@
 const mariadb = require('../../../config/mariadb');
 
 class adminoOptionStroage {
-  static async findFunctionById(payloadId) {
+  static async findOneById(adminInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'SELECT club_admin_auth.student_id FROM function_categories JOIN club_admin_auth ON club_admin_auth.student_id = ?, AND function_categories.no = 1;';
+      const query = `select student_id from members where club_no = ? AND student_id = ? AND join_admin_flag = 1;`;
 
-      const id = await conn.query(query, payloadId);
+      const id = await conn.query(query, [adminInfo.clubNum, adminInfo.id]);
 
       return { success: true, id };
     } catch (err) {
@@ -25,11 +24,8 @@ class adminoOptionStroage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const memberAndAuthQuery = `SELECT students.name, students.id, IFNULL(function_categories.name, '권한 없음') AS functionName FROM students 
-        JOIN members ON members.club_no = ? AND students.id = members.student_id 
-        LEFT JOIN club_admin_auth ON club_admin_auth.club_no = members.club_no 
-        AND club_admin_auth.student_id = members.student_id 
-        LEFT JOIN function_categories ON club_admin_auth.function_no = function_categories.no;`;
+
+      const memberAndAuthQuery = `select students.name, members.club_no, members.join_admin_flag, members.board_admin_flag from members join students on students.id = members.student_id AND members.club_no = ?;`;
       const leaderQuery =
         'select students.name from students JOIN clubs ON clubs.leader = students.name AND clubs.no = ?;';
 
@@ -37,7 +33,7 @@ class adminoOptionStroage {
       const leader = await conn.query(leaderQuery, clubNum);
 
       return {
-        findNameSuccess: true,
+        success: true,
         leader: leader[0].name,
         memberAndAuthList,
       };

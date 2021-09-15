@@ -8,9 +8,10 @@ const process = {
     const adminOption = new AdminOption(req);
     const response = await adminOption.checkClubAdmin();
 
-    if (response.success) next();
-
-    return res.status(401).json(response);
+    if (!response.success) {
+      return res.status(401).json(response);
+    }
+    return next();
   },
 
   findOneByClubNum: async (req, res) => {

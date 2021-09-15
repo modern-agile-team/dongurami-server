@@ -8,14 +8,14 @@ class applicationStorage2 {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT students.name, students.id, students.major, students.grade, students.gender, students.phone_number, 
-        questions.description AS 'question', answers.description AS 'answer' FROM applicants 
+      const query = `SELECT s.name, s.id, s.major, s.grade, s.gender, s.phone_number
+        FROM applicants 
         JOIN answers ON applicants.reading_flag = 0 AND applicants.student_id = answers.student_id AND applicants.club_no = ?
         JOIN questions ON answers.question_no = questions.no
-        JOIN students ON answers.student_id = students.id;`;
+        JOIN students AS s ON answers.student_id = s.id;`;
 
       const application = await conn.query(query, clubNum);
-      console.log(application);
+
       return { success: true, application };
     } catch (err) {
       throw err;

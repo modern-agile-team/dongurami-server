@@ -12,12 +12,15 @@ class AdminOption {
 
   async checkClubAdmin() {
     const payload = this.auth;
+    const clubNum = Number(this.params.clubNum);
 
+    const adminInfo = {
+      id: payload.id,
+      clubNum,
+    };
     try {
-      const { response } = await AdminOptionStorage.findFunctionById(
-        payload.id
-      );
-
+      const response = await AdminOptionStorage.findOneById(adminInfo);
+      console.log(response);
       if (response === undefined) {
         return {
           success: false,
@@ -38,10 +41,10 @@ class AdminOption {
     const clubNum = Number(this.params.clubNum);
 
     try {
-      const { findNameSuccess, leader, memberAndAuthList } =
+      const { success, leader, memberAndAuthList } =
         await AdminOptionStorage.findOneByClubNum(clubNum);
 
-      if (findNameSuccess) {
+      if (success) {
         return { success: true, leader, memberAndAuthList };
       }
 
