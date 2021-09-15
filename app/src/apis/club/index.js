@@ -3,9 +3,8 @@
 const express = require('express');
 
 const router = express.Router();
-const ctrl = require('./sign-up.ctrl');
+const ctrl = require('./club.ctrl');
 
-// 회원가입 API
-router.post('/sign-up', ctrl.process.signUp);
+router.get('/', ctrl.process.readClubList);
 
 module.exports = router;

@@ -18,26 +18,42 @@ class Home {
       if (success) {
         return { success: true, result };
       }
-
       return { success: false, msg: result };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요', err);
     }
   }
 
-  async saveClub() {
+  async updateClubInfo() {
+    const { clubNum } = this.params;
     const data = this.body;
 
     try {
       const clubInfo = {
+        clubNum,
         introduce: data.introduce,
+      };
+      await HomeStorage.updateClubInfo(clubInfo);
+
+      return { success: true };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요', err);
+    }
+  }
+
+  async updateClubLogo() {
+    const data = this.body;
+    const { clubNum } = this.params;
+
+    try {
+      const logoInfo = {
+        clubNum,
         logoUrl: data.logoUrl,
         fileId: data.fileId,
-        clubNum: this.params.clubNum,
       };
-      const result = await HomeStorage.saveClub(clubInfo);
+      await HomeStorage.updateClubLogo(logoInfo);
 
-      return result;
+      return { success: true };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요', err);
     }

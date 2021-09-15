@@ -4,8 +4,12 @@ const express = require('express');
 
 const router = express.Router();
 const ctrl = require('./home.ctrl');
+// 로그인 인증 미들웨어
+const loginAuth = require('../../middlewares/login-auth');
 
-router.get('/home/:clubNum', ctrl.process.findOneByClubNum);
-router.put('/home/:clubNum', ctrl.process.updateClubInfo);
+router.get('/:clubNum', loginAuth.loginCheck, ctrl.process.findOneByClubNum);
+
+router.patch('/:clubNum', loginAuth.loginCheck, ctrl.process.updateClubInfo);
+router.put('/:clubNum', loginAuth.loginCheck, ctrl.process.updateClubLogo);
 
 module.exports = router;

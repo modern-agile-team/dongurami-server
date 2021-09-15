@@ -9,7 +9,7 @@ class HomeStorage {
     try {
       // 동아리 정보 조회
       const findClubInfo =
-        'SELECT name, logo_url AS logoUrl, file_id AS fileId, introduce FROM clubs WHERE no = ?;';
+        'SELECT name, category, logo_url AS logoUrl, file_id AS fileId, leader, introduce FROM clubs WHERE no = ?;';
       // 동아리 성별 수 조회
       const gender = `SELECT SUM(M) AS man, SUM(W) AS women FROM 
         (SELECT (CASE gender WHEN 1 THEN 1 ELSE 0 END) AS M, 
@@ -40,20 +40,35 @@ class HomeStorage {
     }
   }
 
-  static async saveClub(clubInfo) {
-    let conn;
+  static async updateClubInfo(clubInfo) {
+    const conn = await mariadb.getConnection();
+
     try {
-      conn = await mariadb.getConnection();
-      const query = `UPDATE clubs SET introduce = ?, logo_url = ?, file_id = ?  WHERE no = ?;`;
+      const query = `UPDATE clubs SET introduce = ? WHERE no = ?;`;
 
-      // club 소개, 로고 변경 시 업데이트
+      // club 소개 변경 시 업데이트
+      await conn.query(query, [clubInfo.introduce, clubInfo.clubNum]);
+
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateClubLogo(logoInfo) {
+    const conn = await mariadb.getConnection();
+
+    try {
+      const query = `UPDATE clubs SET logo_url = ?, file_id = ?  WHERE no = ?;`;
+
+      // 로고 변경 시 업데이트
       await conn.query(query, [
-        clubInfo.introduce,
-        clubInfo.logoUrl,
-        clubInfo.fileId,
-        clubInfo.clubNum,
+        logoInfo.logoUrl,
+        logoInfo.fileId,
+        logoInfo.clubNum,
       ]);
-
       return true;
     } catch (err) {
       throw err;
