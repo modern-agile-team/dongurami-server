@@ -35,17 +35,41 @@ class Board {
   }
 
   async findAllByCategoryNum() {
-    const category = boardCategory[this.params.category];
+    const criteriaRead = {
+      category: boardCategory[this.params.category],
+      sort: this.params.sort,
+      order: this.params.order.toUpperCase(),
+    };
 
-    if (category === undefined) {
+    if (criteriaRead.category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
     }
-    if (category > 4) return { success: false, msg: '잘못된 URL의 접근입니다' };
+    if (criteriaRead.category > 4) {
+      return { success: false, msg: '잘못된 URL의 접근입니다' };
+    }
 
     try {
-      const boards = await BoardStorage.findAllByCategoryNum(category);
+      const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
 
       return { success: true, msg: '게시판 조회 성공', boards };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async findAllByPromotionCategory() {
+    const criteriaRead = {
+      category: this.params.category,
+      sort: this.params.sort,
+      order: this.params.order.toUpperCase(),
+    };
+
+    try {
+      const boards = await BoardStorage.findAllByPromotionCategory(
+        criteriaRead
+      );
+
+      return { success: true, msg: '장르별 조회 성공', boards };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -68,7 +92,7 @@ class Board {
       };
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
-      if (board[0] === undefined)
+      if (board === undefined)
         return {
           success: false,
           msg: '해당 게시판에 존재하지 않는 글 입니다.',
