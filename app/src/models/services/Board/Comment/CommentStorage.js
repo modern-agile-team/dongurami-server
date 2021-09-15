@@ -18,7 +18,6 @@ class CommentStorage {
 
       return comment.insertId;
     } catch (err) {
-      console.log(err);
       throw err;
     } finally {
       conn?.release();
