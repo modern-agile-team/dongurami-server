@@ -14,10 +14,16 @@ class Application2 {
     const clubNum = Number(this.params.clubNum);
 
     try {
-      const { applicantInfo, questionAndAnswer } =
+      const { success, applicantInfo, questionAndAnswer } =
         await ApplicationStorage2.findOneByClubNum(clubNum);
 
-      return { success: true, applicantInfo, questionAndAnswer };
+      if (success) {
+        return { success: true, applicantInfo, questionAndAnswer };
+      }
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }

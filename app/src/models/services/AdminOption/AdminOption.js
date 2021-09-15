@@ -47,8 +47,10 @@ class AdminOption {
       if (success) {
         return { success: true, leader, memberAndAuthList };
       }
-
-      return { success: false, msg: '서버에러' };
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }

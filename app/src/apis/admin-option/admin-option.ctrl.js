@@ -18,12 +18,23 @@ const process = {
     const adminOption = new AdminOption(req);
     const application2 = new Application2(req);
 
-    const adminOptionRes = await adminOption.findOneByClubNum();
-    const applicationRes = await application2.findOneByClubNum();
+    const response = {};
+    response.clubAdminOption = await adminOption.findOneByClubNum();
 
-    const response = { adminOptionRes, applicationRes };
-
-    return res.status(200).json(response);
+    if (response.clubAdminOption.success) {
+      response.applicant = await application2.findOneByClubNum();
+      if (response.applicant.isError) {
+        return res.status(500).json(response.applicant.clientMsg);
+      }
+      if (!response.applicant) {
+        return res.status(400).json(response);
+      }
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      return res.status(400).json(response.clientMsg);
+    }
+    return res.status(500).json(response);
   },
 };
 
