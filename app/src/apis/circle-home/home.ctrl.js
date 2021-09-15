@@ -20,30 +20,20 @@ const process = {
     const home = new Home(req);
     const response = await home.updateClubInfo();
 
-    if (response.success) {
-      return res.status(200).json(response);
-    }
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res
-      .status(400)
-      .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
+    return res.status(200).json(response);
   },
 
   updateClubLogo: async (req, res) => {
     const home = new Home(req);
     const response = await home.updateClubLogo();
 
-    if (response.success) {
-      return res.status(200).json(response);
-    }
     if (response.isError) {
-      return res.status(500).json({ success: false, msg: response.errMsg });
+      return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res
-      .status(400)
-      .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
+    return res.status(200).json(response);
   },
 };
 
