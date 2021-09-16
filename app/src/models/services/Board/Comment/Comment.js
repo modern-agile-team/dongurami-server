@@ -1,6 +1,7 @@
 'use strict';
 
 const CommentStorage = require('./CommentStorage');
+const BoardStorage = require('../BoardStorage');
 const Error = require('../../../utils/Error');
 
 class Comment {
@@ -16,6 +17,12 @@ class Comment {
         id: this.body.id,
         description: this.body.description,
       };
+      const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
+
+      if (exist === undefined) {
+        return { success: false, msg: '해당 게시글이 존재하지 않습니다.' };
+      }
+
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
       await CommentStorage.updateOnlyGroupNum(commentNum);
 

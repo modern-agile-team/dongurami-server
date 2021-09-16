@@ -150,6 +150,24 @@ class BoardStorage {
     }
   }
 
+  static async existOnlyBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no FROM boards WHERE no = ?;`;
+
+      const board = await conn.query(query, [boardNum]);
+
+      return board[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async updateOnlyHitByNum(boardNum) {
     let conn;
 

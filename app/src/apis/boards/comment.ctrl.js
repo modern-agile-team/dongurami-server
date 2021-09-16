@@ -8,7 +8,8 @@ const process = {
     const response = await comment.createCommentNum();
 
     if (response.success) return res.status(201).json(response);
-    return res.status(500).json(response.clientMsg);
+    if (response.isError) return res.status(500).json(response.clientMsg);
+    return res.status(404).json(response);
   },
 
   createReplyCommentNum: async (req, res) => {
