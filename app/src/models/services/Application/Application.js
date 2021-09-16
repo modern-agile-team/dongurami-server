@@ -24,6 +24,7 @@ class Application {
       if (result.success) {
         return {
           success: true,
+          clientMajor: result.clientMajor[0].major,
           leader: result.clubLeader[0].leader,
           questions: result.questions,
         };

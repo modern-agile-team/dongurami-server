@@ -8,6 +8,7 @@ class ApplicationStorage {
 
     try {
       conn = await mariadb.getConnection();
+      const major = 'SELECT major FROM students WHERE id = ?;';
       const leader = 'SELECT leader FROM clubs WHERE no = ?;'; // 동아리 회장만 수정 가능 -> 동아리 회장 학번 조회
       const qustion =
         'SELECT no, description FROM questions WHERE club_no = ?;';
@@ -18,9 +19,10 @@ class ApplicationStorage {
         return { success: false };
       }
 
+      const clientMajor = await conn.query(major, clubInfo.id);
       const questions = await conn.query(qustion, clubInfo.clubNum);
 
-      return { success: true, clubLeader, questions };
+      return { success: true, clubLeader, clientMajor, questions };
     } catch (err) {
       throw err;
     } finally {
