@@ -1,6 +1,6 @@
 'use strict';
 
-const Application = require('../../models/services/ApplicationForm/Application');
+const Application = require('../../models/services/Application/Application');
 
 const process = {
   findAllByClubNum: async (req, res) => {
@@ -44,6 +44,16 @@ const process = {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     return res.status(200).json(response);
+  },
+
+  createAnswer: async (req, res) => {
+    const application = new Application(req);
+    const response = await application.createAnswer();
+
+    if (response.isError) {
+      return res.status(500).json({ success: false, msg: response.clientMsg });
+    }
+    return res.status(201).json(response);
   },
 };
 

@@ -38,9 +38,9 @@ class Application {
         description,
       };
 
-      const result = await ApplicationStorage.createQuestion(questionInfo);
+      await ApplicationStorage.createQuestion(questionInfo);
 
-      return { success: result };
+      return { success: true };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -55,9 +55,9 @@ class Application {
         no,
         description: data.description,
       };
-      const result = await ApplicationStorage.updateQuestion(questionInfo);
+      await ApplicationStorage.updateQuestion(questionInfo);
 
-      return { success: result };
+      return { success: true };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -67,9 +67,39 @@ class Application {
     const { no } = this.params;
 
     try {
-      const result = await ApplicationStorage.deleteQuestion(no);
+      await ApplicationStorage.deleteQuestion(no);
 
-      return { success: result };
+      return { success: true };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async createAnswer() {
+    const { clubNum } = this.params;
+    const { auth } = this;
+    const { basic } = this.body;
+    const { extra } = this.body;
+
+    try {
+      const answerInfo = {
+        id: auth.id,
+        name: auth.name,
+        major: basic.major,
+        grade: basic.grade,
+        gender: basic.gender,
+        phoneNum: basic.phoneNum,
+        extra,
+      };
+      await ApplicationStorage.createAnswer(answerInfo);
+
+      const applicantInfo = {
+        clubNum,
+        id: auth.id,
+      };
+
+      await ApplicationStorage.createApplicant(applicantInfo);
+      return { success: true };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }

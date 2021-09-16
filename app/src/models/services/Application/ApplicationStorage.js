@@ -38,7 +38,7 @@ class ApplicationStorage {
 
       await conn.query(query, [questionInfo.clubNum, questionInfo.description]);
 
-      return true;
+      return;
     } catch (err) {
       throw err;
     } finally {
@@ -55,7 +55,7 @@ class ApplicationStorage {
 
       await conn.query(query, [questionInfo.description, questionInfo.no]);
 
-      return true;
+      return;
     } catch (err) {
       throw err;
     } finally {
@@ -72,7 +72,57 @@ class ApplicationStorage {
 
       await conn.query(query, no);
 
+      return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async createAnswer(answerInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+      const studentInfo = `UPDATE students SET major = ?, grade = ?, gender = ?, phone_number = ? WHERE id = ?;`;
+      let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
+
+      answerInfo.extra.forEach((x, idx) => {
+        if (idx === 0)
+          answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+        else answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+      });
+      answer += ';';
+
+      await conn.query(`${answer}`);
+
+      conn.query(studentInfo, [
+        answerInfo.major,
+        answerInfo.grade,
+        answerInfo.gender,
+        answerInfo.phoneNum,
+        answerInfo.id,
+      ]);
+
       return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async createApplicant(applicantInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+      const query = `INSERT INTO applicants (club_no, student_id) VALUE (?, ?);`;
+
+      await conn.query(query, [applicantInfo.clubNum, applicantInfo.id]);
+
+      return;
     } catch (err) {
       throw err;
     } finally {
