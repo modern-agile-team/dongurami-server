@@ -14,7 +14,6 @@ const process = {
   updateByCommentNum: async (req, res) => {
     const comment = new Comment(req);
     const response = await comment.updateByCommentNum();
-    console.log(response);
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
