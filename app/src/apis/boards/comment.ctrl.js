@@ -47,6 +47,15 @@ const process = {
     if (response.isError) return res.status(500).json(response.clientMsg);
     return res.status(404).json(response);
   },
+
+  deleteOneReplyCommentNum: async (req, res) => {
+    const comment = new Comment(req);
+    const response = await comment.deleteOneReplyCommentNum();
+
+    if (response.success) return res.status(200).json(response);
+    if (response.isError) return res.status(500).json(response.clientMsg);
+    return res.status(404).json(response);
+  },
 };
 
 module.exports = {

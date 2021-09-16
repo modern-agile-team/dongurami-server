@@ -35,5 +35,9 @@ router.delete(
   '/:category/:boardNum/:cmtNum',
   commentCtrl.process.deleteAllByGroupNum
 );
+router.delete(
+  '/:category/:boardNum/:cmtNum/:replyCmtNum',
+  commentCtrl.process.deleteOneReplyCommentNum
+);
 
 module.exports = router;

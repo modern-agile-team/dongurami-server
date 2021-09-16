@@ -134,6 +134,28 @@ class CommentStorage {
     }
   }
 
+  static async deleteOneReplyCommentNum(replyCmtInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `DELETE FROM comments WHERE depth = 1 AND no = ? AND board_no = ? AND group_no = ?;`;
+
+      const cmt = await conn.query(query, [
+        replyCmtInfo.replyCmtNum,
+        replyCmtInfo.boardNum,
+        replyCmtInfo.cmtNum,
+      ]);
+
+      return cmt.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async updateOnlyGroupNum(groupNum) {
     let conn;
 
