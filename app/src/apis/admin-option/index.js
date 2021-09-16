@@ -19,10 +19,10 @@ router.put(
   loginAuth.loginCheck,
   ctrl.process.updateAdminOptionById
 );
-// router.put(
-//   '/:clubNum/applicants',
-//   loginAuth.loginCheck,
-//   ctrl.process.updateById
-// );
+router.put(
+  '/:clubNum/applicants',
+  loginAuth.loginCheck,
+  ctrl.process.updateById
+);
 
 module.exports = router;
