@@ -85,6 +85,27 @@ class Comment {
     }
   }
 
+  async updateByReplyCommentNum() {
+    try {
+      const replyCmtInfo = {
+        boardNum: this.params.boardNum,
+        cmtNum: this.params.cmtNum,
+        replyCmtNum: this.params.replyCmtNum,
+        description: this.body.description,
+      };
+      const updateReplyCmtCount = await CommentStorage.updateByReplyCommentNum(
+        replyCmtInfo
+      );
+
+      if (updateReplyCmtCount === 0) {
+        return { success: false, msg: '존재하지 않는 답글입니다.' };
+      }
+      return { success: true, msg: '답글 수정 성공' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
   async deleteAllByGroupNum() {
     try {
       const cmtInfo = {

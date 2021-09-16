@@ -32,14 +32,13 @@ class CommentStorage {
 
       const query = `INSERT INTO comments (board_no, student_id, description, group_no, depth) VALUES (?, ?, ?, ?, 1);
       UPDATE comments SET reply_flag = 1 WHERE no = ?;`;
-      const comment = await conn.query(query, [
+      await conn.query(query, [
         replyCommentInfo.boardNum,
         replyCommentInfo.id,
         replyCommentInfo.description,
         replyCommentInfo.cmtNum,
         replyCommentInfo.cmtNum,
       ]);
-      console.log(comment);
 
       return;
     } catch (err) {
@@ -78,7 +77,7 @@ class CommentStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE comments SET description = ? WHERE no = ? AND board_no = ?;`;
+      const query = `UPDATE comments SET description = ? WHERE depth = 0 AND no = ? AND board_no = ?;`;
 
       const cmt = await conn.query(query, [
         cmtInfo.description,
@@ -87,6 +86,29 @@ class CommentStorage {
       ]);
 
       return cmt.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateByReplyCommentNum(replyCmtInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `UPDATE comments SET description = ? WHERE depth = 1 AND no = ? AND board_no = ? AND group_no = ?;`;
+
+      const replyCmt = await conn.query(query, [
+        replyCmtInfo.description,
+        replyCmtInfo.replyCmtNum,
+        replyCmtInfo.boardNum,
+        replyCmtInfo.cmtNum,
+      ]);
+
+      return replyCmt.affectedRows;
     } catch (err) {
       throw err;
     } finally {

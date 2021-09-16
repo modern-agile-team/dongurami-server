@@ -25,6 +25,10 @@ router.put(
   '/:category/:boardNum/:cmtNum',
   commentCtrl.process.updateByCommentNum
 );
+router.put(
+  '/:category/:boardNum/:cmtNum/:replyCmtNum',
+  commentCtrl.process.updateByReplyCommentNum
+);
 
 router.delete('/:category/:boardNum', boardCtrl.process.deleteOneByBoardNum);
 router.delete(

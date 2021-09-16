@@ -27,7 +27,16 @@ const process = {
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
-    return res.status(400).json(response);
+    return res.status(404).json(response);
+  },
+
+  updateByReplyCommentNum: async (req, res) => {
+    const comment = new Comment(req);
+    const response = await comment.updateByReplyCommentNum();
+
+    if (response.success) return res.status(200).json(response);
+    if (response.isError) return res.status(500).json(response.clientMsg);
+    return res.status(404).json(response);
   },
 
   deleteAllByGroupNum: async (req, res) => {
@@ -36,7 +45,7 @@ const process = {
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
-    return res.status(400).json(response);
+    return res.status(404).json(response);
   },
 };
 
