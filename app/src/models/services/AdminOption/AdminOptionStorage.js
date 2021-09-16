@@ -69,7 +69,9 @@ class adminoOptionStroage {
       const query = 'UPDATE clubs SET leader = ? WHERE no = ?;';
 
       await conn.query(query, [leaderInfo.newLeader, leaderInfo.clubNum]);
-
+      console.log(
+        await conn.query(query, [leaderInfo.newLeader, leaderInfo.clubNum])
+      );
       return true;
     } catch (err) {
       throw err;
@@ -86,7 +88,10 @@ class adminoOptionStroage {
 
       const query =
         'UPDATE members SET join_admin_flag = ?, board_admin_flag = ? WHERE club_no = ? AND student_id = ?';
+
       await conn.query(query, [1, 1, leaderInfo.clubNum, leaderInfo.newLeader]);
+
+      return true;
     } catch (err) {
       throw err;
     } finally {

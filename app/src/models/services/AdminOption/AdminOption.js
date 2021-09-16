@@ -62,7 +62,7 @@ class AdminOption {
 
     try {
       const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
-
+      console.log(leader);
       if (leader === payload.id) {
         const leaderInfo = {
           clubNum,
