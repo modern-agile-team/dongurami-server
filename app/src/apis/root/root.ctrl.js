@@ -1,6 +1,7 @@
 'use strict';
 
 const Student = require('../../models/services/Student/Student');
+const Email = require('../../models/services/Email/Email');
 
 const process = {
   login: async (req, res) => {
@@ -70,9 +71,10 @@ const process = {
   },
 
   // 메일 전송
-  sendEmail: async (req, res) => {
-    const student = new Student(req);
-    const response = await student.sendEmail();
+  sendEmailForPassword: async (req, res) => {
+    const email = new Email(req);
+    const response = await email.sendLinkForPassword();
+
     if (response.success) {
       return res.status(200).json(response);
     }
@@ -80,14 +82,6 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     return res.status(400).json(response);
-  },
-
-  // 메일 전송
-  findPassword: async (req, res) => {
-    const student = new Student(req);
-    const response = await student.findPassword();
-    console.log(response);
-    return res.json(response);
   },
 };
 
