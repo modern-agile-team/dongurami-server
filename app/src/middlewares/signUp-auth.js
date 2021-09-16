@@ -33,11 +33,22 @@ const signUpCheck = async (req, res, next) => {
       .status(400)
       .json({ success: false, msg: '이름에 공백이 포함되어있습니다.' });
   }
+  if (arr[2].length === 0) {
+    return res
+      .status(400)
+      .json({ success: false, msg: '이름을 입력해주세요.' });
+  }
 
   if (arr[3].indexOf(' ') !== -1) {
     return res
       .status(400)
       .json({ success: false, msg: '이메일에 공백이 포함되어있습니다.' });
+  }
+
+  if (arr[3].length === 0) {
+    return res
+      .status(400)
+      .json({ success: false, msg: '이메일을 입력해주세요.' });
   }
 
   if (arr[4].length === 0) {
