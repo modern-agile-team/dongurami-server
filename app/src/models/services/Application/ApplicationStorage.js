@@ -88,7 +88,6 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
       const studentInfo = `UPDATE students SET grade = ?, gender = ?, phone_number = ? WHERE id = ?;`;
-      let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
 
       conn.query(studentInfo, [
         answerInfo.grade,
@@ -97,14 +96,20 @@ class ApplicationStorage {
         answerInfo.id,
       ]);
 
-      answerInfo.extra.forEach((x, idx) => {
-        if (idx === 0)
-          answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-        else answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-      });
-      answer += ';';
+      // 추가 질문이 있을시 -> 없을시엔 answers table에 row 추가 x, applicants table row 추가 o
+      if (answerInfo.extra.length !== 0) {
+        let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
 
-      await conn.query(`${answer}`);
+        answerInfo.extra.forEach((x, idx) => {
+          if (idx === 0)
+            answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+          else
+            answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+        });
+        answer += ';';
+
+        await conn.query(`${answer}`);
+      }
 
       return true;
     } catch (err) {
