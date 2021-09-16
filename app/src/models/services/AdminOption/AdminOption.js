@@ -87,4 +87,5 @@ class AdminOption {
     }
   }
 }
+
 module.exports = AdminOption;

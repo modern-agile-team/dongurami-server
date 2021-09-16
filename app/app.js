@@ -17,6 +17,7 @@ const review = require('./src/apis/review');
 const home = require('./src/apis/circle-home');
 const schedule = require('./src/apis/schedule');
 const clubList = require('./src/apis/club');
+const application = require('./src/apis/application');
 const adminOption = require('./src/apis/admin-option');
 
 app.use('/api/board', board);
@@ -25,6 +26,7 @@ app.use('/api/club/review', review);
 app.use('/api/club/home', home);
 app.use('/api/club/schedule', schedule);
 app.use('/api/club/list', clubList);
+app.use('/api/club/application', application);
 app.use('/api/club/admin-option', adminOption);
 
 module.exports = app;

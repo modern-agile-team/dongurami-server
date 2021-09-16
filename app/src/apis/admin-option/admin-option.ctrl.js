@@ -1,7 +1,7 @@
 'use strict';
 
 const AdminOption = require('../../models/services/AdminOption/AdminOption');
-const Application2 = require('../../models/services/Application2/Application2');
+const Application = require('../../models/services/Application/Application');
 
 const process = {
   checkClubAdmin: async (req, res, next) => {
@@ -16,13 +16,13 @@ const process = {
 
   findOneByClubNum: async (req, res) => {
     const adminOption = new AdminOption(req);
-    const application2 = new Application2(req);
+    const application = new Application(req);
 
     const response = {};
     response.clubAdminOption = await adminOption.findOneByClubNum();
 
     if (response.clubAdminOption.success) {
-      response.applicant = await application2.findOneByClubNum();
+      response.applicant = await application.findOneByClubNum();
 
       if (response.applicant.isError) {
         return res.status(500).json(response.applicant.clientMsg);

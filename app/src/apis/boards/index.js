@@ -7,7 +7,11 @@ const router = express.Router();
 
 router.post('/:category', ctrl.process.createBoardNum);
 
-router.get('/:category', ctrl.process.findAllByCategoryNum);
+router.get('/:category/:sort/:order', ctrl.process.findAllByCategoryNum);
+router.get(
+  '/promotion/:category/:sort/:order',
+  ctrl.process.findAllByPromotionCategory
+);
 router.get('/:category/:num', ctrl.process.findOneByBoardNum);
 
 router.put('/:category/:num', ctrl.process.updateOneByNum);
