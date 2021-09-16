@@ -25,6 +25,30 @@ class Comment {
     }
   }
 
+  async createReplyCommentNum() {
+    try {
+      const replyCommentInfo = {
+        boardNum: this.params.boardNum,
+        cmtNum: this.params.cmtNum,
+        id: this.body.id,
+        description: this.body.description,
+      };
+      const exist = await CommentStorage.existOnlycmtNum(
+        replyCommentInfo.cmtNum,
+        replyCommentInfo.boardNum
+      );
+
+      if (exist === undefined) {
+        return { success: false, msg: '해당 게시글이나 댓글이 없습니다.' };
+      }
+      await CommentStorage.createReplyCommentNum(replyCommentInfo);
+
+      return { success: true, msg: '답글 생성 성공' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
   async findAllByBoardNum() {
     try {
       const { boardNum } = this.params;

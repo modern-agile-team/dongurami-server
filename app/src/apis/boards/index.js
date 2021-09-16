@@ -8,6 +8,10 @@ const router = express.Router();
 
 router.post('/:category', boardCtrl.process.createBoardNum);
 router.post('/:category/:boardNum', commentCtrl.process.createCommentNum);
+router.post(
+  '/:category/:boardNum/:cmtNum',
+  commentCtrl.process.createReplyCommentNum
+);
 
 router.get('/:category/:sort/:order', boardCtrl.process.findAllByCategoryNum);
 router.get(

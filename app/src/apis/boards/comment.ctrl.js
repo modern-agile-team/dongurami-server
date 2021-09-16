@@ -11,6 +11,15 @@ const process = {
     return res.status(500).json(response.clientMsg);
   },
 
+  createReplyCommentNum: async (req, res) => {
+    const comment = new Comment(req);
+    const response = await comment.createReplyCommentNum();
+
+    if (response.success) return res.status(201).json(response);
+    if (response.isError) return res.status(500).json(response.clientMsg);
+    return res.status(404).json(response);
+  },
+
   updateByCommentNum: async (req, res) => {
     const comment = new Comment(req);
     const response = await comment.updateByCommentNum();

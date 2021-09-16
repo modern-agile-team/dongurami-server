@@ -24,6 +24,31 @@ class CommentStorage {
     }
   }
 
+  static async createReplyCommentNum(replyCommentInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `INSERT INTO comments (board_no, student_id, description, group_no, depth) VALUES (?, ?, ?, ?, 1);
+      UPDATE comments SET reply_flag = 1 WHERE no = ?;`;
+      const comment = await conn.query(query, [
+        replyCommentInfo.boardNum,
+        replyCommentInfo.id,
+        replyCommentInfo.description,
+        replyCommentInfo.cmtNum,
+        replyCommentInfo.cmtNum,
+      ]);
+      console.log(comment);
+
+      return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findAllByBoardNum(boardNum) {
     let conn;
 
@@ -98,6 +123,24 @@ class CommentStorage {
       await conn.query(query, [groupNum, groupNum]);
 
       return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async existOnlycmtNum(cmtNum, boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no FROM comments WHERE no = ? AND board_no = ?;`;
+
+      const cmt = await conn.query(query, [cmtNum, boardNum]);
+
+      return cmt[0];
     } catch (err) {
       throw err;
     } finally {
