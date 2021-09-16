@@ -17,7 +17,6 @@ router.patch(
   loginAuth.loginCheck,
   ctrl.process.resetPassword
 );
-router.post('/send-email', ctrl.process.sendEmail);
-router.patch('/find-password', ctrl.process.findPassword);
+router.post('/forgot-password', ctrl.process.sendEmailForPassword);
 
 module.exports = router;
