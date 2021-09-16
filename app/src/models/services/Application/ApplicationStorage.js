@@ -117,6 +117,40 @@ class ApplicationStorage {
       conn?.release();
     }
   }
+
+  static async updateApplicantByid(userInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'UPDATE applicants SET reading_flag = 1 WHERE club_no = ? , student_id = ?;';
+
+      await conn.query(query, [userInfo.clubNum, userInfo.id]);
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async createMemberById(userInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'INSERT INTO members (student_id, club_no, join_admin_flag, board_admin_flag) VALUES (?, ?, 0, 0);';
+
+      await conn.query(query, [userInfo.clubNum, userInfo.id]);
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = ApplicationStorage;

@@ -58,9 +58,22 @@ const process = {
     return res.status(400).json(response);
   },
 
-  updateById: async (req, res) => {
+  createMemberById: async (req, res) => {
     const application = new Application(req);
-    const response = await application.updateById();
+    const response = await application.createMemberById();
+
+    if (response.success) {
+      return res.status(201).json(response);
+    }
+    if (response.isError) {
+      return res.status(500).json(response.clientMsg);
+    }
+    return res.status(400).json(response);
+  },
+
+  updateApplicantById: async (req, res) => {
+    const application = new Application(req);
+    const response = await application.updateApplicantById();
 
     return res.status(200).json(response);
   },

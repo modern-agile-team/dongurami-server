@@ -8,11 +8,11 @@ class adminoOptionStroage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT student_id FROM members WHERE club_no = ? AND student_id = ? AND join_admin_flag = 1;`;
+      const query = `SELECT student_id AS studentId FROM members WHERE club_no = ? AND student_id = ? AND join_admin_flag = 1;`;
 
       const id = await conn.query(query, [adminInfo.clubNum, adminInfo.id]);
 
-      return { success: true, id: id[0].student_id };
+      return { success: true, id: id[0].studentId };
     } catch (err) {
       throw err;
     } finally {
@@ -69,9 +69,7 @@ class adminoOptionStroage {
       const query = 'UPDATE clubs SET leader = ? WHERE no = ?;';
 
       await conn.query(query, [leaderInfo.newLeader, leaderInfo.clubNum]);
-      console.log(
-        await conn.query(query, [leaderInfo.newLeader, leaderInfo.clubNum])
-      );
+
       return true;
     } catch (err) {
       throw err;
@@ -112,7 +110,6 @@ class adminoOptionStroage {
       });
 
       await conn.query(`${query}`);
-
       return true;
     } catch (err) {
       throw err;

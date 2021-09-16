@@ -13,15 +13,14 @@ class AdminOption {
   async checkClubAdmin() {
     const payload = this.auth;
     const { clubNum } = this.params;
-
     const adminInfo = {
       id: payload.id,
       clubNum,
     };
     try {
-      const response = await AdminOptionStorage.findOneById(adminInfo);
+      const clubAdmin = await AdminOptionStorage.findOneById(adminInfo);
 
-      if (response.id === payload.id) {
+      if (clubAdmin.id === payload.id) {
         return {
           success: true,
           msg: '권한 있음',
@@ -62,7 +61,7 @@ class AdminOption {
 
     try {
       const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
-      console.log(leader);
+
       if (leader === payload.id) {
         const leaderInfo = {
           clubNum,
@@ -72,12 +71,12 @@ class AdminOption {
           await AdminOptionStorage.updateNewLeaderByClubNum(leaderInfo);
 
         if (changeLeaderRes) {
-          const response =
+          const isUpdate =
             await AdminOptionStorage.updateLeaderAdminOptionByClubNum(
               leaderInfo
             );
 
-          if (response) {
+          if (isUpdate) {
             return { success: true, msg: '회장이 양도되었습니다.' };
           }
           return {
@@ -108,11 +107,11 @@ class AdminOption {
           clubNum,
           adminOption: adminOption.adminOptions,
         };
-        const response = await AdminOptionStorage.updateAdminOptionById(
+        const isUpdate = await AdminOptionStorage.updateAdminOptionById(
           adminInfo
         );
 
-        if (response) {
+        if (isUpdate) {
           return { success: true, msg: '권한이 수정되었습니다.' };
         }
         return {

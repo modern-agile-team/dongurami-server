@@ -77,7 +77,7 @@ class Application {
 
   // 관리자 페이지에 보여지는 신청서
   async findOneByClubNum() {
-    const clubNum = Number(this.params.clubNum);
+    const { clubNum } = this.params;
 
     try {
       const { success, applicantInfo, questionAndAnswer } =
@@ -95,9 +95,36 @@ class Application {
     }
   }
 
-  // async updateById() {
-  //   const
-  // }
+  async createMemberById() {
+    const { clubNum } = this.params;
+    const { id } = this.body;
+
+    try {
+      const userInfo = {
+        clubNum,
+        id,
+      };
+      const isUpdate = await ApplicationStorage.updateApplicantByid(userInfo);
+
+      if (isUpdate) {
+        const isCreate = await ApplicationStorage.createMemberById(userInfo);
+
+        if (isCreate) {
+          return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
+        }
+        return {
+          success: false,
+          msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+        };
+      }
+      return {
+        success: false,
+        msg: '이미 가입되었거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
 }
 
 module.exports = Application;

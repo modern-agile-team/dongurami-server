@@ -73,7 +73,6 @@ class reviewStorage {
         reviewInfo.score,
         reviewInfo.num,
       ]);
-
       return true;
     } catch (err) {
       throw err;
