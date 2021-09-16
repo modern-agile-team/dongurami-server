@@ -12,12 +12,12 @@ class Comment {
   async createCommentNum() {
     try {
       const commentInfo = {
-        boardNum: this.params.cmtNum,
+        boardNum: this.params.boardNum,
         id: this.body.id,
         description: this.body.description,
       };
-      const comments = await CommentStorage.createCommentNum(commentInfo);
-      await CommentStorage.updateOnlyGroupNum(comments);
+      const commentNum = await CommentStorage.createCommentNum(commentInfo);
+      await CommentStorage.updateOnlyGroupNum(commentNum);
 
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {

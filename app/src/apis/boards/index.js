@@ -7,7 +7,7 @@ const commentCtrl = require('./comment.ctrl');
 const router = express.Router();
 
 router.post('/:category', boardCtrl.process.createBoardNum);
-router.post('/:category/:cmtNum', commentCtrl.process.createCommentNum);
+router.post('/:category/:boardNum', commentCtrl.process.createCommentNum);
 
 router.get('/:category/:sort/:order', boardCtrl.process.findAllByCategoryNum);
 router.get(
