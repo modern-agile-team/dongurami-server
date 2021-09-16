@@ -15,6 +15,11 @@ router.get(
   ctrl.process.findOneByClubNum
 );
 router.put(
+  '/:clubNum/leader',
+  loginAuth.loginCheck,
+  ctrl.process.updateLeaderById
+);
+router.put(
   '/:clubNum/admin-function',
   loginAuth.loginCheck,
   ctrl.process.updateAdminOptionById

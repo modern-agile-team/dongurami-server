@@ -61,19 +61,53 @@ class adminoOptionStroage {
     }
   }
 
-  static async updateAdminOptionById(adminOptionInfo) {
+  static async updateNewLeaderByClubNum(leaderInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'UPDATE clubs SET leader = ? WHERE no = ?;';
+
+      await conn.query(query, [leaderInfo.newLeader, leaderInfo.clubNum]);
+
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateLeaderAdminOptionByClubNum(leaderInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'UPDATE members SET join_admin_flag = ?, board_admin_flag = ? WHERE club_no = ? AND student_id = ?';
+      await conn.query(query, [1, 1, leaderInfo.clubNum, leaderInfo.newLeader]);
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateAdminOptionById(adminInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
 
       let query = '';
 
-      adminOptionInfo.adminOption.forEach((option) => {
+      adminInfo.adminOption.forEach((option) => {
         query += `UPDATE members SET join_admin_flag = "${option.joinAdminFlag}", board_admin_flag = "${option.boardAdminFlag}"
-          WHERE student_id = "${option.studentId}" AND club_no = "${adminOptionInfo.clubNum}";`;
+          WHERE student_id = "${option.studentId}" AND club_no = "${adminInfo.clubNum}";`;
       });
 
       await conn.query(`${query}`);
+
       return true;
     } catch (err) {
       throw err;

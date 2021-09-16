@@ -55,22 +55,61 @@ class AdminOption {
     }
   }
 
-  async updateAdminOptionById() {
+  async updateLeaderById() {
     const payload = this.auth;
     const { clubNum } = this.params;
-    const adminOption = this.body.req;
+    const { newLeader } = this.body;
 
     try {
       const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
 
       if (leader === payload.id) {
-        const adminOptionInfo = {
-          adminOption,
+        const leaderInfo = {
           clubNum,
+          newLeader,
         };
+        const changeLeaderRes =
+          await AdminOptionStorage.updateNewLeaderByClubNum(leaderInfo);
 
+        if (changeLeaderRes) {
+          const response =
+            await AdminOptionStorage.updateLeaderAdminOptionByClubNum(
+              leaderInfo
+            );
+
+          if (response) {
+            return { success: true, msg: '회장이 양도되었습니다.' };
+          }
+          return {
+            success: false,
+            msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+          };
+        }
+      }
+      return {
+        success: false,
+        msg: '회장만 접근이 가능합니다.',
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async updateAdminOptionById() {
+    const payload = this.auth;
+    const { clubNum } = this.params;
+    const adminOption = this.body;
+
+    try {
+      const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
+
+      if (leader === payload.id) {
+        const adminInfo = {
+          clubNum,
+          adminOption: adminOption.adminOptions,
+        };
         const response = await AdminOptionStorage.updateAdminOptionById(
-          adminOptionInfo
+          adminInfo
         );
 
         if (response) {

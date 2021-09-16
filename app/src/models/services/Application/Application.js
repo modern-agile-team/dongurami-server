@@ -94,6 +94,10 @@ class Application {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
+
+  // async updateById() {
+  //   const
+  // }
 }
 
 module.exports = Application;
