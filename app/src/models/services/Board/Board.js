@@ -112,7 +112,7 @@ class Board {
       const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
 
       if (updateBoardCnt === 0) {
-        return { success: flase, msg: '해당 게시글이 없습니다.' };
+        return { success: false, msg: '해당 게시글이 없습니다.' };
       }
       return { success: true, msg: '게시글 수정 성공' };
     } catch (err) {
@@ -126,7 +126,7 @@ class Board {
       const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardNum);
 
       if (deleteBoardCnt === 0) {
-        return { success: flase, msg: '해당 게시글이 없습니다.' };
+        return { success: false, msg: '해당 게시글이 없습니다.' };
       }
       return { success: true, msg: '게시글 삭제 성공' };
     } catch (err) {
