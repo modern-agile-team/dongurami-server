@@ -58,13 +58,12 @@ class Board {
   }
 
   async findAllByPromotionCategory() {
-    const criteriaRead = {
-      category: this.params.category,
-      sort: this.params.sort,
-      order: this.params.order.toUpperCase(),
-    };
-
     try {
+      const criteriaRead = {
+        category: this.params.category,
+        sort: this.params.sort,
+        order: this.params.order.toUpperCase(),
+      };
       const boards = await BoardStorage.findAllByPromotionCategory(
         criteriaRead
       );
@@ -110,9 +109,11 @@ class Board {
         description: this.body.description,
         boardNum: this.params.num,
       };
+      const updateBoardCnt = await BoardStorage.updateOneByNum(boardInfo);
 
-      await BoardStorage.updateOneByNum(boardInfo);
-
+      if (updateBoardCnt === 0) {
+        return { success: flase, msg: '해당 게시글이 없습니다.' };
+      }
       return { success: true, msg: '게시글 수정 성공' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
@@ -122,9 +123,11 @@ class Board {
   async deleteOneByNum() {
     try {
       const boardNum = this.params.num;
+      const deleteBoardCnt = await BoardStorage.deleteOneByNum(boardNum);
 
-      await BoardStorage.deleteOneByNum(boardNum);
-
+      if (deleteBoardCnt === 0) {
+        return { success: flase, msg: '해당 게시글이 없습니다.' };
+      }
       return { success: true, msg: '게시글 삭제 성공' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
@@ -132,9 +135,8 @@ class Board {
   }
 
   async updateOnlyHitByNum() {
-    const boardNum = this.params.num;
-
     try {
+      const boardNum = this.params.num;
       await BoardStorage.updateOnlyHitByNum(boardNum);
 
       return { success: true, msg: '조회수 1 증가' };

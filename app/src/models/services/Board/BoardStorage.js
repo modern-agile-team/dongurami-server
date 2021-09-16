@@ -118,13 +118,13 @@ class BoardStorage {
 
       const query = `UPDATE boards SET title = ?, description = ? WHERE no = ?;`;
 
-      await conn.query(query, [
+      const board = await conn.query(query, [
         boardInfo.title,
         boardInfo.description,
         boardInfo.boardNum,
       ]);
 
-      return;
+      return board.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -140,9 +140,9 @@ class BoardStorage {
 
       const query = `DELETE FROM boards WHERE no = ?;`;
 
-      await conn.query(query, [boardNum]);
+      const board = await conn.query(query, [boardNum]);
 
-      return;
+      return board.affectedRows;
     } catch (err) {
       throw err;
     } finally {
