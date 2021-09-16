@@ -12,12 +12,12 @@ class Comment {
   async createCommentNum() {
     try {
       const commentInfo = {
-        boardNum: this.params.num,
+        boardNum: this.params.boardNum,
         id: this.body.id,
         description: this.body.description,
       };
-      const comments = await CommentStorage.createCommentNum(commentInfo);
-      await CommentStorage.updateOnlyGroupNum(comments);
+      const commentNum = await CommentStorage.createCommentNum(commentInfo);
+      await CommentStorage.updateOnlyGroupNum(commentNum);
 
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {
@@ -27,7 +27,7 @@ class Comment {
 
   async findAllByBoardNum() {
     try {
-      const boardNum = this.params.num;
+      const { boardNum } = this.params;
       const comments = await CommentStorage.findAllByBoardNum(boardNum);
 
       return comments;
@@ -39,7 +39,7 @@ class Comment {
   async updateByCommentNum() {
     try {
       const cmtInfo = {
-        boardNum: this.params.num,
+        boardNum: this.params.boardNum,
         cmtNum: this.params.cmtNum,
         description: this.body.description,
       };
@@ -57,7 +57,7 @@ class Comment {
   async deleteAllByGroupNum() {
     try {
       const cmtInfo = {
-        boardNum: this.params.num,
+        boardNum: this.params.boardNum,
         cmtNum: this.params.cmtNum,
       };
       const deleteCmtCount = await CommentStorage.deleteAllByGroupNum(cmtInfo);

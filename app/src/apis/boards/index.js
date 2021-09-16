@@ -7,21 +7,24 @@ const commentCtrl = require('./comment.ctrl');
 const router = express.Router();
 
 router.post('/:category', boardCtrl.process.createBoardNum);
-router.post('/:category/:num', commentCtrl.process.createCommentNum);
+router.post('/:category/:boardNum', commentCtrl.process.createCommentNum);
 
 router.get('/:category/:sort/:order', boardCtrl.process.findAllByCategoryNum);
 router.get(
   '/promotion/:category/:sort/:order',
   boardCtrl.process.findAllByPromotionCategory
 );
-router.get('/:category/:num', boardCtrl.process.findOneByBoardNum);
+router.get('/:category/:boardNum', boardCtrl.process.findOneByBoardNum);
 
-router.put('/:category/:num', boardCtrl.process.updateOneByNum);
-router.put('/:category/:num/:cmtNum', commentCtrl.process.updateByCommentNum);
+router.put('/:category/:boardNum', boardCtrl.process.updateOneByBoardNum);
+router.put(
+  '/:category/:boardNum/:cmtNum',
+  commentCtrl.process.updateByCommentNum
+);
 
-router.delete('/:category/:num', boardCtrl.process.deleteOneByNum);
+router.delete('/:category/:boardNum', boardCtrl.process.deleteOneByBoardNum);
 router.delete(
-  '/:category/:num/:cmtNum',
+  '/:category/:boardNum/:cmtNum',
   commentCtrl.process.deleteAllByGroupNum
 );
 
