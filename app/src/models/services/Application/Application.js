@@ -11,9 +11,15 @@ class Application {
   }
 
   async findAllByClubNum() {
+    const { id } = this.auth;
     const { clubNum } = this.params;
+
     try {
-      const result = await ApplicationStorage.findAllByClubNum(clubNum);
+      const clubInfo = {
+        id,
+        clubNum,
+      };
+      const result = await ApplicationStorage.findAllByClubNum(clubInfo);
 
       if (result.success) {
         return {
@@ -85,7 +91,6 @@ class Application {
       const answerInfo = {
         id: auth.id,
         name: auth.name,
-        major: basic.major,
         grade: basic.grade,
         gender: basic.gender,
         phoneNum: basic.phoneNum,

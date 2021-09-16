@@ -3,7 +3,7 @@
 const mariadb = require('../../../config/mariadb');
 
 class ApplicationStorage {
-  static async findAllByClubNum(clubNum) {
+  static async findAllByClubNum(clubInfo) {
     let conn;
 
     try {
@@ -11,14 +11,14 @@ class ApplicationStorage {
       const leader = 'SELECT leader FROM clubs WHERE no = ?;'; // 동아리 회장만 수정 가능 -> 동아리 회장 학번 조회
       const qustion =
         'SELECT no, description FROM questions WHERE club_no = ?;';
-      const clubLeader = await conn.query(leader, clubNum);
+      const clubLeader = await conn.query(leader, clubInfo.clubNum);
 
       if (clubLeader[0] === undefined) {
         // 동아리 존재 x
         return { success: false };
       }
 
-      const questions = await conn.query(qustion, clubNum);
+      const questions = await conn.query(qustion, clubInfo.clubNum);
 
       return { success: true, clubLeader, questions };
     } catch (err) {
@@ -85,8 +85,15 @@ class ApplicationStorage {
 
     try {
       conn = await mariadb.getConnection();
-      const studentInfo = `UPDATE students SET major = ?, grade = ?, gender = ?, phone_number = ? WHERE id = ?;`;
+      const studentInfo = `UPDATE students SET grade = ?, gender = ?, phone_number = ? WHERE id = ?;`;
       let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
+
+      conn.query(studentInfo, [
+        answerInfo.grade,
+        answerInfo.gender,
+        answerInfo.phoneNum,
+        answerInfo.id,
+      ]);
 
       answerInfo.extra.forEach((x, idx) => {
         if (idx === 0)
@@ -96,14 +103,6 @@ class ApplicationStorage {
       answer += ';';
 
       await conn.query(`${answer}`);
-
-      conn.query(studentInfo, [
-        answerInfo.major,
-        answerInfo.grade,
-        answerInfo.gender,
-        answerInfo.phoneNum,
-        answerInfo.id,
-      ]);
 
       return true;
     } catch (err) {
