@@ -21,16 +21,15 @@ class AdminOption {
     try {
       const response = await AdminOptionStorage.findOneById(adminInfo);
 
-      if (response === undefined) {
+      if (response.id === payload.id) {
         return {
-          success: false,
-          msg: '동아리 관리 페이지에 접근 권한이 없습니다.',
+          success: true,
+          msg: '권한 있음',
         };
       }
-
       return {
-        success: true,
-        msg: '권한 있음',
+        success: false,
+        msg: '동아리 관리 페이지에 접근 권한이 없습니다.',
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
@@ -59,16 +58,22 @@ class AdminOption {
   async updateAdminOptionById() {
     const payload = this.auth;
     const { clubNum } = this.params;
-    const adminOption = this.body;
+    const adminOption = this.body.req;
 
     try {
       const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
 
       if (leader === payload.id) {
+        const adminOptionInfo = {
+          adminOption,
+          clubNum,
+        };
+
         const response = await AdminOptionStorage.updateAdminOptionById(
-          adminOption
+          adminOptionInfo
         );
-        if (response.success) {
+
+        if (response) {
           return { success: true, msg: '권한이 수정되었습니다.' };
         }
         return {

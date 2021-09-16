@@ -23,6 +23,7 @@ const process = {
 
     if (response.clubAdminOption.success) {
       response.applicant = await application2.findOneByClubNum();
+
       if (response.applicant.isError) {
         return res.status(500).json(response.applicant.clientMsg);
       }

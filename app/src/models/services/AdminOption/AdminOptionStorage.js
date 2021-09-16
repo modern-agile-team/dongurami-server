@@ -8,11 +8,11 @@ class adminoOptionStroage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `select student_id from members where club_no = ? AND student_id = ? AND join_admin_flag = 1;`;
+      const query = `SELECT student_id FROM members WHERE club_no = ? AND student_id = ? AND join_admin_flag = 1;`;
 
       const id = await conn.query(query, [adminInfo.clubNum, adminInfo.id]);
 
-      return { success: true, id };
+      return { success: true, id: id[0].student_id };
     } catch (err) {
       throw err;
     } finally {
@@ -25,8 +25,8 @@ class adminoOptionStroage {
     try {
       conn = await mariadb.getConnection();
 
-      const memberAndAuthQuery = `SELECT s.name, s.id, m.club_no, m.join_admin_flag, m.board_admin_flag FROM members AS m
-      JOIN students AS s ON s.id = m.student_id AND m.club_no = ?;`;
+      const memberAndAuthQuery = `SELECT s.name, s.id, m.join_admin_flag AS joinAdminFlag, m.board_admin_flag AS boarAdminFlag 
+        FROM members AS m JOIN students AS s ON s.id = m.student_id AND m.club_no = ?;`;
       const leaderQuery =
         'select students.name from students JOIN clubs ON clubs.leader = students.name AND clubs.no = ?;';
 
@@ -50,10 +50,10 @@ class adminoOptionStroage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'SELECT leader FROM clubs WHERE club_no = ?;';
+      const query = 'SELECT leader FROM clubs WHERE no = ?;';
       const leader = await conn.query(query, clubNum);
 
-      return leader;
+      return leader[0].leader;
     } catch (err) {
       throw err;
     } finally {
@@ -61,17 +61,26 @@ class adminoOptionStroage {
     }
   }
 
-  // static async updateAdminOptionById(adminOption) {
-  //   let conn;
-  //   try {
-  //     conn = await mariadb.getConnection();
+  static async updateAdminOptionById(adminOptionInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
 
-  //     let query = 'UPDATE members SET';
+      let query = '';
 
-  //     await conn.query(`${query}`);
+      adminOptionInfo.adminOption.forEach((option) => {
+        query += `UPDATE members SET join_admin_flag = "${option.joinAdminFlag}", board_admin_flag = "${option.boardAdminFlag}"
+          WHERE student_id = "${option.studentId}" AND club_no = "${adminOptionInfo.clubNum}";`;
+      });
 
-  //   }
-  // }
+      await conn.query(`${query}`);
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = adminoOptionStroage;
