@@ -88,30 +88,34 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
       const studentInfo = `UPDATE students SET grade = ?, gender = ?, phone_number = ? WHERE id = ?;`;
-
-      conn.query(studentInfo, [
+      const basic = await conn.query(studentInfo, [
         answerInfo.grade,
         answerInfo.gender,
         answerInfo.phoneNum,
         answerInfo.id,
       ]);
 
-      // 추가 질문이 있을시 -> 없을시엔 answers table에 row 추가 x, applicants table row 추가 o
-      if (answerInfo.extra.length !== 0) {
-        let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
+      if (basic.affectedRows === 1) {
+        // 추가 질문이 있을시 -> 없을시엔 answers table에 row 추가 x, applicants table row 추가 o
+        if (answerInfo.extra.length !== 0) {
+          let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
 
-        answerInfo.extra.forEach((x, idx) => {
-          if (idx === 0)
-            answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-          else
-            answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-        });
-        answer += ';';
+          answerInfo.extra.forEach((x, idx) => {
+            if (idx === 0)
+              answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+            else
+              answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+          });
+          answer += ';';
 
-        await conn.query(`${answer}`);
+          const extra = await conn.query(`${answer}`);
+
+          if (extra.affectedRows === answerInfo.extra.length) return true;
+          return false;
+        }
+        return true;
       }
-
-      return true;
+      return false;
     } catch (err) {
       throw err;
     } finally {
@@ -125,10 +129,12 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
       const query = `INSERT INTO applicants (club_no, student_id) VALUE (?, ?);`;
+      const result = await conn.query(query, [
+        applicantInfo.clubNum,
+        applicantInfo.id,
+      ]);
 
-      await conn.query(query, [applicantInfo.clubNum, applicantInfo.id]);
-
-      return;
+      return result.affectedRows;
     } catch (err) {
       throw err;
     } finally {

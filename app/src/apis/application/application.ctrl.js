@@ -50,10 +50,15 @@ const process = {
     const application = new Application(req);
     const response = await application.createAnswer();
 
+    if (response.success) {
+      return res.status(201).json(response);
+    }
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res.status(201).json(response);
+    return res
+      .status(400)
+      .json({ success: false, msg: '가입 신청서 작성에 실패하셨습니다.' }); // 캐치 에러 x DB등록 X
   },
 };
 

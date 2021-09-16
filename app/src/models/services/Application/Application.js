@@ -85,27 +85,30 @@ class Application {
   async createAnswer() {
     const { clubNum } = this.params;
     const { auth } = this;
-    const { basic } = this.body;
-    const { extra } = this.body;
+    const answer = this.body;
 
     try {
       const answerInfo = {
         id: auth.id,
         name: auth.name,
-        grade: basic.grade,
-        gender: basic.gender,
-        phoneNum: basic.phoneNum,
-        extra,
+        grade: answer.basic.grade,
+        gender: answer.basic.gender,
+        phoneNum: answer.basic.phoneNum,
+        extra: answer.extra,
       };
-      await ApplicationStorage.createAnswer(answerInfo);
+      const success = await ApplicationStorage.createAnswer(answerInfo);
 
-      const applicantInfo = {
-        clubNum,
-        id: auth.id,
-      };
+      if (success) {
+        const applicantInfo = {
+          clubNum,
+          id: auth.id,
+        };
+        const result = await ApplicationStorage.createApplicant(applicantInfo);
 
-      await ApplicationStorage.createApplicant(applicantInfo);
-      return { success: true };
+        if (result === 1)
+          return { success: true, msg: '가입 신청서가 작성되었습니다.' };
+      }
+      return { success: false };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
