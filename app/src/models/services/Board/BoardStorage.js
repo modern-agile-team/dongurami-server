@@ -110,7 +110,7 @@ class BoardStorage {
     }
   }
 
-  static async updateOneByNum(boardInfo) {
+  static async updateOneByBoardNum(boardInfo) {
     let conn;
 
     try {
@@ -132,7 +132,7 @@ class BoardStorage {
     }
   }
 
-  static async deleteOneByNum(boardNum) {
+  static async deleteOneByBoardNum(boardNum) {
     let conn;
 
     try {

@@ -69,18 +69,18 @@ const process = {
     return res.status(404).json(response);
   },
 
-  updateOneByNum: async (req, res) => {
+  updateOneByBoardNum: async (req, res) => {
     const board = new Board(req);
-    const response = await board.updateOneByNum();
+    const response = await board.updateOneByBoardNum();
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
     return res.status(400).json(response);
   },
 
-  deleteOneByNum: async (req, res) => {
+  deleteOneByBoardNum: async (req, res) => {
     const board = new Board(req);
-    const response = await board.deleteOneByNum();
+    const response = await board.deleteOneByBoardNum();
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);

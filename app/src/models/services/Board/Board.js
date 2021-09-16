@@ -102,14 +102,14 @@ class Board {
     }
   }
 
-  async updateOneByNum() {
+  async updateOneByBoardNum() {
     try {
       const boardInfo = {
         title: this.body.title,
         description: this.body.description,
         boardNum: this.params.boardNum,
       };
-      const updateBoardCnt = await BoardStorage.updateOneByNum(boardInfo);
+      const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
 
       if (updateBoardCnt === 0) {
         return { success: flase, msg: '해당 게시글이 없습니다.' };
@@ -120,10 +120,10 @@ class Board {
     }
   }
 
-  async deleteOneByNum() {
+  async deleteOneByBoardNum() {
     try {
       const { boardNum } = this.params;
-      const deleteBoardCnt = await BoardStorage.deleteOneByNum(boardNum);
+      const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardNum);
 
       if (deleteBoardCnt === 0) {
         return { success: flase, msg: '해당 게시글이 없습니다.' };

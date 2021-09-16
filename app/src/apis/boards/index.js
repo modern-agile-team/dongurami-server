@@ -14,8 +14,8 @@ router.get(
 );
 router.get('/:category/:boardNum', ctrl.process.findOneByBoardNum);
 
-router.put('/:category/:boardNum', ctrl.process.updateOneByNum);
+router.put('/:category/:boardNum', ctrl.process.updateOneByBoardNum);
 
-router.delete('/:category/:boardNum', ctrl.process.deleteOneByNum);
+router.delete('/:category/:boardNum', ctrl.process.deleteOneByBoardNum);
 
 module.exports = router;
