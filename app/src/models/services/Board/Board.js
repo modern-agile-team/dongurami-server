@@ -87,7 +87,7 @@ class Board {
     try {
       const boardInfo = {
         category,
-        boardNum: this.params.num,
+        boardNum: this.params.boardNum,
       };
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
@@ -107,7 +107,7 @@ class Board {
       const boardInfo = {
         title: this.body.title,
         description: this.body.description,
-        boardNum: this.params.num,
+        boardNum: this.params.boardNum,
       };
       const updateBoardCnt = await BoardStorage.updateOneByNum(boardInfo);
 
@@ -122,7 +122,7 @@ class Board {
 
   async deleteOneByNum() {
     try {
-      const boardNum = this.params.num;
+      const { boardNum } = this.params;
       const deleteBoardCnt = await BoardStorage.deleteOneByNum(boardNum);
 
       if (deleteBoardCnt === 0) {
@@ -136,7 +136,7 @@ class Board {
 
   async updateOnlyHitByNum() {
     try {
-      const boardNum = this.params.num;
+      const { boardNum } = this.params;
       await BoardStorage.updateOnlyHitByNum(boardNum);
 
       return { success: true, msg: '조회수 1 증가' };

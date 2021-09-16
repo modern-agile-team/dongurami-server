@@ -12,10 +12,10 @@ router.get(
   '/promotion/:category/:sort/:order',
   ctrl.process.findAllByPromotionCategory
 );
-router.get('/:category/:num', ctrl.process.findOneByBoardNum);
+router.get('/:category/:boardNum', ctrl.process.findOneByBoardNum);
 
-router.put('/:category/:num', ctrl.process.updateOneByNum);
+router.put('/:category/:boardNum', ctrl.process.updateOneByNum);
 
-router.delete('/:category/:num', ctrl.process.deleteOneByNum);
+router.delete('/:category/:boardNum', ctrl.process.deleteOneByNum);
 
 module.exports = router;
