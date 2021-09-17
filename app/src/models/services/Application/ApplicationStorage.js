@@ -88,23 +88,29 @@ class ApplicationStorage {
         FROM students AS s JOIN applicants AS app ON app.club_no = ?
         AND app.student_id = s.id AND app.reading_flag = 0;`;
 
-      const qAndAQuery = `SELECT app.student_id, q.description AS question, a.description AS answer 
+      const qAndAQuery = `SELECT app.student_id AS studentId, q.description AS question, a.description AS answer 
         FROM answers AS a JOIN applicants AS app ON a.student_id = app.student_id 
         AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q ON a.question_no = q.no;`;
 
       const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
-      const AllQAndA = await conn.query(qAndAQuery, clubNum);
-      const qAndA = {};
-      qAndA.id = AllQAndA[0].student_id;
+      const QAndAResult = await conn.query(qAndAQuery, clubNum);
 
-      for (let i = 0; i < AllQAndA.length; i += 1) {
-        qAndA[AllQAndA[i].question] = AllQAndA[i].answer;
+      const AllQAndA = [];
+      for (let i = 0; i < QAndAResult.length; i += 1) {
+        const qAndA = {};
+        qAndA.id = QAndAResult[i].studentId;
+
+        for (let j = 0; j < QAndAResult.length; j += 1) {
+          qAndA[QAndAResult[j].question] = QAndAResult[j].answer;
+        }
+        AllQAndA.push(qAndA);
       }
+      const qAndAs = [...new Set(AllQAndA.map(JSON.stringify))].map(JSON.parse);
 
       return {
         success: true,
         applicantInfo,
-        qAndA,
+        qAndAs,
       };
     } catch (err) {
       throw err;

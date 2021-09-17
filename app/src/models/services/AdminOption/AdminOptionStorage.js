@@ -28,7 +28,7 @@ class adminoOptionStroage {
       const memberAndAuthQuery = `SELECT s.name, s.id, m.join_admin_flag AS joinAdminFlag, m.board_admin_flag AS boarAdminFlag 
         FROM members AS m JOIN students AS s ON s.id = m.student_id AND m.club_no = ?;`;
       const leaderQuery =
-        'select students.name from students JOIN clubs ON clubs.leader = students.name AND clubs.no = ?;';
+        'select students.name from students JOIN clubs ON clubs.leader = students.id AND clubs.no = ?;';
 
       const memberAndAuthList = await conn.query(memberAndAuthQuery, clubNum);
       const leader = await conn.query(leaderQuery, clubNum);

@@ -34,16 +34,22 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      return res.status(400).json(response.clientMsg);
+      return res.status(500).json(response.clientMsg);
     }
-    return res.status(500).json(response);
+    return res.status(400).json(response);
   },
 
   updateLeaderById: async (req, res) => {
     const adminOption = new AdminOption(req);
     const response = await adminOption.updateLeaderById();
 
-    return res.status(200).json(response);
+    if (response.success) {
+      return res.status(201).json(response);
+    }
+    if (response.isError) {
+      return res.status(500).json(response.clientMsg);
+    }
+    return res.status(400).json(response);
   },
 
   updateAdminOptionById: async (req, res) => {
@@ -51,7 +57,7 @@ const process = {
     const response = await adminOption.updateAdminOptionById();
 
     if (response.success) {
-      return res.status(200).json(response);
+      return res.status(201).json(response);
     }
     if (response.isError) {
       return res.status(500).json(response.clientMsg);
@@ -77,7 +83,7 @@ const process = {
     const response = await application.updateApplicantById();
 
     if (response.success) {
-      return res.status(201).json(response);
+      return res.status(200).json(response);
     }
     if (response.isError) {
       return res.status(500).json(response.clientMsg);
