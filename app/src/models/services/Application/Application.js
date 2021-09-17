@@ -24,12 +24,12 @@ class Application {
       if (result.success) {
         return {
           success: true,
-          clientMajor: result.clientMajor[0].major,
+          clientInfo: result.clientInfo,
           leader: result.clubLeader[0].leader,
           questions: result.questions,
         };
       }
-      return { success: false };
+      return false;
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
