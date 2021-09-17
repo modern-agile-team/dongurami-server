@@ -24,9 +24,9 @@ class ScheduleStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      const query = `SELECT no, color_code AS colrCode, title, start_date AS startDate, end_date AS endDate, period, important 
+      const query = `SELECT no, color_code AS colrCode, title, start_date AS startDate, end_date AS endDate, important 
       FROM schedules
-      WHERE LEFT(start_date, 7) = LEFT(NOW(), 7) AND club_no = ?
+      WHERE LEFT(start_date, 7) = LEFT(NOW(), 7) AND LEFT(end_date, 7) = LEFT(NOW(), 7) AND club_no = ?
       ORDER BY start_date;`;
 
       const result = await conn.query(query, clubNum);
@@ -43,7 +43,7 @@ class ScheduleStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      const query = `SELECT no, color_code AS colorCode, title, start_date AS startDate, end_date AS endDate, period, important 
+      const query = `SELECT no, color_code AS colorCode, title, start_date AS startDate, end_date AS endDate, important 
       FROM schedules 
       WHERE club_no = ? AND LEFT(start_date, 7) = ?
       ORDER BY start_date;`;
@@ -65,7 +65,7 @@ class ScheduleStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      const query = `INSERT INTO schedules (club_no, student_id, color_code, title, start_date, end_date, period)
+      const query = `INSERT INTO schedules (club_no, student_id, color_code, title, start_date, end_date)
       VALUE (?, ?, ?, ?, ?, ?, ?);`;
 
       await conn.query(query, [
@@ -75,7 +75,6 @@ class ScheduleStorage {
         scheduleInfo.title,
         scheduleInfo.startDate,
         scheduleInfo.endDate,
-        scheduleInfo.period,
       ]);
 
       return;
@@ -90,14 +89,13 @@ class ScheduleStorage {
     const conn = await mariadb.getConnection();
 
     try {
-      const query = `UPDATE schedules SET color_code = ?, title = ?, start_date = ?, end_date = ?, period = ? WHERE no = ?;`;
+      const query = `UPDATE schedules SET color_code = ?, title = ?, start_date = ?, end_date = ? WHERE no = ?;`;
 
       await conn.query(query, [
         scheduleInfo.colorCode,
         scheduleInfo.title,
         scheduleInfo.startDate,
         scheduleInfo.endDate,
-        scheduleInfo.period,
         scheduleInfo.no,
       ]);
 
