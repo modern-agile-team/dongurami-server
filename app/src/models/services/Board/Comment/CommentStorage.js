@@ -174,7 +174,7 @@ class CommentStorage {
     }
   }
 
-  static async existOnlycmtNum(cmtNum, boardNum) {
+  static async existOnlyCmtNum(cmtNum, boardNum) {
     let conn;
 
     try {

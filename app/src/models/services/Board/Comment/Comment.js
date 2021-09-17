@@ -40,7 +40,7 @@ class Comment {
         id: this.body.id,
         description: this.body.description,
       };
-      const exist = await CommentStorage.existOnlycmtNum(
+      const exist = await CommentStorage.existOnlyCmtNum(
         replyCommentInfo.cmtNum,
         replyCommentInfo.boardNum
       );
