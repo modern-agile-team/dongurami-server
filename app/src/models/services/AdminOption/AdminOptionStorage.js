@@ -78,14 +78,14 @@ class adminoOptionStroage {
     }
   }
 
-  static async updateLeaderAdminOptionByClubNum(leaderInfo) {
+  static async updateLeaderAdminOptionById(leaderInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
       const query =
-        'UPDATE members SET join_admin_flag = ?, board_admin_flag = ? WHERE club_no = ? AND student_id = ?';
+        'UPDATE members SET join_admin_flag = ?, board_admin_flag = ? WHERE club_no = ? AND student_id = ?;';
 
       await conn.query(query, [1, 1, leaderInfo.clubNum, leaderInfo.newLeader]);
 
@@ -106,10 +106,11 @@ class adminoOptionStroage {
 
       adminInfo.adminOption.forEach((option) => {
         query += `UPDATE members SET join_admin_flag = "${option.joinAdminFlag}", board_admin_flag = "${option.boardAdminFlag}"
-          WHERE student_id = "${option.studentId}" AND club_no = "${adminInfo.clubNum}";`;
+          WHERE student_id = "${option.id}" AND club_no = "${adminInfo.clubNum}";`;
       });
 
       await conn.query(`${query}`);
+
       return true;
     } catch (err) {
       throw err;

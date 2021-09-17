@@ -95,6 +95,7 @@ class Application {
     }
   }
 
+  // 동아리 가입 신청 승인.
   async createMemberById() {
     const { clubNum } = this.params;
     const { id } = this.body;
@@ -104,7 +105,10 @@ class Application {
         clubNum,
         id,
       };
-      const isUpdate = await ApplicationStorage.updateApplicantByid(userInfo);
+
+      const isUpdate = await ApplicationStorage.updateApprovedApplicantById(
+        userInfo
+      );
 
       if (isUpdate) {
         const isCreate = await ApplicationStorage.createMemberById(userInfo);
@@ -120,6 +124,32 @@ class Application {
       return {
         success: false,
         msg: '이미 가입되었거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  // 동아리 가입 신청 거절.
+  async updateApplicantById() {
+    const { clubNum } = this.params;
+    const { id } = this.body;
+
+    try {
+      const userInfo = {
+        clubNum,
+        id,
+      };
+      const isUpdate = await ApplicationStorage.updateRejectedApplicantById(
+        userInfo
+      );
+
+      if (isUpdate) {
+        return { success: true, msg: '동아리 가입 신청을 거절하셨습니다.' };
+      }
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);

@@ -28,13 +28,13 @@ router.put(
 );
 // 가입신청 승인
 router.post(
-  '/:clubNum/accepted-applicant/',
+  '/:clubNum/accepted-applicant',
   loginAuth.loginCheck,
   ctrl.process.createMemberById
 );
 // 가입신청 거절
 router.put(
-  '/:clubNum/applicant/',
+  '/:clubNum/rejected-applicant',
   loginAuth.loginCheck,
   ctrl.process.updateApplicantById
 );

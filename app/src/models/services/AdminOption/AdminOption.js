@@ -35,6 +35,7 @@ class AdminOption {
     }
   }
 
+  // 모든 동아리원과 회장.
   async findOneByClubNum() {
     const { clubNum } = this.params;
 
@@ -54,6 +55,7 @@ class AdminOption {
     }
   }
 
+  // 회장 양도.
   async updateLeaderById() {
     const payload = this.auth;
     const { clubNum } = this.params;
@@ -67,14 +69,13 @@ class AdminOption {
           clubNum,
           newLeader,
         };
-        const changeLeaderRes =
+        const isChangeLeader =
           await AdminOptionStorage.updateNewLeaderByClubNum(leaderInfo);
 
-        if (changeLeaderRes) {
-          const isUpdate =
-            await AdminOptionStorage.updateLeaderAdminOptionByClubNum(
-              leaderInfo
-            );
+        if (isChangeLeader) {
+          const isUpdate = await AdminOptionStorage.updateLeaderAdminOptionById(
+            leaderInfo
+          );
 
           if (isUpdate) {
             return { success: true, msg: '회장이 양도되었습니다.' };
@@ -94,6 +95,7 @@ class AdminOption {
     }
   }
 
+  // 관리자 권한 변경.
   async updateAdminOptionById() {
     const payload = this.auth;
     const { clubNum } = this.params;

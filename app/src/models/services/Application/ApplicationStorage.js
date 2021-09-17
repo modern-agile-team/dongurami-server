@@ -37,7 +37,6 @@ class ApplicationStorage {
         'INSERT INTO questions (club_no, description) VALUE (?, ?);';
 
       await conn.query(query, [questionInfo.clubNum, questionInfo.description]);
-
       return true;
     } catch (err) {
       throw err;
@@ -89,21 +88,17 @@ class ApplicationStorage {
         FROM students AS s JOIN applicants AS app ON app.club_no = ?
         AND app.student_id = s.id AND app.reading_flag = 0;`;
 
-      const questionAndAnswerQuery = `SELECT app.student_id, q.description AS question, a.description AS answer 
+      const qAndAQuery = `SELECT app.student_id, q.description AS question, a.description AS answer 
         FROM answers AS a JOIN applicants AS app ON a.student_id = app.student_id 
         AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q ON a.question_no = q.no;`;
 
       const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
-      const AllquestionAndAnswer = await conn.query(
-        questionAndAnswerQuery,
-        clubNum
-      );
-      const questionAndAnswer = {};
-      questionAndAnswer.id = AllquestionAndAnswer[0].student_id;
+      const AllQAndA = await conn.query(qAndAQuery, clubNum);
+      const qAndA = {};
+      qAndA.id = AllQAndA[0].student_id;
 
-      for (let i = 0; i < AllquestionAndAnswer.length; i += 1) {
-        questionAndAnswer[AllquestionAndAnswer[i].question] =
-          AllquestionAndAnswer[i].answer;
+      for (let i = 0; i < AllQAndA.length; i += 1) {
+        qAndA[AllQAndA[i].question] = AllQAndA[i].answer;
       }
 
       return {
@@ -118,15 +113,16 @@ class ApplicationStorage {
     }
   }
 
-  static async updateApplicantByid(userInfo) {
+  static async updateApprovedApplicantById(userInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
 
       const query =
-        'UPDATE applicants SET reading_flag = 1 WHERE club_no = ? , student_id = ?;';
+        'UPDATE applicants SET reading_flag = 1 WHERE club_no = ? AND student_id = ?;';
 
       await conn.query(query, [userInfo.clubNum, userInfo.id]);
+
       return true;
     } catch (err) {
       throw err;
@@ -143,7 +139,26 @@ class ApplicationStorage {
       const query =
         'INSERT INTO members (student_id, club_no, join_admin_flag, board_admin_flag) VALUES (?, ?, 0, 0);';
 
+      await conn.query(query, [userInfo.id, userInfo.clubNum]);
+
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateRejectedApplicantById(userInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'UPDATE applicants SET reading_flag = 2 WHERE club_no = ? AND student_id = ?;';
+
       await conn.query(query, [userInfo.clubNum, userInfo.id]);
+
       return true;
     } catch (err) {
       throw err;
