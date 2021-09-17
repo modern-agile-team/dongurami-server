@@ -10,6 +10,7 @@ const mariadb = db.createPool({
   dateStrings: 'date',
   port: 3307,
   connectionLimit: 5,
+  multipleStatements: true,
 });
 
 module.exports = mariadb;
