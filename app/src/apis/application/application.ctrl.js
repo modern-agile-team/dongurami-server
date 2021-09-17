@@ -42,7 +42,7 @@ const process = {
     if (response.success) {
       return res
         .status(200)
-        .json({ success, msg: '질문 수정에 성공하셨습니다.' });
+        .json({ success: true, msg: '질문 수정에 성공하셨습니다.' });
     }
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
@@ -59,7 +59,7 @@ const process = {
     if (response.success) {
       return res
         .status(200)
-        .json({ success, msg: '질문 삭제에 성공하셨습니다.' });
+        .json({ success: true, msg: '질문 삭제에 성공하셨습니다.' });
     }
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
@@ -79,7 +79,7 @@ const process = {
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res.status(400).json({ response }); // 캐치 에러 x DB등록 X
+    return res.status(400).json(response); // 캐치 에러 x DB등록 X
   },
 };
 

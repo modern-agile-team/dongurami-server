@@ -29,7 +29,7 @@ class Application {
           questions: result.questions,
         };
       }
-      return false;
+      return { success: false };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -77,7 +77,7 @@ class Application {
     try {
       const success = await ApplicationStorage.deleteQuestion(no);
 
-      if (success) return { success: true };
+      if (success === 1) return { success: true };
       return { success: false };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
