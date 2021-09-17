@@ -128,7 +128,7 @@ class Application {
 
       if (result === 1)
         return { success: true, msg: '가입 신청이 완료 되었습니다.' };
-      return { success: false, msg: '가입 신청에 실패하였습니다.' };
+      return { success: false, msg: '가입 신청이 완료되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
