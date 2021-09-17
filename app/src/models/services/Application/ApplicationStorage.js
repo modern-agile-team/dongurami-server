@@ -37,10 +37,12 @@ class ApplicationStorage {
       conn = await mariadb.getConnection();
       const query =
         'INSERT INTO questions (club_no, description) VALUE (?, ?);';
+      const question = await conn.query(query, [
+        questionInfo.clubNum,
+        questionInfo.description,
+      ]);
 
-      await conn.query(query, [questionInfo.clubNum, questionInfo.description]);
-
-      return;
+      return question.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -54,10 +56,12 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
       const query = 'UPDATE questions SET description = ? WHERE no = ?;';
+      const question = await conn.query(query, [
+        questionInfo.description,
+        questionInfo.no,
+      ]);
 
-      await conn.query(query, [questionInfo.description, questionInfo.no]);
-
-      return;
+      return question.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -72,9 +76,9 @@ class ApplicationStorage {
       conn = await mariadb.getConnection();
       const query = 'DELETE FROM questions WHERE no = ?;';
 
-      await conn.query(query, no);
+      const question = await conn.query(query, no);
 
-      return;
+      return question.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -82,7 +86,28 @@ class ApplicationStorage {
     }
   }
 
-  static async createAnswer(answerInfo) {
+  static async findMember(applicantInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+      const member = `SELECT student_id AS studentId FROM members WHERE club_no = ? AND student_id =?;`;
+      const isMember = await conn.query(member, [
+        applicantInfo.clubNum,
+        applicantInfo.id,
+      ]);
+
+      // 이미 가입되었는지 판별
+      if (isMember[0] === undefined) return true;
+      return false;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async createBasicAnswer(answerInfo) {
     let conn;
 
     try {
@@ -95,26 +120,31 @@ class ApplicationStorage {
         answerInfo.id,
       ]);
 
-      if (basic.affectedRows === 1) {
-        // 추가 질문이 있을시 -> 없을시엔 answers table에 row 추가 x, applicants table row 추가 o
-        if (answerInfo.extra.length !== 0) {
-          let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
+      return basic.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 
-          answerInfo.extra.forEach((x, idx) => {
-            if (idx === 0)
-              answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-            else
-              answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-          });
-          answer += ';';
+  static async createExtraAnser(answerInfo) {
+    let conn;
 
-          const extra = await conn.query(`${answer}`);
+    try {
+      conn = await mariadb.getConnection();
+      let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
 
-          if (extra.affectedRows === answerInfo.extra.length) return true;
-          return false;
-        }
-        return true;
-      }
+      answerInfo.extra.forEach((x, idx) => {
+        if (idx === 0)
+          answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+        else answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+      });
+      answer += ';';
+
+      const extra = await conn.query(`${answer}`);
+
+      if (extra.affectedRows === answerInfo.extra.length) return true;
       return false;
     } catch (err) {
       throw err;

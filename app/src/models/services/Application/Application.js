@@ -29,7 +29,7 @@ class Application {
           questions: result.questions,
         };
       }
-      return { success: false, msg: '존재하지 않는 동아리입니다.' };
+      return { success: false };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -44,10 +44,10 @@ class Application {
         clubNum,
         description,
       };
+      const success = await ApplicationStorage.createQuestion(questionInfo);
 
-      await ApplicationStorage.createQuestion(questionInfo);
-
-      return { success: true };
+      if (success) return { success: true };
+      return { success: false };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -62,9 +62,10 @@ class Application {
         no,
         description: data.description,
       };
-      await ApplicationStorage.updateQuestion(questionInfo);
+      const success = await ApplicationStorage.updateQuestion(questionInfo);
 
-      return { success: true };
+      if (success) return { success: true };
+      return { success: false };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -74,9 +75,10 @@ class Application {
     const { no } = this.params;
 
     try {
-      await ApplicationStorage.deleteQuestion(no);
+      const success = await ApplicationStorage.deleteQuestion(no);
 
-      return { success: true };
+      if (success) return { success: true };
+      return { success: false };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -88,6 +90,17 @@ class Application {
     const answer = this.body;
 
     try {
+      const applicantInfo = {
+        clubNum,
+        id: auth.id,
+      };
+      const isMember = await ApplicationStorage.findMember(applicantInfo);
+
+      // 멤버 o
+      if (isMember === false)
+        return { success: false, msg: '가입된 동아리입니다.' };
+
+      // 멤버 x
       const answerInfo = {
         id: auth.id,
         name: auth.name,
@@ -96,19 +109,26 @@ class Application {
         phoneNum: answer.basic.phoneNum,
         extra: answer.extra,
       };
-      const success = await ApplicationStorage.createAnswer(answerInfo);
+      const isBasic = await ApplicationStorage.createBasicAnswer(answerInfo);
 
-      if (success) {
-        const applicantInfo = {
-          clubNum,
-          id: auth.id,
-        };
-        const result = await ApplicationStorage.createApplicant(applicantInfo);
+      // 필수 질문 추가 완 x
+      if (isBasic === 0)
+        return { success: true, msg: '필수 질문이 작성되지않았습니다.' };
 
-        if (result === 1)
-          return { success: true, msg: '가입 신청서가 작성되었습니다.' };
+      // 필수 질문 추가 완 / 추가 질문 여부
+      if (answerInfo.extra.length !== 0) {
+        // 추가 질문이 있을 시
+        const isExtra = await ApplicationStorage.createExtraAnser(answerInfo);
+
+        if (isExtra === false)
+          return { success: false, msg: '추가 질문이 작성되지 않았습니다.' };
       }
-      return { success: false };
+      // 질문 추가 완 => 동아리 지원자 테이블 추가
+      const result = await ApplicationStorage.createApplicant(applicantInfo);
+
+      if (result === 1)
+        return { success: true, msg: '가입 신청이 완료 되었습니다.' };
+      return { success: false, msg: '가입 신청에 실패하였습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
