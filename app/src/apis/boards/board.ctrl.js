@@ -13,7 +13,7 @@ const process = {
     if (response.success) {
       response.imgNums = await image.saveBoardImg(response.boardNum);
       if (response.imgNums.isError) {
-        return res.status(500).json(response.images.clientMsg);
+        return res.status(500).json(response.imgNums.clientMsg);
       }
       return res.status(201).json(response);
     }
@@ -30,6 +30,14 @@ const process = {
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
     return res.status(404).json(response);
+  },
+
+  findAllByPromotionCategory: async (req, res) => {
+    const board = new Board(req);
+    const response = await board.findAllByPromotionCategory();
+
+    if (response.success) return res.status(200).json(response);
+    return res.status(500).json(response.clientMsg);
   },
 
   findOneByBoardNum: async (req, res) => {
@@ -53,7 +61,7 @@ const process = {
         return res.status(500).json(updateBoardHit.clientMsg);
       }
       if (response.success) {
-        response.board[0].hit += 1;
+        response.board.hit += 1;
         return res.status(200).json(response);
       }
     }
@@ -61,26 +69,22 @@ const process = {
     return res.status(404).json(response);
   },
 
-  updateOneByNum: async (req, res) => {
+  updateOneByBoardNum: async (req, res) => {
     const board = new Board(req);
-    const response = await board.updateOneByNum();
+    const response = await board.updateOneByBoardNum();
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
-    return res
-      .status(400)
-      .json('알 수 없는 에러입니니다. 서버 개발자에게 얘기해주세요.');
+    return res.status(400).json(response);
   },
 
-  deleteOneByNum: async (req, res) => {
+  deleteOneByBoardNum: async (req, res) => {
     const board = new Board(req);
-    const response = await board.deleteOneByNum();
+    const response = await board.deleteOneByBoardNum();
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
-    return res
-      .status(400)
-      .json('알 수 없는 에러입니니다. 서버 개발자에게 얘기해주세요.');
+    return res.status(400).json(response);
   },
 };
 

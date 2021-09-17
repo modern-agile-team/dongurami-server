@@ -13,6 +13,8 @@ class Image {
     const { images } = this.body;
     const imgInfo = [];
 
+    if (images === undefined || images.length === 0) return [];
+
     try {
       for (const image of images) {
         imgInfo.push([boardNum, image.path, image.name]);
@@ -27,7 +29,7 @@ class Image {
   }
 
   async findAllByBoardImg() {
-    const boardNum = this.params.num;
+    const { boardNum } = this.params;
 
     try {
       const imgInfo = await ImageStorage.findAllByBoardImg(boardNum);
