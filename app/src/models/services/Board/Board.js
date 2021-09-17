@@ -44,7 +44,7 @@ class Board {
     if (criteriaRead.category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
     }
-    if (criteriaRead.category > 4) {
+    if (criteriaRead.category > 3) {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
     }
 
