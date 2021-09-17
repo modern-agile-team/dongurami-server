@@ -202,13 +202,10 @@ class Student {
         return { isExist: false, msg: '가입된 이메일이 아닙니다.' };
       }
 
-      if (checkedId.id !== checkedEmail.id) {
-        return {
-          isExist: false,
-          msg: '아이디 또는 이메일이 일치하지 않습니다.',
-        };
-      }
-      if (checkedId.email !== checkedEmail.email) {
+      if (
+        checkedId.id !== checkedEmail.id ||
+        checkedId.email !== checkedEmail.email
+      ) {
         return {
           isExist: false,
           msg: '아이디 또는 이메일이 일치하지 않습니다.',
