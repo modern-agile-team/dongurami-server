@@ -80,11 +80,11 @@ class Application {
     const { clubNum } = this.params;
 
     try {
-      const { success, applicantInfo, questionAndAnswer } =
+      const { success, applicantInfo, qAndA } =
         await ApplicationStorage.findOneByClubNum(clubNum);
 
       if (success) {
-        return { success: true, applicantInfo, questionAndAnswer };
+        return { success: true, applicantInfo, qAndA };
       }
       return {
         success: false,

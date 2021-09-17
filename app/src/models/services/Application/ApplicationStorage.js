@@ -103,8 +103,8 @@ class ApplicationStorage {
 
       return {
         success: true,
-        applicantInfo: applicantInfo[0],
-        questionAndAnswer,
+        applicantInfo,
+        qAndA,
       };
     } catch (err) {
       throw err;
