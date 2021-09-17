@@ -2,11 +2,9 @@
 
 const bcrypt = require('bcrypt');
 
-// const crypto = require('crypto');
 const StudentStorage = require('./StudentStorage');
 const Error = require('../../utils/Error');
 const Auth = require('../Auth/Auth');
-const Mail = require('../Mail/Mail');
 
 class Student {
   constructor(req) {
@@ -190,53 +188,7 @@ class Student {
     }
   }
 
-  // async findPassword() {
-  //   const client = this.body;
-  // const checkSendMail = await Mail.mail();
-  // console.log(client);
-  // try {
-  //   if (checkedIdAndEmail.client) {
-  //     const saltRounds = 10;
-  //     const passwordSalt = bcrypt.genSaltSync(saltRounds);
-  //     const hash = bcrypt.hashSync(client.password, passwordSalt);
-  //     const clientInfo = {
-  //       id: client.id,
-  //       hash,
-  //       passwordSalt,
-  //     };
-  //     const response = await StudentStorage.modifyPasswordSave(clientInfo);
-
-  //     if (response) {
-  //       return { success: true, msg: '저장 잘됨' };
-  //     }
-  //   }
-  //   return checkedIdAndEmail;
-  // } catch (err) {
-  //   return Error.ctrl(
-  //     '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-  //     err
-  //   );
-  // }
-  // }
-
-  async sendEmail() {
-    const client = this.body;
-    const checkedInfoByEmail = await this.checkIdAndEmailByFind();
-    const mailInfo = {
-      mail: client.email,
-      name: checkedInfoByEmail.name,
-      id: checkedInfoByEmail.id,
-    };
-    const mail = await Mail.mail(mailInfo);
-
-    if (!mail) {
-      return { success: false, msg: '메일 발송을 실패하였습니다.' };
-    }
-
-    return { success: true, msg: '성공적으로 메일을 발송했습니다.' };
-  }
-
-  async checkIdAndEmailByFind() {
+  async isExistIdAndEmail() {
     const client = this.body;
 
     try {
@@ -244,26 +196,29 @@ class Student {
       const checkedEmail = await StudentStorage.findOneByEmail(client.email);
 
       if (checkedId === undefined) {
-        return { success: false, msg: '가입된 아이디가 아닙니다.' };
+        return { isExist: false, msg: '가입된 아이디가 아닙니다.' };
       }
-
       if (checkedEmail === undefined) {
-        return { success: false, msg: '가입된 이메일이 아닙니다.' };
+        return { isExist: false, msg: '가입된 이메일이 아닙니다.' };
       }
 
       if (checkedId.id !== checkedEmail.id) {
-        return { success: false, msg: '아이디 또는 이메일이 틀립니다.' };
+        return {
+          isExist: false,
+          msg: '아이디 또는 이메일이 일치하지 않습니다.',
+        };
       }
-
       if (checkedId.email !== checkedEmail.email) {
-        return { success: false, msg: '아이디 또는 이메일이 틀립니다.' };
+        return {
+          isExist: false,
+          msg: '아이디 또는 이메일이 일치하지 않습니다.',
+        };
       }
-
       return {
-        success: true,
+        isExist: true,
         msg: '일치',
-        name: checkedId.name,
         id: checkedId.id,
+        name: checkedId.name,
       };
     } catch (err) {
       return Error.ctrl(
