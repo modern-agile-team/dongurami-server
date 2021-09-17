@@ -1,6 +1,7 @@
 'use strict';
 
 const CommentStorage = require('./CommentStorage');
+const BoardStorage = require('../BoardStorage');
 const Error = require('../../../utils/Error');
 
 class Comment {
@@ -16,10 +17,40 @@ class Comment {
         id: this.body.id,
         description: this.body.description,
       };
+      const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
+
+      if (exist === undefined) {
+        return { success: false, msg: '해당 게시글이 존재하지 않습니다.' };
+      }
+
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
       return { success: true, msg: '댓글 생성 성공' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async createReplyCommentNum() {
+    try {
+      const replyCommentInfo = {
+        boardNum: this.params.boardNum,
+        cmtNum: this.params.cmtNum,
+        id: this.body.id,
+        description: this.body.description,
+      };
+      const exist = await CommentStorage.existOnlyCmtNum(
+        replyCommentInfo.cmtNum,
+        replyCommentInfo.boardNum
+      );
+
+      if (exist === undefined) {
+        return { success: false, msg: '해당 게시글이나 댓글이 없습니다.' };
+      }
+      await CommentStorage.createReplyCommentNum(replyCommentInfo);
+
+      return { success: true, msg: '답글 생성 성공' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -54,6 +85,27 @@ class Comment {
     }
   }
 
+  async updateByReplyCommentNum() {
+    try {
+      const replyCmtInfo = {
+        boardNum: this.params.boardNum,
+        cmtNum: this.params.cmtNum,
+        replyCmtNum: this.params.replyCmtNum,
+        description: this.body.description,
+      };
+      const updateReplyCmtCount = await CommentStorage.updateByReplyCommentNum(
+        replyCmtInfo
+      );
+
+      if (updateReplyCmtCount === 0) {
+        return { success: false, msg: '존재하지 않는 답글입니다.' };
+      }
+      return { success: true, msg: '답글 수정 성공' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
   async deleteAllByGroupNum() {
     try {
       const cmtInfo = {
@@ -68,6 +120,26 @@ class Comment {
       return { success: true, msg: '댓글 삭제 성공' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async deleteOneReplyCommentNum() {
+    try {
+      const replyCmtInfo = {
+        boardNum: this.params.boardNum,
+        cmtNum: this.params.cmtNum,
+        replyCmtNum: this.params.replyCmtNum,
+      };
+      const deleteReplyCmtCount = await CommentStorage.deleteOneReplyCommentNum(
+        replyCmtInfo
+      );
+
+      if (deleteReplyCmtCount === 0) {
+        return { success: false, msg: '존재하지 않는 답글입니다.' };
+      }
+      return { success: true, msg: '답글 삭제 성공' };
+    } catch (err) {
+      return Error.ctrl('서버에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
   }
 }
