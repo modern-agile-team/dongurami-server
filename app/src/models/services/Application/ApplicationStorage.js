@@ -93,24 +93,27 @@ class ApplicationStorage {
         AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q ON a.question_no = q.no;`;
 
       const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
-      const QAndAResult = await conn.query(qAndAQuery, clubNum);
+      const qAndAResult = await conn.query(qAndAQuery, clubNum);
 
       const AllQAndA = [];
-      for (let i = 0; i < QAndAResult.length; i += 1) {
+
+      for (let i = 0; i < qAndAResult.length; i += 1) {
         const qAndA = {};
-        qAndA.id = QAndAResult[i].studentId;
+        qAndA.id = qAndAResult[i].studentId;
 
-        for (let j = 0; j < QAndAResult.length; j += 1) {
-          qAndA[QAndAResult[j].question] = QAndAResult[j].answer;
+        for (let j = 0; j < qAndAResult.length; j += 1) {
+          if (qAndA.id !== qAndAResult[j].studentId) continue;
+          qAndA[qAndAResult[j].question] = qAndAResult[j].answer;
         }
-        AllQAndA.push(qAndA);
+        if (AllQAndA.find((qAndAs) => qAndAs.id === qAndA.id) === undefined) {
+          AllQAndA.push(qAndA);
+        }
+        continue;
       }
-      const qAndAs = [...new Set(AllQAndA.map(JSON.stringify))].map(JSON.parse);
-
       return {
         success: true,
         applicantInfo,
-        qAndAs,
+        AllQAndA,
       };
     } catch (err) {
       throw err;
