@@ -60,7 +60,7 @@ class Board {
   async findAllByPromotionCategory() {
     try {
       const criteriaRead = {
-        category: this.params.category,
+        clubCategory: this.params.clubCategory,
         sort: this.params.sort,
         order: this.params.order.toUpperCase(),
       };

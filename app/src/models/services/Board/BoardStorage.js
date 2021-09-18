@@ -66,7 +66,7 @@ class BoardStorage {
       conn = await mariadb.getConnection();
       let whole = '';
 
-      if (criteriaRead.category !== 'whole') {
+      if (criteriaRead.clubCategory !== 'whole') {
         whole = ` AND clubs.category = ?`;
       }
 
@@ -83,7 +83,7 @@ class BoardStorage {
       ORDER BY ? ?;`;
 
       const boardList = conn.query(query, [
-        criteriaRead.category,
+        criteriaRead.clubCategory,
         criteriaRead.sort,
         criteriaRead.order,
       ]);
