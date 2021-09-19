@@ -18,6 +18,6 @@ router.patch(
   ctrl.process.resetPassword
 );
 router.post('/forgot-password', ctrl.process.sendEmailForPassword);
-router.patch('/find-password', ctrl.process.findPassword);
+router.patch('/find-password/:token', ctrl.process.findPassword);
 
 module.exports = router;
