@@ -68,9 +68,13 @@ class adminoOptionStroage {
 
       const query = 'UPDATE clubs SET leader = ? WHERE no = ?;';
 
-      await conn.query(query, [leaderInfo.newLeader, leaderInfo.clubNum]);
+      const updateLeader = await conn.query(query, [
+        leaderInfo.newLeader,
+        leaderInfo.clubNum,
+      ]);
 
-      return true;
+      if (updateLeader.affectedRows === 1) return true;
+      return false;
     } catch (err) {
       throw err;
     } finally {
@@ -105,11 +109,16 @@ class adminoOptionStroage {
       let query = '';
 
       adminInfo.adminOption.forEach((option) => {
-        query += `UPDATE members SET join_admin_flag = "${option.joinAdminFlag}", board_admin_flag = "${option.boardAdminFlag}"
+        query += `UPDATE members SET join_admin_flag = "${option.joinAdmin}", board_admin_flag = "${option.boardAdmin}"
           WHERE student_id = "${option.id}" AND club_no = "${adminInfo.clubNum}";`;
       });
 
-      await conn.query(`${query}`);
+      const updateAdminOption = await conn.query(`${query}`);
+
+      for (let i = 0; i < updateAdminOption.length; i += 1) {
+        if (!updateAdminOption[i].affectedRows) return false;
+        continue;
+      }
 
       return true;
     } catch (err) {

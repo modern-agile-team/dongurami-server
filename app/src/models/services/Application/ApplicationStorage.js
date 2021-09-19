@@ -130,9 +130,13 @@ class ApplicationStorage {
       const query =
         'UPDATE applicants SET reading_flag = 1 WHERE club_no = ? AND student_id = ?;';
 
-      await conn.query(query, [userInfo.clubNum, userInfo.id]);
+      const ApprovedApplicant = await conn.query(query, [
+        userInfo.clubNum,
+        userInfo.id,
+      ]);
 
-      return true;
+      if (ApprovedApplicant.affectedRows) return true;
+      return false;
     } catch (err) {
       throw err;
     } finally {
@@ -148,9 +152,13 @@ class ApplicationStorage {
       const query =
         'INSERT INTO members (student_id, club_no, join_admin_flag, board_admin_flag) VALUES (?, ?, 0, 0);';
 
-      await conn.query(query, [userInfo.id, userInfo.clubNum]);
+      const updateMember = await conn.query(query, [
+        userInfo.id,
+        userInfo.clubNum,
+      ]);
 
-      return true;
+      if (updateMember.affectedRows) return true;
+      return false;
     } catch (err) {
       throw err;
     } finally {
@@ -166,9 +174,12 @@ class ApplicationStorage {
       const query =
         'UPDATE applicants SET reading_flag = 2 WHERE club_no = ? AND student_id = ?;';
 
-      await conn.query(query, [userInfo.clubNum, userInfo.id]);
-
-      return true;
+      const updateRejectedApplicant = await conn.query(query, [
+        userInfo.clubNum,
+        userInfo.id,
+      ]);
+      if (updateRejectedApplicant.affectedRows) return true;
+      return false;
     } catch (err) {
       throw err;
     } finally {
