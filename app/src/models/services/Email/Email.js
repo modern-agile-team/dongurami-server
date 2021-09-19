@@ -2,7 +2,7 @@
 
 const nodemailer = require('nodemailer');
 const Student = require('../Student/Student');
-const Auth = require('../Auth/EmailAuth/Auth');
+const Auth = require('../Auth/EmailAuth/EmailAuth');
 const Error = require('../../utils/Error');
 const mailConfig = require('../../../config/mail');
 
