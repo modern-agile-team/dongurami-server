@@ -12,6 +12,7 @@ class Student {
   constructor(req) {
     this.body = req.body;
     this.auth = req.auth;
+    this.params = req.params;
   }
 
   async login() {
@@ -229,9 +230,15 @@ class Student {
 
   async findPassword() {
     const client = this.body;
+    const { params } = this;
 
     try {
       // 토큰 검증
+      const token = await EmailAuthStorage.findOneByStudentId(client.id);
+      if (params.token !== token) {
+        return { success: false, msg: '유효한 토큰이 아닙니다.' };
+      }
+
       const authInfo = await EmailAuth.useableToken(client.id);
       if (!authInfo.useable) return authInfo;
 
