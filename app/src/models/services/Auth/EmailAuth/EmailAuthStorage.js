@@ -18,7 +18,7 @@ class AuthStorage {
         `${student.id}:token`,
         `${student.token}`,
         'EX',
-        1200
+        600
       );
       return result;
     } catch (err) {
