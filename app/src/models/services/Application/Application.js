@@ -97,7 +97,7 @@ class Application {
       const isMember = await ApplicationStorage.findMember(applicantInfo);
 
       // 멤버 o
-      if (!isMember)
+      if (isMember !== undefined)
         return { success: false, msg: '이미 가입된 동아리입니다.' };
 
       // 멤버 x
