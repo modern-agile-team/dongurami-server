@@ -32,11 +32,11 @@ class Auth {
     }
   }
 
-  static async useableToken(id) {
+  static async useableToken(reqInfo) {
     try {
-      const auth = await EmailAuthStorage.findOneByStudentId(id);
+      const token = await EmailAuthStorage.findOneByStudentId(reqInfo.id);
 
-      if (auth) {
+      if (token === reqInfo.params.token) {
         return { useable: true };
       }
       return {
