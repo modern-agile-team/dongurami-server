@@ -68,13 +68,13 @@ class reviewStorage {
       conn = await mariadb.getConnection();
       const query =
         'UPDATE reviews SET description = ?, score = ? WHERE no = ?;';
-      await conn.query(query, [
+      const updateReview = await conn.query(query, [
         reviewInfo.description,
         reviewInfo.score,
         reviewInfo.num,
       ]);
-
-      return true;
+      if (updateReview.affectedRows) return true;
+      return false;
     } catch (err) {
       throw err;
     } finally {
@@ -87,9 +87,10 @@ class reviewStorage {
     try {
       conn = await mariadb.getConnection();
       const query = 'DELETE FROM reviews WHERE no = ?;';
-      await conn.query(query, [reviewNum]);
+      const deleteReview = await conn.query(query, [reviewNum]);
 
-      return true;
+      if (deleteReview.affectedRows) return true;
+      return false;
     } catch (err) {
       throw err;
     } finally {
