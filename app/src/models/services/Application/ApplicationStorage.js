@@ -97,9 +97,7 @@ class ApplicationStorage {
         applicantInfo.id,
       ]);
 
-      // 이미 가입되었는지 판별
-      if (isMember[0] === undefined) return true;
-      return false;
+      return isMember[0];
     } catch (err) {
       throw err;
     } finally {
@@ -136,16 +134,15 @@ class ApplicationStorage {
       let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
 
       answerInfo.extra.forEach((x, idx) => {
-        if (idx === 0)
-          answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-        else answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+        if (idx)
+          answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+        else answer += `("${x.no}", "${answerInfo.id}", "${x.description}")`;
       });
       answer += ';';
 
       const extra = await conn.query(`${answer}`);
 
-      if (extra.affectedRows === answerInfo.extra.length) return true;
-      return false;
+      return extra.affectedRows;
     } catch (err) {
       throw err;
     } finally {
