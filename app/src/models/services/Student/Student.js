@@ -234,13 +234,12 @@ class Student {
 
     try {
       // 토큰 검증
-      const token = await EmailAuthStorage.findOneByStudentId(client.id);
-      if (params.token !== token) {
-        return { success: false, msg: '유효한 토큰이 아닙니다.' };
-      }
-
-      const authInfo = await EmailAuth.useableToken(client.id);
-      if (!authInfo.useable) return authInfo;
+      const reqInfo = {
+        id: client.id,
+        params,
+      };
+      const checkedToken = await EmailAuth.useableToken(reqInfo);
+      if (!checkedToken.useable) return checkedToken;
 
       // 비밀번호 검증
       const checkedByChangePassword = await this.checkByChangePassword();
