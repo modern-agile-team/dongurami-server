@@ -109,7 +109,7 @@ class AdminOption {
           clubNum,
           adminOption: adminOption.adminOptions,
         };
-        const isUpdate = await AdminOptionStorage.createAdminOptionById(
+        const isUpdate = await AdminOptionStorage.updateAdminOptionById(
           adminInfo
         );
 

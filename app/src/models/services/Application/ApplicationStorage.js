@@ -97,7 +97,7 @@ class ApplicationStorage {
 
       const AllQAndA = [];
 
-      for (let i = 0; i < qAndAResult.length; i += 1) {
+      for (let i = 0; i < applicantInfo.length; i += 1) {
         const qAndA = {};
         qAndA.id = qAndAResult[i].studentId;
 
@@ -105,10 +105,7 @@ class ApplicationStorage {
           if (qAndA.id !== qAndAResult[j].studentId) continue;
           qAndA[qAndAResult[j].question] = qAndAResult[j].answer;
         }
-        if (AllQAndA.find((qAndAs) => qAndAs.id === qAndA.id) === undefined) {
-          AllQAndA.push(qAndA);
-        }
-        continue;
+        AllQAndA.push(qAndA);
       }
       return {
         success: true,

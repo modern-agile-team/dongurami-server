@@ -28,7 +28,7 @@ const process = {
       if (response.applicant.isError) {
         return res.status(500).json(response.applicant.clientMsg);
       }
-      if (!response.applicant) {
+      if (!response.applicant.success) {
         return res.status(400).json(response);
       }
       return res.status(200).json(response);
@@ -44,7 +44,7 @@ const process = {
     const response = await adminOption.updateLeaderById();
 
     if (response.success) {
-      return res.status(201).json(response);
+      return res.status(200).json(response);
     }
     if (response.isError) {
       return res.status(500).json(response.clientMsg);
