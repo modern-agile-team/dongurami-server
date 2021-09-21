@@ -2,7 +2,7 @@
 
 const mariadb = require('../../../config/mariadb');
 
-class AdminoOptionStroage {
+class AdminoOptionStorage {
   static async findOneById(adminInfo) {
     let conn;
     try {
@@ -135,4 +135,4 @@ class AdminoOptionStroage {
   }
 }
 
-module.exports = AdminoOptionStroage;
+module.exports = AdminoOptionStorage;

@@ -95,8 +95,8 @@ class ApplicationStorage {
       const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
       const qAndAResult = await conn.query(qAndAQuery, clubNum);
 
-      const AllQAndA = [];
-      console.log(qAndAResult);
+      const allQAndA = [];
+
       for (let i = 0; i < qAndAResult.length; i += 1) {
         const qAndA = { id: qAndAResult[i].studentId };
 
@@ -105,14 +105,14 @@ class ApplicationStorage {
             qAndA[qAndAResult[j].question] = qAndAResult[j].answer;
           }
         }
-        if (AllQAndA.find((qAndAs) => qAndAs.id === qAndA.id) === undefined) {
-          AllQAndA.push(qAndA);
+        if (allQAndA.find((qAndAs) => qAndAs.id === qAndA.id) === undefined) {
+          allQAndA.push(qAndA);
         }
       }
       return {
         success: true,
         applicantInfo,
-        AllQAndA,
+        allQAndA,
       };
     } catch (err) {
       throw err;
@@ -121,7 +121,7 @@ class ApplicationStorage {
     }
   }
 
-  static async updateApprovedApplicantById(userInfo) {
+  static async updateAcceptedApplicantById(userInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
@@ -131,7 +131,7 @@ class ApplicationStorage {
 
       const approvedApplicant = await conn.query(query, [
         userInfo.clubNum,
-        userInfo.id,
+        userInfo.applicant,
       ]);
 
       if (approvedApplicant.affectedRows) return true;
@@ -152,7 +152,7 @@ class ApplicationStorage {
         'INSERT INTO members (student_id, club_no, join_admin_flag, board_admin_flag) VALUES (?, ?, 0, 0);';
 
       const updateMember = await conn.query(query, [
-        userInfo.id,
+        userInfo.applicant,
         userInfo.clubNum,
       ]);
 
@@ -175,7 +175,7 @@ class ApplicationStorage {
 
       const updateRejectedApplicant = await conn.query(query, [
         userInfo.clubNum,
-        userInfo.id,
+        userInfo.applicant,
       ]);
       if (updateRejectedApplicant.affectedRows) return true;
       return false;

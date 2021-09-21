@@ -80,11 +80,11 @@ class Application {
     const { clubNum } = this.params;
 
     try {
-      const { success, applicantInfo, AllQAndA } =
+      const { success, applicantInfo, allQAndA } =
         await ApplicationStorage.findOneByClubNum(clubNum);
 
       if (success) {
-        return { success: true, applicantInfo, AllQAndA };
+        return { success: true, applicantInfo, allQAndA };
       }
       return {
         success: false,
@@ -98,15 +98,15 @@ class Application {
   // 동아리 가입 신청 승인.
   async createMemberById() {
     const { clubNum } = this.params;
-    const { id } = this.body;
+    const { applicant } = this.body;
 
     try {
       const userInfo = {
         clubNum,
-        id,
+        applicant,
       };
 
-      const isUpdate = await ApplicationStorage.updateApprovedApplicantById(
+      const isUpdate = await ApplicationStorage.updateAcceptedApplicantById(
         userInfo
       );
 
@@ -133,12 +133,12 @@ class Application {
   // 동아리 가입 신청 거절.
   async updateApplicantById() {
     const { clubNum } = this.params;
-    const { id } = this.body;
+    const { applicant } = this.body;
 
     try {
       const userInfo = {
         clubNum,
-        id,
+        applicant,
       };
       const isUpdate = await ApplicationStorage.updateRejectedApplicantById(
         userInfo
