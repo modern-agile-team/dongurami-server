@@ -280,20 +280,13 @@ class Student {
   async checkByChangePassword() {
     const client = this.body;
 
-    try {
-      if (client.newPassword !== client.checkNewPassword) {
-        return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
-      }
-      if (client.newPassword.length < 8 || client.checkNewPassword.length < 8) {
-        return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
-      }
-      return { success: true, msg: '비밀번호가 일치합니다' };
-    } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+    if (client.newPassword !== client.checkNewPassword) {
+      return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
     }
+    if (client.newPassword.length < 8) {
+      return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
+    }
+    return { success: true };
   }
 }
 
