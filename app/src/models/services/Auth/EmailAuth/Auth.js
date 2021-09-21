@@ -1,7 +1,7 @@
 'use strict';
 
 const crypto = require('crypto');
-const AuthStorage = require('./AuthStorage');
+const EmailAuthStorage = require('./EmailAuthStorage');
 
 class Auth {
   constructor(req) {
@@ -19,10 +19,13 @@ class Auth {
       };
 
       // redis -> 토큰, 아이디, 유효시간 설정
-      const isSave = await AuthStorage.saveToken(student);
+      const isSave = await EmailAuthStorage.saveToken(student);
 
       if (isSave) return { success: true, token };
-      return { success: false, err };
+      return {
+        success: false,
+        msg: '서버 에러입니다. 서버개발자에게 문의하세요.',
+      };
     } catch (err) {
       return Error.ctrl(
         '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
