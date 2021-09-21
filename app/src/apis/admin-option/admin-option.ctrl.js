@@ -10,7 +10,7 @@ const process = {
     const response = await adminOption.checkClubAdmin();
 
     if (!response.success) {
-      return res.status(400).json(response);
+      return res.status(403).json(response);
     }
     return next();
   },
@@ -57,7 +57,7 @@ const process = {
     const response = await adminOption.updateAdminOptionById();
 
     if (response.success) {
-      return res.status(201).json(response);
+      return res.status(200).json(response);
     }
     if (response.isError) {
       return res.status(500).json(response.clientMsg);

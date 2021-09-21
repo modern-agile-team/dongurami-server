@@ -2,7 +2,7 @@
 
 const mariadb = require('../../../config/mariadb');
 
-class adminoOptionStroage {
+class AdminoOptionStroage {
   static async findOneById(adminInfo) {
     let conn;
     try {
@@ -12,7 +12,7 @@ class adminoOptionStroage {
 
       const id = await conn.query(query, [adminInfo.clubNum, adminInfo.id]);
 
-      return { success: true, id: id[0].studentId };
+      return id[0].studentId;
     } catch (err) {
       throw err;
     } finally {
@@ -25,10 +25,11 @@ class adminoOptionStroage {
     try {
       conn = await mariadb.getConnection();
 
-      const memberAndAuthQuery = `SELECT s.name, s.id, m.join_admin_flag AS joinAdminFlag, m.board_admin_flag AS boarAdminFlag 
-        FROM members AS m JOIN students AS s ON s.id = m.student_id AND m.club_no = ?;`;
+      const memberAndAuthQuery = `SELECT s.name, s.id, m.join_admin_flag AS joinAdminFlag, 
+        m.board_admin_flag AS boarAdminFlag FROM members AS m JOIN students AS s 
+        ON s.id = m.student_id AND m.club_no = ?;`;
       const leaderQuery =
-        'select students.name from students JOIN clubs ON clubs.leader = students.id AND clubs.no = ?;';
+        'SELECT students.name FROM students JOIN clubs ON clubs.leader = students.id AND clubs.no = ?;';
 
       const memberAndAuthList = await conn.query(memberAndAuthQuery, clubNum);
       const leader = await conn.query(leaderQuery, clubNum);
@@ -91,8 +92,14 @@ class adminoOptionStroage {
       const query =
         'UPDATE members SET join_admin_flag = ?, board_admin_flag = ? WHERE club_no = ? AND student_id = ?;';
 
-      await conn.query(query, [1, 1, leaderInfo.clubNum, leaderInfo.newLeader]);
+      const adminOption = await conn.query(query, [
+        1,
+        1,
+        leaderInfo.clubNum,
+        leaderInfo.newLeader,
+      ]);
 
+      if (adminOption.affectedRows === 1) return true;
       return true;
     } catch (err) {
       throw err;
@@ -117,7 +124,6 @@ class adminoOptionStroage {
 
       for (let i = 0; i < updateAdminOption.length; i += 1) {
         if (!updateAdminOption[i].affectedRows) return false;
-        continue;
       }
 
       return true;
@@ -129,4 +135,4 @@ class adminoOptionStroage {
   }
 }
 
-module.exports = adminoOptionStroage;
+module.exports = AdminoOptionStroage;

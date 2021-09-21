@@ -96,16 +96,18 @@ class ApplicationStorage {
       const qAndAResult = await conn.query(qAndAQuery, clubNum);
 
       const AllQAndA = [];
-
-      for (let i = 0; i < applicantInfo.length; i += 1) {
-        const qAndA = {};
-        qAndA.id = qAndAResult[i].studentId;
+      console.log(qAndAResult);
+      for (let i = 0; i < qAndAResult.length; i += 1) {
+        const qAndA = { id: qAndAResult[i].studentId };
 
         for (let j = 0; j < qAndAResult.length; j += 1) {
-          if (qAndA.id !== qAndAResult[j].studentId) continue;
-          qAndA[qAndAResult[j].question] = qAndAResult[j].answer;
+          if (qAndA.id === qAndAResult[j].studentId) {
+            qAndA[qAndAResult[j].question] = qAndAResult[j].answer;
+          }
         }
-        AllQAndA.push(qAndA);
+        if (AllQAndA.find((qAndAs) => qAndAs.id === qAndA.id) === undefined) {
+          AllQAndA.push(qAndA);
+        }
       }
       return {
         success: true,
@@ -127,12 +129,12 @@ class ApplicationStorage {
       const query =
         'UPDATE applicants SET reading_flag = 1 WHERE club_no = ? AND student_id = ?;';
 
-      const ApprovedApplicant = await conn.query(query, [
+      const approvedApplicant = await conn.query(query, [
         userInfo.clubNum,
         userInfo.id,
       ]);
 
-      if (ApprovedApplicant.affectedRows) return true;
+      if (approvedApplicant.affectedRows) return true;
       return false;
     } catch (err) {
       throw err;
