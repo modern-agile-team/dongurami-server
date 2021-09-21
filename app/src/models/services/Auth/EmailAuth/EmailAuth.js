@@ -44,10 +44,7 @@ class Auth {
         msg: '미등록 토큰이거나 유효시간 (10분)이 만료된 토큰입니다.',
       };
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      throw err;
     }
   }
 }
