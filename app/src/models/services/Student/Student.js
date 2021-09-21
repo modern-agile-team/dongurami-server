@@ -193,11 +193,11 @@ class Student {
 
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
-      const checkedEmail = await StudentStorage.findOneByEmail(client.email);
-
       if (checkedId === undefined) {
         return { isExist: false, msg: '가입된 아이디가 아닙니다.' };
       }
+
+      const checkedEmail = await StudentStorage.findOneByEmail(client.email);
       if (checkedEmail === undefined) {
         return { isExist: false, msg: '가입된 이메일이 아닙니다.' };
       }
@@ -213,8 +213,6 @@ class Student {
       }
       return {
         isExist: true,
-        msg: '일치',
-        id: checkedId.id,
         name: checkedId.name,
       };
     } catch (err) {
