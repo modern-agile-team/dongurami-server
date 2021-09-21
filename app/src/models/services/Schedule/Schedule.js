@@ -107,8 +107,9 @@ class Schedule {
 
       const success = await ScheduleStorage.updateOnlyImportant(scheduleInfo);
 
-      if (success)
+      if (success) {
         return { success: true, msg: '주요 일정으로 등록되었습니다.' };
+      }
       return { success: false, msg: '주요 일정 등록이되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
