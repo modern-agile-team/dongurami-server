@@ -16,7 +16,7 @@ class AuthStorage {
     try {
       const result = await redis.set(
         `${student.id}:token`,
-        `${student.token}`,
+        student.token,
         'EX',
         600
       );
