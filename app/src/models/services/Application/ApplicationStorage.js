@@ -88,7 +88,7 @@ class ApplicationStorage {
         FROM students AS s JOIN applicants AS app ON app.club_no = ?
         AND app.student_id = s.id AND app.reading_flag = 0;`;
 
-      const qAndAQuery = `SELECT app.student_id AS studentId, q.description AS question, a.description AS answer 
+      const qAndAQuery = `SELECT app.student_id AS id, q.description AS question, a.description AS answer 
         FROM answers AS a JOIN applicants AS app ON a.student_id = app.student_id 
         AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q ON a.question_no = q.no;`;
 
