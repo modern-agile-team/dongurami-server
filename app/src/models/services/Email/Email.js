@@ -2,7 +2,7 @@
 
 const nodemailer = require('nodemailer');
 const Student = require('../Student/Student');
-const Auth = require('../Auth/EmailAuth/EmailAuth');
+const EmailAuth = require('../Auth/EmailAuth/EmailAuth');
 const Error = require('../../utils/Error');
 const mailConfig = require('../../../config/mail');
 
@@ -26,7 +26,7 @@ class Email {
       if (!existInfo.isExist) return existInfo;
 
       // 토큰 생성 함수로 이동
-      const tokenInfo = await Auth.createToken(client.id);
+      const tokenInfo = await EmailAuth.createToken(client.id);
       if (!tokenInfo.success) return tokenInfo;
 
       const message = {

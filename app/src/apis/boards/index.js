@@ -15,7 +15,7 @@ router.post(
 
 router.get('/:category/:sort/:order', boardCtrl.process.findAllByCategoryNum);
 router.get(
-  '/promotion/:category/:sort/:order',
+  '/promotion/:clubCategory/:sort/:order',
   boardCtrl.process.findAllByPromotionCategory
 );
 router.get('/:category/:boardNum', boardCtrl.process.findOneByBoardNum);
