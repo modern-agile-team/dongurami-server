@@ -26,7 +26,7 @@ class AdminoOptionStorage {
       conn = await mariadb.getConnection();
 
       const memberAndAuthQuery = `SELECT s.name, s.id, m.join_admin_flag AS joinAdminFlag, 
-        m.board_admin_flag AS boarAdminFlag FROM members AS m JOIN students AS s 
+        m.board_admin_flag AS boardAdminFlag FROM members AS m JOIN students AS s 
         ON s.id = m.student_id AND m.club_no = ?;`;
       const leaderQuery =
         'SELECT students.name FROM students JOIN clubs ON clubs.leader = students.id AND clubs.no = ?;';
@@ -116,7 +116,7 @@ class AdminoOptionStorage {
       let query = '';
 
       adminInfo.adminOption.forEach((option) => {
-        query += `UPDATE members SET join_admin_flag = "${option.joinAdmin}", board_admin_flag = "${option.boardAdmin}"
+        query += `UPDATE members SET join_admin_flag = "${option.joinAdminFlag}", board_admin_flag = "${option.boardAdminFlag}"
           WHERE student_id = "${option.id}" AND club_no = "${adminInfo.clubNum}";`;
       });
 
