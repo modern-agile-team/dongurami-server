@@ -62,12 +62,12 @@ class Schedule {
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
-        period: data.period,
       };
 
-      await ScheduleStorage.createSchedule(scheduleInfo);
+      const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
-      return { success: true };
+      if (success) return { success: true, msg: '일정이 등록되었습니다.' };
+      return { success: false, msg: '일정 등록에 실패하였습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -83,13 +83,13 @@ class Schedule {
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
-        endDate: data.endDate,
-        period: data.period, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
+        endDate: data.endDate, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
       };
 
-      await ScheduleStorage.updateSchedule(scheduleInfo);
+      const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
-      return { success: true };
+      if (success) return { success: true, msg: '일정이 수정되었습니다.' };
+      return { success: false, msg: '일정 수정에 실패하였습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -105,9 +105,12 @@ class Schedule {
         important: data.important,
       };
 
-      await ScheduleStorage.updateOnlyImportant(scheduleInfo);
+      const success = await ScheduleStorage.updateOnlyImportant(scheduleInfo);
 
-      return { success: true };
+      if (success) {
+        return { success: true, msg: '주요 일정으로 등록되었습니다.' };
+      }
+      return { success: false, msg: '주요 일정 등록이되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -117,9 +120,10 @@ class Schedule {
     const { no } = this.params;
 
     try {
-      await ScheduleStorage.deleteSchedule(no);
+      const success = await ScheduleStorage.deleteSchedule(no);
 
-      return { success: true };
+      if (success) return { success: true, msg: '일정이 삭제되었습니다.' };
+      return { success: false, msg: '일정이 삭제되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
