@@ -46,8 +46,8 @@ class BoardStorage {
       ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
 
       const boardList = await conn.query(query, [
-        criteriaRead.clubNum,
         criteriaRead.category,
+        criteriaRead.clubNum,
       ]);
 
       return boardList;
