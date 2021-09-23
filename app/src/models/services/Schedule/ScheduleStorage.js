@@ -4,15 +4,15 @@ const mariadb = require('../../../config/mariadb');
 
 class ScheduleStorage {
   static async existClub(clubNum) {
-    const conn = await mariadb.getConnection();
+    let conn;
+
     try {
+      conn = await mariadb.getConnection();
+
       const query = 'SELECT no FROM clubs WHERE no = ?;';
       const club = await conn.query(query, clubNum);
 
-      if (club[0] === undefined) {
-        return false;
-      }
-      return true;
+      return club[0];
     } catch (err) {
       throw err;
     } finally {
@@ -21,12 +21,14 @@ class ScheduleStorage {
   }
 
   static async findAllByClubNum(clubNum) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
-      const query = `SELECT no, color_code AS colrCode, title, start_date AS startDate, end_date AS endDate, period, important 
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no, color_code AS colorCode, title, start_date AS startDate, end_date AS endDate, important 
       FROM schedules
-      WHERE LEFT(start_date, 7) = LEFT(NOW(), 7) AND club_no = ?
+      WHERE LEFT(start_date, 7) = LEFT(NOW(), 7) OR LEFT(end_date, 7) = LEFT(NOW(), 7) AND club_no = ?
       ORDER BY start_date;`;
 
       const result = await conn.query(query, clubNum);
@@ -40,16 +42,18 @@ class ScheduleStorage {
   }
 
   static async findAllByDate(scheduleInfo) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
-      const query = `SELECT no, color_code AS colorCode, title, start_date AS startDate, end_date AS endDate, period, important 
-      FROM schedules 
-      WHERE club_no = ? AND LEFT(start_date, 7) = ?
-      ORDER BY start_date;`;
+      conn = await mariadb.getConnection();
 
+      const query = `SELECT no, color_code AS colorCode, title, start_date AS startDate, end_date AS endDate, important 
+      FROM schedules 
+      WHERE club_no = ? AND LEFT(start_date, 7) = ? OR LEFT(end_date, 7) = ?
+      ORDER BY start_date;`;
       const result = await conn.query(query, [
         scheduleInfo.clubNum,
+        scheduleInfo.date,
         scheduleInfo.date,
       ]);
 
@@ -62,23 +66,23 @@ class ScheduleStorage {
   }
 
   static async createSchedule(scheduleInfo) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
-      const query = `INSERT INTO schedules (club_no, student_id, color_code, title, start_date, end_date, period)
-      VALUE (?, ?, ?, ?, ?, ?, ?);`;
+      conn = await mariadb.getConnection();
 
-      await conn.query(query, [
+      const query = `INSERT INTO schedules (club_no, student_id, color_code, title, start_date, end_date)
+      VALUE (?, ?, ?, ?, ?, ?);`;
+      const schedule = await conn.query(query, [
         scheduleInfo.clubNum,
         scheduleInfo.studentId,
         scheduleInfo.colorCode,
         scheduleInfo.title,
         scheduleInfo.startDate,
         scheduleInfo.endDate,
-        scheduleInfo.period,
       ]);
 
-      return;
+      return schedule.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -87,21 +91,21 @@ class ScheduleStorage {
   }
 
   static async updateSchedule(scheduleInfo) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
-      const query = `UPDATE schedules SET color_code = ?, title = ?, start_date = ?, end_date = ?, period = ? WHERE no = ?;`;
+      conn = await mariadb.getConnection();
 
-      await conn.query(query, [
+      const query = `UPDATE schedules SET color_code = ?, title = ?, start_date = ?, end_date = ? WHERE no = ?;`;
+      const schedule = await conn.query(query, [
         scheduleInfo.colorCode,
         scheduleInfo.title,
         scheduleInfo.startDate,
         scheduleInfo.endDate,
-        scheduleInfo.period,
         scheduleInfo.no,
       ]);
 
-      return;
+      return schedule.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -110,14 +114,18 @@ class ScheduleStorage {
   }
 
   static async updateOnlyImportant(scheduleInfo) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
+      conn = await mariadb.getConnection();
+
       const query = `UPDATE schedules SET important = ? WHERE no = ?;`;
+      const important = await conn.query(query, [
+        scheduleInfo.important,
+        scheduleInfo.no,
+      ]);
 
-      await conn.query(query, [scheduleInfo.important, scheduleInfo.no]);
-
-      return;
+      return important.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -126,14 +134,15 @@ class ScheduleStorage {
   }
 
   static async deleteSchedule(no) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
+      conn = await mariadb.getConnection();
+
       const query = `DELETE FROM schedules WHERE no = ?;`;
+      const schedule = await conn.query(query, no);
 
-      await conn.query(query, no);
-
-      return;
+      return schedule.affectedRows;
     } catch (err) {
       throw err;
     } finally {

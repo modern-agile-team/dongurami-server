@@ -19,4 +19,11 @@ router.delete(
   ctrl.process.deleteQuestion
 );
 
+// 가입 희망자
+router.post(
+  '/:clubNum/answer',
+  loginAuth.loginCheck,
+  ctrl.process.createAnswer
+);
+
 module.exports = router;
