@@ -126,7 +126,7 @@ class ApplicationStorage {
     }
   }
 
-  static async createExtraAnser(answerInfo) {
+  static async createExtraAnswer(answerInfo) {
     let conn;
 
     try {

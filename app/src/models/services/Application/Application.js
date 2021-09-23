@@ -97,8 +97,9 @@ class Application {
       const isMember = await ApplicationStorage.findMember(applicantInfo);
 
       // 멤버 o
-      if (isMember !== undefined)
+      if (isMember !== undefined) {
         return { success: false, msg: '이미 가입된 동아리입니다.' };
+      }
 
       // 멤버 x
       const answerInfo = {
@@ -118,10 +119,11 @@ class Application {
       // 필수 질문 추가 완 / 추가 질문 여부
       if (answerInfo.extra.length) {
         // 추가 질문이 있을 시
-        const isExtra = await ApplicationStorage.createExtraAnser(answerInfo);
+        const isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
 
-        if (isExtra !== answerInfo.extra.length)
+        if (isExtra !== answerInfo.extra.length) {
           return { success: false, msg: '추가 질문이 작성되지 않았습니다.' };
+        }
       }
       // 질문 추가 완 => 동아리 지원자 테이블 추가
       const result = await ApplicationStorage.createApplicant(applicantInfo);
