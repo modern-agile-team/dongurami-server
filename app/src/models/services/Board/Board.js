@@ -11,17 +11,20 @@ class Board {
   }
 
   async createBoardNum() {
-    const category = boardCategory[this.params.category];
-
     try {
+      const category = boardCategory[this.params.category];
       const request = this.body;
       const boardInfo = {
         category,
         id: request.id,
-        clubNo: request.clubNo,
+        clubNum: request.clubNum,
         title: request.title,
         description: request.description,
       };
+      if (this.params.clubNum === undefined && category !== 4) {
+        boardInfo.clubNum = 1;
+      }
+
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
       return { success: true, msg: '게시글 생성 성공', boardNum };
@@ -32,6 +35,7 @@ class Board {
 
   async findAllByCategoryNum() {
     const criteriaRead = {
+      clubNum: 1,
       category: boardCategory[this.params.category],
       sort: this.params.sort,
       order: this.params.order.toUpperCase(),
@@ -40,7 +44,9 @@ class Board {
     if (criteriaRead.category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
     }
-    if (criteriaRead.category > 3) {
+    if (criteriaRead.category === 4 || criteriaRead.category === 7) {
+      criteriaRead.clubNum = this.params.clubNum;
+    } else {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
     }
 
