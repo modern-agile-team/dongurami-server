@@ -19,6 +19,7 @@ const schedule = require('./src/apis/schedule');
 const clubList = require('./src/apis/club');
 const application = require('./src/apis/application');
 const clubBoard = require('./src/apis/club-board');
+const adminOption = require('./src/apis/admin-option');
 
 app.use('/api/board', board);
 app.use('/api', root);
@@ -28,5 +29,6 @@ app.use('/api/club/schedule', schedule);
 app.use('/api/club/list', clubList);
 app.use('/api/club/application', application);
 app.use('/api/club/board', clubBoard);
+app.use('/api/club/admin-option', adminOption);
 
 module.exports = app;
