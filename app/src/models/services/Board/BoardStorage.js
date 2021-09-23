@@ -33,8 +33,6 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const clubNum = `AND bo.club_no = ${criteriaRead.clubNum}`;
-
       const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
       FROM boards AS bo
       LEFT JOIN images AS img
@@ -43,11 +41,14 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = ? ${clubNum}
+      WHERE bo.board_category_no = ? AND bo.club_no = ?
       GROUP BY no
       ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
 
-      const boardList = await conn.query(query, [criteriaRead.category]);
+      const boardList = await conn.query(query, [
+        criteriaRead.clubNum,
+        criteriaRead.category,
+      ]);
 
       return boardList;
     } catch (err) {
