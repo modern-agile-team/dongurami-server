@@ -17,7 +17,7 @@ class Board {
       const boardInfo = {
         category,
         id: request.id,
-        clubNum: request.clubNum,
+        clubNum: this.params.clubNum,
         title: request.title,
         description: request.description,
       };
@@ -45,9 +45,10 @@ class Board {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
     }
     if (criteriaRead.category === 4 || criteriaRead.category === 7) {
-      criteriaRead.clubNum = this.params.clubNum;
-    } else {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
+    }
+    if (criteriaRead.category === 5 || criteriaRead.category === 6) {
+      criteriaRead.clubNum = this.params.clubNum;
     }
 
     try {
