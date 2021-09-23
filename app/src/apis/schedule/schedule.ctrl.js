@@ -39,9 +39,7 @@ const process = {
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res
-      .status(400)
-      .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
+    return res.status(400).json(response);
   },
 
   updateSchedule: async (req, res) => {
@@ -55,9 +53,7 @@ const process = {
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res
-      .status(400)
-      .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
+    return res.status(400).json(response);
   },
 
   updateOnlyImportant: async (req, res) => {
@@ -71,9 +67,7 @@ const process = {
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res
-      .status(400)
-      .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
+    return res.status(400).json(response);
   },
 
   deleteSchedule: async (req, res) => {
@@ -86,9 +80,7 @@ const process = {
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res
-      .status(400)
-      .json({ success: false, msg: '서버 개발자에게 문의해주세요.' });
+    return res.status(400).json(response);
   },
 };
 

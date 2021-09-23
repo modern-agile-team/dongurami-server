@@ -43,9 +43,13 @@ class BoardStorage {
       ON bo.club_no = clubs.no
       WHERE bo.board_category_no = ?
       GROUP BY no
-      ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
+      ORDER BY ? ?;`;
 
-      const boardList = await conn.query(query, [criteriaRead.category]);
+      const boardList = await conn.query(query, [
+        criteriaRead.category,
+        criteriaRead.sort,
+        criteriaRead.order,
+      ]);
 
       return boardList;
     } catch (err) {
@@ -60,6 +64,7 @@ class BoardStorage {
 
     try {
       conn = await mariadb.getConnection();
+      let whole = '';
 
       const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
       FROM boards AS bo
@@ -69,11 +74,19 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = 4 AND clubs.category = ?
+      WHERE bo.board_category_no = 4${whole}
       GROUP BY no
-      ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
+      ORDER BY ? ?;`;
 
-      const boardList = conn.query(query, [criteriaRead.category]);
+      if (criteriaRead.clubCategory !== 'whole') {
+        whole = ` AND clubs.category = ?`;
+      }
+
+      const boardList = conn.query(query, [
+        criteriaRead.clubCategory,
+        criteriaRead.sort,
+        criteriaRead.order,
+      ]);
 
       return boardList;
     } catch (err) {
@@ -110,7 +123,7 @@ class BoardStorage {
     }
   }
 
-  static async updateOneByNum(boardInfo) {
+  static async updateOneByBoardNum(boardInfo) {
     let conn;
 
     try {
@@ -118,13 +131,13 @@ class BoardStorage {
 
       const query = `UPDATE boards SET title = ?, description = ? WHERE no = ?;`;
 
-      await conn.query(query, [
+      const board = await conn.query(query, [
         boardInfo.title,
         boardInfo.description,
         boardInfo.boardNum,
       ]);
 
-      return;
+      return board.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -132,7 +145,7 @@ class BoardStorage {
     }
   }
 
-  static async deleteOneByNum(boardNum) {
+  static async deleteOneByBoardNum(boardNum) {
     let conn;
 
     try {
@@ -140,9 +153,27 @@ class BoardStorage {
 
       const query = `DELETE FROM boards WHERE no = ?;`;
 
-      await conn.query(query, [boardNum]);
+      const board = await conn.query(query, [boardNum]);
 
-      return;
+      return board.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async existOnlyBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no FROM boards WHERE no = ?;`;
+
+      const board = await conn.query(query, [boardNum]);
+
+      return board[0];
     } catch (err) {
       throw err;
     } finally {

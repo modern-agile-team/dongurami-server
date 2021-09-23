@@ -29,7 +29,7 @@ class Image {
   }
 
   async findAllByBoardImg() {
-    const boardNum = this.params.num;
+    const { boardNum } = this.params;
 
     try {
       const imgInfo = await ImageStorage.findAllByBoardImg(boardNum);

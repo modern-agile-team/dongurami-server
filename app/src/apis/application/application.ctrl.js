@@ -20,30 +20,52 @@ const process = {
     const application = new Application(req);
     const response = await application.createQuestion();
 
+    if (response.success) {
+      return res.status(201).json(response);
+    }
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res.status(201).json(response);
+    return res.status(400).json(response);
   },
 
   updateQuestion: async (req, res) => {
     const application = new Application(req);
     const response = await application.updateQuestion();
 
+    if (response.success) {
+      return res.status(200).json(response);
+    }
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res.status(200).json(response);
+    return res.status(400).json(response);
   },
 
   deleteQuestion: async (req, res) => {
     const application = new Application(req);
     const response = await application.deleteQuestion();
 
+    if (response.success) {
+      return res.status(200).json(response);
+    }
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res.status(200).json(response);
+    return res.status(400).json(response);
+  },
+
+  createAnswer: async (req, res) => {
+    const application = new Application(req);
+    const response = await application.createAnswer();
+
+    if (response.success) {
+      return res.status(201).json(response);
+    }
+    if (response.isError) {
+      return res.status(500).json({ success: false, msg: response.clientMsg });
+    }
+    return res.status(400).json(response); // 캐치 에러 x
   },
 };
 
