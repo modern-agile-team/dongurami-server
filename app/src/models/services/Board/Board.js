@@ -13,10 +13,6 @@ class Board {
   async createBoardNum() {
     const category = boardCategory[this.params.category];
 
-    if (category === undefined) {
-      return { success: false, msg: '존재하지 않는 게시판입니다.' };
-    }
-
     try {
       const request = this.body;
       const boardInfo = {
