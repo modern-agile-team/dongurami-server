@@ -16,13 +16,16 @@ class Board {
       const request = this.body;
       const boardInfo = {
         category,
+        clubNum: 1,
         id: request.id,
-        clubNum: this.params.clubNum,
         title: request.title,
         description: request.description,
       };
-      if (this.params.clubNum === undefined && category !== 4) {
-        boardInfo.clubNum = 1;
+
+      if (this.params.clubNum !== undefined) {
+        boardInfo.clubNum = this.params.clubNum;
+      } else if (category === 4) {
+        boardInfo.clubNum = request.clubNum;
       }
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
