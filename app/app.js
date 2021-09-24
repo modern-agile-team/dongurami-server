@@ -18,6 +18,7 @@ const home = require('./src/apis/circle-home');
 const schedule = require('./src/apis/schedule');
 const clubList = require('./src/apis/club');
 const application = require('./src/apis/application');
+const notification = require('./src/apis/notification');
 
 app.use('/api/board', board);
 app.use('/api', root);
@@ -26,5 +27,6 @@ app.use('/api/club/home', home);
 app.use('/api/club/schedule', schedule);
 app.use('/api/club/list', clubList);
 app.use('/api/club/application', application);
+app.use('/api/notification', notification);
 
 module.exports = app;
