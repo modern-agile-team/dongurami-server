@@ -22,7 +22,7 @@ class Board {
       const boardInfo = {
         category,
         id: request.id,
-        clubNo: request.clubNo,
+        clubNum: request.clubNum,
         title: request.title,
         description: request.description,
       };
