@@ -12,12 +12,29 @@ class NotificationStorage {
         FROM notifications AS no 
         JOIN board AS bo
         ON no.board_num = bo.no
-        WHERE no.recipient_id=(SELECT id FROM students WHERE id=?)
+        WHERE no.recipient_id=(SELECT id FROM students WHERE id = ?)
         ORDER BY inDate DESC
-        LIMIT 10`;
+        LIMIT 10;`;
 
       const notifications = await conn.query(query, studentId);
       return { success: true, notifications };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateReadFlagByNotificationNum(notificationNum) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'UPDATE read_flag SET notifications WHERE no = ?;';
+
+      const notification = await conn.query(query, notificationNum);
+
+      if (notification.affectedRows) return true;
+      return false;
     } catch (err) {
       throw err;
     } finally {

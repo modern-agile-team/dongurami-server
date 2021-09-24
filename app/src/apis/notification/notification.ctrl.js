@@ -4,7 +4,7 @@ const Notification = require('../../models/services/Notification/Notification');
 
 const process = {
   findAllById: async (req, res) => {
-    const notification = new Notification();
+    const notification = new Notification(req);
     const response = await notification.findAllById();
 
     if (response.success) {
@@ -17,7 +17,7 @@ const process = {
   },
 
   updateByNotificationNum: async (req, res) => {
-    const notification = new Notification();
+    const notification = new Notification(req);
     const response = await notification.findAllById();
 
     if (response.success) {
