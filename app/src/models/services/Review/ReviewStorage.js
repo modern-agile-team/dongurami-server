@@ -2,7 +2,7 @@
 
 const mariadb = require('../../../config/mariadb');
 
-class reviewStorage {
+class ReviewStorage {
   static async saveReview(reviewInfo) {
     let conn;
     try {
@@ -98,4 +98,4 @@ class reviewStorage {
   }
 }
 
-module.exports = reviewStorage;
+module.exports = ReviewStorage;
