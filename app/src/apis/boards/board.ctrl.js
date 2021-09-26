@@ -49,6 +49,7 @@ const process = {
     if (response.success) {
       const updateBoardHit = await board.updateOnlyHitByNum();
       response.images = await image.findAllByBoardImg();
+      // 동아리 활동일지는 댓글이 달리지 않기 때문에 조건문을 사용해 주어야
       response.comments = await comment.findAllByBoardNum();
 
       if (response.comments.isError) {
