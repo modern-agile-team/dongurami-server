@@ -207,28 +207,18 @@ class BoardStorage {
 
       // query문 대입을 위한 변수 설정
       const { category } = searchInfo;
-      const { searchType } = searchInfo;
+      const { type } = searchInfo;
       const keyword = `%${searchInfo.keyword}%`;
 
       const query = `SELECT no, student_id AS studentId, club_no AS clubNo, board_category_no AS boardCategoryNo, title, description, in_date AS inDate, modify_date AS modifyDate, hit
-      FROM boards WHERE ${searchType} LIKE ? AND board_category_no = ?;`;
+      FROM boards WHERE ${type} LIKE ? AND board_category_no = ?;`;
 
       const searchByKeywordResults = await conn.query(query, [
         keyword,
         category,
       ]);
 
-      if (searchByKeywordResults.length < 1) {
-        return {
-          sucess: false,
-          msg: `${searchType}타입의 ${searchInfo.keyword}(으)로 검색한 결과가 없습니다.`,
-        };
-      }
-      return {
-        success: true,
-        msg: `${searchType}타입의 ${searchInfo.keyword}(으)로 검색한 결과입니다.`,
-        searchByKeywordResults,
-      };
+      return searchByKeywordResults;
     } catch (err) {
       throw err;
     } finally {

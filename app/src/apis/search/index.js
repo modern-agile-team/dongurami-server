@@ -3,11 +3,8 @@
 const express = require('express');
 
 const router = express.Router();
-const searchCtrl = require('./search.ctrl');
+const ctrl = require('./search.ctrl');
 
-router.get(
-  '/:category/:searchType/:keyword',
-  searchCtrl.process.searchByKeyword
-);
+router.get('/:category/:type/:keyword', ctrl.process.searchByKeyword);
 
 module.exports = router;
