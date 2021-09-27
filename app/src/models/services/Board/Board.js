@@ -25,7 +25,7 @@ class Board {
       if (this.params.clubNum !== undefined) {
         boardInfo.clubNum = this.params.clubNum;
       } else if (category === 4) {
-        boardInfo.clubNum = request.clubNum;
+        boardInfo.clubNum = request.clubNo;
       }
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);

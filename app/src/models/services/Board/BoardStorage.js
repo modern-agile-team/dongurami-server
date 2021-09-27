@@ -14,7 +14,7 @@ class BoardStorage {
       const board = await conn.query(query, [
         boardInfo.category,
         boardInfo.id,
-        boardInfo.clubNo,
+        boardInfo.clubNum,
         boardInfo.title,
         boardInfo.description,
       ]);
