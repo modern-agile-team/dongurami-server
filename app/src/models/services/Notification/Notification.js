@@ -37,12 +37,12 @@ class Notification {
     const { notificationNum } = this.body;
 
     try {
-      const isUpdate = await NotificationStorage.deleteByNotificationNum(
+      const isDelete = await NotificationStorage.deleteByNotificationNum(
         notificationNum
       );
 
-      if (isUpdate) {
-        return { success: true, msg: '알림 읽음 여부가 수정되었습니다.' };
+      if (isDelete) {
+        return { success: true, msg: '읽은 알림이 삭제되었습니다.' };
       }
       return {
         success: false,
@@ -50,6 +50,24 @@ class Notification {
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async deleteAllById() {
+    const studentId = this.body.id;
+
+    try {
+      const isDelete = await NotificationStorage.deleteAllById(studentId);
+
+      if (isDelete) {
+        return { success: true, msg: '전체 알림이 삭제되었습니다.' };
+      }
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요', err);
     }
   }
 }

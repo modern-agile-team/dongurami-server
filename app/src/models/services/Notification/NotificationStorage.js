@@ -7,6 +7,7 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
+
       const query = `SELECT no.no AS notificationNum, no.sender_id AS senderId, 
         bo.title, no.url, no.reading_flag AS readingFlag, no.in_date AS inDate 
         FROM notifications AS no 
@@ -15,8 +16,8 @@ class NotificationStorage {
         WHERE no.recipient_id=(SELECT id FROM students WHERE id = ?)
         ORDER BY inDate DESC
         LIMIT 10;`;
-
       const notifications = await conn.query(query, studentId);
+
       return { success: true, notifications };
     } catch (err) {
       throw err;
@@ -25,13 +26,30 @@ class NotificationStorage {
     }
   }
 
-  static async deleteNotificationNum(notificationNum) {
+  static async deleteByNotificationNum(notificationNum) {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = 'DELETE FROM notifications WHERE no = ?;';
 
+      const query = 'DELETE FROM notifications WHERE no = ?;';
       const notification = await conn.query(query, notificationNum);
+
+      if (notification.affectedRows) return true;
+      return false;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteAllById(studentId) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'DELETE FROM notifications WHERE recipient_id = ?;';
+      const notification = await conn.query(query, studentId);
 
       if (notification.affectedRows) return true;
       return false;
