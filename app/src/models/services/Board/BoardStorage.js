@@ -124,12 +124,13 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE boards SET title = ?, description = ? WHERE no = ?;`;
+      const query = `UPDATE boards SET title = ?, description = ? WHERE no = ? AND board_category_no = ?;`;
 
       const board = await conn.query(query, [
         boardInfo.title,
         boardInfo.description,
         boardInfo.boardNum,
+        boardInfo.category,
       ]);
 
       return board.affectedRows;

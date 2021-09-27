@@ -102,7 +102,9 @@ class Board {
 
   async updateOneByBoardNum() {
     try {
+      const category = boardCategory[this.params.category];
       const boardInfo = {
+        category,
         title: this.body.title,
         description: this.body.description,
         boardNum: this.params.boardNum,
