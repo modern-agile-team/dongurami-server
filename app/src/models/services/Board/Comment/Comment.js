@@ -146,7 +146,7 @@ class Comment {
           replyCmtInfo.cmtNum
         );
 
-        if (replyCmt === undefined) {
+        if (replyCmt === 0) {
           return Error.ctrl(
             '서버에러입니다. 서버 개발자에게 얘기해주세요.',
             err
