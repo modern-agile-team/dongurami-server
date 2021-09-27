@@ -76,7 +76,6 @@ class Board {
 
   async findOneByBoardNum() {
     const category = boardCategory[this.params.category];
-
     if (category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
     }
@@ -142,6 +141,43 @@ class Board {
       return { success: true, msg: '조회수 1 증가' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async searchByKeyword() {
+    try {
+      // 검색을 위한 정보
+      const searchInfo = {
+        category: boardCategory[this.params.category],
+        searchType: this.params.searchType,
+        keyword: this.params.keyword,
+      };
+
+      // 게시판 유무 검증
+      if (searchInfo.category === undefined) {
+        return { success: false, msg: '존재하지 않는 게시판입니다.' };
+      }
+
+      // 검색타입 검증
+      if (
+        searchInfo.searchType !== 'description' &&
+        searchInfo.searchType !== 'title' &&
+        searchInfo.searchType !== 'student_id'
+      )
+        return { success: false, msg: '검색 타입을 확인해주세요' };
+
+      // 검색결과, 함수이동
+      const searchByKeywordResults = await BoardStorage.searchByKeyword(
+        searchInfo
+      );
+
+      return searchByKeywordResults;
+    } catch (err) {
+      console.log(err);
+      return Error.ctrl(
+        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+        err
+      );
     }
   }
 }
