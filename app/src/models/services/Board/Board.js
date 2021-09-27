@@ -8,6 +8,7 @@ class Board {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
+    this.auth = req.auth;
   }
 
   async createBoardNum() {
@@ -17,7 +18,7 @@ class Board {
       const boardInfo = {
         category,
         clubNum: 1,
-        id: request.id,
+        id: this.auth.id,
         title: request.title,
         description: request.description,
       };
@@ -56,8 +57,15 @@ class Board {
 
     try {
       const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
+      let userInfo = '비로그인 회원입니다.';
 
-      return { success: true, msg: '게시판 조회 성공', boards };
+      if (this.auth)
+        userInfo = {
+          id: this.auth.id,
+          isAdmin: this.auth.isAdmin,
+        };
+
+      return { success: true, msg: '게시판 조회 성공', userInfo, boards };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -73,8 +81,16 @@ class Board {
       const boards = await BoardStorage.findAllByPromotionCategory(
         criteriaRead
       );
+      let userInfo = '비로그인 회원입니다.';
 
-      return { success: true, msg: '장르별 조회 성공', boards };
+      if (this.auth) {
+        userInfo = {
+          id: this.auth.id,
+          club: this.auth.clubNum,
+        };
+      }
+
+      return { success: true, msg: '장르별 조회 성공', userInfo, boards };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -94,7 +110,16 @@ class Board {
           success: false,
           msg: '해당 게시판에 존재하지 않는 글 입니다.',
         };
-      return { success: true, msg: '게시글 조회 성공', board };
+
+      let userInfo = '비로그인 회원입니다.';
+
+      if (this.auth)
+        userInfo = {
+          id: this.auth.id,
+          isAdmin: this.auth.isAdmin,
+        };
+
+      return { success: true, msg: '게시글 조회 성공', userInfo, board };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }

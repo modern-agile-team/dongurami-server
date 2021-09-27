@@ -8,13 +8,14 @@ class Comment {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
+    this.auth = req.auth;
   }
 
   async createCommentNum() {
     try {
       const commentInfo = {
         boardNum: this.params.boardNum,
-        id: this.body.id,
+        id: this.auth.id,
         description: this.body.description,
       };
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
@@ -37,7 +38,7 @@ class Comment {
       const replyCommentInfo = {
         boardNum: this.params.boardNum,
         cmtNum: this.params.cmtNum,
-        id: this.body.id,
+        id: this.auth.id,
         description: this.body.description,
       };
       const exist = await CommentStorage.existOnlyCmtNum(
