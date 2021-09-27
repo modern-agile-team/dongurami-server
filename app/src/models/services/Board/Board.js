@@ -122,8 +122,12 @@ class Board {
 
   async deleteOneByBoardNum() {
     try {
-      const { boardNum } = this.params;
-      const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardNum);
+      const category = boardCategory[this.params.category];
+      const boardInfo = {
+        category,
+        boardNum: this.params.boardNum,
+      };
+      const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
       if (deleteBoardCnt === 0) {
         return { success: false, msg: '해당 게시글이 없습니다.' };

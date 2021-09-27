@@ -141,15 +141,18 @@ class BoardStorage {
     }
   }
 
-  static async deleteOneByBoardNum(boardNum) {
+  static async deleteOneByBoardNum(boardInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `DELETE FROM boards WHERE no = ?;`;
+      const query = `DELETE FROM boards WHERE no = ? AND board_category_no = ?;`;
 
-      const board = await conn.query(query, [boardNum]);
+      const board = await conn.query(query, [
+        boardInfo.boardNum,
+        boardInfo.category,
+      ]);
 
       return board.affectedRows;
     } catch (err) {
