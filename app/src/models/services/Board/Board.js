@@ -11,21 +11,23 @@ class Board {
   }
 
   async createBoardNum() {
-    const category = boardCategory[this.params.category];
-
-    if (category === undefined) {
-      return { success: false, msg: '존재하지 않는 게시판입니다.' };
-    }
-
     try {
+      const category = boardCategory[this.params.category];
       const request = this.body;
       const boardInfo = {
         category,
+        clubNum: 1,
         id: request.id,
-        clubNo: request.clubNo,
         title: request.title,
         description: request.description,
       };
+
+      if (this.params.clubNum !== undefined) {
+        boardInfo.clubNum = this.params.clubNum;
+      } else if (category === 4) {
+        boardInfo.clubNum = request.clubNo;
+      }
+
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
       return { success: true, msg: '게시글 생성 성공', boardNum };
@@ -36,6 +38,7 @@ class Board {
 
   async findAllByCategoryNum() {
     const criteriaRead = {
+      clubNum: 1,
       category: boardCategory[this.params.category],
       sort: this.params.sort,
       order: this.params.order.toUpperCase(),
@@ -44,8 +47,11 @@ class Board {
     if (criteriaRead.category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
     }
-    if (criteriaRead.category > 3) {
+    if (criteriaRead.category === 4 || criteriaRead.category === 7) {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
+    }
+    if (criteriaRead.category === 5 || criteriaRead.category === 6) {
+      criteriaRead.clubNum = this.params.clubNum;
     }
 
     try {
@@ -75,15 +81,8 @@ class Board {
   }
 
   async findOneByBoardNum() {
-    const category = boardCategory[this.params.category];
-    if (category === undefined) {
-      return { success: false, msg: '존재하지 않는 게시판 입니다.' };
-    }
-    if (category > 4) {
-      return { success: false, msg: '잘못된 URL의 접근입니다' };
-    }
-
     try {
+      const category = boardCategory[this.params.category];
       const boardInfo = {
         category,
         boardNum: this.params.boardNum,
@@ -103,7 +102,9 @@ class Board {
 
   async updateOneByBoardNum() {
     try {
+      const category = boardCategory[this.params.category];
       const boardInfo = {
+        category,
         title: this.body.title,
         description: this.body.description,
         boardNum: this.params.boardNum,
@@ -121,8 +122,12 @@ class Board {
 
   async deleteOneByBoardNum() {
     try {
-      const { boardNum } = this.params;
-      const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardNum);
+      const category = boardCategory[this.params.category];
+      const boardInfo = {
+        category,
+        boardNum: this.params.boardNum,
+      };
+      const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
       if (deleteBoardCnt === 0) {
         return { success: false, msg: '해당 게시글이 없습니다.' };

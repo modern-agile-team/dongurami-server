@@ -174,17 +174,56 @@ class CommentStorage {
     }
   }
 
+  static async updateOnlyReplyFlag(cmtNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `UPDATE comments SET reply_flag = 0 WHERE no = ?;`;
+
+      const replycmt = conn.query(query, [cmtNum]);
+
+      return replycmt.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async existOnlyCmtNum(cmtNum, boardNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no FROM comments WHERE no = ? AND board_no = ?;`;
+      const query = `SELECT no FROM comments WHERE no = ? AND board_no = ? AND depth = 0;`;
 
       const cmt = await conn.query(query, [cmtNum, boardNum]);
 
       return cmt[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async existOnlyReplyCmtNum(replyCmtInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no FROM comments WHERE board_no = ? AND group_no = ? AND depth = 1;`;
+
+      const replyCmt = await conn.query(query, [
+        replyCmtInfo.boardNum,
+        replyCmtInfo.cmtNum,
+      ]);
+
+      return replyCmt[0];
     } catch (err) {
       throw err;
     } finally {
