@@ -33,14 +33,13 @@ class Notification {
     }
   }
 
-  async updateByNotificationNum() {
+  async deleteByNotificationNum() {
     const { notificationNum } = this.body;
 
     try {
-      const isUpdate =
-        await NotificationStorage.updateReadFlagByNotificationNum(
-          notificationNum
-        );
+      const isUpdate = await NotificationStorage.deleteByNotificationNum(
+        notificationNum
+      );
 
       if (isUpdate) {
         return { success: true, msg: '알림 읽음 여부가 수정되었습니다.' };

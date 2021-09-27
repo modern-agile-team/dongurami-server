@@ -16,9 +16,9 @@ const process = {
     return res.status(400).json(response);
   },
 
-  updateByNotificationNum: async (req, res) => {
+  deleteByNotificationNum: async (req, res) => {
     const notification = new Notification(req);
-    const response = await notification.updateByNotificationNum();
+    const response = await notification.deleteByNotificationNum();
 
     if (response.success) {
       return res.status(200).json(response);

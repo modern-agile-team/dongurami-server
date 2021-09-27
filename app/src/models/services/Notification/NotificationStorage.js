@@ -25,11 +25,11 @@ class NotificationStorage {
     }
   }
 
-  static async updateReadFlagByNotificationNum(notificationNum) {
+  static async deleteNotificationNum(notificationNum) {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = 'UPDATE read_flag SET notifications WHERE no = ?;';
+      const query = 'DELETE FROM notifications WHERE no = ?;';
 
       const notification = await conn.query(query, notificationNum);
 
