@@ -5,11 +5,14 @@ const bcrypt = require('bcrypt');
 const StudentStorage = require('./StudentStorage');
 const Error = require('../../utils/Error');
 const Auth = require('../Auth/Auth');
+const EmailAuth = require('../Auth/EmailAuth/EmailAuth');
+const EmailAuthStorage = require('../Auth/EmailAuth/EmailAuthStorage');
 
 class Student {
   constructor(req) {
     this.body = req.body;
     this.auth = req.auth;
+    this.params = req.params;
   }
 
   async login() {
@@ -218,6 +221,67 @@ class Student {
     } catch (err) {
       throw err;
     }
+  }
+
+  async findPassword() {
+    const client = this.body;
+    const { params } = this;
+
+    try {
+      // 토큰 검증
+      const reqInfo = {
+        id: client.id,
+        params,
+      };
+      const checkedToken = await EmailAuth.useableToken(reqInfo);
+      if (!checkedToken.useable) return checkedToken;
+
+      // 비밀번호 검증
+      const checkedByChangePassword = await this.checkByChangePassword();
+      if (!checkedByChangePassword.success) return checkedByChangePassword;
+
+      // 암호화
+      const saltRounds = 10;
+      const passwordSalt = bcrypt.genSaltSync(saltRounds); // 솔트
+      const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt); // 해시(비밀번호)
+      const clientInfo = {
+        hash,
+        passwordSalt,
+        id: client.id,
+      };
+
+      // DB 수정
+      const isReset = await StudentStorage.modifyPasswordSave(clientInfo);
+      if (!isReset) {
+        return { success: false, msg: '비밀번호 변경에 실패하였습니다.' };
+      }
+
+      // 토큰 삭제 && 비밀번호 변경
+      const isDeleteToken = await EmailAuthStorage.deleteTokenByStudentId(
+        client.id
+      );
+      if (!isDeleteToken) {
+        return { success: false, msg: '토큰 삭제에 실패하였습니다.' };
+      }
+      return { success: true, msg: '비밀번호가 변경되었습니다.' };
+    } catch (err) {
+      return Error.ctrl(
+        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+        err
+      );
+    }
+  }
+
+  async checkByChangePassword() {
+    const client = this.body;
+
+    if (client.newPassword !== client.checkNewPassword) {
+      return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
+    }
+    if (client.newPassword.length < 8) {
+      return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
+    }
+    return { success: true };
   }
 }
 
