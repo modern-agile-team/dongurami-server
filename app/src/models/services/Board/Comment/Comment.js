@@ -137,6 +137,22 @@ class Comment {
       if (deleteReplyCmtCount === 0) {
         return { success: false, msg: '존재하지 않는 답글입니다.' };
       }
+      const replyCmtCount = await CommentStorage.existOnlyReplyCmtNum(
+        replyCmtInfo
+      );
+
+      if (replyCmtCount === undefined) {
+        const replyCmt = await CommentStorage.updateOnlyReplyFlag(
+          replyCmtInfo.cmtNum
+        );
+
+        if (replyCmt === 0) {
+          return Error.ctrl(
+            '서버에러입니다. 서버 개발자에게 얘기해주세요.',
+            err
+          );
+        }
+      }
       return { success: true, msg: '답글 삭제 성공' };
     } catch (err) {
       return Error.ctrl('서버에러입니다. 서버 개발자에게 얘기해주세요.', err);
