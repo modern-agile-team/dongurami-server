@@ -94,7 +94,7 @@ class Board {
           success: false,
           msg: '해당 게시판에 존재하지 않는 글 입니다.',
         };
-      return { success: true, msg: '게시글 조회 성공', board };
+      return { success: true, msg: '게시글 조회 성공', category, board };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
