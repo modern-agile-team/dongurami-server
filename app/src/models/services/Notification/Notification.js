@@ -9,7 +9,7 @@ class Notification {
     this.params = req.params;
   }
 
-  static async findAllById() {
+  async findAllById() {
     const { studentId } = this.params;
 
     try {
@@ -33,7 +33,7 @@ class Notification {
     }
   }
 
-  static async updateByNotificationNum() {
+  async updateByNotificationNum() {
     const { notificationNum } = this.body;
 
     try {

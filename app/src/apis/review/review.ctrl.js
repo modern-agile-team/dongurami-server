@@ -6,7 +6,7 @@ const process = {
   // 테스트용 JWT
   createToken: async (req, res) => {
     const jwt = await Auth.createJWT(req.body, req.body.clubNum);
-    console.log(jwt);
+
     if (!jwt) {
       return res
         .status(401)
@@ -26,7 +26,7 @@ const process = {
       return res.status(201).json(response);
     }
     if (response.isError) {
-      return res.status(500).json(response.clinetMsg);
+      return res.status(500).json(response.clientMsg);
     }
     return res.status(400).json(response);
   },
