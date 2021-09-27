@@ -2,20 +2,25 @@
 
 const CommentStorage = require('./CommentStorage');
 const BoardStorage = require('../BoardStorage');
+const Notification = require('../../Notification/Notification');
 const Error = require('../../../utils/Error');
 
 class Comment {
   constructor(req) {
+    this.req = req;
     this.body = req.body;
     this.params = req.params;
   }
 
   async createCommentNum() {
+    const { body } = this;
+    const notification = new Notification(this.req);
+
     try {
       const commentInfo = {
         boardNum: this.params.boardNum,
-        id: this.body.id,
-        description: this.body.description,
+        id: body.id,
+        description: body.description,
       };
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
 
@@ -24,7 +29,14 @@ class Comment {
       }
 
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
+
       await CommentStorage.updateOnlyGroupNum(commentNum);
+
+      body.recipientIds.forEach(async (recipientId) => {
+        if (body.senderId !== recipientId) {
+          await notification.createByIdAndTitle(recipientId);
+        }
+      });
 
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {

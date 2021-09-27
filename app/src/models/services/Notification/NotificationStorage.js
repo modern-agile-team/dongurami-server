@@ -7,7 +7,6 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-
       const query = `SELECT no.no AS notificationNum, no.sender_id AS senderId, 
         bo.title, no.url, no.reading_flag AS readingFlag, no.in_date AS inDate 
         FROM notifications AS no 
@@ -26,11 +25,48 @@ class NotificationStorage {
     }
   }
 
+  static async findTitleByBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'SELECT title FROM boards WHERE no = ?;';
+      const board = await conn.query(query, boardNum);
+
+      return board[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async createByIdAndTitle(notificationInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = `INSERT INTO notifications (board_no, sender_id, recipient_id, url, notification_category_no) 
+      VALUES (?, ?, ?, ?, ?);`;
+      await conn.query(query, [
+        notificationInfo.boardNum,
+        notificationInfo.body.senderId,
+        notificationInfo.recipientId,
+        notificationInfo.body.url,
+        notificationInfo.body.notificationCategoryNum,
+      ]);
+
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async deleteByNotificationNum(notificationNum) {
     let conn;
     try {
       conn = await mariadb.getConnection();
-
       const query = 'DELETE FROM notifications WHERE no = ?;';
       const notification = await conn.query(query, notificationNum);
 
@@ -47,7 +83,6 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-
       const query = 'DELETE FROM notifications WHERE recipient_id = ?;';
       const notification = await conn.query(query, studentId);
 
