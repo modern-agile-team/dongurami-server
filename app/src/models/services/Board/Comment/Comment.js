@@ -55,13 +55,18 @@ class Comment {
   }
 
   async createReplyCommentNum() {
+    const { body } = this;
+    const userInfo = this.auth;
+    const notification = new Notification(this.req);
+
     try {
       const replyCommentInfo = {
         boardNum: this.params.boardNum,
         cmtNum: this.params.cmtNum,
-        id: this.auth.id,
-        description: this.body.description,
+        id: userInfo.id,
+        description: body.description,
       };
+      const senderId = userInfo.id;
       const exist = await CommentStorage.existOnlyCmtNum(
         replyCommentInfo.cmtNum,
         replyCommentInfo.boardNum
@@ -71,6 +76,16 @@ class Comment {
         return { success: false, msg: '해당 게시글이나 댓글이 없습니다.' };
       }
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
+
+      body.recipientIds.forEach(async (recipientId) => {
+        if (senderId !== recipientId) {
+          const title = await NotificationStorage.findTitleByBoardNum(
+            replyCommentInfo.boardNum
+          );
+
+          await notification.createByIdAndTitle(senderId, recipientId, title);
+        }
+      });
 
       return { success: true, msg: '답글 생성 성공' };
     } catch (err) {
