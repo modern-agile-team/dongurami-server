@@ -33,15 +33,42 @@ class Notification {
     }
   }
 
-  async createByIdAndTitle(recipientId) {
+  async createByIdAndTitle(recipientId, title) {
     try {
       const notificationInfo = {
-        boardNum: this.params.boardNum,
         recipientId,
+        title,
         body: this.body,
       };
 
       const success = await NotificationStorage.createByIdAndTitle(
+        notificationInfo
+      );
+
+      if (success) {
+        return success;
+      }
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async createByIdAndClubName(applicant, senderId, clubName) {
+    const { body } = this;
+    try {
+      const notificationInfo = {
+        applicant,
+        senderId,
+        clubName,
+        url: body.url,
+        notificationCategroyNum: body.notificationCategoryNum,
+      };
+
+      const success = await NotificationStorage.createByIdAndClubName(
         notificationInfo
       );
 

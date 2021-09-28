@@ -8,15 +8,13 @@ class NotificationStorage {
     try {
       conn = await mariadb.getConnection();
       const query = `SELECT no.no AS notificationNum, no.sender_id AS senderId, 
-        bo.title, no.url, no.reading_flag AS readingFlag, no.in_date AS inDate 
-        FROM notifications AS no 
-        JOIN board AS bo
-        ON no.board_num = bo.no
+        no.url, no.notification_category_no AS notificationCategoryNum, 
+        no.in_date AS inDate FROM notifications AS no 
         WHERE no.recipient_id=(SELECT id FROM students WHERE id = ?)
         ORDER BY inDate DESC
         LIMIT 10;`;
       const notifications = await conn.query(query, studentId);
-
+      console.log(notifications);
       return { success: true, notifications };
     } catch (err) {
       throw err;
@@ -33,7 +31,23 @@ class NotificationStorage {
       const query = 'SELECT title FROM boards WHERE no = ?;';
       const board = await conn.query(query, boardNum);
 
-      return board[0];
+      return board[0].title;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findClubNameByClubNum(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+      const query = 'SELECT name FROM clubs WHERE no = ?;';
+      const club = await conn.query(query, clubNum);
+
+      return club[0].name;
     } catch (err) {
       throw err;
     } finally {
@@ -45,14 +59,38 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = `INSERT INTO notifications (board_no, sender_id, recipient_id, url, notification_category_no) 
+      const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, title) 
       VALUES (?, ?, ?, ?, ?);`;
+
       await conn.query(query, [
-        notificationInfo.boardNum,
         notificationInfo.body.senderId,
         notificationInfo.recipientId,
         notificationInfo.body.url,
         notificationInfo.body.notificationCategoryNum,
+        notificationInfo.title,
+      ]);
+
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async createByIdAndClubName(notificationInfo) {
+    let conn;
+    try {
+      conn = await mariadb.getConnection();
+      const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, title) 
+      VALUES (?, ?, ?, ?, ?);`;
+
+      await conn.query(query, [
+        notificationInfo.senderId,
+        notificationInfo.applicant,
+        notificationInfo.url,
+        notificationInfo.notificationCategroyNum,
+        notificationInfo.clubName,
       ]);
 
       return true;

@@ -174,21 +174,24 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const applicantInfoQuery = `SELECT app.in_date AS inDate, s.name, s.id, s.major, s.grade, s.gender, s.phone_number AS phoneNum 
+      const applicantInfoQuery = `SELECT app.in_date AS inDate, s.name, s.id, s.major, 
+        s.grade, s.gender, s.phone_number AS phoneNum 
         FROM students AS s JOIN applicants AS app ON app.club_no = ?
         AND app.student_id = s.id AND app.reading_flag = 0;`;
 
-      const qAndAQuery = `SELECT app.student_id AS id, q.description AS question, a.description AS answer 
+      const questionAnswerQuery = `SELECT app.student_id AS id, q.description AS question, 
+        a.description AS answer 
         FROM answers AS a JOIN applicants AS app ON a.student_id = app.student_id 
-        AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q ON a.question_no = q.no;`;
+        AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q 
+        ON a.question_no = q.no;`;
 
       const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
-      const questionAndAnswer = await conn.query(qAndAQuery, clubNum);
+      const questionsAnswers = await conn.query(questionAnswerQuery, clubNum);
 
       return {
         success: true,
         applicantInfo,
-        questionAndAnswer,
+        questionsAnswers,
       };
     } catch (err) {
       throw err;

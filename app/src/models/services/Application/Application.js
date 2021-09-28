@@ -1,10 +1,13 @@
 'use strict';
 
 const ApplicationStorage = require('./ApplicationStorage');
+const Notification = require('../Notification/Notification');
+const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Application {
   constructor(req) {
+    this.req = req;
     this.body = req.body;
     this.params = req.params;
     this.auth = req.auth;
@@ -140,11 +143,11 @@ class Application {
     const { clubNum } = this.params;
 
     try {
-      const { success, applicantInfo, questionAndAnswer } =
+      const { success, applicantInfo, questionsAnswers } =
         await ApplicationStorage.findOneByClubNum(clubNum);
 
       if (success) {
-        return { success: true, applicantInfo, questionAndAnswer };
+        return { success: true, applicantInfo, questionsAnswers };
       }
       return {
         success: false,
@@ -159,8 +162,9 @@ class Application {
   async createMemberById() {
     const { clubNum } = this.params;
     const { applicant } = this.body;
-
+    const notification = new Notification(this.req);
     try {
+      const senderId = this.auth.id;
       const userInfo = {
         clubNum,
         applicant,
@@ -174,6 +178,16 @@ class Application {
         const isCreate = await ApplicationStorage.createMemberById(userInfo);
 
         if (isCreate) {
+          const clubName = await NotificationStorage.findClubNameByClubNum(
+            userInfo.clubNum
+          );
+
+          await notification.createByIdAndClubName(
+            userInfo.applicant,
+            senderId,
+            clubName
+          );
+
           return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
         }
         return {

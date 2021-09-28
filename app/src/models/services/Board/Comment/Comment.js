@@ -3,6 +3,7 @@
 const CommentStorage = require('./CommentStorage');
 const BoardStorage = require('../BoardStorage');
 const Notification = require('../../Notification/Notification');
+const NotificationStorage = require('../../Notification/NotificationStorage');
 const Error = require('../../../utils/Error');
 
 class Comment {
@@ -15,6 +16,8 @@ class Comment {
   async createCommentNum() {
     const { body } = this;
     const notification = new Notification(this.req);
+    // 포스트맨 데이터 안먹어서 생성해놓은 것.
+    body.recipientIds = ['test2', 'test3'];
 
     try {
       const commentInfo = {
@@ -34,7 +37,11 @@ class Comment {
 
       body.recipientIds.forEach(async (recipientId) => {
         if (body.senderId !== recipientId) {
-          await notification.createByIdAndTitle(recipientId);
+          const title = await NotificationStorage.findTitleByBoardNum(
+            commentInfo.boardNum
+          );
+
+          await notification.createByIdAndTitle(recipientId, title);
         }
       });
 
