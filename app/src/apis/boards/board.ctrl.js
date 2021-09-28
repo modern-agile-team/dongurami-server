@@ -35,7 +35,6 @@ const process = {
   findAllByPromotionCategory: async (req, res) => {
     const board = new Board(req);
     const response = await board.findAllByPromotionCategory();
-    console.log(response);
 
     if (response.success) return res.status(200).json(response);
     return res.status(500).json(response.clientMsg);
