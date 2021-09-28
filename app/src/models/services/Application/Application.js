@@ -208,8 +208,10 @@ class Application {
   async updateApplicantById() {
     const { clubNum } = this.params;
     const { applicant } = this.body;
+    const notification = new Notification(this.req);
 
     try {
+      const senderId = this.auth.id;
       const userInfo = {
         clubNum,
         applicant,
@@ -219,6 +221,15 @@ class Application {
       );
 
       if (isUpdate) {
+        const clubName = await NotificationStorage.findClubNameByClubNum(
+          userInfo.clubNum
+        );
+
+        await notification.createByIdAndClubName(
+          userInfo.applicant,
+          senderId,
+          clubName
+        );
         return { success: true, msg: '동아리 가입 신청을 거절하셨습니다.' };
       }
       return {
