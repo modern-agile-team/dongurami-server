@@ -4,9 +4,9 @@ const Board = require('../../models/services/Board/Board');
 
 const process = {
   // 검색
-  searchByKeyword: async (req, res) => {
+  search: async (req, res) => {
     const board = new Board(req);
-    const response = await board.searchByKeyword();
+    const response = await board.search();
 
     if (response.success) {
       return res.status(200).json(response);
