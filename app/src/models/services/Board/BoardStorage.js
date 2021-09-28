@@ -198,6 +198,33 @@ class BoardStorage {
       conn?.release();
     }
   }
+
+  static async searchByKeyword(searchInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      // query문 대입을 위한 변수 설정
+      const { category } = searchInfo;
+      const { type } = searchInfo;
+      const keyword = `%${searchInfo.keyword}%`;
+
+      const query = `SELECT no, student_id AS studentId, club_no AS clubNo, board_category_no AS boardCategoryNo, title, description, in_date AS inDate, modify_date AS modifyDate, hit
+      FROM boards WHERE ${type} LIKE ? AND board_category_no = ?;`;
+
+      const searchByKeywordResults = await conn.query(query, [
+        keyword,
+        category,
+      ]);
+
+      return searchByKeywordResults;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = BoardStorage;
