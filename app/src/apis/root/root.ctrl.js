@@ -83,6 +83,23 @@ const process = {
     }
     return res.status(400).json(response);
   },
+
+  // 비밀번호 찾기
+  findPassword: async (req, res) => {
+    const student = new Student(req);
+    const response = await student.findPassword();
+
+    if (response.success) {
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      return res.status(500).json(response.clientMsg);
+    }
+    if (!response.useable) {
+      return res.status(403).json(response);
+    }
+    return res.status(400).json(response);
+  },
 };
 
 module.exports = {

@@ -8,13 +8,14 @@ class Comment {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
+    this.auth = req.auth;
   }
 
   async createCommentNum() {
     try {
       const commentInfo = {
         boardNum: this.params.boardNum,
-        id: this.body.id,
+        id: this.auth.id,
         description: this.body.description,
       };
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
@@ -37,7 +38,7 @@ class Comment {
       const replyCommentInfo = {
         boardNum: this.params.boardNum,
         cmtNum: this.params.cmtNum,
-        id: this.body.id,
+        id: this.auth.id,
         description: this.body.description,
       };
       const exist = await CommentStorage.existOnlyCmtNum(
@@ -136,6 +137,22 @@ class Comment {
 
       if (deleteReplyCmtCount === 0) {
         return { success: false, msg: '존재하지 않는 답글입니다.' };
+      }
+      const replyCmtCount = await CommentStorage.existOnlyReplyCmtNum(
+        replyCmtInfo
+      );
+
+      if (replyCmtCount === undefined) {
+        const replyCmt = await CommentStorage.updateOnlyReplyFlag(
+          replyCmtInfo.cmtNum
+        );
+
+        if (replyCmt === 0) {
+          return Error.ctrl(
+            '서버에러입니다. 서버 개발자에게 얘기해주세요.',
+            err
+          );
+        }
       }
       return { success: true, msg: '답글 삭제 성공' };
     } catch (err) {

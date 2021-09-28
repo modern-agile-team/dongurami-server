@@ -29,6 +29,9 @@ const process = {
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
+    if (response.msg === '해당 동아리에 가입하지 않았습니다.') {
+      return res.status(403).json(response);
+    }
     return res.status(404).json(response);
   },
 
@@ -49,10 +52,13 @@ const process = {
     if (response.success) {
       const updateBoardHit = await board.updateOnlyHitByNum();
       response.images = await image.findAllByBoardImg();
-      response.comments = await comment.findAllByBoardNum();
+      // 동아리 활동일지 & 마이페이지는 댓글이 달리지 않기 때문에 조건문을 사용해 주어야됨.
+      if (response.category < 6) {
+        response.comments = await comment.findAllByBoardNum();
 
-      if (response.comments.isError) {
-        return res.status(500).json(response.comments.clientMsg);
+        if (response.comments.isError) {
+          return res.status(500).json(response.comments.clientMsg);
+        }
       }
       if (response.images.isError) {
         return res.status(500).json(response.images.clientMsg);
@@ -61,11 +67,16 @@ const process = {
         return res.status(500).json(updateBoardHit.clientMsg);
       }
       if (response.success) {
+        delete response.category;
+
         response.board.hit += 1;
         return res.status(200).json(response);
       }
     }
     if (response.isError) return res.status(500).json(response.clientMsg);
+    if (response.msg === '해당 동아리에 가입하지 않았습니다.') {
+      return res.status(403).json(response);
+    }
     return res.status(404).json(response);
   },
 
