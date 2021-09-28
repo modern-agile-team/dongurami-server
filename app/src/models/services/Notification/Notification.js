@@ -33,13 +33,13 @@ class Notification {
     }
   }
 
-  async createByIdAndTitle(recipientId, title) {
+  async createByIdAndTitle(recipientId, content) {
     const { body } = this;
     try {
       const notificationInfo = {
         senderId,
         recipientId,
-        title,
+        content,
         url: body.url,
         notificationCategoryNum: body.notificationCategoryNum,
       };
