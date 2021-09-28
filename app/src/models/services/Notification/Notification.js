@@ -60,11 +60,12 @@ class Notification {
     }
   }
 
-  async createByIdAndClubName(applicant, senderId, clubName) {
+  async createByIdAndClubName(recipientId, senderId, clubName) {
     const { body } = this;
+
     try {
       const notificationInfo = {
-        applicant,
+        recipientId,
         senderId,
         clubName,
         url: body.url,

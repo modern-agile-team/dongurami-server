@@ -1,10 +1,13 @@
 'use strict';
 
 const ScheduleStorage = require('./ScheduleStorage');
+const Notification = require('../Notification/Notification');
+const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Schedule {
   constructor(req) {
+    this.req = req;
     this.body = req.body;
     this.params = req.params;
     this.auth = req.auth;
@@ -52,21 +55,42 @@ class Schedule {
   async createSchedule() {
     const data = this.body;
     const { clubNum } = this.params;
-    const { id } = this.auth;
+    const userInfo = this.auth;
+    const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
         clubNum,
-        studentId: id,
+        studentId: userInfo.id,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
       };
-
+      const senderId = userInfo.id;
       const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
-      if (success) return { success: true, msg: '일정이 등록되었습니다.' };
+      if (success) {
+        const recipientIds = await NotificationStorage.findAllByClubNum(
+          clubNum
+        );
+
+        recipientIds.forEach(async (recipientId) => {
+          if (senderId !== recipientId) {
+            const clubName = await NotificationStorage.findClubNameByClubNum(
+              clubNum
+            );
+
+            await notification.createByIdAndClubName(
+              recipientId,
+              senderId,
+              clubName
+            );
+          }
+        });
+
+        return { success: true, msg: '일정이 등록되었습니다.' };
+      }
       return { success: false, msg: '일정 등록에 실패하였습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
@@ -88,7 +112,9 @@ class Schedule {
 
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
-      if (success) return { success: true, msg: '일정이 수정되었습니다.' };
+      if (success) {
+        return { success: true, msg: '일정이 수정되었습니다.' };
+      }
       return { success: false, msg: '일정 수정에 실패하였습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
@@ -122,7 +148,9 @@ class Schedule {
     try {
       const success = await ScheduleStorage.deleteSchedule(no);
 
-      if (success) return { success: true, msg: '일정이 삭제되었습니다.' };
+      if (success) {
+        return { success: true, msg: '일정이 삭제되었습니다.' };
+      }
       return { success: false, msg: '일정이 삭제되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);

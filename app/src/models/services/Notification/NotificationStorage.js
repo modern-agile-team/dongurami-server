@@ -55,6 +55,28 @@ class NotificationStorage {
     }
   }
 
+  static async findAllByClubNum(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+      const query =
+        'SELECT student_id AS studentId FROM members WHERE club_no = ?;';
+      const members = await conn.query(query, clubNum);
+      const studentIds = [];
+
+      for (let i = 0; i < members.length; i += 1) {
+        studentIds.push(members[i].studentId);
+      }
+
+      return studentIds;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async createByIdAndTitle(notificationInfo) {
     let conn;
     try {
@@ -87,7 +109,7 @@ class NotificationStorage {
 
       await conn.query(query, [
         notificationInfo.senderId,
-        notificationInfo.applicant,
+        notificationInfo.recipientId,
         notificationInfo.url,
         notificationInfo.notificationCategoryNum,
         notificationInfo.clubName,
