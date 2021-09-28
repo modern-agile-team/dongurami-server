@@ -29,7 +29,7 @@ const process = {
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
-    if (response.msg === '열람 권한이 없습니다.') {
+    if (response.msg === '해당 동아리에 가입하지 않았습니다.') {
       return res.status(403).json(response);
     }
     return res.status(404).json(response);
@@ -74,7 +74,7 @@ const process = {
       }
     }
     if (response.isError) return res.status(500).json(response.clientMsg);
-    if (response.msg === '열람 권한이 없습니다.') {
+    if (response.msg === '해당 동아리에 가입하지 않았습니다.') {
       return res.status(403).json(response);
     }
     return res.status(404).json(response);

@@ -39,6 +39,7 @@ class Board {
 
   async findAllByCategoryNum() {
     const category = boardCategory[this.params.category];
+    const { clubNum } = this.params;
     const criteriaRead = {
       clubNum: 1,
       category,
@@ -53,13 +54,10 @@ class Board {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
     }
     if (category === 5 || category === 6) {
-      if (
-        category === 5 &&
-        !this.auth.clubNum.includes(Number(this.params.clubNum))
-      ) {
-        return { success: false, msg: '열람 권한이 없습니다.' };
+      if (category === 5 && !this.auth.clubNum.includes(Number(clubNum))) {
+        return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
       }
-      criteriaRead.clubNum = this.params.clubNum;
+      criteriaRead.clubNum = clubNum;
     }
 
     try {
@@ -115,7 +113,7 @@ class Board {
         category === 5 &&
         !this.auth.clubNum.includes(Number(this.params.clubNum))
       ) {
-        return { success: false, msg: '열람 권한이 없습니다.' };
+        return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
       }
 
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
