@@ -8,6 +8,7 @@ class Board {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
+    this.auth = req.auth;
   }
 
   async createBoardNum() {
@@ -17,7 +18,7 @@ class Board {
       const boardInfo = {
         category,
         clubNum: 1,
-        id: request.id,
+        id: this.auth.id,
         title: request.title,
         description: request.description,
       };
@@ -56,8 +57,15 @@ class Board {
 
     try {
       const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
+      let userInfo = '비로그인 회원입니다.';
 
-      return { success: true, msg: '게시판 조회 성공', boards };
+      if (this.auth)
+        userInfo = {
+          id: this.auth.id,
+          isAdmin: this.auth.isAdmin,
+        };
+
+      return { success: true, msg: '게시판 조회 성공', userInfo, boards };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -73,8 +81,16 @@ class Board {
       const boards = await BoardStorage.findAllByPromotionCategory(
         criteriaRead
       );
+      let userInfo = '비로그인 회원입니다.';
 
-      return { success: true, msg: '장르별 조회 성공', boards };
+      if (this.auth) {
+        userInfo = {
+          id: this.auth.id,
+          club: this.auth.clubNum,
+        };
+      }
+
+      return { success: true, msg: '장르별 조회 성공', userInfo, boards };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -94,7 +110,16 @@ class Board {
           success: false,
           msg: '해당 게시판에 존재하지 않는 글 입니다.',
         };
-      return { success: true, msg: '게시글 조회 성공', board };
+
+      let userInfo = '비로그인 회원입니다.';
+
+      if (this.auth)
+        userInfo = {
+          id: this.auth.id,
+          isAdmin: this.auth.isAdmin,
+        };
+
+      return { success: true, msg: '게시글 조회 성공', userInfo, board };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -146,6 +171,47 @@ class Board {
       return { success: true, msg: '조회수 1 증가' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async searchByKeyword() {
+    // 검색을 위한 정보
+    const searchInfo = {
+      category: boardCategory[this.params.category],
+      type: this.params.type,
+      keyword: this.params.keyword,
+    };
+
+    // 게시판 유무 검증
+    if (searchInfo.category === undefined) {
+      return { success: false, msg: '존재하지 않는 게시판입니다.' };
+    }
+
+    // 검색타입 검증
+    if (
+      searchInfo.type !== 'description' &&
+      searchInfo.type !== 'title' &&
+      searchInfo.type !== 'student_id'
+    ) {
+      return { success: false, msg: '검색 타입을 확인해주세요' };
+    }
+
+    try {
+      // 검색결과, 함수이동
+      const searchByKeywordResults = await BoardStorage.searchByKeyword(
+        searchInfo
+      );
+
+      return {
+        success: true,
+        msg: `${searchInfo.type}타입으로 ${searchInfo.keyword}(을)를 검색한 결과입니다.`,
+        searchByKeywordResults,
+      };
+    } catch (err) {
+      return Error.ctrl(
+        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+        err
+      );
     }
   }
 }

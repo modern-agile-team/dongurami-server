@@ -34,11 +34,14 @@ class Notification {
   }
 
   async createByIdAndTitle(recipientId, title) {
+    const { body } = this;
     try {
       const notificationInfo = {
+        senderId,
         recipientId,
         title,
-        body: this.body,
+        url: body.url,
+        notificationCategoryNum: body.notificationCategoryNum,
       };
 
       const success = await NotificationStorage.createByIdAndTitle(
@@ -65,7 +68,7 @@ class Notification {
         senderId,
         clubName,
         url: body.url,
-        notificationCategroyNum: body.notificationCategoryNum,
+        notificationCategoryNum: body.notificationCategoryNum,
       };
 
       const success = await NotificationStorage.createByIdAndClubName(

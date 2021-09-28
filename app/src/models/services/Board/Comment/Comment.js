@@ -11,10 +11,12 @@ class Comment {
     this.req = req;
     this.body = req.body;
     this.params = req.params;
+    this.auth = req.auth;
   }
 
   async createCommentNum() {
     const { body } = this;
+    const userInfo = this.auth;
     const notification = new Notification(this.req);
     // 포스트맨 데이터 안먹어서 생성해놓은 것.
     body.recipientIds = ['test2', 'test3'];
@@ -22,9 +24,10 @@ class Comment {
     try {
       const commentInfo = {
         boardNum: this.params.boardNum,
-        id: body.id,
-        description: body.description,
+        id: userInfo.id,
+        description: this.body.description,
       };
+      const senderId = userInfo.id;
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
 
       if (exist === undefined) {
@@ -36,12 +39,12 @@ class Comment {
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
       body.recipientIds.forEach(async (recipientId) => {
-        if (body.senderId !== recipientId) {
+        if (senderId !== recipientId) {
           const title = await NotificationStorage.findTitleByBoardNum(
             commentInfo.boardNum
           );
 
-          await notification.createByIdAndTitle(recipientId, title);
+          await notification.createByIdAndTitle(senderId, recipientId, title);
         }
       });
 
@@ -56,7 +59,7 @@ class Comment {
       const replyCommentInfo = {
         boardNum: this.params.boardNum,
         cmtNum: this.params.cmtNum,
-        id: this.body.id,
+        id: this.auth.id,
         description: this.body.description,
       };
       const exist = await CommentStorage.existOnlyCmtNum(

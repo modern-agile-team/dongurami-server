@@ -63,10 +63,10 @@ class NotificationStorage {
       VALUES (?, ?, ?, ?, ?);`;
 
       await conn.query(query, [
-        notificationInfo.body.senderId,
+        notificationInfo.senderId,
         notificationInfo.recipientId,
-        notificationInfo.body.url,
-        notificationInfo.body.notificationCategoryNum,
+        notificationInfo.url,
+        notificationInfo.notificationCategoryNum,
         notificationInfo.title,
       ]);
 
@@ -89,7 +89,7 @@ class NotificationStorage {
         notificationInfo.senderId,
         notificationInfo.applicant,
         notificationInfo.url,
-        notificationInfo.notificationCategroyNum,
+        notificationInfo.notificationCategoryNum,
         notificationInfo.clubName,
       ]);
 
