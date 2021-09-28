@@ -38,21 +38,26 @@ class Board {
   }
 
   async findAllByCategoryNum() {
+    const category = boardCategory[this.params.category];
+    const { clubNum } = this.params;
     const criteriaRead = {
       clubNum: 1,
-      category: boardCategory[this.params.category],
+      category,
       sort: this.params.sort,
       order: this.params.order.toUpperCase(),
     };
 
-    if (criteriaRead.category === undefined) {
+    if (category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판 입니다.' };
     }
-    if (criteriaRead.category === 4 || criteriaRead.category === 7) {
+    if (category === 4 || category === 7) {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
     }
-    if (criteriaRead.category === 5 || criteriaRead.category === 6) {
-      criteriaRead.clubNum = this.params.clubNum;
+    if (category === 5 || category === 6) {
+      if (category === 5 && !this.auth.clubNum.includes(Number(clubNum))) {
+        return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
+      }
+      criteriaRead.clubNum = clubNum;
     }
 
     try {
@@ -103,6 +108,14 @@ class Board {
         category,
         boardNum: this.params.boardNum,
       };
+
+      if (
+        category === 5 &&
+        !this.auth.clubNum.includes(Number(this.params.clubNum))
+      ) {
+        return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
+      }
+
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
       if (board === undefined)
@@ -119,7 +132,13 @@ class Board {
           isAdmin: this.auth.isAdmin,
         };
 
-      return { success: true, msg: '게시글 조회 성공', userInfo, board };
+      return {
+        success: true,
+        msg: '게시글 조회 성공',
+        userInfo,
+        category,
+        board,
+      };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
