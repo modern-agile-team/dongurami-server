@@ -14,7 +14,7 @@ class BoardStorage {
       const board = await conn.query(query, [
         boardInfo.category,
         boardInfo.id,
-        boardInfo.clubNo,
+        boardInfo.clubNum,
         boardInfo.title,
         boardInfo.description,
       ]);
@@ -66,7 +66,7 @@ class BoardStorage {
       let whole = '';
 
       if (criteriaRead.clubCategory !== 'whole') {
-        whole = ` AND clubs.category = ${criteriaRead.clubCategory}`;
+        whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
       }
 
       const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
@@ -124,12 +124,13 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE boards SET title = ?, description = ? WHERE no = ?;`;
+      const query = `UPDATE boards SET title = ?, description = ? WHERE no = ? AND board_category_no = ?;`;
 
       const board = await conn.query(query, [
         boardInfo.title,
         boardInfo.description,
         boardInfo.boardNum,
+        boardInfo.category,
       ]);
 
       return board.affectedRows;
@@ -140,15 +141,18 @@ class BoardStorage {
     }
   }
 
-  static async deleteOneByBoardNum(boardNum) {
+  static async deleteOneByBoardNum(boardInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `DELETE FROM boards WHERE no = ?;`;
+      const query = `DELETE FROM boards WHERE no = ? AND board_category_no = ?;`;
 
-      const board = await conn.query(query, [boardNum]);
+      const board = await conn.query(query, [
+        boardInfo.boardNum,
+        boardInfo.category,
+      ]);
 
       return board.affectedRows;
     } catch (err) {
@@ -188,6 +192,33 @@ class BoardStorage {
       await conn.query(query, [boardNum]);
 
       return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async searchByKeyword(searchInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      // query문 대입을 위한 변수 설정
+      const { category } = searchInfo;
+      const { type } = searchInfo;
+      const keyword = `%${searchInfo.keyword}%`;
+
+      const query = `SELECT no, student_id AS studentId, club_no AS clubNo, board_category_no AS boardCategoryNo, title, description, in_date AS inDate, modify_date AS modifyDate, hit
+      FROM boards WHERE ${type} LIKE ? AND board_category_no = ?;`;
+
+      const searchByKeywordResults = await conn.query(query, [
+        keyword,
+        category,
+      ]);
+
+      return searchByKeywordResults;
     } catch (err) {
       throw err;
     } finally {
