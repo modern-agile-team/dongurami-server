@@ -36,7 +36,7 @@ class Board {
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
-      if (category === 4) {
+      if (category === 5) {
         const senderId = boardInfo.id;
         const recipientIds = await NotificationStorage.findAllByClubNum(
           boardInfo.clubNum
