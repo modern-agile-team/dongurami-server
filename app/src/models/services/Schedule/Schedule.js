@@ -102,39 +102,43 @@ class Schedule {
 
   async updateSchedule() {
     const data = this.body;
-    const { no } = this.params;
+    const { params } = this;
     const userInfo = this.auth;
     const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
-        no,
+        no: params.no,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
       };
-      const senderId = userInfo.id;
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
-      recipientIds.forEach(async (recipientId) => {
-        if (senderId !== recipientId) {
-          const clubName = await NotificationStorage.findClubNameByClubNum(
-            clubNum
-          );
-
-          const notificationInfo = {
-            recipientId,
-            senderId,
-            clubName,
-            content: scheduleInfo.startDate,
-          };
-
-          await notification.createByIdAndClubName(notificationInfo);
-        }
-      });
-
       if (success) {
+        const senderId = userInfo.id;
+        const { clubNum } = params;
+        const recipientIds = await NotificationStorage.findAllByClubNum(
+          clubNum
+        );
+
+        recipientIds.forEach(async (recipientId) => {
+          if (senderId !== recipientId) {
+            const clubName = await NotificationStorage.findClubNameByClubNum(
+              clubNum
+            );
+
+            const notificationInfo = {
+              recipientId,
+              senderId,
+              clubName,
+              content: scheduleInfo.startDate,
+            };
+            console.log(notificationInfo);
+            await notification.createByIdAndClubName(notificationInfo);
+          }
+        });
         return { success: true, msg: '일정이 수정되었습니다.' };
       }
       return { success: false, msg: '일정 수정에 실패하였습니다.' };
