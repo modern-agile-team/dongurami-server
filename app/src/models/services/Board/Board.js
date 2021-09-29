@@ -158,7 +158,7 @@ class Board {
       sort: this.params.sort,
       order: this.params.order,
     };
-    const searchType = ['description', 'title', 'name'];
+    const searchType = ['title', 'name'];
 
     // 게시판 유무 검증
     if (searchInfo.category === undefined) {
