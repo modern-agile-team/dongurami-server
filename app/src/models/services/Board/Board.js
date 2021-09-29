@@ -1,35 +1,63 @@
 'use strict';
 
 const BoardStorage = require('./BoardStorage');
+const Notification = require('../Notification/Notification');
+const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 const boardCategory = require('../Category/board');
 
 class Board {
   constructor(req) {
+    this.req = req;
     this.body = req.body;
     this.params = req.params;
     this.auth = req.auth;
   }
 
   async createBoardNum() {
+    const board = this.body;
+    const { clubNum } = this.params;
+    const category = boardCategory[this.params.category];
+    const notification = new Notification(this.req);
     try {
-      const category = boardCategory[this.params.category];
-      const request = this.body;
       const boardInfo = {
         category,
         clubNum: 1,
         id: this.auth.id,
-        title: request.title,
-        description: request.description,
+        title: board.title,
+        description: board.description,
       };
 
-      if (this.params.clubNum !== undefined) {
-        boardInfo.clubNum = this.params.clubNum;
+      if (clubNum !== undefined) {
+        boardInfo.clubNum = clubNum;
       } else if (category === 4) {
-        boardInfo.clubNum = request.clubNo;
+        boardInfo.clubNum = board.clubNo;
       }
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
+
+      if (category === 4) {
+        const senderId = boardInfo.id;
+        const recipientIds = await NotificationStorage.findAllByClubNum(
+          boardInfo.clubNum
+        );
+        recipientIds.forEach(async (recipientId) => {
+          if (senderId !== recipientId) {
+            const clubName = await NotificationStorage.findClubNameByClubNum(
+              clubNum
+            );
+
+            const notificationInfo = {
+              recipientId,
+              senderId,
+              clubName,
+              content: boardInfo.title,
+            };
+
+            await notification.createByIdAndClubName(notificationInfo);
+          }
+        });
+      }
 
       return { success: true, msg: '게시글 생성 성공', boardNum };
     } catch (err) {
