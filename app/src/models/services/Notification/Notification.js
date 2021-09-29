@@ -89,6 +89,34 @@ class Notification {
     }
   }
 
+  async createNotification() {
+    const todaySchedule = this.body;
+    const { clubNum } = this.params;
+    try {
+      const recipientIds = await NotificationStorage.findAllByClubNum(clubNum);
+
+      recipientIds.forEach(async (recipientId) => {
+        const clubName = await NotificationStorage.findClubNameByClubNum(
+          clubNum
+        );
+
+        const notificationInfo = {
+          recipientId,
+          senderId: clubName,
+          title: clubName,
+          content: todaySchedule.title,
+          url: todaySchedule.url,
+          notificationCategoryNum: todaySchedule.notificationCategoryNum,
+        };
+
+        await NotificationStorage.createByIdAndClubName(notificationInfo);
+      });
+      return { success: true, msg: '오늘의 일정 알림이 생성되었습니다.' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
   async deleteByNotificationNum() {
     const { notificationNum } = this.body;
 

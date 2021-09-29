@@ -10,7 +10,7 @@ const loginAuth = require('../../middlewares/login-auth');
 const clubAuth = require('../../middlewares/club-auth');
 
 router.post('/:clubNum', loginAuth.loginCheck, ctrl.process.createSchedule);
-// router.post('/:clubNum/today', ctrl.process.createNotification);
+router.post('/:clubNum/today', ctrl.process.createNotification);
 router.get(
   '/:clubNum',
   loginAuth.loginCheck,
