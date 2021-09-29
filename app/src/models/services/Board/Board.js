@@ -171,9 +171,7 @@ class Board {
     }
 
     // DB 검색을 위한 type변수명 변경
-    if (searchInfo.type === 'name') {
-      searchInfo.type = 'st.name';
-    }
+    if (searchInfo.type === 'name') searchInfo.type = 'st.name';
 
     try {
       // 검색결과, 함수이동
