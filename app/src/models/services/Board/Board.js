@@ -174,13 +174,16 @@ class Board {
     }
   }
 
-  async searchByKeyword() {
+  async search() {
     // 검색을 위한 정보
     const searchInfo = {
       category: boardCategory[this.params.category],
       type: this.params.type,
       keyword: this.params.keyword,
+      sort: this.params.sort,
+      order: this.params.order,
     };
+    const searchType = ['title', 'name'];
 
     // 게시판 유무 검증
     if (searchInfo.category === undefined) {
@@ -188,24 +191,23 @@ class Board {
     }
 
     // 검색타입 검증
-    if (
-      searchInfo.type !== 'description' &&
-      searchInfo.type !== 'title' &&
-      searchInfo.type !== 'student_id'
-    ) {
+    if (!searchType.includes(searchInfo.type)) {
       return { success: false, msg: '검색 타입을 확인해주세요' };
+    }
+
+    // DB 검색을 위한 type변수명 변경
+    if (searchInfo.type === 'name') {
+      searchInfo.type = 'st.name';
     }
 
     try {
       // 검색결과, 함수이동
-      const searchByKeywordResults = await BoardStorage.searchByKeyword(
-        searchInfo
-      );
+      const boards = await BoardStorage.findAllSearch(searchInfo);
 
       return {
         success: true,
         msg: `${searchInfo.type}타입으로 ${searchInfo.keyword}(을)를 검색한 결과입니다.`,
-        searchByKeywordResults,
+        boards,
       };
     } catch (err) {
       return Error.ctrl(
