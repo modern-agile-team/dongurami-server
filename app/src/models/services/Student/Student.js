@@ -8,6 +8,8 @@ const Auth = require('../Auth/Auth');
 const EmailAuth = require('../Auth/EmailAuth/EmailAuth');
 const EmailAuthStorage = require('../Auth/EmailAuth/EmailAuthStorage');
 
+const { SALT_ROUNDS } = Number(process.env.SALT_ROUNDS);
+
 class Student {
   constructor(req) {
     this.body = req.body;
@@ -50,20 +52,29 @@ class Student {
 
   async signUp() {
     const client = this.body;
-    const saltRounds = 10;
-    const passwordSalt = bcrypt.genSaltSync(saltRounds);
-    const hash = bcrypt.hashSync(client.password, passwordSalt);
-    const checkedIdAndEmail = await this.checkIdAndEmail();
 
-    if (checkedIdAndEmail.saveable) {
-      const studentInfo = { client, passwordSalt, hash };
-      const response = await StudentStorage.save(studentInfo);
+    try {
+      // 아이디 이메일 중복여부 확인
+      const checkedIdAndEmail = await this.checkIdAndEmail();
 
-      if (response) {
-        return { success: true, msg: '회원가입에 성공하셨습니다.' };
+      if (checkedIdAndEmail.saveable) {
+        const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS);
+        const hash = bcrypt.hashSync(client.password, passwordSalt);
+        const studentInfo = { client, passwordSalt, hash };
+        // DB에 회원 추가
+        const response = await StudentStorage.save(studentInfo);
+
+        if (response) {
+          return { success: true, msg: '회원가입에 성공하셨습니다.' };
+        }
       }
+      return checkedIdAndEmail;
+    } catch (err) {
+      return Error.ctrl(
+        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+        err
+      );
     }
-    return checkedIdAndEmail;
   }
 
   async findId() {
@@ -98,8 +109,7 @@ class Student {
 
     try {
       if (checkedPassword.success) {
-        const saltRounds = 10;
-        const passwordSalt = bcrypt.genSaltSync(saltRounds);
+        const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS);
         const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt);
         const clientInfo = {
           id: checkedPassword.student.id,
@@ -241,8 +251,7 @@ class Student {
       if (!checkedByChangePassword.success) return checkedByChangePassword;
 
       // 암호화
-      const saltRounds = 10;
-      const passwordSalt = bcrypt.genSaltSync(saltRounds); // 솔트
+      const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS); // 솔트
       const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt); // 해시(비밀번호)
       const clientInfo = {
         hash,
