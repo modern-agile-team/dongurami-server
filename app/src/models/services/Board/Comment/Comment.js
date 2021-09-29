@@ -16,17 +16,17 @@ class Comment {
 
   async createCommentNum() {
     const { body } = this;
-    const userInfo = this.auth;
+    const user = this.auth;
     const notification = new Notification(this.req);
 
     try {
       const commentInfo = {
         boardNum: this.params.boardNum,
-        id: userInfo.id,
+        id: user.id,
         description: body.description,
       };
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
-      const senderId = userInfo.id;
+      const senderId = user.id;
       if (exist === undefined) {
         return { success: false, msg: '해당 게시글이 존재하지 않습니다.' };
       }
@@ -60,12 +60,13 @@ class Comment {
   async createReplyCommentNum() {
     const { body } = this;
     const userInfo = this.auth;
+    const { params } = this;
     const notification = new Notification(this.req);
 
     try {
       const replyCommentInfo = {
-        boardNum: this.params.boardNum,
-        cmtNum: this.params.cmtNum,
+        boardNum: params.boardNum,
+        cmtNum: params.cmtNum,
         id: userInfo.id,
         description: body.description,
       };
@@ -115,10 +116,11 @@ class Comment {
   }
 
   async updateByCommentNum() {
+    const { params } = this;
     try {
       const cmtInfo = {
-        boardNum: this.params.boardNum,
-        cmtNum: this.params.cmtNum,
+        boardNum: params.boardNum,
+        cmtNum: params.cmtNum,
         description: this.body.description,
       };
       const updateCmtCount = await CommentStorage.updateByCommentNum(cmtInfo);
@@ -133,11 +135,12 @@ class Comment {
   }
 
   async updateByReplyCommentNum() {
+    const { params } = this;
     try {
       const replyCmtInfo = {
-        boardNum: this.params.boardNum,
-        cmtNum: this.params.cmtNum,
-        replyCmtNum: this.params.replyCmtNum,
+        boardNum: params.boardNum,
+        cmtNum: params.cmtNum,
+        replyCmtNum: params.replyCmtNum,
         description: this.body.description,
       };
       const updateReplyCmtCount = await CommentStorage.updateByReplyCommentNum(
@@ -154,10 +157,12 @@ class Comment {
   }
 
   async deleteAllByGroupNum() {
+    const { params } = this;
+
     try {
       const cmtInfo = {
-        boardNum: this.params.boardNum,
-        cmtNum: this.params.cmtNum,
+        boardNum: params.boardNum,
+        cmtNum: params.cmtNum,
       };
       const deleteCmtCount = await CommentStorage.deleteAllByGroupNum(cmtInfo);
 
@@ -171,11 +176,13 @@ class Comment {
   }
 
   async deleteOneReplyCommentNum() {
+    const { params } = this;
+
     try {
       const replyCmtInfo = {
-        boardNum: this.params.boardNum,
-        cmtNum: this.params.cmtNum,
-        replyCmtNum: this.params.replyCmtNum,
+        boardNum: params.boardNum,
+        cmtNum: params.cmtNum,
+        replyCmtNum: params.replyCmtNum,
       };
       const deleteReplyCmtCount = await CommentStorage.deleteOneReplyCommentNum(
         replyCmtInfo
