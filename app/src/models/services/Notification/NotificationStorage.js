@@ -14,7 +14,7 @@ class NotificationStorage {
         ORDER BY inDate DESC
         LIMIT 10;`;
       const notifications = await conn.query(query, studentId);
-      console.log(notifications);
+
       return { success: true, notifications };
     } catch (err) {
       throw err;
@@ -81,14 +81,15 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, content) 
-      VALUES (?, ?, ?, ?, ?);`;
+      const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, title, content) 
+      VALUES (?, ?, ?, ?, ?, ?);`;
 
       await conn.query(query, [
         notificationInfo.senderId,
         notificationInfo.recipientId,
         notificationInfo.url,
         notificationInfo.notificationCategoryNum,
+        notificationInfo.title,
         notificationInfo.content,
       ]);
 
@@ -104,15 +105,16 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, content) 
-      VALUES (?, ?, ?, ?, ?);`;
+      const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, title, content) 
+      VALUES (?, ?, ?, ?, ?, ?);`;
 
       await conn.query(query, [
         notificationInfo.senderId,
         notificationInfo.recipientId,
         notificationInfo.url,
         notificationInfo.notificationCategoryNum,
-        notificationInfo.clubName,
+        notificationInfo.title,
+        notificationInfo.content,
       ]);
 
       return true;

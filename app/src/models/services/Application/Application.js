@@ -182,11 +182,13 @@ class Application {
             userInfo.clubNum
           );
 
-          await notification.createByIdAndClubName(
-            userInfo.applicant,
+          const notificationInfo = {
             senderId,
-            clubName
-          );
+            clubName,
+            recipientId: userInfo.applicant,
+            content: '동아리 가입 신청 결과',
+          };
+          await notification.createByIdAndClubName(notificationInfo);
 
           return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
         }
@@ -225,11 +227,15 @@ class Application {
           userInfo.clubNum
         );
 
-        await notification.createByIdAndClubName(
-          userInfo.applicant,
+        const notificationInfo = {
           senderId,
-          clubName
-        );
+          clubName,
+          recipientId: userInfo.applicant,
+          content: '동아리 가입 신청 결과',
+        };
+
+        await notification.createByIdAndClubName(notificationInfo);
+
         return { success: true, msg: '동아리 가입 신청을 거절하셨습니다.' };
       }
       return {

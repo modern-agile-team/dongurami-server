@@ -18,18 +18,15 @@ class Comment {
     const { body } = this;
     const userInfo = this.auth;
     const notification = new Notification(this.req);
-    // 포스트맨 데이터 안먹어서 생성해놓은 것.
-    body.recipientIds = ['test2', 'test3'];
 
     try {
       const commentInfo = {
         boardNum: this.params.boardNum,
         id: userInfo.id,
-        description: this.body.description,
+        description: body.description,
       };
-      const senderId = userInfo.id;
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
-
+      const senderId = userInfo.id;
       if (exist === undefined) {
         return { success: false, msg: '해당 게시글이 존재하지 않습니다.' };
       }
@@ -40,11 +37,17 @@ class Comment {
 
       body.recipientIds.forEach(async (recipientId) => {
         if (senderId !== recipientId) {
-          const title = await NotificationStorage.findTitleByBoardNum(
+          const boardTitle = await NotificationStorage.findTitleByBoardNum(
             commentInfo.boardNum
           );
 
-          await notification.createByIdAndTitle(senderId, recipientId, title);
+          const notificationInfo = {
+            senderId,
+            recipientId,
+            boardTitle,
+            content: commentInfo.description,
+          };
+          await notification.createByIdAndTitle(notificationInfo);
         }
       });
 
@@ -79,11 +82,18 @@ class Comment {
 
       body.recipientIds.forEach(async (recipientId) => {
         if (senderId !== recipientId) {
-          const title = await NotificationStorage.findTitleByBoardNum(
+          const boardTitle = await NotificationStorage.findTitleByBoardNum(
             replyCommentInfo.boardNum
           );
 
-          await notification.createByIdAndTitle(senderId, recipientId, title);
+          const notificationInfo = {
+            senderId,
+            recipientId,
+            boardTitle,
+            content: commentInfo.description,
+          };
+
+          await notification.createByIdAndTitle(notificationInfo);
         }
       });
 

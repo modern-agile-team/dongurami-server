@@ -81,11 +81,14 @@ class Schedule {
               clubNum
             );
 
-            await notification.createByIdAndClubName(
+            const notificationInfo = {
               recipientId,
               senderId,
-              clubName
-            );
+              clubName,
+              content: scheduleInfo.startDate,
+            };
+
+            await notification.createByIdAndClubName(notificationInfo);
           }
         });
 
@@ -100,6 +103,8 @@ class Schedule {
   async updateSchedule() {
     const data = this.body;
     const { no } = this.params;
+    const userInfo = this.auth;
+    const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
@@ -109,8 +114,25 @@ class Schedule {
         startDate: data.startDate,
         endDate: data.endDate, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
       };
-
+      const senderId = userInfo.id;
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
+
+      recipientIds.forEach(async (recipientId) => {
+        if (senderId !== recipientId) {
+          const clubName = await NotificationStorage.findClubNameByClubNum(
+            clubNum
+          );
+
+          const notificationInfo = {
+            recipientId,
+            senderId,
+            clubName,
+            content: scheduleInfo.startDate,
+          };
+
+          await notification.createByIdAndClubName(notificationInfo);
+        }
+      });
 
       if (success) {
         return { success: true, msg: '일정이 수정되었습니다.' };

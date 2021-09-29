@@ -42,6 +42,10 @@ const process = {
     return res.status(400).json(response);
   },
 
+  // createNotification: async (req, res) => {
+  //   const
+  // }
+
   updateSchedule: async (req, res) => {
     // 일정 내용과 시간과 관련하여 수정 시
     const schedule = new Schedule(req);

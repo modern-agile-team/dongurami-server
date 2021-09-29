@@ -33,17 +33,17 @@ class Notification {
     }
   }
 
-  async createByIdAndTitle(recipientId, content) {
+  async createByIdAndTitle(notification) {
     const { body } = this;
     try {
       const notificationInfo = {
-        senderId,
-        recipientId,
-        content,
+        senderId: notification.senderId,
+        recipientId: notification.recipientId,
+        title: notification.boardTitle,
+        content: notification.content,
         url: body.url,
         notificationCategoryNum: body.notificationCategoryNum,
       };
-
       const success = await NotificationStorage.createByIdAndTitle(
         notificationInfo
       );
@@ -60,14 +60,15 @@ class Notification {
     }
   }
 
-  async createByIdAndClubName(recipientId, senderId, clubName) {
+  async createByIdAndClubName(notification) {
     const { body } = this;
 
     try {
       const notificationInfo = {
-        recipientId,
-        senderId,
-        clubName,
+        recipientId: notification.recipientId,
+        senderId: notification.senderId,
+        title: notification.clubName,
+        content: notification.content,
         url: body.url,
         notificationCategoryNum: body.notificationCategoryNum,
       };

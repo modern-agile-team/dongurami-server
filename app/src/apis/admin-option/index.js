@@ -33,7 +33,7 @@ router.post(
   ctrl.process.createMemberById
 );
 // 가입신청 거절
-router.put(
+router.post(
   '/:clubNum/reject-applicant',
   loginAuth.loginCheck,
   ctrl.process.updateApplicantById
