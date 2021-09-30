@@ -105,9 +105,10 @@ class Student {
 
   async resetPassword() {
     const client = this.body;
-    const checkedPassword = await this.checkPassword();
 
     try {
+      const checkedPassword = await this.checkPassword();
+
       if (checkedPassword.success) {
         const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS);
         const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt);
@@ -170,11 +171,11 @@ class Student {
 
   async checkPassword() {
     const client = this.body;
-    const studentInfo = this.auth;
+    const user = this.auth;
 
     try {
-      const studentInfoId = studentInfo.id;
-      const student = await StudentStorage.findOneById(studentInfoId);
+      const userId = user.id;
+      const student = await StudentStorage.findOneById(userId);
       const comparePassword = bcrypt.compareSync(
         client.password,
         student.password
@@ -183,7 +184,10 @@ class Student {
       if (comparePassword) {
         if (client.password !== client.newPassword) {
           if (client.newPassword === client.checkNewPassword) {
-            return { success: true, msg: '비밀번호가 일치합니다.', student };
+            if (client.newPassword.length >= 8) {
+              return { success: true, msg: '비밀번호가 일치합니다.', student };
+            }
+            return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
           }
           return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
         }
