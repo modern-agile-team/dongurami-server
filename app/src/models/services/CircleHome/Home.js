@@ -14,12 +14,12 @@ class Home {
     const { clubNum } = this.params;
 
     try {
-      const info = {
+      const clubInfo = {
         clubNum,
         id: this.auth.id,
       };
       const { success, clientInfo, result } =
-        await HomeStorage.findOneByClubNum(info);
+        await HomeStorage.findOneByClubNum(clubInfo);
 
       if (success) {
         return { success: true, clientInfo, result };

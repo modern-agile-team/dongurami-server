@@ -3,7 +3,7 @@
 const mariadb = require('../../../config/mariadb');
 
 class HomeStorage {
-  static async findOneByClubNum(info) {
+  static async findOneByClubNum(clubInfo) {
     const conn = await mariadb.getConnection();
 
     try {
@@ -18,7 +18,7 @@ class HomeStorage {
         AS collectMember) AS collectGender;`;
       // 동아리 존재 여부
       const existLeader = 'SELECT leader FROM clubs WHERE no = ?;';
-      const leader = await conn.query(existLeader, info.clubNum);
+      const leader = await conn.query(existLeader, clubInfo.clubNum);
 
       if (leader[0] === undefined) {
         // 동아리 존재 x
@@ -27,16 +27,16 @@ class HomeStorage {
 
       // 동아리가 존재한다면
       // clubInfo 조회
-      const result = await conn.query(findClubInfo, info.clubNum);
-      const cntGender = await conn.query(gender, info.clubNum);
+      const result = await conn.query(findClubInfo, clubInfo.clubNum);
+      const cntGender = await conn.query(gender, clubInfo.clubNum);
 
       result[0].genderMan = cntGender[0].man;
       result[0].genderWomen = cntGender[0].women;
 
       // 사용자가 리더인지, 동아리원이라면 권한 정보 포함
-      const isflag =
+      const findFlag =
         'SELECT join_admin_flag AS joinAdminFlag, board_admin_flag AS boardAdminFlag FROM members WHERE student_id = ?;';
-      const flags = await conn.query(isflag, info.id);
+      const flags = await conn.query(findFlag, clubInfo.id);
       const clientInfo = {};
 
       clientInfo.leader = leader[0] === clientInfo.id ? 1 : 0;
