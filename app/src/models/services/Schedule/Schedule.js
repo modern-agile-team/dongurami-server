@@ -55,19 +55,19 @@ class Schedule {
   async createSchedule() {
     const data = this.body;
     const { clubNum } = this.params;
-    const userInfo = this.auth;
+    const user = this.auth;
     const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
         clubNum,
-        studentId: userInfo.id,
+        studentId: user.id,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
       };
-      const senderId = userInfo.id;
+      const senderId = user.id;
       const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
       if (success) {

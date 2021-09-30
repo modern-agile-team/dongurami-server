@@ -5,9 +5,9 @@ const express = require('express');
 const router = express.Router();
 const ctrl = require('./notification.ctrl');
 
-router.get('/:studentId', ctrl.process.findAllById);
+router.get('/', ctrl.process.findAllById);
 
-router.delete('/:notification-num', ctrl.process.deleteByNotificationNum);
-router.delete('/entire-notification', ctrl.process.deleteAllById);
+router.delete('/:notificationNum', ctrl.process.deleteByNotificationNum);
+router.delete('/entire/:studentId', ctrl.process.deleteAllById);
 
 module.exports = router;

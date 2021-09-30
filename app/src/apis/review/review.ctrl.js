@@ -3,20 +3,6 @@
 const Review = require('../../models/services/Review/Review');
 
 const process = {
-  // 테스트용 JWT
-  createToken: async (req, res) => {
-    const jwt = await Auth.createJWT(req.body, req.body.clubNum);
-
-    if (!jwt) {
-      return res
-        .status(401)
-        .json({ success: false, msg: 'JWT가 존재하지 않습니다.' });
-    }
-    return res
-      .status(201)
-      .json({ success: true, msg: 'JWT가 생성되었습니다.', jwt });
-  },
-
   // 후기 작성
   createByReview: async (req, res) => {
     const review = new Review(req);

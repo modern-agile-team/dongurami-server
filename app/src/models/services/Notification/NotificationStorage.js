@@ -88,7 +88,7 @@ class NotificationStorage {
         notificationInfo.senderId,
         notificationInfo.recipientId,
         notificationInfo.url,
-        notificationInfo.notificationCategoryNum,
+        notificationInfo.notiCategoryNum,
         notificationInfo.title,
         notificationInfo.content,
       ]);
@@ -112,7 +112,7 @@ class NotificationStorage {
         notificationInfo.senderId,
         notificationInfo.recipientId,
         notificationInfo.url,
-        notificationInfo.notificationCategoryNum,
+        notificationInfo.notiCategoryNum,
         notificationInfo.title,
         notificationInfo.content,
       ]);

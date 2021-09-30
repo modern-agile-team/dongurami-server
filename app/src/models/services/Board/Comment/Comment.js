@@ -15,7 +15,7 @@ class Comment {
   }
 
   async createCommentNum() {
-    const { body } = this;
+    const comment = this.body;
     const user = this.auth;
     const notification = new Notification(this.req);
 
@@ -23,10 +23,11 @@ class Comment {
       const commentInfo = {
         boardNum: this.params.boardNum,
         id: user.id,
-        description: body.description,
+        description: comment.description,
       };
+      const senderId = commentInfo.id;
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
-      const senderId = user.id;
+
       if (exist === undefined) {
         return { success: false, msg: '해당 게시글이 존재하지 않습니다.' };
       }
@@ -35,18 +36,18 @@ class Comment {
 
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
-      body.recipientIds.forEach(async (recipientId) => {
+      comment.recipientIds.forEach(async (recipientId) => {
         if (senderId !== recipientId) {
-          const boardTitle = await NotificationStorage.findTitleByBoardNum(
+          const title = await NotificationStorage.findTitleByBoardNum(
             commentInfo.boardNum
           );
-
           const notificationInfo = {
             senderId,
             recipientId,
-            boardTitle,
+            title,
             content: commentInfo.description,
           };
+
           await notification.createByIdAndTitle(notificationInfo);
         }
       });
@@ -58,8 +59,8 @@ class Comment {
   }
 
   async createReplyCommentNum() {
-    const { body } = this;
-    const userInfo = this.auth;
+    const replyComment = this.body;
+    const user = this.auth;
     const { params } = this;
     const notification = new Notification(this.req);
 
@@ -67,10 +68,10 @@ class Comment {
       const replyCommentInfo = {
         boardNum: params.boardNum,
         cmtNum: params.cmtNum,
-        id: userInfo.id,
-        description: body.description,
+        id: user.id,
+        description: replyComment.description,
       };
-      const senderId = userInfo.id;
+      const senderId = replyCommentInfo.id;
       const exist = await CommentStorage.existOnlyCmtNum(
         replyCommentInfo.cmtNum,
         replyCommentInfo.boardNum
@@ -81,16 +82,16 @@ class Comment {
       }
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      body.recipientIds.forEach(async (recipientId) => {
+      replyComment.recipientIds.forEach(async (recipientId) => {
         if (senderId !== recipientId) {
-          const boardTitle = await NotificationStorage.findTitleByBoardNum(
+          const title = await NotificationStorage.findTitleByBoardNum(
             replyCommentInfo.boardNum
           );
 
           const notificationInfo = {
             senderId,
             recipientId,
-            boardTitle,
+            title,
             content: commentInfo.description,
           };
 

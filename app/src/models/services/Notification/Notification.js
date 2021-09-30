@@ -34,15 +34,16 @@ class Notification {
   }
 
   async createByIdAndTitle(notification) {
-    const { body } = this;
+    const { body } = this.body;
+
     try {
       const notificationInfo = {
         senderId: notification.senderId,
         recipientId: notification.recipientId,
-        title: notification.boardTitle,
+        title: notification.title,
         content: notification.content,
         url: body.url,
-        notificationCategoryNum: body.notificationCategoryNum,
+        notiCategoryNum: body.notiCategoryNum,
       };
       const success = await NotificationStorage.createByIdAndTitle(
         notificationInfo
@@ -70,7 +71,7 @@ class Notification {
         title: notification.clubName,
         content: notification.content,
         url: body.url,
-        notificationCategoryNum: body.notificationCategoryNum,
+        notiCategoryNum: body.notiCategoryNum,
       };
 
       const success = await NotificationStorage.createByIdAndClubName(
@@ -89,7 +90,7 @@ class Notification {
     }
   }
 
-  async createNotification() {
+  async createTodayByIdAndClubName() {
     const todaySchedule = this.body;
     const { clubNum } = this.params;
     try {
@@ -106,11 +107,12 @@ class Notification {
           title: clubName,
           content: todaySchedule.title,
           url: todaySchedule.url,
-          notificationCategoryNum: todaySchedule.notificationCategoryNum,
+          notiCategoryNum: todaySchedule.notiCategoryNum,
         };
 
         await NotificationStorage.createByIdAndClubName(notificationInfo);
       });
+
       return { success: true, msg: '오늘의 일정 알림이 생성되었습니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
@@ -118,7 +120,7 @@ class Notification {
   }
 
   async deleteByNotificationNum() {
-    const { notificationNum } = this.body;
+    const { notificationNum } = this.params;
 
     try {
       const isDelete = await NotificationStorage.deleteByNotificationNum(
@@ -138,11 +140,11 @@ class Notification {
   }
 
   async deleteAllById() {
-    const studentId = this.body.id;
+    const { studentId } = this.params;
 
     try {
       const isDelete = await NotificationStorage.deleteAllById(studentId);
-
+      console.log(isDelete);
       if (isDelete) {
         return { success: true, msg: '전체 알림이 삭제되었습니다.' };
       }

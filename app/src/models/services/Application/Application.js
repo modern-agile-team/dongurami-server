@@ -163,6 +163,7 @@ class Application {
     const { clubNum } = this.params;
     const { applicant } = this.body;
     const notification = new Notification(this.req);
+
     try {
       const senderId = this.auth.id;
       const userInfo = {

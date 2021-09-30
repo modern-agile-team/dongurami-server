@@ -43,9 +43,9 @@ const process = {
     return res.status(400).json(response);
   },
 
-  createNotification: async (req, res) => {
+  createTodayByIdAndClubName: async (req, res) => {
     const notification = new Notification(req);
-    const response = await notification.createNotification();
+    const response = await notification.createTodayByIdAndClubName();
 
     if (response.success) {
       return res.status(201).json(response);
