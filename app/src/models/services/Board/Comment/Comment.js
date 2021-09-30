@@ -92,7 +92,7 @@ class Comment {
             senderId,
             recipientId,
             title,
-            content: commentInfo.description,
+            content: replyCommentInfo.description,
           };
 
           await notification.createByIdAndTitle(notificationInfo);

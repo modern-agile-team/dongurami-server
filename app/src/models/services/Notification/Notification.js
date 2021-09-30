@@ -35,7 +35,7 @@ class Notification {
   }
 
   async createByIdAndTitle(notification) {
-    const { body } = this.body;
+    const { body } = this;
 
     try {
       const notificationInfo = {
@@ -46,6 +46,7 @@ class Notification {
         url: body.url,
         notiCategoryNum: body.notiCategoryNum,
       };
+
       const success = await NotificationStorage.createByIdAndTitle(
         notificationInfo
       );

@@ -200,7 +200,7 @@ class Application {
       }
       return {
         success: false,
-        msg: '이미 가입되었거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+        msg: '존재하지 않는 회원이거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);

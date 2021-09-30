@@ -7,6 +7,7 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
+
       const query = `SELECT no.no AS notificationNum, no.sender_id AS senderId, 
         no.url, no.notification_category_no AS notificationCategoryNum, 
         no.in_date AS inDate FROM notifications AS no 
@@ -28,6 +29,7 @@ class NotificationStorage {
 
     try {
       conn = await mariadb.getConnection();
+
       const query = 'SELECT title FROM boards WHERE no = ?;';
       const board = await conn.query(query, boardNum);
 
@@ -44,6 +46,7 @@ class NotificationStorage {
 
     try {
       conn = await mariadb.getConnection();
+
       const query = 'SELECT name FROM clubs WHERE no = ?;';
       const club = await conn.query(query, clubNum);
 
@@ -60,6 +63,7 @@ class NotificationStorage {
 
     try {
       conn = await mariadb.getConnection();
+
       const query =
         'SELECT student_id AS studentId FROM members WHERE club_no = ?;';
       const members = await conn.query(query, clubNum);
@@ -81,6 +85,7 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
+
       const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, title, content) 
       VALUES (?, ?, ?, ?, ?, ?);`;
 
@@ -105,6 +110,7 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
+
       const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, title, content) 
       VALUES (?, ?, ?, ?, ?, ?);`;
 
@@ -129,6 +135,7 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
+
       const query = 'DELETE FROM notifications WHERE no = ?;';
       const notification = await conn.query(query, notificationNum);
 
@@ -145,6 +152,7 @@ class NotificationStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
+
       const query = 'DELETE FROM notifications WHERE recipient_id = ?;';
       const notification = await conn.query(query, studentId);
 
