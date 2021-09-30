@@ -32,7 +32,7 @@ class Profile {
       if (this.auth) {
         userInfo = {
           id: this.auth.id,
-          club: this.auth.clubNum,
+          isAdmin: this.auth.isAdmin,
         };
       }
 
