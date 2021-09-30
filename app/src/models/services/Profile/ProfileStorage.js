@@ -9,7 +9,7 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT id, name, email, major, profile_image_url AS profileImageUrl
+      const query = `SELECT id, name, email, phone_number AS phoneNumber, grade, gender, major, profile_image_url AS profileImageUrl, file_id AS fileId
       FROM students
       WHERE id = ?;`;
 
@@ -37,6 +37,31 @@ class ProfileStorage {
       const clubList = await conn.query(query, [id]);
 
       return clubList;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateStudentInfo(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `UPDATE students SET email = ?, phone_number = ?, grade = ?, profile_image_url = ?, file_id = ? WHERE id = ?;`;
+
+      const student = conn.query(query, [
+        userInfo.email,
+        userInfo.phoneNumber,
+        userInfo.grade,
+        userInfo.profileImageUrl,
+        userInfo.fileId,
+        userInfo.userId,
+      ]);
+
+      return student.affectedRows;
     } catch (err) {
       throw err;
     } finally {
