@@ -7,6 +7,7 @@ class Notification {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
+    this.auth = req.auth;
   }
 
   async findAllById() {
@@ -140,17 +141,17 @@ class Notification {
   }
 
   async deleteAllById() {
-    const { studentId } = this.params;
+    const { studentId } = this.auth.id;
 
     try {
       const isDelete = await NotificationStorage.deleteAllById(studentId);
-      console.log(isDelete);
+
       if (isDelete) {
         return { success: true, msg: '전체 알림이 삭제되었습니다.' };
       }
       return {
         success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+        msg: '삭제 할 알림이 없거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요', err);
