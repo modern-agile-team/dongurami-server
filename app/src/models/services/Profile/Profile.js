@@ -23,8 +23,12 @@ class Profile {
       const clubs = await ProfileStorage.findAllClubByStudentId(id);
 
       profile.clubs = [];
-      for (let i = 0; i < clubs.length; i += 1) {
-        profile.clubs.push(clubs[i].name);
+
+      for (const club of clubs) {
+        profile.clubs.push({
+          no: club.no,
+          name: club.name,
+        });
       }
 
       let userInfo = '비로그인 회원입니다.';

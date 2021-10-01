@@ -29,10 +29,11 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT name FROM clubs
+      const query = `SELECT clubs.no, clubs.name FROM clubs
       LEFT JOIN members
       ON clubs.no = members.club_no
-      WHERE members.student_id = ?;`;
+      WHERE members.student_id = ?
+      ORDER BY clubs.no ASC;`;
 
       const clubList = await conn.query(query, [id]);
 
