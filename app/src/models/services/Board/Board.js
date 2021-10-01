@@ -86,16 +86,20 @@ class Board {
       }
       criteriaRead.clubNum = clubNum;
     }
+    if (category < 5 && this.params.clubNum !== undefined) {
+      return { success: false, msg: '잘못된 URL의 접근입니다.' };
+    }
 
     try {
       const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
       let userInfo = '비로그인 회원입니다.';
 
-      if (user)
+      if (user) {
         userInfo = {
           id: user.id,
           isAdmin: user.isAdmin,
         };
+      }
 
       return { success: true, msg: '게시판 조회 성공', userInfo, boards };
     } catch (err) {
