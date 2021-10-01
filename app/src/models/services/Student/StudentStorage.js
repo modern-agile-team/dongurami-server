@@ -35,19 +35,19 @@ class StudentStorage {
     }
   }
 
-  static async save(studentInfo) {
+  static async save(saveInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query =
         'INSERT INTO students (id, password, name, email, password_salt, major) VALUES (?, ?, ?, ?, ?, ?);';
       await conn.query(query, [
-        studentInfo.client.id,
-        studentInfo.hash,
-        studentInfo.client.name,
-        studentInfo.client.email,
-        studentInfo.passwordSalt,
-        studentInfo.client.major,
+        saveInfo.id,
+        saveInfo.password,
+        saveInfo.name,
+        saveInfo.email,
+        saveInfo.passwordSalt,
+        saveInfo.major,
       ]);
       return true;
     } catch (err) {

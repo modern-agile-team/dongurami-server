@@ -8,13 +8,12 @@ const Auth = require('../Auth/Auth');
 const EmailAuth = require('../Auth/EmailAuth/EmailAuth');
 const EmailAuthStorage = require('../Auth/EmailAuth/EmailAuthStorage');
 
-const { SALT_ROUNDS } = Number(process.env.SALT_ROUNDS);
-
 class Student {
   constructor(req) {
     this.body = req.body;
     this.auth = req.auth;
     this.params = req.params;
+    this.SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
   }
 
   async login() {
@@ -51,18 +50,21 @@ class Student {
   }
 
   async signUp() {
-    const client = this.body;
+    const saveInfo = this.body;
 
     try {
       // 아이디 이메일 중복여부 확인
       const checkedIdAndEmail = await this.checkIdAndEmail();
 
       if (checkedIdAndEmail.saveable) {
-        const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS);
-        const hash = bcrypt.hashSync(client.password, passwordSalt);
-        const studentInfo = { client, passwordSalt, hash };
+        saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+        saveInfo.hash = bcrypt.hashSync(
+          saveInfo.password,
+          saveInfo.passwordSalt
+        );
+
         // DB에 회원 추가
-        const response = await StudentStorage.save(studentInfo);
+        const response = await StudentStorage.save(saveInfo);
 
         if (response) {
           return { success: true, msg: '회원가입에 성공하셨습니다.' };
@@ -133,12 +135,12 @@ class Student {
 
   async checkIdAndEmail() {
     const client = this.body;
+    const clientInfo = {
+      id: client.id,
+      email: client.email,
+    };
 
     try {
-      const clientInfo = {
-        id: client.id,
-        email: client.email,
-      };
       const student = await StudentStorage.findOneByIdOrEmail(clientInfo);
 
       if (student === undefined) {
