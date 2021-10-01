@@ -184,19 +184,19 @@ class Student {
       );
 
       if (comparePassword) {
-        if (client.password !== client.newPassword) {
-          if (client.newPassword === client.checkNewPassword) {
-            if (client.newPassword.length >= 8) {
-              return { success: true, msg: '비밀번호가 일치합니다.', student };
-            }
-            return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
-          }
-          return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
+        if (client.newPassword.length < 8) {
+          return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
         }
-        return {
-          success: false,
-          msg: '기존 비밀번호와 다른 비밀번호를 설정해주세요.',
-        };
+        if (client.password === client.newPassword) {
+          return {
+            success: false,
+            msg: '기존 비밀번호와 다른 비밀번호를 설정해주세요.',
+          };
+        }
+        if (client.newPassword === client.checkNewPassword) {
+          return { success: true, msg: '비밀번호가 일치합니다.', student };
+        }
+        return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
       }
       return { success: false, msg: '비밀번호가 틀렸습니다.' };
     } catch (err) {
