@@ -1,10 +1,13 @@
 'use strict';
 
 const ScheduleStorage = require('./ScheduleStorage');
+const Notification = require('../Notification/Notification');
+const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Schedule {
   constructor(req) {
+    this.req = req;
     this.body = req.body;
     this.params = req.params;
     this.auth = req.auth;
@@ -52,21 +55,44 @@ class Schedule {
   async createSchedule() {
     const data = this.body;
     const { clubNum } = this.params;
-    const { id } = this.auth;
+    const user = this.auth;
+    const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
         clubNum,
-        studentId: id,
+        studentId: user.id,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate,
       };
-
+      const senderId = scheduleInfo.studentId;
       const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
-      if (success) return { success: true, msg: '일정이 등록되었습니다.' };
+      if (success) {
+        const recipientIds = await NotificationStorage.findAllByClubNum(
+          clubNum
+        );
+        const clubName = await NotificationStorage.findClubNameByClubNum(
+          clubNum
+        );
+
+        recipientIds.forEach(async (recipientId) => {
+          if (senderId !== recipientId) {
+            const notificationInfo = {
+              recipientId,
+              senderId,
+              clubName,
+              content: scheduleInfo.startDate,
+            };
+
+            await notification.createByIdAndClubName(notificationInfo);
+          }
+        });
+
+        return { success: true, msg: '일정이 등록되었습니다.' };
+      }
       return { success: false, msg: '일정 등록에 실패하였습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
@@ -75,20 +101,44 @@ class Schedule {
 
   async updateSchedule() {
     const data = this.body;
-    const { no } = this.params;
+    const { params } = this;
+    const userInfo = this.auth;
+    const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
-        no,
+        no: params.no,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
         endDate: data.endDate, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
       };
-
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
-      if (success) return { success: true, msg: '일정이 수정되었습니다.' };
+      if (success) {
+        const senderId = userInfo.id;
+        const { clubNum } = params;
+        const recipientIds = await NotificationStorage.findAllByClubNum(
+          clubNum
+        );
+        const clubName = await NotificationStorage.findClubNameByClubNum(
+          clubNum
+        );
+
+        recipientIds.forEach(async (recipientId) => {
+          if (senderId !== recipientId) {
+            const notificationInfo = {
+              recipientId,
+              senderId,
+              clubName,
+              content: scheduleInfo.startDate,
+            };
+
+            await notification.createByIdAndClubName(notificationInfo);
+          }
+        });
+        return { success: true, msg: '일정이 수정되었습니다.' };
+      }
       return { success: false, msg: '일정 수정에 실패하였습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
@@ -122,7 +172,9 @@ class Schedule {
     try {
       const success = await ScheduleStorage.deleteSchedule(no);
 
-      if (success) return { success: true, msg: '일정이 삭제되었습니다.' };
+      if (success) {
+        return { success: true, msg: '일정이 삭제되었습니다.' };
+      }
       return { success: false, msg: '일정이 삭제되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);

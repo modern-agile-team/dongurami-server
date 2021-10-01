@@ -1,5 +1,3 @@
-'use strict';
-
 const mariadb = require('../../../config/mariadb');
 
 class BoardStorage {
@@ -14,7 +12,7 @@ class BoardStorage {
       const board = await conn.query(query, [
         boardInfo.category,
         boardInfo.id,
-        boardInfo.clubNo,
+        boardInfo.clubNum,
         boardInfo.title,
         boardInfo.description,
       ]);
@@ -41,11 +39,14 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = ?
+      WHERE bo.board_category_no = ? AND bo.club_no = ?
       GROUP BY no
       ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
 
-      const boardList = await conn.query(query, [criteriaRead.category]);
+      const boardList = await conn.query(query, [
+        criteriaRead.category,
+        criteriaRead.clubNum,
+      ]);
 
       return boardList;
     } catch (err) {
@@ -63,7 +64,7 @@ class BoardStorage {
       let whole = '';
 
       if (criteriaRead.clubCategory !== 'whole') {
-        whole = ` AND clubs.category = ?`;
+        whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
       }
 
       const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
@@ -78,7 +79,7 @@ class BoardStorage {
       GROUP BY no
       ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
 
-      const boardList = conn.query(query, [criteriaRead.clubCategory]);
+      const boardList = conn.query(query);
 
       return boardList;
     } catch (err) {
@@ -121,12 +122,13 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE boards SET title = ?, description = ? WHERE no = ?;`;
+      const query = `UPDATE boards SET title = ?, description = ? WHERE no = ? AND board_category_no = ?;`;
 
       const board = await conn.query(query, [
         boardInfo.title,
         boardInfo.description,
         boardInfo.boardNum,
+        boardInfo.category,
       ]);
 
       return board.affectedRows;
@@ -137,15 +139,18 @@ class BoardStorage {
     }
   }
 
-  static async deleteOneByBoardNum(boardNum) {
+  static async deleteOneByBoardNum(boardInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `DELETE FROM boards WHERE no = ?;`;
+      const query = `DELETE FROM boards WHERE no = ? AND board_category_no = ?;`;
 
-      const board = await conn.query(query, [boardNum]);
+      const board = await conn.query(query, [
+        boardInfo.boardNum,
+        boardInfo.category,
+      ]);
 
       return board.affectedRows;
     } catch (err) {
@@ -185,6 +190,41 @@ class BoardStorage {
       await conn.query(query, [boardNum]);
 
       return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllSearch(searchInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      // query문 대입을 위한 변수 설정
+      const { category } = searchInfo;
+      const { type } = searchInfo;
+      const keyword = `%${searchInfo.keyword}%`;
+      const { sort } = searchInfo;
+      const { order } = searchInfo;
+
+      const query = `
+      SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
+      FROM boards AS bo
+      LEFT JOIN images AS img
+      ON bo.no = img.board_no
+      JOIN students AS st
+      ON bo.student_id = st.id
+      JOIN clubs
+      ON bo.club_no = clubs.no
+      WHERE ${type} LIKE ? AND board_category_no = ?
+      ORDER BY ${sort} ${order};`;
+
+      const boards = await conn.query(query, [keyword, category]);
+
+      return boards;
     } catch (err) {
       throw err;
     } finally {
