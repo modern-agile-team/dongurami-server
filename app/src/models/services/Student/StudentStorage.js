@@ -125,16 +125,17 @@ class StudentStorage {
     }
   }
 
-  static async modifyPasswordSave(clientInfo) {
+  static async modifyPasswordSave(saveInfo) {
     let conn;
+    console.log(saveInfo);
     try {
       conn = await mariadb.getConnection();
       const query =
         'UPDATE students SET password = ?, password_salt = ? WHERE id = ?;';
       await conn.query(query, [
-        clientInfo.hash,
-        clientInfo.passwordSalt,
-        clientInfo.id,
+        saveInfo.hash,
+        saveInfo.passwordSalt,
+        saveInfo.id,
       ]);
       return true;
     } catch (err) {

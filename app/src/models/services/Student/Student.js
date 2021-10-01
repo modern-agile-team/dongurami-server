@@ -106,19 +106,20 @@ class Student {
   }
 
   async resetPassword() {
-    const client = this.body;
-    const checkedPassword = await this.checkPassword();
+    const saveInfo = this.body;
 
     try {
+      const checkedPassword = await this.checkPassword();
+
       if (checkedPassword.success) {
-        const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS);
-        const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt);
-        const clientInfo = {
-          id: checkedPassword.student.id,
-          hash,
-          passwordSalt,
-        };
-        const student = await StudentStorage.modifyPasswordSave(clientInfo);
+        saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+        saveInfo.hash = bcrypt.hashSync(
+          saveInfo.newPassword,
+          saveInfo.passwordSalt
+        );
+        saveInfo.id = checkedPassword.student.id;
+
+        const student = await StudentStorage.modifyPasswordSave(saveInfo);
 
         if (student) {
           return { success: true, msg: '비밀번호 변경을 성공하였습니다.' };
@@ -126,6 +127,7 @@ class Student {
       }
       return checkedPassword;
     } catch (err) {
+      console.log(err);
       return Error.ctrl(
         '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
         err
