@@ -16,11 +16,10 @@ class Email {
 
   async sendLinkForPassword() {
     const client = this.body;
+    const { req } = this;
+    const student = new Student(req);
 
     try {
-      const { req } = this;
-      const student = new Student(req);
-
       // id, email 유효성 검사
       const existInfo = await student.isExistIdAndEmail();
       if (!existInfo.isExist) return existInfo;
