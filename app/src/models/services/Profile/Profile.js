@@ -52,15 +52,20 @@ class Profile {
       fileId: request.fileId,
       userId: this.auth.id,
     };
-    const regExp =
+    const emailRegExp =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    const phoneNumberRegExp = /[eE]/;
     let msg = '';
 
     if (this.params.studentId !== userInfo.userId) {
       msg = '로그인된 사람의 프로필이 아닙니다.';
-    } else if (userInfo.email.match(regExp) === null) {
+    } else if (userInfo.email.match(emailRegExp) === null) {
       msg = '이메일 형식이 맞지 않습니다.';
-    } else if (userInfo.phoneNumber.length !== 11) {
+    } else if (
+      userInfo.phoneNumber.length !== 11 ||
+      Number.isNaN(Number(userInfo.phoneNumber)) ||
+      userInfo.email.match(phoneNumberRegExp) === null
+    ) {
       msg = '전화번호 형식이 맞지 않습니다.';
     }
     if (msg) return { success: false, msg };
