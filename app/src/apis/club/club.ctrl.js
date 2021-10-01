@@ -11,7 +11,7 @@ const process = {
     }
     return res
       .status(500)
-      .json({ success: false, msg: '개발자에게 문의 해 주세요.' });
+      .json({ success: false, msg: '개발자에게 문의해주세요.' });
   },
 };
 

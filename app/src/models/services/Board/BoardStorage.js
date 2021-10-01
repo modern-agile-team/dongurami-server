@@ -14,7 +14,7 @@ class BoardStorage {
       const board = await conn.query(query, [
         boardInfo.category,
         boardInfo.id,
-        boardInfo.clubNo,
+        boardInfo.clubNum,
         boardInfo.title,
         boardInfo.description,
       ]);
@@ -41,11 +41,14 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = ?
+      WHERE bo.board_category_no = ? AND bo.club_no = ?
       GROUP BY no
       ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
 
-      const boardList = await conn.query(query, [criteriaRead.category]);
+      const boardList = await conn.query(query, [
+        criteriaRead.category,
+        criteriaRead.clubNum,
+      ]);
 
       return boardList;
     } catch (err) {
@@ -60,6 +63,11 @@ class BoardStorage {
 
     try {
       conn = await mariadb.getConnection();
+      let whole = '';
+
+      if (criteriaRead.clubCategory !== 'whole') {
+        whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
+      }
 
       const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
       FROM boards AS bo
@@ -69,11 +77,11 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = 4 AND clubs.category = ?
+      WHERE bo.board_category_no = 4${whole}
       GROUP BY no
       ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
 
-      const boardList = conn.query(query, [criteriaRead.category]);
+      const boardList = conn.query(query);
 
       return boardList;
     } catch (err) {
@@ -110,21 +118,22 @@ class BoardStorage {
     }
   }
 
-  static async updateOneByNum(boardInfo) {
+  static async updateOneByBoardNum(boardInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE boards SET title = ?, description = ? WHERE no = ?;`;
+      const query = `UPDATE boards SET title = ?, description = ? WHERE no = ? AND board_category_no = ?;`;
 
-      await conn.query(query, [
+      const board = await conn.query(query, [
         boardInfo.title,
         boardInfo.description,
         boardInfo.boardNum,
+        boardInfo.category,
       ]);
 
-      return;
+      return board.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -132,17 +141,38 @@ class BoardStorage {
     }
   }
 
-  static async deleteOneByNum(boardNum) {
+  static async deleteOneByBoardNum(boardInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `DELETE FROM boards WHERE no = ?;`;
+      const query = `DELETE FROM boards WHERE no = ? AND board_category_no = ?;`;
 
-      await conn.query(query, [boardNum]);
+      const board = await conn.query(query, [
+        boardInfo.boardNum,
+        boardInfo.category,
+      ]);
 
-      return;
+      return board.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async existOnlyBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no FROM boards WHERE no = ?;`;
+
+      const board = await conn.query(query, [boardNum]);
+
+      return board[0];
     } catch (err) {
       throw err;
     } finally {
@@ -162,6 +192,33 @@ class BoardStorage {
       await conn.query(query, [boardNum]);
 
       return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async searchByKeyword(searchInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      // query문 대입을 위한 변수 설정
+      const { category } = searchInfo;
+      const { type } = searchInfo;
+      const keyword = `%${searchInfo.keyword}%`;
+
+      const query = `SELECT no, student_id AS studentId, club_no AS clubNo, board_category_no AS boardCategoryNo, title, description, in_date AS inDate, modify_date AS modifyDate, hit
+      FROM boards WHERE ${type} LIKE ? AND board_category_no = ?;`;
+
+      const searchByKeywordResults = await conn.query(query, [
+        keyword,
+        category,
+      ]);
+
+      return searchByKeywordResults;
     } catch (err) {
       throw err;
     } finally {

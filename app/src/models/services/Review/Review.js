@@ -80,9 +80,9 @@ class Review {
     };
 
     try {
-      const response = await ReviewStorage.updateById(reviewInfo);
+      const isUpdate = await ReviewStorage.updateById(reviewInfo);
 
-      if (response) {
+      if (isUpdate) {
         return {
           success: true,
           msg: '후기가 수정되었습니다.',
@@ -101,9 +101,9 @@ class Review {
     const paramsNum = Number(this.params.num);
 
     try {
-      const response = await ReviewStorage.deleteByNum(paramsNum);
+      const isDelete = await ReviewStorage.deleteByNum(paramsNum);
 
-      if (response) {
+      if (isDelete) {
         return { success: true, msg: '작성된 후기가 삭제되었습니다.' };
       }
       return {

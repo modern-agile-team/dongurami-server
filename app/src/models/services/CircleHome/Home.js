@@ -7,16 +7,22 @@ class Home {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
+    this.auth = req.auth;
   }
 
   async findOneByClubNum() {
     const { clubNum } = this.params;
 
     try {
-      const { success, result } = await HomeStorage.findOneByClubNum(clubNum);
+      const clubInfo = {
+        clubNum,
+        id: this.auth.id,
+      };
+      const { success, clientInfo, result } =
+        await HomeStorage.findOneByClubNum(clubInfo);
 
       if (success) {
-        return { success: true, result };
+        return { success: true, clientInfo, result };
       }
       return { success: false, msg: result };
     } catch (err) {

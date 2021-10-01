@@ -1,21 +1,75 @@
 'use strict';
 
 const express = require('express');
-const ctrl = require('./board.ctrl');
+const boardCtrl = require('./board.ctrl');
+const commentCtrl = require('./comment.ctrl');
+const identityCheck = require('../../middlewares/identify-auth');
+const loginCheck = require('../../middlewares/login-auth');
 
 const router = express.Router();
 
-router.post('/:category', ctrl.process.createBoardNum);
-
-router.get('/:category/:sort/:order', ctrl.process.findAllByCategoryNum);
-router.get(
-  '/promotion/:category/:sort/:order',
-  ctrl.process.findAllByPromotionCategory
+router.post(
+  '/:category',
+  loginCheck.loginCheck,
+  boardCtrl.process.createBoardNum
 );
-router.get('/:category/:num', ctrl.process.findOneByBoardNum);
+router.post(
+  '/:category/:boardNum',
+  loginCheck.loginCheck,
+  commentCtrl.process.createCommentNum
+);
+router.post(
+  '/:category/:boardNum/:cmtNum',
+  loginCheck.loginCheck,
+  commentCtrl.process.createReplyCommentNum
+);
 
-router.put('/:category/:num', ctrl.process.updateOneByNum);
+router.get(
+  '/:category/:sort/:order',
+  identityCheck.identityCheck,
+  boardCtrl.process.findAllByCategoryNum
+);
+router.get(
+  '/promotion/:clubCategory/:sort/:order',
+  identityCheck.identityCheck,
+  boardCtrl.process.findAllByPromotionCategory
+);
+router.get(
+  '/:category/:boardNum',
+  identityCheck.identityCheck,
+  boardCtrl.process.findOneByBoardNum
+);
 
-router.delete('/:category/:num', ctrl.process.deleteOneByNum);
+router.put(
+  '/:category/:boardNum',
+  loginCheck.loginCheck,
+  boardCtrl.process.updateOneByBoardNum
+);
+router.put(
+  '/:category/:boardNum/:cmtNum',
+  loginCheck.loginCheck,
+  commentCtrl.process.updateByCommentNum
+);
+router.put(
+  '/:category/:boardNum/:cmtNum/:replyCmtNum',
+  loginCheck.loginCheck,
+  commentCtrl.process.updateByReplyCommentNum
+);
+
+router.delete(
+  '/:category/:boardNum',
+  loginCheck.loginCheck,
+  boardCtrl.process.deleteOneByBoardNum
+);
+router.delete(
+  '/:category/:boardNum/:cmtNum',
+  loginCheck.loginCheck,
+  commentCtrl.process.deleteAllByGroupNum
+);
+router.delete(
+  '/:category/:boardNum/:cmtNum/:replyCmtNum',
+  loginCheck.loginCheck,
+  commentCtrl.process.deleteOneReplyCommentNum
+);
 
 module.exports = router;
