@@ -51,7 +51,9 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE students SET email = ?, phone_number = ?, grade = ?, profile_image_url = ?, file_id = ? WHERE id = ?;`;
+      const query = `UPDATE students
+      SET email = ?, phone_number = ?, grade = ?, profile_image_url = ?, file_id = ?
+      WHERE id = ?;`;
 
       const student = await conn.query(query, [
         userInfo.email,
