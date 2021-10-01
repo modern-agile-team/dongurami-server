@@ -4,9 +4,10 @@ const mariadb = require('../../../config/mariadb');
 
 class HomeStorage {
   static async findOneByClubNum(clubInfo) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
+      conn = await mariadb.getConnection();
       // 동아리 정보 조회
       const findClubInfo =
         'SELECT name, category, logo_url AS logoUrl, file_id AS fileId, introduce FROM clubs WHERE no = ?;';
@@ -51,9 +52,11 @@ class HomeStorage {
   }
 
   static async updateClubInfo(clubInfo) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
+      conn = await mariadb.getConnection();
+
       const query = `UPDATE clubs SET introduce = ? WHERE no = ?;`;
 
       // club 소개 변경 시 업데이트
@@ -68,9 +71,11 @@ class HomeStorage {
   }
 
   static async updateClubLogo(logoInfo) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
+      conn = await mariadb.getConnection();
+
       const query = `UPDATE clubs SET logo_url = ?, file_id = ?  WHERE no = ?;`;
 
       // 로고 변경 시 업데이트
