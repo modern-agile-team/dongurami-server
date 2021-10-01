@@ -12,7 +12,7 @@ class NotificationStorage {
       const query = `SELECT no.no AS notificationNum, no.sender_id AS senderId, 
         no.url, no.notification_category_no AS notificationCategoryNum, 
         no.in_date AS inDate FROM notifications AS no 
-        WHERE no.recipient_id=(SELECT id FROM students WHERE id = ?) 
+        WHERE no.recipient_id=(SELECT id FROM students WHERE id = ?)
         AND no.reading_flag = 0
         ORDER BY inDate DESC
         LIMIT 10;`;
