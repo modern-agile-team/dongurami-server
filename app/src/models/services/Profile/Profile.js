@@ -64,7 +64,7 @@ class Profile {
     } else if (
       userInfo.phoneNumber.length !== 11 ||
       Number.isNaN(Number(userInfo.phoneNumber)) ||
-      userInfo.email.match(phoneNumberRegExp) === null
+      !(userInfo.phoneNumber.match(phoneNumberRegExp) === null)
     ) {
       msg = '전화번호 형식이 맞지 않습니다.';
     }
