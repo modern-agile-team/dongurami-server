@@ -238,13 +238,13 @@ class Student {
   }
 
   async findPassword() {
-    const client = this.body;
+    const saveInfo = this.body;
     const { params } = this;
 
     try {
       // 토큰 검증
       const reqInfo = {
-        id: client.id,
+        id: saveInfo.id,
         params,
       };
       const checkedToken = await EmailAuth.useableToken(reqInfo);
@@ -255,23 +255,21 @@ class Student {
       if (!checkedByChangePassword.success) return checkedByChangePassword;
 
       // 암호화
-      const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS); // 솔트
-      const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt); // 해시(비밀번호)
-      const clientInfo = {
-        hash,
-        passwordSalt,
-        id: client.id,
-      };
+      saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+      saveInfo.hash = bcrypt.hashSync(
+        saveInfo.newPassword,
+        saveInfo.passwordSalt
+      );
 
       // DB 수정
-      const isReset = await StudentStorage.modifyPasswordSave(clientInfo);
+      const isReset = await StudentStorage.modifyPasswordSave(saveInfo);
       if (!isReset) {
         return { success: false, msg: '비밀번호 변경에 실패하였습니다.' };
       }
 
       // 토큰 삭제 && 비밀번호 변경
       const isDeleteToken = await EmailAuthStorage.deleteTokenByStudentId(
-        client.id
+        saveInfo.id
       );
       if (!isDeleteToken) {
         return { success: false, msg: '토큰 삭제에 실패하였습니다.' };

@@ -127,7 +127,6 @@ class StudentStorage {
 
   static async modifyPasswordSave(saveInfo) {
     let conn;
-    console.log(saveInfo);
     try {
       conn = await mariadb.getConnection();
       const query =
