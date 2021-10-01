@@ -42,12 +42,11 @@ class Board {
         const recipientIds = await NotificationStorage.findAllByClubNum(
           boardInfo.clubNum
         );
+        const clubName = await NotificationStorage.findClubNameByClubNum(
+          clubNum
+        );
         recipientIds.forEach(async (recipientId) => {
           if (senderId !== recipientId) {
-            const clubName = await NotificationStorage.findClubNameByClubNum(
-              clubNum
-            );
-
             const notificationInfo = {
               recipientId,
               senderId,

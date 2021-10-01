@@ -6,13 +6,13 @@ const router = express.Router();
 const ctrl = require('./notification.ctrl');
 const loginAuth = require('../../middlewares/login-auth');
 
-router.get('/', loginAuth.loginCheck, ctrl.process.findAllById);
+router.get('/entire', loginAuth.loginCheck, ctrl.process.findAllById);
 
-router.delete(
+router.patch(
   '/:notificationNum',
   loginAuth.loginCheck,
-  ctrl.process.deleteByNotificationNum
+  ctrl.process.updateOneByNotificationNum
 );
-router.delete('/entire', loginAuth.loginCheck, ctrl.process.deleteAllById);
+router.put('/entire', loginAuth.loginCheck, ctrl.process.updateAllById);
 
 module.exports = router;

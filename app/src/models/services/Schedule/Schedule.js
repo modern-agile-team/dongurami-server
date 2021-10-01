@@ -67,20 +67,19 @@ class Schedule {
         startDate: data.startDate,
         endDate: data.endDate,
       };
-      const senderId = user.id;
+      const senderId = scheduleInfo.studentId;
       const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
       if (success) {
         const recipientIds = await NotificationStorage.findAllByClubNum(
           clubNum
         );
+        const clubName = await NotificationStorage.findClubNameByClubNum(
+          clubNum
+        );
 
         recipientIds.forEach(async (recipientId) => {
           if (senderId !== recipientId) {
-            const clubName = await NotificationStorage.findClubNameByClubNum(
-              clubNum
-            );
-
             const notificationInfo = {
               recipientId,
               senderId,
@@ -122,20 +121,19 @@ class Schedule {
         const recipientIds = await NotificationStorage.findAllByClubNum(
           clubNum
         );
+        const clubName = await NotificationStorage.findClubNameByClubNum(
+          clubNum
+        );
 
         recipientIds.forEach(async (recipientId) => {
           if (senderId !== recipientId) {
-            const clubName = await NotificationStorage.findClubNameByClubNum(
-              clubNum
-            );
-
             const notificationInfo = {
               recipientId,
               senderId,
               clubName,
               content: scheduleInfo.startDate,
             };
-            console.log(notificationInfo);
+
             await notification.createByIdAndClubName(notificationInfo);
           }
         });

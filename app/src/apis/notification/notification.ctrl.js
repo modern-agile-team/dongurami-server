@@ -16,9 +16,9 @@ const process = {
     return res.status(400).json(response);
   },
 
-  deleteByNotificationNum: async (req, res) => {
+  updateOneByNotificationNum: async (req, res) => {
     const notification = new Notification(req);
-    const response = await notification.deleteByNotificationNum();
+    const response = await notification.updateOneByNotificationNum();
 
     if (response.success) {
       return res.status(200).json(response);
@@ -29,9 +29,9 @@ const process = {
     return res.status(400).json(response);
   },
 
-  deleteAllById: async (req, res) => {
+  updateAllById: async (req, res) => {
     const notification = new Notification(req);
-    const response = await notification.deleteAllById();
+    const response = await notification.updateAllById();
 
     if (response.success) {
       return res.status(200).json(response);

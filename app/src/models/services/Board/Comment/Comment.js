@@ -3,7 +3,6 @@
 const CommentStorage = require('./CommentStorage');
 const BoardStorage = require('../BoardStorage');
 const Notification = require('../../Notification/Notification');
-const NotificationStorage = require('../../Notification/NotificationStorage');
 const Error = require('../../../utils/Error');
 
 class Comment {
@@ -25,7 +24,6 @@ class Comment {
         id: user.id,
         description: comment.description,
       };
-      const senderId = commentInfo.id;
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
 
       if (exist === undefined) {
@@ -33,24 +31,15 @@ class Comment {
       }
 
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
+      const notificationInfo = {
+        senderId: commentInfo.id,
+        recipientId: comment.recipientId,
+        title: comment.boardTitle,
+        content: commentInfo.description,
+      };
 
       await CommentStorage.updateOnlyGroupNum(commentNum);
-
-      comment.recipientIds.forEach(async (recipientId) => {
-        if (senderId !== recipientId) {
-          const title = await NotificationStorage.findTitleByBoardNum(
-            commentInfo.boardNum
-          );
-          const notificationInfo = {
-            senderId,
-            recipientId,
-            title,
-            content: commentInfo.description,
-          };
-
-          await notification.createByIdAndTitle(notificationInfo);
-        }
-      });
+      await notification.createByIdAndTitle(notificationInfo);
 
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {
@@ -84,14 +73,10 @@ class Comment {
 
       replyComment.recipientIds.forEach(async (recipientId) => {
         if (senderId !== recipientId) {
-          const title = await NotificationStorage.findTitleByBoardNum(
-            replyCommentInfo.boardNum
-          );
-
           const notificationInfo = {
             senderId,
             recipientId,
-            title,
+            title: replyComment.boardTitle,
             content: replyCommentInfo.description,
           };
 

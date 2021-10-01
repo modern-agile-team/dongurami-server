@@ -24,23 +24,6 @@ class NotificationStorage {
     }
   }
 
-  static async findTitleByBoardNum(boardNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = 'SELECT title FROM boards WHERE no = ?;';
-      const board = await conn.query(query, boardNum);
-
-      return board[0].title;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
   static async findClubNameByClubNum(clubNum) {
     let conn;
 
@@ -131,12 +114,12 @@ class NotificationStorage {
     }
   }
 
-  static async deleteByNotificationNum(notificationNum) {
+  static async updateOneByNotificationNum(notificationNum) {
     let conn;
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'DELETE FROM notifications WHERE no = ?;';
+      const query = 'UPDATE notifications SET reading_flag = 1 WHERE no = ?;';
       const notification = await conn.query(query, notificationNum);
 
       if (notification.affectedRows) return true;
@@ -148,12 +131,13 @@ class NotificationStorage {
     }
   }
 
-  static async deleteAllById(studentId) {
+  static async updateAllById(studentId) {
     let conn;
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'DELETE FROM notifications WHERE recipient_id = ?;';
+      const query =
+        'UPDATE notifications SET reading_flag = 1 WHERE recipient_id = ?;';
       const notification = await conn.query(query, studentId);
 
       if (notification.affectedRows) return true;

@@ -11,7 +11,7 @@ class Notification {
   }
 
   async findAllById() {
-    const { studentId } = this.params;
+    const studentId = this.auth.id;
 
     try {
       const { success, notifications } = await NotificationStorage.findAllById(
@@ -46,7 +46,6 @@ class Notification {
         url: body.url,
         notiCategoryNum: body.notiCategoryNum,
       };
-
       const success = await NotificationStorage.createByIdAndTitle(
         notificationInfo
       );
@@ -95,14 +94,12 @@ class Notification {
   async createTodayByIdAndClubName() {
     const todaySchedule = this.body;
     const { clubNum } = this.params;
+
     try {
       const recipientIds = await NotificationStorage.findAllByClubNum(clubNum);
+      const clubName = await NotificationStorage.findClubNameByClubNum(clubNum);
 
       recipientIds.forEach(async (recipientId) => {
-        const clubName = await NotificationStorage.findClubNameByClubNum(
-          clubNum
-        );
-
         const notificationInfo = {
           recipientId,
           senderId: clubName,
@@ -121,15 +118,15 @@ class Notification {
     }
   }
 
-  async deleteByNotificationNum() {
+  async updateOneByNotificationNum() {
     const { notificationNum } = this.params;
 
     try {
-      const isDelete = await NotificationStorage.deleteByNotificationNum(
+      const isUpdate = await NotificationStorage.updateOneByNotificationNum(
         notificationNum
       );
 
-      if (isDelete) {
+      if (isUpdate) {
         return { success: true, msg: '읽은 알림이 삭제되었습니다.' };
       }
       return {
@@ -141,13 +138,13 @@ class Notification {
     }
   }
 
-  async deleteAllById() {
-    const { studentId } = this.auth.id;
+  async updateAllById() {
+    const studentId = this.auth.id;
 
     try {
-      const isDelete = await NotificationStorage.deleteAllById(studentId);
+      const isUpdate = await NotificationStorage.updateAllById(studentId);
 
-      if (isDelete) {
+      if (isUpdate) {
         return { success: true, msg: '전체 알림이 삭제되었습니다.' };
       }
       return {
