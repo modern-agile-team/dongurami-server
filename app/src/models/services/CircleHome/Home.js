@@ -7,16 +7,20 @@ class Home {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
+    this.auth = req.auth;
   }
 
   async findOneByClubNum() {
-    const { clubNum } = this.params;
-
     try {
-      const { success, result } = await HomeStorage.findOneByClubNum(clubNum);
+      const clubInfo = {
+        clubNum: this.params.clubNum,
+        id: this.auth.id,
+      };
+      const { success, clientInfo, result } =
+        await HomeStorage.findOneByClubNum(clubInfo);
 
       if (success) {
-        return { success: true, result };
+        return { success: true, clientInfo, result };
       }
       return { success: false, msg: result };
     } catch (err) {
@@ -25,13 +29,10 @@ class Home {
   }
 
   async updateClubInfo() {
-    const { clubNum } = this.params;
-    const data = this.body;
-
     try {
       const clubInfo = {
-        clubNum,
-        introduce: data.introduce,
+        clubNum: this.params.clubNum,
+        introduce: this.body.introduce,
       };
       await HomeStorage.updateClubInfo(clubInfo);
 
@@ -43,11 +44,10 @@ class Home {
 
   async updateClubLogo() {
     const data = this.body;
-    const { clubNum } = this.params;
 
     try {
       const logoInfo = {
-        clubNum,
+        clubNum: this.params.clubNum,
         logoUrl: data.logoUrl,
         fileId: data.fileId,
       };
