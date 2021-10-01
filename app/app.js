@@ -31,6 +31,6 @@ app.use('/api/club/list', clubList);
 app.use('/api/club/application', application);
 app.use('/api/club/admin-option', adminOption);
 app.use('/api/search', search);
-app.use('/api/profile', myPage);
+app.use('/api/my-page', myPage);
 
 module.exports = app;

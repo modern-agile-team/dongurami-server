@@ -11,15 +11,38 @@ class MyPage {
   }
 
   async findAllScraps() {
-    const { id } = this.params;
+    const user = this.auth;
 
     try {
-      const { success, scraps } = await MyPageStorage.findAllScraps(id);
+      const userInfo = {
+        id: user.id,
+        clubNum: user.clubNum,
+      };
+
+      const { success, scraps } = await MyPageStorage.findAllScraps(userInfo);
 
       if (success) return { success: true, scraps };
       return { success: false };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요', err);
+    }
+  }
+
+  async findAllScrapsBySubClub() {
+    try {
+      const userInfo = {
+        id: this.auth.id,
+        clubNum: this.params.clubNum,
+      };
+
+      const { success, scraps } = await MyPageStorage.findAllScrapsBySubClub(
+        userInfo
+      );
+
+      if (success) return { success: true, scraps };
+      return { success: false };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
 }
