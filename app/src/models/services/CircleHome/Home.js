@@ -11,15 +11,13 @@ class Home {
   }
 
   async findOneByClubNum() {
-    const { clubNum } = this.params;
-
     try {
-      const info = {
-        clubNum,
+      const clubInfo = {
+        clubNum: this.params.clubNum,
         id: this.auth.id,
       };
       const { success, clientInfo, result } =
-        await HomeStorage.findOneByClubNum(info);
+        await HomeStorage.findOneByClubNum(clubInfo);
 
       if (success) {
         return { success: true, clientInfo, result };
@@ -31,13 +29,10 @@ class Home {
   }
 
   async updateClubInfo() {
-    const { clubNum } = this.params;
-    const data = this.body;
-
     try {
       const clubInfo = {
-        clubNum,
-        introduce: data.introduce,
+        clubNum: this.params.clubNum,
+        introduce: this.body.introduce,
       };
       await HomeStorage.updateClubInfo(clubInfo);
 
@@ -49,11 +44,10 @@ class Home {
 
   async updateClubLogo() {
     const data = this.body;
-    const { clubNum } = this.params;
 
     try {
       const logoInfo = {
-        clubNum,
+        clubNum: this.params.clubNum,
         logoUrl: data.logoUrl,
         fileId: data.fileId,
       };

@@ -3,10 +3,11 @@
 const mariadb = require('../../../config/mariadb');
 
 class HomeStorage {
-  static async findOneByClubNum(info) {
-    const conn = await mariadb.getConnection();
+  static async findOneByClubNum(clubInfo) {
+    let conn;
 
     try {
+      conn = await mariadb.getConnection();
       // 동아리 정보 조회
       const findClubInfo =
         'SELECT name, category, logo_url AS logoUrl, file_id AS fileId, introduce FROM clubs WHERE no = ?;';
@@ -18,7 +19,7 @@ class HomeStorage {
         AS collectMember) AS collectGender;`;
       // 동아리 존재 여부
       const existLeader = 'SELECT leader FROM clubs WHERE no = ?;';
-      const leader = await conn.query(existLeader, info.clubNum);
+      const leader = await conn.query(existLeader, clubInfo.clubNum);
 
       if (leader[0] === undefined) {
         // 동아리 존재 x
@@ -27,16 +28,16 @@ class HomeStorage {
 
       // 동아리가 존재한다면
       // clubInfo 조회
-      const result = await conn.query(findClubInfo, info.clubNum);
-      const cntGender = await conn.query(gender, info.clubNum);
+      const result = await conn.query(findClubInfo, clubInfo.clubNum);
+      const cntGender = await conn.query(gender, clubInfo.clubNum);
 
       result[0].genderMan = cntGender[0].man;
       result[0].genderWomen = cntGender[0].women;
 
       // 사용자가 리더인지, 동아리원이라면 권한 정보 포함
-      const isflag =
+      const findFlag =
         'SELECT join_admin_flag AS joinAdminFlag, board_admin_flag AS boardAdminFlag FROM members WHERE student_id = ?;';
-      const flags = await conn.query(isflag, info.id);
+      const flags = await conn.query(findFlag, clubInfo.id);
       const clientInfo = {};
 
       clientInfo.leader = leader[0] === clientInfo.id ? 1 : 0;
@@ -51,9 +52,11 @@ class HomeStorage {
   }
 
   static async updateClubInfo(clubInfo) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
+      conn = await mariadb.getConnection();
+
       const query = `UPDATE clubs SET introduce = ? WHERE no = ?;`;
 
       // club 소개 변경 시 업데이트
@@ -68,9 +71,11 @@ class HomeStorage {
   }
 
   static async updateClubLogo(logoInfo) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
+      conn = await mariadb.getConnection();
+
       const query = `UPDATE clubs SET logo_url = ?, file_id = ?  WHERE no = ?;`;
 
       // 로고 변경 시 업데이트
