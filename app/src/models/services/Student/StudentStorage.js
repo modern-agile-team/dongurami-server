@@ -43,7 +43,7 @@ class StudentStorage {
         'INSERT INTO students (id, password, name, email, password_salt, major) VALUES (?, ?, ?, ?, ?, ?);';
       await conn.query(query, [
         saveInfo.id,
-        saveInfo.password,
+        saveInfo.hash,
         saveInfo.name,
         saveInfo.email,
         saveInfo.passwordSalt,
