@@ -8,13 +8,12 @@ const Auth = require('../Auth/Auth');
 const EmailAuth = require('../Auth/EmailAuth/EmailAuth');
 const EmailAuthStorage = require('../Auth/EmailAuth/EmailAuthStorage');
 
-const { SALT_ROUNDS } = Number(process.env.SALT_ROUNDS);
-
 class Student {
   constructor(req) {
     this.body = req.body;
     this.auth = req.auth;
     this.params = req.params;
+    this.SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
   }
 
   async login() {
@@ -51,18 +50,21 @@ class Student {
   }
 
   async signUp() {
-    const client = this.body;
+    const saveInfo = this.body;
 
     try {
       // 아이디 이메일 중복여부 확인
       const checkedIdAndEmail = await this.checkIdAndEmail();
 
       if (checkedIdAndEmail.saveable) {
-        const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS);
-        const hash = bcrypt.hashSync(client.password, passwordSalt);
-        const studentInfo = { client, passwordSalt, hash };
+        saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+        saveInfo.hash = bcrypt.hashSync(
+          saveInfo.password,
+          saveInfo.passwordSalt
+        );
+
         // DB에 회원 추가
-        const response = await StudentStorage.save(studentInfo);
+        const response = await StudentStorage.save(saveInfo);
 
         if (response) {
           return { success: true, msg: '회원가입에 성공하셨습니다.' };
@@ -104,20 +106,20 @@ class Student {
   }
 
   async resetPassword() {
-    const client = this.body;
+    const saveInfo = this.body;
 
     try {
       const checkedPassword = await this.checkPassword();
 
       if (checkedPassword.success) {
-        const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS);
-        const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt);
-        const clientInfo = {
-          id: checkedPassword.student.id,
-          hash,
-          passwordSalt,
-        };
-        const student = await StudentStorage.modifyPasswordSave(clientInfo);
+        saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+        saveInfo.hash = bcrypt.hashSync(
+          saveInfo.newPassword,
+          saveInfo.passwordSalt
+        );
+        saveInfo.id = checkedPassword.student.id;
+
+        const student = await StudentStorage.modifyPasswordSave(saveInfo);
 
         if (student) {
           return { success: true, msg: '비밀번호 변경을 성공하였습니다.' };
@@ -134,12 +136,12 @@ class Student {
 
   async checkIdAndEmail() {
     const client = this.body;
+    const clientInfo = {
+      id: client.id,
+      email: client.email,
+    };
 
     try {
-      const clientInfo = {
-        id: client.id,
-        email: client.email,
-      };
       const student = await StudentStorage.findOneByIdOrEmail(clientInfo);
 
       if (student === undefined) {
@@ -238,13 +240,13 @@ class Student {
   }
 
   async findPassword() {
-    const client = this.body;
+    const saveInfo = this.body;
     const { params } = this;
 
     try {
       // 토큰 검증
       const reqInfo = {
-        id: client.id,
+        id: saveInfo.id,
         params,
       };
       const checkedToken = await EmailAuth.useableToken(reqInfo);
@@ -255,23 +257,21 @@ class Student {
       if (!checkedByChangePassword.success) return checkedByChangePassword;
 
       // 암호화
-      const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS); // 솔트
-      const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt); // 해시(비밀번호)
-      const clientInfo = {
-        hash,
-        passwordSalt,
-        id: client.id,
-      };
+      saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+      saveInfo.hash = bcrypt.hashSync(
+        saveInfo.newPassword,
+        saveInfo.passwordSalt
+      );
 
       // DB 수정
-      const isReset = await StudentStorage.modifyPasswordSave(clientInfo);
+      const isReset = await StudentStorage.modifyPasswordSave(saveInfo);
       if (!isReset) {
         return { success: false, msg: '비밀번호 변경에 실패하였습니다.' };
       }
 
       // 토큰 삭제 && 비밀번호 변경
       const isDeleteToken = await EmailAuthStorage.deleteTokenByStudentId(
-        client.id
+        saveInfo.id
       );
       if (!isDeleteToken) {
         return { success: false, msg: '토큰 삭제에 실패하였습니다.' };
