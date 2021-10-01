@@ -74,16 +74,13 @@ class Schedule {
         const recipientIds = await NotificationStorage.findAllByClubNum(
           clubNum
         );
-        const clubName = await NotificationStorage.findClubNameByClubNum(
-          clubNum
-        );
 
         recipientIds.forEach(async (recipientId) => {
           if (senderId !== recipientId) {
             const notificationInfo = {
               recipientId,
               senderId,
-              clubName,
+              clubName: data.clubName,
               content: scheduleInfo.startDate,
             };
 
@@ -117,12 +114,8 @@ class Schedule {
 
       if (success) {
         const senderId = userInfo.id;
-        const { clubNum } = params;
         const recipientIds = await NotificationStorage.findAllByClubNum(
-          clubNum
-        );
-        const clubName = await NotificationStorage.findClubNameByClubNum(
-          clubNum
+          params.clubNum
         );
 
         recipientIds.forEach(async (recipientId) => {
@@ -130,13 +123,14 @@ class Schedule {
             const notificationInfo = {
               recipientId,
               senderId,
-              clubName,
+              clubName: data.clubName,
               content: scheduleInfo.startDate,
             };
 
             await notification.createByIdAndClubName(notificationInfo);
           }
         });
+
         return { success: true, msg: '일정이 수정되었습니다.' };
       }
       return { success: false, msg: '일정 수정에 실패하였습니다.' };

@@ -11,6 +11,7 @@ const clubAuth = require('../../middlewares/club-auth');
 
 router.post('/:clubNum', loginAuth.loginCheck, ctrl.process.createSchedule);
 router.post('/:clubNum/today', ctrl.process.createTodayByIdAndClubName);
+
 router.get(
   '/:clubNum',
   loginAuth.loginCheck,

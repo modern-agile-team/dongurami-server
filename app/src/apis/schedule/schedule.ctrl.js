@@ -47,13 +47,10 @@ const process = {
     const notification = new Notification(req);
     const response = await notification.createTodayByIdAndClubName();
 
-    if (response.success) {
-      return res.status(201).json(response);
-    }
     if (response.isError) {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res.status(400).json(response);
+    return res.status(201).json(response);
   },
 
   updateSchedule: async (req, res) => {

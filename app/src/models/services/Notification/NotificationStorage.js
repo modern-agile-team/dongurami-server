@@ -5,6 +5,7 @@ const mariadb = require('../../../config/mariadb');
 class NotificationStorage {
   static async findAllById(studentId) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
@@ -24,23 +25,6 @@ class NotificationStorage {
     }
   }
 
-  static async findClubNameByClubNum(clubNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = 'SELECT name FROM clubs WHERE no = ?;';
-      const club = await conn.query(query, clubNum);
-
-      return club[0].name;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
   static async findAllByClubNum(clubNum) {
     let conn;
 
@@ -52,9 +36,9 @@ class NotificationStorage {
       const members = await conn.query(query, clubNum);
       const studentIds = [];
 
-      for (let i = 0; i < members.length; i += 1) {
-        studentIds.push(members[i].studentId);
-      }
+      members.forEach((member) => {
+        studentIds.push(member.studentId);
+      });
 
       return studentIds;
     } catch (err) {
@@ -66,6 +50,7 @@ class NotificationStorage {
 
   static async createByIdAndTitle(notificationInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
@@ -91,6 +76,7 @@ class NotificationStorage {
 
   static async createByIdAndClubName(notificationInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
@@ -116,6 +102,7 @@ class NotificationStorage {
 
   static async updateOneByNotificationNum(notificationNum) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
@@ -133,6 +120,7 @@ class NotificationStorage {
 
   static async updateAllById(studentId) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 

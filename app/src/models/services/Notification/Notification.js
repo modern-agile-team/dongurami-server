@@ -97,13 +97,12 @@ class Notification {
 
     try {
       const recipientIds = await NotificationStorage.findAllByClubNum(clubNum);
-      const clubName = await NotificationStorage.findClubNameByClubNum(clubNum);
 
       recipientIds.forEach(async (recipientId) => {
         const notificationInfo = {
           recipientId,
-          senderId: clubName,
-          title: clubName,
+          senderId: todaySchedule.clubName,
+          title: todaySchedule.clubName,
           content: todaySchedule.title,
           url: todaySchedule.url,
           notiCategoryNum: todaySchedule.notiCategoryNum,
@@ -156,4 +155,5 @@ class Notification {
     }
   }
 }
+
 module.exports = Notification;

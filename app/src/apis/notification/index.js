@@ -13,6 +13,7 @@ router.patch(
   loginAuth.loginCheck,
   ctrl.process.updateOneByNotificationNum
 );
+
 router.put('/entire', loginAuth.loginCheck, ctrl.process.updateAllById);
 
 module.exports = router;
