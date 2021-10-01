@@ -7,10 +7,10 @@ class MyPageStorage {
     let conn;
     try {
       conn = await mariadb.getConnection();
-      const query = `SELECT s.no, s.description, s.in_date AS inDate s.modify_date AS modifyDate,  
-      FROM scraps AS s
-      INNER JOIN boards AS b ON b.no = board_no 
-      WHERE s.student_id = ? AND club_no = ?;`;
+      const query = `SELECT scraps.no, scraps.board_no AS boardNo, scraps.student_id AS studentId, scraps.description, scraps.in_date AS inDate 
+      FROM scraps 
+      INNER JOIN boards ON boards.no = board_no 
+      WHERE scraps.student_id = ? AND club_no = ?;`;
       const scraps = await conn.query(query, [
         userInfo.id,
         userInfo.clubNum[0],
@@ -29,9 +29,7 @@ class MyPageStorage {
   //   let conn;
   //   try {
   //     conn = await mariadb.getConnection();
-  //     const query = '';
-  //   } catch {
-  //     throw err;
+
   //   }
   // }
 }
