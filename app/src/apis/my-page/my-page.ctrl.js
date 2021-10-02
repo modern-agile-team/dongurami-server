@@ -3,18 +3,18 @@
 const MyPage = require('../../models/services/MyPage/MyPage');
 
 const process = {
-  findAllScraps: async (req, res) => {
+  findAllScrapsByClubNum: async (req, res) => {
     const myPage = new MyPage(req);
-    const response = await myPage.findAllScraps();
+    const response = await myPage.findAllScrapsByClubNum();
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
     return res.status(400).json(response);
   },
 
-  findAllScrapsBySubClub: async (req, res) => {
+  findOneScrp: async (req, res) => {
     const myPage = new MyPage(req);
-    const response = await myPage.findAllScrapsBySubClub();
+    const response = await myPage.findOneScrap();
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);

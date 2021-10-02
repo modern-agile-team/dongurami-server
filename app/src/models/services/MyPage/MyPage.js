@@ -10,39 +10,46 @@ class MyPage {
     this.params = req.params;
   }
 
-  async findAllScraps() {
-    const user = this.auth;
+  async findAllScrapsByClubNum() {
+    const { params } = this;
 
     try {
       const userInfo = {
-        id: user.id,
-        clubNum: user.clubNum,
+        id: params.id,
+        clubNum: params.clubNum,
       };
 
-      const { success, scraps } = await MyPageStorage.findAllScraps(userInfo);
+      const isClub = await MyPageStorage.existClub(params.clubNum);
 
-      if (success) return { success: true, scraps };
-      return { success: false };
+      if (!isClub) {
+        return { success: false, msg: '존재하지 않는 동아리입니다.' };
+      }
+
+      const scrpas = await MyPageStorage.findAllScrapsByclubNum(userInfo);
+
+      if (scrpas) return { success: true, scrpas };
+      return { success: true, msg: '스크랩 내역이 존재하지 않습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요', err);
     }
   }
 
-  async findAllScrapsBySubClub() {
+  async findOneScrap() {
+    const { params } = this;
+
     try {
       const userInfo = {
-        id: this.auth.id,
-        clubNum: this.params.clubNum,
+        id: params.id,
+        clubNum: params.clubNum,
+        scrapNo: params.scrapNo,
       };
 
-      const { success, scraps } = await MyPageStorage.findAllScrapsBySubClub(
-        userInfo
-      );
+      const { scrap, board } = await MyPageStorage.findOneScrap(userInfo);
 
-      if (success) return { success: true, scraps };
-      return { success: false };
+      if (scrap[0]) return { success: true, scrap, board };
+      return { success: false, msg: '존재하지 않는 글입니다.' };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('개발자에게 문의해주세요', err);
     }
   }
 }
