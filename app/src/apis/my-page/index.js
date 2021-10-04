@@ -12,13 +12,48 @@ router.get(
   loginAuth.loginCheck,
   myPageCtrl.process.findAllScrapsByClubNum
 );
-
 router.get(
-  '/:id/personal/:clubNum/:scrapNo',
+  '/:id/personal/scrap/:clubNum/:scrapNum',
   loginAuth.loginCheck,
-  myPageCtrl.process.findOneScrp
+  myPageCtrl.process.findOneScrap
 );
 // category - > personal
-router.post('/:id/:category/:clubNum', boardCtrl.process.createBoardNum);
+router.get(
+  '/:id/:category/:clubNum/:boardNum',
+  loginAuth.loginCheck,
+  boardCtrl.process.findOneByBoardNum
+);
+
+// category - > personal
+router.post(
+  '/:id/:category/:clubNum',
+  loginAuth.loginCheck,
+  boardCtrl.process.createBoardNum
+);
+
+// category - > personal
+router.put(
+  '/:id/:category/:clubNum/:boardNum',
+  loginAuth.loginCheck,
+  boardCtrl.process.updateOneByBoardNum
+);
+router.put(
+  '/:id/personal/scrap/:clubNum/:scrapNum',
+  loginAuth.loginCheck,
+  myPageCtrl.process.updateOneByScrapNum
+);
+
+// category -> personal
+router.delete(
+  '/:id/:category/:clubNum/:boardNum',
+  loginAuth.loginCheck,
+  boardCtrl.process.deleteOneByBoardNum
+);
+
+router.delete(
+  '/:id/personal/scrap/:clubNum/:scrapNum',
+  loginAuth.loginCheck,
+  myPageCtrl.process.deleteOneByScrapNum
+);
 
 module.exports = router;

@@ -25,12 +25,15 @@ class MyPage {
         return { success: false, msg: '존재하지 않는 동아리입니다.' };
       }
 
-      const scrpas = await MyPageStorage.findAllScrapsByclubNum(userInfo);
+      const { scraps, boards, thumbnail } =
+        await MyPageStorage.findAllScrapsByclubNum(userInfo);
 
-      if (scrpas) return { success: true, scrpas };
+      if (scraps || boards) {
+        return { success: true, scraps, boards, thumbnail };
+      }
       return { success: true, msg: '스크랩 내역이 존재하지 않습니다.' };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요', err);
+      return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
 
@@ -41,15 +44,47 @@ class MyPage {
       const userInfo = {
         id: params.id,
         clubNum: params.clubNum,
-        scrapNo: params.scrapNo,
+        scrapNum: params.scrapNum,
       };
 
-      const { scrap, board } = await MyPageStorage.findOneScrap(userInfo);
+      const { scrap, images } = await MyPageStorage.findOneScrap(userInfo);
 
-      if (scrap[0]) return { success: true, scrap, board };
+      if (scrap) return { success: true, scrap, images };
       return { success: false, msg: '존재하지 않는 글입니다.' };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요', err);
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async updateOneByScrapNum() {
+    const data = this.body;
+
+    try {
+      const scrapInfo = {
+        scrapNum: this.params.scrapNum,
+        title: data.title,
+        description: data.description,
+      };
+
+      const scrap = await MyPageStorage.updateOneByScrapNum(scrapInfo);
+
+      if (scrap) return { success: true, msg: '글이 수정되었습니다.' };
+      return { success: false, msg: '글이 수정되지 않았습니다.' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async deleteOneByScrapNum() {
+    const { scrapNum } = this.params;
+
+    try {
+      const scrap = await MyPageStorage.deleteOneByScrapNum(scrapNum);
+
+      if (scrap) return { success: true, msg: '글이 삭제되었습니다.' };
+      return { success: false, msg: '글이 삭제되지 않았습니다.' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
 }
