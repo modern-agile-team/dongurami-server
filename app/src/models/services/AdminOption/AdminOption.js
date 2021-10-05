@@ -40,11 +40,11 @@ class AdminOption {
     const { clubNum } = this.params;
 
     try {
-      const { success, leader, memberAndAuthList } =
+      const { success, leader, clubName, memberAndAuthList } =
         await AdminOptionStorage.findOneByClubNum(clubNum);
 
       if (success) {
-        return { success: true, leader, memberAndAuthList };
+        return { success: true, leader, clubName, memberAndAuthList };
       }
       return {
         success: false,

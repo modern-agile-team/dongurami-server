@@ -45,17 +45,17 @@ router.post(
 );
 
 router.put(
-  '/:category/:clubNum',
+  '/:category/:clubNum/:boardNum',
   loginCheck.loginCheck,
   boardCtrl.process.updateOneByBoardNum
 );
 router.put(
-  '/:category/:boardNum/:cmtNum',
+  '/:category/:clubNum/:boardNum/:cmtNum',
   loginCheck.loginCheck,
   commentCtrl.process.updateByCommentNum
 );
 router.put(
-  '/:category/:boardNum/:cmtNum/:replyCmtNum',
+  '/:category/:clubNum/:boardNum/:cmtNum/:replyCmtNum',
   loginCheck.loginCheck,
   commentCtrl.process.updateByReplyCommentNum
 );
@@ -66,12 +66,12 @@ router.delete(
   boardCtrl.process.deleteOneByBoardNum
 );
 router.delete(
-  '/:category/:boardNum/:cmtNum',
+  '/:category/:clubNum/:boardNum/:cmtNum',
   loginCheck.loginCheck,
   commentCtrl.process.deleteAllByGroupNum
 );
 router.delete(
-  '/:category/:boardNum/:cmtNum/:replyCmtNum',
+  '/:category/:clubNum/:boardNum/:cmtNum/:replyCmtNum',
   loginCheck.loginCheck,
   commentCtrl.process.deleteOneReplyCommentNum
 );

@@ -28,15 +28,19 @@ class AdminoOptionStorage {
       const memberAndAuthQuery = `SELECT s.name, s.id, m.join_admin_flag AS joinAdminFlag, 
         m.board_admin_flag AS boardAdminFlag FROM members AS m JOIN students AS s 
         ON s.id = m.student_id AND m.club_no = ?;`;
-      const leaderQuery =
-        'SELECT students.name FROM students JOIN clubs ON clubs.leader = students.id AND clubs.no = ?;';
+      const leaderAndClubNameQuery = `SELECT s.name AS leader , c.name 
+        FROM students AS s JOIN clubs AS c ON c.leader = s.id AND c.no = ?;`;
 
       const memberAndAuthList = await conn.query(memberAndAuthQuery, clubNum);
-      const leader = await conn.query(leaderQuery, clubNum);
+      const leaderAndClubName = await conn.query(
+        leaderAndClubNameQuery,
+        clubNum
+      );
 
       return {
         success: true,
-        leader: leader[0].name,
+        leader: leaderAndClubName[0].leader,
+        clubName: leaderAndClubName[0].name,
         memberAndAuthList,
       };
     } catch (err) {
