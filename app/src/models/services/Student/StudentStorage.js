@@ -35,19 +35,19 @@ class StudentStorage {
     }
   }
 
-  static async save(studentInfo) {
+  static async save(saveInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query =
         'INSERT INTO students (id, password, name, email, password_salt, major) VALUES (?, ?, ?, ?, ?, ?);';
       await conn.query(query, [
-        studentInfo.client.id,
-        studentInfo.hash,
-        studentInfo.client.name,
-        studentInfo.client.email,
-        studentInfo.passwordSalt,
-        studentInfo.client.major,
+        saveInfo.id,
+        saveInfo.hash,
+        saveInfo.name,
+        saveInfo.email,
+        saveInfo.passwordSalt,
+        saveInfo.major,
       ]);
       return true;
     } catch (err) {
@@ -125,16 +125,16 @@ class StudentStorage {
     }
   }
 
-  static async modifyPasswordSave(clientInfo) {
+  static async modifyPasswordSave(saveInfo) {
     let conn;
     try {
       conn = await mariadb.getConnection();
       const query =
         'UPDATE students SET password = ?, password_salt = ? WHERE id = ?;';
       await conn.query(query, [
-        clientInfo.hash,
-        clientInfo.passwordSalt,
-        clientInfo.id,
+        saveInfo.hash,
+        saveInfo.passwordSalt,
+        saveInfo.id,
       ]);
       return true;
     } catch (err) {
