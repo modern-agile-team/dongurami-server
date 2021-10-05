@@ -88,28 +88,23 @@ class MyPageStorage {
       const { imgPath, imgName } = await this.createThumbnail(
         scrapInfo.boardNum
       );
-
-      if (imgPath) {
-        const query = `INSERT INTO scraps (board_no, student_id, title, description, file_url, file_id) VALUES (?, ?, ?, ?, ?, ?);`;
-        const scrap = await conn.query(query, [
-          scrapInfo.boardNum,
-          scrapInfo.id,
-          scrapInfo.title,
-          scrapInfo.description,
-          imgPath,
-          imgName,
-        ]);
-        return scrap.affectedRows;
-      }
-      const query = `INSERT INTO scraps (board_no, student_id, title, description) VALUES (?, ?, ?, ?);`;
-      const scrap = await conn.query(query, [
+      let query = '';
+      const scrap = [
         scrapInfo.boardNum,
         scrapInfo.id,
         scrapInfo.title,
         scrapInfo.description,
-      ]);
+      ];
 
-      return scrap.affectedRows;
+      if (imgPath) {
+        query = `INSERT INTO scraps (board_no, student_id, title, description, file_url, file_id) VALUES (?, ?, ?, ?, ?, ?);`;
+        scrap.push(imgPath, imgName);
+      } else {
+        query = `INSERT INTO scraps (board_no, student_id, title, description) VALUES (?, ?, ?, ?);`;
+      }
+
+      const scraps = await conn.query(query, scrap);
+      return scraps.affectedRows;
     } catch (err) {
       throw err;
     } finally {
