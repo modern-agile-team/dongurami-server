@@ -13,6 +13,7 @@ class Profile {
   async findOneByStudentId() {
     try {
       const id = this.params.studentId;
+      const user = this.auth;
 
       const profile = await ProfileStorage.findInfoByStudentId(id);
 
@@ -33,10 +34,10 @@ class Profile {
 
       let userInfo = '비로그인 회원입니다.';
 
-      if (this.auth) {
+      if (user) {
         userInfo = {
-          id: this.auth.id,
-          isAdmin: this.auth.isAdmin,
+          id: user.id,
+          isAdmin: user.isAdmin,
         };
       }
 
