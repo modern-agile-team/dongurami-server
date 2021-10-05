@@ -20,33 +20,6 @@ class MyPageStorage {
     }
   }
 
-  static async createThumbnail(boardNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT description FROM boards WHERE no = ?`;
-      const thumbnail = await conn.query(query, boardNum);
-      const imgReg = /(<img[^>]*(src\s*=\s*"([']?([^>"'])+)["']?[^>]*)>)/gi;
-
-      imgReg.test(thumbnail[0].description);
-
-      const a = RegExp.$3;
-
-      if (a.match(/^.*\//gi)) {
-        const imgPath = a.match(/^.*\//gi)[0];
-        const igmName = a.replace(/^.*\//gi, '');
-        return { imgPath, igmName };
-      }
-      return { imgPath: null, imgNamg: null };
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
   static async findAllScrapsByclubNum(userInfo) {
     let conn;
 
@@ -64,19 +37,13 @@ class MyPageStorage {
       const imgReg = /(<img[^>]*(src\s*=\s*"([']?([^>"'])+)["']?[^>]*)>)/gi;
 
       if (boards[0]) {
-        const see = [];
         boards.forEach((x, idx) => {
-          if (!see.includes(x.no)) {
-            imgReg.test(x.description);
-            const a = RegExp.$3;
-            if (!a.match(/^.*\//gi)) {
-              boards[idx].imgPath = null;
-              boards[idx].imgName = null;
-            } else {
-              boards[idx].imgPath = a.match(/^.*\//gi);
-              boards[idx].imgName = a.replace(/^.*\//gi, '');
-            }
-          }
+          imgReg.test(x.description);
+          const url = RegExp.$3;
+
+          [boards[idx].imgPath, boards[idx].imgName] = url.match(/^.*\//gi)
+            ? [url.match(/^.*\//gi)[0], url.replace(/^.*\//gi, '')]
+            : [null, null];
         });
       }
 
@@ -118,19 +85,19 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const { filePath, fileName } = await this.createThumbnail(
+      const { imgPath, imgName } = await this.createThumbnail(
         scrapInfo.boardNum
       );
 
-      if (filePath) {
+      if (imgPath) {
         const query = `INSERT INTO scraps (board_no, student_id, title, description, file_url, file_id) VALUES (?, ?, ?, ?, ?, ?);`;
         const scrap = await conn.query(query, [
           scrapInfo.boardNum,
           scrapInfo.id,
           scrapInfo.title,
           scrapInfo.description,
-          filePath,
-          fileName,
+          imgPath,
+          imgName,
         ]);
         return scrap.affectedRows;
       }
@@ -141,7 +108,36 @@ class MyPageStorage {
         scrapInfo.title,
         scrapInfo.description,
       ]);
+
       return scrap.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async createThumbnail(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT description FROM boards WHERE no = ?`;
+      const thumbnail = await conn.query(query, boardNum);
+      const imgReg = /(<img[^>]*(src\s*=\s*"([']?([^>"'])+)["']?[^>]*)>)/gi;
+
+      imgReg.test(thumbnail[0].description);
+
+      const url = RegExp.$3;
+
+      if (url.match(/^.*\//gi)) {
+        const imgPath = url.match(/^.*\//gi)[0];
+        const imgName = url.replace(/^.*\//gi, '');
+
+        return { imgPath, imgName };
+      }
+      return { imgPath: null, imgNamg: null };
     } catch (err) {
       throw err;
     } finally {
