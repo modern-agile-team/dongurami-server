@@ -29,7 +29,7 @@ class Board {
         description: board.description,
       };
 
-      if (clubNum !== undefined) {
+      if (clubNum !== undefined && this.params.clubNum > 1) {
         boardInfo.clubNum = clubNum;
       } else if (category === 4) {
         boardInfo.clubNum = board.clubNo;
