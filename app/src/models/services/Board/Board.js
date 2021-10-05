@@ -9,6 +9,7 @@ class Board {
     this.body = req.body;
     this.params = req.params;
     this.auth = req.auth;
+    this.query = req.query;
   }
 
   async createBoardNum() {
@@ -195,21 +196,28 @@ class Board {
 
   async search() {
     // 검색을 위한 정보
-    const searchInfo = {
-      category: boardCategory[this.params.category],
-      type: this.params.type,
-      keyword: this.params.keyword,
-      sort: this.params.sort,
-      order: this.params.order,
-    };
+    const searchInfo = this.query;
     const searchType = ['title', 'name'];
 
+    // 카테고리 고유번호로 변환
+    searchInfo.category = boardCategory[this.query.category];
+    console.log(searchInfo.clubno);
+    console.log(searchInfo);
     // 게시판 유무 검증
     if (searchInfo.category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판입니다.' };
     }
 
-    // 검색타입 검증
+    if (searchInfo.category > 3) {
+      if (!searchInfo.clubno) {
+        return {
+          success: false,
+          msg: '동아리 고유번호가 포함되지 않았습니다.',
+        };
+      }
+    }
+    if (searchInfo.clubno === undefined) searchInfo.clubno = 1;
+
     if (!searchType.includes(searchInfo.type)) {
       return { success: false, msg: '검색 타입을 확인해주세요' };
     }
