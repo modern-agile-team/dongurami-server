@@ -9,7 +9,7 @@ const process = {
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
-    return res.status(400).json(response);
+    return res.status(404).json(response);
   },
 
   findOneScrap: async (req, res) => {
@@ -18,7 +18,7 @@ const process = {
 
     if (response.success) return res.status(200).json(response);
     if (response.isError) return res.status(500).json(response.clientMsg);
-    return res.status(400).json(response);
+    return res.status(404).json(response);
   },
 
   createScrapNum: async (req, res) => {

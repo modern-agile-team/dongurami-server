@@ -71,7 +71,7 @@ class MyPageStorage {
         userInfo.scrapNum,
       ]);
 
-      return scrap;
+      return scrap[0];
     } catch (err) {
       throw err;
     } finally {

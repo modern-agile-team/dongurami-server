@@ -58,12 +58,14 @@ class MyPage {
   }
 
   async createScrapNum() {
+    const data = this.body;
+
     try {
       const scrapInfo = {
         id: this.auth.id,
         boardNum: this.params.boardNum,
-        title: this.body.title,
-        description: this.body.description,
+        title: data.title,
+        description: data.description,
       };
 
       const scrap = await MyPageStorage.createScrapNum(scrapInfo);
