@@ -25,11 +25,12 @@ class MyPage {
         return { success: false, msg: '존재하지 않는 동아리입니다.' };
       }
 
-      const { scraps, boards, thumbnail } =
-        await MyPageStorage.findAllScrapsByclubNum(userInfo);
+      const { scraps, boards } = await MyPageStorage.findAllScrapsByclubNum(
+        userInfo
+      );
 
       if (scraps || boards) {
-        return { success: true, scraps, boards, thumbnail };
+        return { success: true, scraps, boards };
       }
       return { success: true, msg: '스크랩 내역이 존재하지 않습니다.' };
     } catch (err) {
@@ -47,10 +48,28 @@ class MyPage {
         scrapNum: params.scrapNum,
       };
 
-      const { scrap, images } = await MyPageStorage.findOneScrap(userInfo);
+      const scrap = await MyPageStorage.findOneScrap(userInfo);
 
-      if (scrap) return { success: true, scrap, images };
+      if (scrap) return { success: true, scrap };
       return { success: false, msg: '존재하지 않는 글입니다.' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async createScrapNum() {
+    try {
+      const scrapInfo = {
+        id: this.auth.id,
+        boardNum: this.params.boardNum,
+        title: this.body.title,
+        description: this.body.description,
+      };
+
+      const scrap = await MyPageStorage.createScrapNum(scrapInfo);
+
+      if (scrap) return { success: true, msg: '스크랩글이 생성되었습니다.' };
+      return { suuccess: false, msg: '글이 스크랩되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
