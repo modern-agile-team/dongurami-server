@@ -89,7 +89,7 @@ class MyPageStorage {
         scrapInfo.boardNum
       );
       let query = '';
-      const scrap = [
+      const infoOfScrap = [
         scrapInfo.boardNum,
         scrapInfo.id,
         scrapInfo.title,
@@ -98,13 +98,14 @@ class MyPageStorage {
 
       if (imgPath) {
         query = `INSERT INTO scraps (board_no, student_id, title, description, file_url, file_id) VALUES (?, ?, ?, ?, ?, ?);`;
-        scrap.push(imgPath, imgName);
+        infoOfScrap.push(imgPath, imgName);
       } else {
         query = `INSERT INTO scraps (board_no, student_id, title, description) VALUES (?, ?, ?, ?);`;
       }
 
-      const scraps = await conn.query(query, scrap);
-      return scraps.affectedRows;
+      const scrap = await conn.query(query, infoOfScrap);
+
+      return scrap.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -132,7 +133,7 @@ class MyPageStorage {
 
         return { imgPath, imgName };
       }
-      return { imgPath: null, imgNamg: null };
+      return { imgPath: null, imgName: null };
     } catch (err) {
       throw err;
     } finally {
