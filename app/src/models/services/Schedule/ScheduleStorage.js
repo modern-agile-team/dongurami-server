@@ -73,6 +73,7 @@ class ScheduleStorage {
 
       const query = `INSERT INTO schedules (club_no, student_id, color_code, title, start_date, end_date)
       VALUE (?, ?, ?, ?, ?, ?);`;
+
       const schedule = await conn.query(query, [
         scheduleInfo.clubNum,
         scheduleInfo.studentId,

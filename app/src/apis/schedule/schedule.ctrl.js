@@ -1,6 +1,7 @@
 'use strict';
 
 const Schedule = require('../../models/services/Schedule/Schedule');
+const Notification = require('../../models/services/Notification/Notification');
 
 const process = {
   findAllByClubNum: async (req, res) => {
@@ -40,6 +41,16 @@ const process = {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     return res.status(400).json(response);
+  },
+
+  createTodayByIdAndClubName: async (req, res) => {
+    const notification = new Notification(req);
+    const response = await notification.createTodayByIdAndClubName();
+
+    if (response.isError) {
+      return res.status(500).json({ success: false, msg: response.clientMsg });
+    }
+    return res.status(201).json(response);
   },
 
   updateSchedule: async (req, res) => {
