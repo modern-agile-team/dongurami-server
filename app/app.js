@@ -21,6 +21,8 @@ const application = require('./src/apis/application');
 const clubBoard = require('./src/apis/club-board');
 const adminOption = require('./src/apis/admin-option');
 const search = require('./src/apis/search');
+const profile = require('./src/apis/profile');
+const notification = require('./src/apis/notification');
 
 app.use('/api/board', board);
 app.use('/api', root);
@@ -32,5 +34,7 @@ app.use('/api/club/application', application);
 app.use('/api/club/board', clubBoard);
 app.use('/api/club/admin-option', adminOption);
 app.use('/api/search', search);
+app.use('/api/profile', profile);
+app.use('/api/notification', notification);
 
 module.exports = app;

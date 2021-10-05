@@ -13,6 +13,7 @@ class Student {
     this.body = req.body;
     this.auth = req.auth;
     this.params = req.params;
+    this.SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
   }
 
   async login() {
@@ -49,21 +50,33 @@ class Student {
   }
 
   async signUp() {
-    const client = this.body;
-    const saltRounds = 10;
-    const passwordSalt = bcrypt.genSaltSync(saltRounds);
-    const hash = bcrypt.hashSync(client.password, passwordSalt);
-    const checkedIdAndEmail = await this.checkIdAndEmail();
+    const saveInfo = this.body;
 
-    if (checkedIdAndEmail.saveable) {
-      const studentInfo = { client, passwordSalt, hash };
-      const response = await StudentStorage.save(studentInfo);
+    try {
+      // 아이디 이메일 중복여부 확인
+      const checkedIdAndEmail = await this.checkIdAndEmail();
 
-      if (response) {
-        return { success: true, msg: '회원가입에 성공하셨습니다.' };
+      if (checkedIdAndEmail.saveable) {
+        saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+        saveInfo.hash = bcrypt.hashSync(
+          saveInfo.password,
+          saveInfo.passwordSalt
+        );
+
+        // DB에 회원 추가
+        const response = await StudentStorage.save(saveInfo);
+
+        if (response) {
+          return { success: true, msg: '회원가입에 성공하셨습니다.' };
+        }
       }
+      return checkedIdAndEmail;
+    } catch (err) {
+      return Error.ctrl(
+        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+        err
+      );
     }
-    return checkedIdAndEmail;
   }
 
   async findId() {
@@ -93,20 +106,20 @@ class Student {
   }
 
   async resetPassword() {
-    const client = this.body;
-    const checkedPassword = await this.checkPassword();
+    const saveInfo = this.body;
 
     try {
+      const checkedPassword = await this.checkPassword();
+
       if (checkedPassword.success) {
-        const saltRounds = 10;
-        const passwordSalt = bcrypt.genSaltSync(saltRounds);
-        const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt);
-        const clientInfo = {
-          id: checkedPassword.student.id,
-          hash,
-          passwordSalt,
-        };
-        const student = await StudentStorage.modifyPasswordSave(clientInfo);
+        saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+        saveInfo.hash = bcrypt.hashSync(
+          saveInfo.newPassword,
+          saveInfo.passwordSalt
+        );
+        saveInfo.id = checkedPassword.student.id;
+
+        const student = await StudentStorage.modifyPasswordSave(saveInfo);
 
         if (student) {
           return { success: true, msg: '비밀번호 변경을 성공하였습니다.' };
@@ -123,12 +136,12 @@ class Student {
 
   async checkIdAndEmail() {
     const client = this.body;
+    const clientInfo = {
+      id: client.id,
+      email: client.email,
+    };
 
     try {
-      const clientInfo = {
-        id: client.id,
-        email: client.email,
-      };
       const student = await StudentStorage.findOneByIdOrEmail(clientInfo);
 
       if (student === undefined) {
@@ -160,27 +173,30 @@ class Student {
 
   async checkPassword() {
     const client = this.body;
-    const studentInfo = this.auth;
+    const user = this.auth;
 
     try {
-      const studentInfoId = studentInfo.id;
-      const student = await StudentStorage.findOneById(studentInfoId);
+      const userId = user.id;
+      const student = await StudentStorage.findOneById(userId);
       const comparePassword = bcrypt.compareSync(
         client.password,
         student.password
       );
 
       if (comparePassword) {
-        if (client.password !== client.newPassword) {
-          if (client.newPassword === client.checkNewPassword) {
-            return { success: true, msg: '비밀번호가 일치합니다.', student };
-          }
-          return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
+        if (client.newPassword.length < 8) {
+          return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
         }
-        return {
-          success: false,
-          msg: '기존 비밀번호와 다른 비밀번호를 설정해주세요.',
-        };
+        if (client.password === client.newPassword) {
+          return {
+            success: false,
+            msg: '기존 비밀번호와 다른 비밀번호를 설정해주세요.',
+          };
+        }
+        if (client.newPassword === client.checkNewPassword) {
+          return { success: true, msg: '비밀번호가 일치합니다.', student };
+        }
+        return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
       }
       return { success: false, msg: '비밀번호가 틀렸습니다.' };
     } catch (err) {
@@ -224,13 +240,13 @@ class Student {
   }
 
   async findPassword() {
-    const client = this.body;
+    const saveInfo = this.body;
     const { params } = this;
 
     try {
       // 토큰 검증
       const reqInfo = {
-        id: client.id,
+        id: saveInfo.id,
         params,
       };
       const checkedToken = await EmailAuth.useableToken(reqInfo);
@@ -241,24 +257,21 @@ class Student {
       if (!checkedByChangePassword.success) return checkedByChangePassword;
 
       // 암호화
-      const saltRounds = 10;
-      const passwordSalt = bcrypt.genSaltSync(saltRounds); // 솔트
-      const hash = bcrypt.hashSync(client.checkNewPassword, passwordSalt); // 해시(비밀번호)
-      const clientInfo = {
-        hash,
-        passwordSalt,
-        id: client.id,
-      };
+      saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+      saveInfo.hash = bcrypt.hashSync(
+        saveInfo.newPassword,
+        saveInfo.passwordSalt
+      );
 
       // DB 수정
-      const isReset = await StudentStorage.modifyPasswordSave(clientInfo);
+      const isReset = await StudentStorage.modifyPasswordSave(saveInfo);
       if (!isReset) {
         return { success: false, msg: '비밀번호 변경에 실패하였습니다.' };
       }
 
       // 토큰 삭제 && 비밀번호 변경
       const isDeleteToken = await EmailAuthStorage.deleteTokenByStudentId(
-        client.id
+        saveInfo.id
       );
       if (!isDeleteToken) {
         return { success: false, msg: '토큰 삭제에 실패하였습니다.' };

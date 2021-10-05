@@ -1,5 +1,3 @@
-'use strict';
-
 const mariadb = require('../../../config/mariadb');
 
 class BoardStorage {
