@@ -235,38 +235,32 @@ class Board {
   }
 
   async search() {
-    // 검색을 위한 정보
     const searchInfo = this.query;
     const searchType = ['title', 'name'];
 
-    // 카테고리 고유번호로 변환
     searchInfo.category = boardCategory[this.query.category];
-    console.log(searchInfo.clubno);
-    console.log(searchInfo);
-    // 게시판 유무 검증
     if (searchInfo.category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판입니다.' };
     }
 
     if (searchInfo.category > 3) {
-      if (!searchInfo.clubno) {
+      if (searchInfo.clubno === '1' || !searchInfo.clubno) {
         return {
           success: false,
-          msg: '동아리 고유번호가 포함되지 않았습니다.',
+          msg: '동아리 고유번호를 확인해주세요.',
         };
       }
+    } else {
+      searchInfo.clubno = 1;
     }
-    if (searchInfo.clubno === undefined) searchInfo.clubno = 1;
 
     if (!searchType.includes(searchInfo.type)) {
       return { success: false, msg: '검색 타입을 확인해주세요' };
     }
 
-    // DB 검색을 위한 type변수명 변경
     if (searchInfo.type === 'name') searchInfo.type = 'st.name';
 
     try {
-      // 검색결과, 함수이동
       const boards = await BoardStorage.findAllSearch(searchInfo);
 
       return {
