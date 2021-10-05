@@ -1,35 +1,61 @@
 'use strict';
 
 const BoardStorage = require('./BoardStorage');
+const Notification = require('../Notification/Notification');
+const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 const boardCategory = require('../Category/board');
 
 class Board {
   constructor(req) {
+    this.req = req;
     this.body = req.body;
     this.params = req.params;
     this.auth = req.auth;
   }
 
   async createBoardNum() {
+    const board = this.body;
+    const { clubNum } = this.params;
+    const category = boardCategory[this.params.category];
+    const notification = new Notification(this.req);
+
     try {
-      const category = boardCategory[this.params.category];
-      const request = this.body;
       const boardInfo = {
         category,
         clubNum: 1,
         id: this.auth.id,
-        title: request.title,
-        description: request.description,
+        title: board.title,
+        description: board.description,
       };
 
-      if (this.params.clubNum !== undefined) {
-        boardInfo.clubNum = this.params.clubNum;
+      if (clubNum !== undefined) {
+        boardInfo.clubNum = clubNum;
       } else if (category === 4) {
-        boardInfo.clubNum = request.clubNo;
+        boardInfo.clubNum = board.clubNo;
       }
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
+
+      if (category === 5) {
+        const senderId = boardInfo.id;
+        const recipientIds = await NotificationStorage.findAllByClubNum(
+          boardInfo.clubNum
+        );
+
+        recipientIds.forEach(async (recipientId) => {
+          if (senderId !== recipientId) {
+            const notificationInfo = {
+              recipientId,
+              senderId,
+              clubName: board.clubName,
+              content: boardInfo.title,
+            };
+
+            await notification.createByIdAndClubName(notificationInfo);
+          }
+        });
+      }
 
       return { success: true, msg: '게시글 생성 성공', boardNum };
     } catch (err) {
@@ -40,6 +66,7 @@ class Board {
   async findAllByCategoryNum() {
     const category = boardCategory[this.params.category];
     const { clubNum } = this.params;
+    const user = this.auth;
     const criteriaRead = {
       clubNum: 1,
       category,
@@ -54,21 +81,25 @@ class Board {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
     }
     if (category === 5 || category === 6) {
-      if (category === 5 && !this.auth.clubNum.includes(Number(clubNum))) {
+      if (category === 5 && !user.clubNum.includes(Number(clubNum))) {
         return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
       }
       criteriaRead.clubNum = clubNum;
+    }
+    if (category < 5 && this.params.clubNum !== undefined) {
+      return { success: false, msg: '잘못된 URL의 접근입니다.' };
     }
 
     try {
       const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
       let userInfo = '비로그인 회원입니다.';
 
-      if (this.auth)
+      if (user) {
         userInfo = {
-          id: this.auth.id,
-          isAdmin: this.auth.isAdmin,
+          id: user.id,
+          isAdmin: user.isAdmin,
         };
+      }
 
       return { success: true, msg: '게시판 조회 성공', userInfo, boards };
     } catch (err) {
@@ -77,21 +108,24 @@ class Board {
   }
 
   async findAllByPromotionCategory() {
+    const user = this.auth;
+    const { params } = this;
+
     try {
       const criteriaRead = {
-        clubCategory: this.params.clubCategory,
-        sort: this.params.sort,
-        order: this.params.order.toUpperCase(),
+        clubCategory: params.clubCategory,
+        sort: params.sort,
+        order: params.order.toUpperCase(),
       };
       const boards = await BoardStorage.findAllByPromotionCategory(
         criteriaRead
       );
       let userInfo = '비로그인 회원입니다.';
 
-      if (this.auth) {
+      if (user) {
         userInfo = {
-          id: this.auth.id,
-          club: this.auth.clubNum,
+          id: user.id,
+          club: user.clubNum,
         };
       }
 
@@ -102,17 +136,17 @@ class Board {
   }
 
   async findOneByBoardNum() {
+    const user = this.auth;
+    const { params } = this;
+
     try {
-      const category = boardCategory[this.params.category];
+      const category = boardCategory[params.category];
       const boardInfo = {
         category,
-        boardNum: this.params.boardNum,
+        boardNum: params.boardNum,
       };
 
-      if (
-        category === 5 &&
-        !this.auth.clubNum.includes(Number(this.params.clubNum))
-      ) {
+      if (category === 5 && !user.clubNum.includes(Number(params.clubNum))) {
         return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
       }
 
@@ -126,10 +160,10 @@ class Board {
 
       let userInfo = '비로그인 회원입니다.';
 
-      if (this.auth)
+      if (user)
         userInfo = {
-          id: this.auth.id,
-          isAdmin: this.auth.isAdmin,
+          id: user.id,
+          isAdmin: user.isAdmin,
         };
 
       return {
@@ -145,13 +179,16 @@ class Board {
   }
 
   async updateOneByBoardNum() {
+    const board = this.body;
+    const { params } = this;
+
     try {
-      const category = boardCategory[this.params.category];
+      const category = boardCategory[params.category];
       const boardInfo = {
         category,
-        title: this.body.title,
-        description: this.body.description,
-        boardNum: this.params.boardNum,
+        title: board.title,
+        description: board.description,
+        boardNum: params.boardNum,
       };
       const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
 
@@ -165,11 +202,13 @@ class Board {
   }
 
   async deleteOneByBoardNum() {
+    const { params } = this;
+
     try {
-      const category = boardCategory[this.params.category];
+      const category = boardCategory[params.category];
       const boardInfo = {
         category,
-        boardNum: this.params.boardNum,
+        boardNum: params.boardNum,
       };
       const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
@@ -185,6 +224,7 @@ class Board {
   async updateOnlyHitByNum() {
     try {
       const { boardNum } = this.params;
+
       await BoardStorage.updateOnlyHitByNum(boardNum);
 
       return { success: true, msg: '조회수 1 증가' };
@@ -194,13 +234,14 @@ class Board {
   }
 
   async search() {
+    const { params } = this;
     // 검색을 위한 정보
     const searchInfo = {
-      category: boardCategory[this.params.category],
-      type: this.params.type,
-      keyword: this.params.keyword,
-      sort: this.params.sort,
-      order: this.params.order,
+      category: boardCategory[params.category],
+      type: params.type,
+      keyword: params.keyword,
+      sort: params.sort,
+      order: params.order,
     };
     const searchType = ['title', 'name'];
 
