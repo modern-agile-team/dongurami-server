@@ -19,7 +19,7 @@ class MyPage {
         clubNum: params.clubNum,
       };
 
-      const isClub = await MyPageStorage.existClub(params.clubNum);
+      const isClub = await MyPageStorage.existClub(userInfo.clubNum);
 
       if (!isClub) {
         return { success: false, msg: '존재하지 않는 동아리입니다.' };
