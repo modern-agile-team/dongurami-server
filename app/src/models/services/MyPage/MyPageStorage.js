@@ -88,13 +88,13 @@ class MyPageStorage {
       const { imgPath, imgName } = await this.createThumbnail(
         scrapInfo.boardNum
       );
-      let query = '';
       const infoOfScrap = [
         scrapInfo.boardNum,
         scrapInfo.id,
         scrapInfo.title,
         scrapInfo.description,
       ];
+      let query = '';
 
       if (imgPath) {
         query = `INSERT INTO scraps (board_no, student_id, title, description, file_url, file_id) VALUES (?, ?, ?, ?, ?, ?);`;
