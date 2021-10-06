@@ -204,12 +204,7 @@ class BoardStorage {
       conn = await mariadb.getConnection();
 
       // query문 대입을 위한 변수 설정
-      const { category } = searchInfo;
-      const { type } = searchInfo;
       const keyword = `%${searchInfo.keyword}%`;
-      const { sort } = searchInfo;
-      const { order } = searchInfo;
-
       const query = `
       SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
       FROM boards AS bo
@@ -219,10 +214,14 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE ${type} LIKE ? AND board_category_no = ?
-      ORDER BY ${sort} ${order};`;
+      WHERE ${searchInfo.type} LIKE ? AND board_category_no = ? AND club_no = ?
+      ORDER BY ${searchInfo.sort} ${searchInfo.order};`;
 
-      const boards = await conn.query(query, [keyword, category]);
+      const boards = await conn.query(query, [
+        keyword,
+        searchInfo.category,
+        searchInfo.clubno,
+      ]);
 
       return boards;
     } catch (err) {
