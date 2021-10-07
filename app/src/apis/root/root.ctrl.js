@@ -107,7 +107,7 @@ const process = {
     const oauth = new Oauth(req);
     try {
       const response = await oauth.naverLogin();
-      return res.json(response);
+      return res.status(200).json(response);
     } catch (err) {
       return res.status(401).json(err);
     }
