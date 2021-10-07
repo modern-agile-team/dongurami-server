@@ -1,0 +1,15 @@
+version: '3'
+services:
+  jenkins:
+    image : jenkins/jenkins:lts
+    container_name: jenkins
+    restart: always
+    portes:
+      - '8081:8080'
+    expose:
+      - '8080'
+    volumes:
+      - '/home/jenkins:/var/jenkins_home'
+    einvironment:
+      TZ: "Asia/Seoul"
+    

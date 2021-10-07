@@ -54,5 +54,8 @@
     "nodemon": "^2.0.12",
     "redis": "^3.1.2",
     "validator-laravel": "^1.0.7"
+  },
+  "bin": {
+    "dongurami-server": "www.js"
   }
 }
