@@ -4,12 +4,24 @@ services:
     image : jenkins/jenkins:lts
     container_name: jenkins
     restart: always
+<<<<<<< HEAD
     portes:
+=======
+    user: root
+    ports:
+>>>>>>> c0aa4db95273754c518c5534b7119ce18f272eac
       - '8081:8080'
     expose:
       - '8080'
     volumes:
       - '/home/jenkins:/var/jenkins_home'
+<<<<<<< HEAD
     einvironment:
       TZ: "Asia/Seoul"
     
+=======
+      - /home/ubuntu/logs:/home/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      TZ: "Asia/Seoul"
+>>>>>>> c0aa4db95273754c518c5534b7119ce18f272eac

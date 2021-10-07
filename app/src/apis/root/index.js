@@ -8,6 +8,7 @@ const loginAuth = require('../../middlewares/login-auth');
 const signUpAuth = require('../../middlewares/signUp-auth');
 
 router.get('/login-check', loginAuth.loginCheck, ctrl.process.resUserInfo);
+router.get('/naver-login', ctrl.process.naverLogin);
 
 router.post('/login', ctrl.process.login);
 router.post('/sign-up', signUpAuth.signUpCheck, ctrl.process.signUp);
