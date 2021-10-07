@@ -2,6 +2,7 @@
 
 const Student = require('../../models/services/Student/Student');
 const Email = require('../../models/services/Email/Email');
+const Oauth = require('../../models/services/Oauth/Oauth');
 
 const process = {
   login: async (req, res) => {
@@ -99,6 +100,17 @@ const process = {
       return res.status(403).json(response);
     }
     return res.status(400).json(response);
+  },
+
+  // naver OAuth 본인인증 (id, email 받기)
+  naverLogin: async (req, res) => {
+    const oauth = new Oauth(req);
+    try {
+      const response = await oauth.naverLogin();
+      return res.json(response);
+    } catch (err) {
+      return res.status(401).json(err);
+    }
   },
 };
 
