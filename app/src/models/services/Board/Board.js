@@ -237,8 +237,8 @@ class Board {
   async search() {
     const searchInfo = this.query;
     const searchType = ['title', 'name'];
+    searchInfo.category = boardCategory[this.params.category];
 
-    searchInfo.category = boardCategory[this.query.category];
     if (searchInfo.category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판입니다.' };
     }
