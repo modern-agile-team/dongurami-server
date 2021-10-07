@@ -1,10 +1,12 @@
 'use strict';
 
 const ApplicationStorage = require('./ApplicationStorage');
+const Notification = require('../Notification/Notification');
 const Error = require('../../utils/Error');
 
 class Application {
   constructor(req) {
+    this.req = req;
     this.body = req.body;
     this.params = req.params;
     this.auth = req.auth;
@@ -140,11 +142,11 @@ class Application {
     const { clubNum } = this.params;
 
     try {
-      const { success, applicantInfo, questionAndAnswer } =
+      const { success, applicantInfo, questionsAnswers } =
         await ApplicationStorage.findOneByClubNum(clubNum);
 
       if (success) {
-        return { success: true, applicantInfo, questionAndAnswer };
+        return { success: true, applicantInfo, questionsAnswers };
       }
       return {
         success: false,
@@ -158,12 +160,14 @@ class Application {
   // 동아리 가입 신청 승인.
   async createMemberById() {
     const { clubNum } = this.params;
-    const { applicant } = this.body;
+    const { body } = this;
+    const notification = new Notification(this.req);
 
     try {
+      const senderId = this.auth.id;
       const userInfo = {
         clubNum,
-        applicant,
+        applicant: body.applicant,
       };
 
       const isUpdate = await ApplicationStorage.updateAcceptedApplicantById(
@@ -174,6 +178,15 @@ class Application {
         const isCreate = await ApplicationStorage.createMemberById(userInfo);
 
         if (isCreate) {
+          const notificationInfo = {
+            senderId,
+            recipientId: userInfo.applicant,
+            clubName: body.clubName,
+            content: '동아리 가입 신청 결과',
+          };
+
+          await notification.createByIdAndClubName(notificationInfo);
+
           return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
         }
         return {
@@ -183,7 +196,7 @@ class Application {
       }
       return {
         success: false,
-        msg: '이미 가입되었거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+        msg: '존재하지 않는 회원이거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
@@ -193,18 +206,29 @@ class Application {
   // 동아리 가입 신청 거절.
   async updateApplicantById() {
     const { clubNum } = this.params;
-    const { applicant } = this.body;
+    const { body } = this;
+    const notification = new Notification(this.req);
 
     try {
+      const senderId = this.auth.id;
       const userInfo = {
         clubNum,
-        applicant,
+        applicant: body.applicant,
       };
       const isUpdate = await ApplicationStorage.updateRejectedApplicantById(
         userInfo
       );
 
       if (isUpdate) {
+        const notificationInfo = {
+          senderId,
+          recipientId: userInfo.applicant,
+          clubName: body.clubName,
+          content: '동아리 가입 신청 결과',
+        };
+
+        await notification.createByIdAndClubName(notificationInfo);
+
         return { success: true, msg: '동아리 가입 신청을 거절하셨습니다.' };
       }
       return {

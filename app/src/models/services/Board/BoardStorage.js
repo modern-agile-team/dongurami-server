@@ -1,5 +1,3 @@
-'use strict';
-
 const mariadb = require('../../../config/mariadb');
 
 class BoardStorage {
@@ -199,26 +197,33 @@ class BoardStorage {
     }
   }
 
-  static async searchByKeyword(searchInfo) {
+  static async findAllSearch(searchInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
       // query문 대입을 위한 변수 설정
-      const { category } = searchInfo;
-      const { type } = searchInfo;
       const keyword = `%${searchInfo.keyword}%`;
+      const query = `
+      SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, img.file_id AS fileId, bo.hit
+      FROM boards AS bo
+      LEFT JOIN images AS img
+      ON bo.no = img.board_no
+      JOIN students AS st
+      ON bo.student_id = st.id
+      JOIN clubs
+      ON bo.club_no = clubs.no
+      WHERE ${searchInfo.type} LIKE ? AND board_category_no = ? AND club_no = ?
+      ORDER BY ${searchInfo.sort} ${searchInfo.order};`;
 
-      const query = `SELECT no, student_id AS studentId, club_no AS clubNo, board_category_no AS boardCategoryNo, title, description, in_date AS inDate, modify_date AS modifyDate, hit
-      FROM boards WHERE ${type} LIKE ? AND board_category_no = ?;`;
-
-      const searchByKeywordResults = await conn.query(query, [
+      const boards = await conn.query(query, [
         keyword,
-        category,
+        searchInfo.category,
+        searchInfo.clubno,
       ]);
 
-      return searchByKeywordResults;
+      return boards;
     } catch (err) {
       throw err;
     } finally {
