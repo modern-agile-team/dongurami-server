@@ -68,11 +68,12 @@ class Board {
     const category = boardCategory[this.params.category];
     const { clubNum } = this.params;
     const user = this.auth;
+    const { query } = this;
     const criteriaRead = {
       clubNum: 1,
       category,
-      sort: this.params.sort,
-      order: this.params.order.toUpperCase(),
+      sort: query.sort || 'inDate',
+      order: query.order || 'DESC',
     };
 
     if (category === undefined) {

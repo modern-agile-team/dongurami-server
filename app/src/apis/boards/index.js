@@ -25,7 +25,7 @@ router.post(
 );
 
 router.get(
-  '/:category/:sort/:order',
+  '/:category',
   identityCheck.identityCheck,
   boardCtrl.process.findAllByCategoryNum
 );
