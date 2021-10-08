@@ -83,7 +83,7 @@ class Schedule {
               clubName: data.clubName,
               content: scheduleInfo.startDate,
             };
-
+            console.log(notificationInfo);
             await notification.createByIdAndClubName(notificationInfo);
           }
         });

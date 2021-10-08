@@ -126,6 +126,16 @@ class AdminOption {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
+
+  async deleteApplicantById() {
+    const payload = this.auth;
+    const { clubNum } = this.params;
+    const adminOption = this.body;
+
+    console.log(payload);
+    console.log(clubNum);
+    console.log(adminOption);
+  }
 }
 
 module.exports = AdminOption;

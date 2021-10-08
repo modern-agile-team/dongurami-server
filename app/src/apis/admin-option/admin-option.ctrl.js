@@ -90,6 +90,19 @@ const process = {
     }
     return res.status(400).json(response);
   },
+
+  deleteApplicantById: async (req, res) => {
+    const application = new Application(req);
+    const response = await application.deleteApplicantById();
+
+    if (response.success) {
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      return res.status(500).json(response.clientMsg);
+    }
+    return res.status(400).json(response);
+  },
 };
 
 module.exports = {
