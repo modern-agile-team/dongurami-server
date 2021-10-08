@@ -101,10 +101,10 @@ class Application {
       const isApplicant = await ApplicationStorage.findApplicant(applicantInfo);
 
       if (isApplicant !== undefined && isApplicant.readingFlag !== 2) {
-        let msg = '';
-        msg = isApplicant.readingFlag
+        const msg = isApplicant.readingFlag
           ? '이미 가입된 동아리입니다.'
           : '가입 승인 대기중입니다.';
+
         return { success: false, msg };
       }
 
