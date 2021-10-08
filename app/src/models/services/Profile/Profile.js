@@ -20,6 +20,12 @@ class Profile {
       if (profile === undefined) {
         return { success: false, msg: '존재하지 않는 회원입니다.' };
       }
+      if (profile.id !== user.id) {
+        delete profile.email;
+        delete profile.phoneNumber;
+        delete profile.grade;
+        delete profile.gender;
+      }
 
       const clubs = await ProfileStorage.findAllClubByStudentId(id);
 
