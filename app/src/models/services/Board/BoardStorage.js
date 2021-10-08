@@ -79,7 +79,7 @@ class BoardStorage {
       GROUP BY no
       ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
 
-      const boardList = conn.query(query);
+      const boardList = await conn.query(query);
 
       return boardList;
     } catch (err) {
