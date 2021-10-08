@@ -137,6 +137,28 @@ class AdminoOptionStorage {
       conn?.release();
     }
   }
+
+  static async deleteMemberById(memberInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'DELETE FROM members WHERE club_no = ? AND student_id = ?;';
+
+      const deleteMember = await conn.query(query, [
+        memberInfo.clubNum,
+        memberInfo.memberId,
+      ]);
+
+      if (!deleteMember.affectedRows) return false;
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = AdminoOptionStorage;
