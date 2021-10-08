@@ -243,7 +243,7 @@ class BoardStorage {
       FROM boards AS bo
       JOIN clubs
       ON club_no = clubs.no
-      where ${searchInfo.type} like ? AND board_category_no = 4 `;
+      WHERE ${searchInfo.type} like ? AND board_category_no = 4 `;
 
       const boards = await conn.query(query, [keyword]);
 

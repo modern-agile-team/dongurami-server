@@ -68,12 +68,11 @@ class Board {
     const category = boardCategory[this.params.category];
     const { clubNum } = this.params;
     const user = this.auth;
-    const { query } = this;
     const criteriaRead = {
       clubNum: 1,
       category,
-      sort: query.sort || 'inDate',
-      order: query.order || 'desc',
+      sort: this.params.sort,
+      order: this.params.order.toUpperCase(),
     };
 
     if (category === undefined) {
@@ -111,15 +110,14 @@ class Board {
 
   async findAllByPromotionCategory() {
     const user = this.auth;
-    const { query } = this;
+    const { params } = this;
 
     try {
       const criteriaRead = {
-        clubCategory: this.params.clubCategory,
-        sort: query.sort || 'inDate',
-        order: query.order || 'desc',
+        clubCategory: params.clubCategory,
+        sort: params.sort,
+        order: params.order.toUpperCase(),
       };
-
       const boards = await BoardStorage.findAllByPromotionCategory(
         criteriaRead
       );
