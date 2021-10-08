@@ -236,36 +236,46 @@ class Board {
 
   async search() {
     const searchInfo = this.query;
-    const searchType = ['title', 'name'];
+    const searchType = ['title', 'name', 'clubname'];
     searchInfo.category = boardCategory[this.params.category];
 
     if (searchInfo.category === undefined) {
       return { success: false, msg: '존재하지 않는 게시판입니다.' };
     }
-
-    if (searchInfo.category > 3) {
-      if (searchInfo.clubno === '1' || !searchInfo.clubno) {
-        return {
-          success: false,
-          msg: '동아리 고유번호를 확인해주세요.',
-        };
-      }
-    } else {
-      searchInfo.clubno = 1;
-    }
-
     if (!searchType.includes(searchInfo.type)) {
       return { success: false, msg: '검색 타입을 확인해주세요' };
     }
-
     if (searchInfo.type === 'name') searchInfo.type = 'st.name';
+    if (searchInfo.type === 'clubname') searchInfo.type = 'clubs.name';
 
     try {
+      if (searchInfo.category === 4) {
+        const promotionSearch = await BoardStorage.findAllPromotionSearch(
+          searchInfo
+        );
+        return {
+          success: true,
+          msg: `${searchInfo.keyword}(을)를 검색한 결과입니다.`,
+          promotionSearch,
+        };
+      }
+
+      if (searchInfo.category === 5) {
+        if (searchInfo.clubno === '1' || !searchInfo.clubno) {
+          return {
+            success: false,
+            msg: '동아리 고유번호를 확인해주세요.',
+          };
+        }
+      } else {
+        searchInfo.clubno = 1;
+      }
+
       const boards = await BoardStorage.findAllSearch(searchInfo);
 
       return {
         success: true,
-        msg: `${searchInfo.type}타입으로 ${searchInfo.keyword}(을)를 검색한 결과입니다.`,
+        msg: `${searchInfo.keyword}(을)를 검색한 결과입니다.`,
         boards,
       };
     } catch (err) {
