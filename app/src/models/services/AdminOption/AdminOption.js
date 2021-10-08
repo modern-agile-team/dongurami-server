@@ -125,7 +125,7 @@ class AdminOption {
   }
 
   async deleteMemberById() {
-    const user = this.auth.payload;
+    const user = this.auth;
     const { clubNum } = this.params;
     const memberId = this.body.studentId;
 
