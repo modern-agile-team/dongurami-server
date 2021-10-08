@@ -74,7 +74,6 @@ class Notification {
         url: body.url,
         notiCategoryNum: body.notiCategoryNum,
       };
-      console.log(notificationInfo);
       const success = await NotificationStorage.createByIdAndClubName(
         notificationInfo
       );

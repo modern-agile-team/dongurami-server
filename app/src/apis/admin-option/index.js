@@ -28,19 +28,19 @@ router.put(
 );
 
 router.post(
-  '/:clubNum/post/applicant',
+  '/:clubNum/applicant',
   loginAuth.loginCheck,
   ctrl.process.createMemberById
 );
 
 router.put(
-  '/:clubNum/put/applicant',
+  '/:clubNum/applicant',
   loginAuth.loginCheck,
   ctrl.process.updateApplicantById
 );
 
 router.delete(
-  '/:clubNum/delete/member',
+  '/:clubNum/member',
   loginAuth.loginCheck,
   ctrl.process.deleteMemberById
 );

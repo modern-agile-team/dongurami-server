@@ -183,7 +183,7 @@ class ApplicationStorage {
         a.description AS answer 
         FROM answers AS a JOIN applicants AS app ON a.student_id = app.student_id 
         AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q 
-        ON a.question_no = q.no;`;
+        ON a.question_no = q.no ORDER BY a.student_id DESC;`;
 
       const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
       const questionsAnswers = await conn.query(questionAnswerQuery, clubNum);

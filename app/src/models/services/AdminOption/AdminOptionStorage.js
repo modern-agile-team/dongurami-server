@@ -140,6 +140,7 @@ class AdminoOptionStorage {
 
   static async deleteMemberById(memberInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
