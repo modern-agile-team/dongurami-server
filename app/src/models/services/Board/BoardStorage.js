@@ -239,7 +239,6 @@ class BoardStorage {
 
       const keyword = `%${searchInfo.keyword}%`;
       const query = `
-      
       SELECT bo.no, bo.title, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate
       FROM boards AS bo
       JOIN clubs
