@@ -73,7 +73,7 @@ class Board {
       clubNum: 1,
       category,
       sort: query.sort || 'inDate',
-      order: query.order || 'DESC',
+      order: query.order || 'desc',
     };
 
     if (category === undefined) {
