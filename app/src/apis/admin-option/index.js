@@ -40,9 +40,9 @@ router.put(
 );
 
 router.delete(
-  '/:clubNum/delete/applicant',
+  '/:clubNum/delete/member',
   lgoinAuth.loginCheck,
-  ctrl.process.deleteApplicantById
+  ctrl.process.deleteMemberById
 );
 
 module.exports = router;

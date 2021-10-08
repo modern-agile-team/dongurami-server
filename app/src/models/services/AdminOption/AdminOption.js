@@ -35,7 +35,6 @@ class AdminOption {
     }
   }
 
-  // 모든 동아리원과 회장.
   async findOneByClubNum() {
     const { clubNum } = this.params;
 
@@ -55,7 +54,6 @@ class AdminOption {
     }
   }
 
-  // 회장 양도.
   async updateLeaderById() {
     const payload = this.auth;
     const { clubNum } = this.params;
@@ -95,7 +93,6 @@ class AdminOption {
     }
   }
 
-  // 관리자 권한 변경.
   async updateAdminOptionById() {
     const payload = this.auth;
     const { clubNum } = this.params;
@@ -127,14 +124,33 @@ class AdminOption {
     }
   }
 
-  async deleteApplicantById() {
+  async deleteMemberById() {
     const payload = this.auth;
     const { clubNum } = this.params;
-    const adminOption = this.body;
+    const memberId = this.body.studentId;
 
-    console.log(payload);
-    console.log(clubNum);
-    console.log(adminOption);
+    try {
+      const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
+
+      if (leader === payload.id) {
+        const memberInfo = {
+          clubNum,
+          memberId,
+        };
+        const isDelete = await AdminOptionStorage.deleteMemberById(memberInfo);
+
+        if (isDelete) {
+          return { success: true, msg: `${memberId}이 추방되었습니다.` };
+        }
+        return {
+          success: false,
+          msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+        };
+      }
+      return { success: false, msg: '회장만 접근이 가능합니다.' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
   }
 }
 

@@ -91,9 +91,9 @@ const process = {
     return res.status(400).json(response);
   },
 
-  deleteApplicantById: async (req, res) => {
-    const application = new Application(req);
-    const response = await application.deleteApplicantById();
+  deleteMemberById: async (req, res) => {
+    const adminOption = new AdminOption(req);
+    const response = await adminOption.deleteMemberById();
 
     if (response.success) {
       return res.status(200).json(response);
