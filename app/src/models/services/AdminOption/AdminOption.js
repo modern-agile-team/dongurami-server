@@ -125,14 +125,14 @@ class AdminOption {
   }
 
   async deleteMemberById() {
-    const payload = this.auth;
+    const user = this.auth.payload;
     const { clubNum } = this.params;
     const memberId = this.body.studentId;
 
     try {
       const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
 
-      if (leader === payload.id) {
+      if (leader === user.id) {
         const memberInfo = {
           clubNum,
           memberId,
@@ -140,7 +140,7 @@ class AdminOption {
         const isDelete = await AdminOptionStorage.deleteMemberById(memberInfo);
 
         if (isDelete) {
-          return { success: true, msg: `${memberId}이 추방되었습니다.` };
+          return { success: true, msg: `${memberId}님이 추방되었습니다.` };
         }
         return {
           success: false,

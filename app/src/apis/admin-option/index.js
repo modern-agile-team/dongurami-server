@@ -41,7 +41,7 @@ router.put(
 
 router.delete(
   '/:clubNum/delete/member',
-  lgoinAuth.loginCheck,
+  loginAuth.loginCheck,
   ctrl.process.deleteMemberById
 );
 
