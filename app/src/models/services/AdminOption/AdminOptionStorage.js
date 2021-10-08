@@ -144,7 +144,7 @@ class AdminoOptionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'DELETE FROM members WHERE club_no = ? And student_id = ?;';
+      const query = 'DELETE FROM members WHERE club_no = ? AND student_id = ?;';
 
       const deleteMember = await conn.query(query, [
         memberInfo.clubNum,
