@@ -111,14 +111,15 @@ class Board {
 
   async findAllByPromotionCategory() {
     const user = this.auth;
-    const { params } = this;
+    const { query } = this;
 
     try {
       const criteriaRead = {
-        clubCategory: params.clubCategory,
-        sort: params.sort,
-        order: params.order.toUpperCase(),
+        clubCategory: this.params.clubCategory,
+        sort: query.sort || 'inDate',
+        order: query.order || 'desc',
       };
+
       const boards = await BoardStorage.findAllByPromotionCategory(
         criteriaRead
       );
