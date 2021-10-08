@@ -1,7 +1,5 @@
 FROM node:14
 
-MAINTAINER 류가희 <qufslarkgml@gmail.com>
-
 RUN mkdir /dongurami-server
 
 WORKDIR /dongurami-server
