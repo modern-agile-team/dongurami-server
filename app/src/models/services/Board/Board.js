@@ -115,7 +115,7 @@ class Board {
 
     try {
       const criteriaRead = {
-        clubCategory: this.params.clubCategory,
+        clubCategory: query.category,
         sort: query.sort || 'inDate',
         order: query.order || 'desc',
       };
