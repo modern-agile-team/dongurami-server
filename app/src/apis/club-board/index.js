@@ -3,12 +3,14 @@
 const express = require('express');
 const boardCtrl = require('../boards/board.ctrl');
 const commentCtrl = require('../boards/comment.ctrl');
+const myPageCtrl = require('../my-page/my-page.ctrl');
 const loginCheck = require('../../middlewares/login-auth');
+const clubJoinCheck = require('../../middlewares/club-auth');
 
 const router = express.Router();
 
 router.get(
-  '/:category/:clubNum/:sort/:order',
+  '/:category/:clubNum',
   loginCheck.loginCheck,
   boardCtrl.process.findAllByCategoryNum
 );
@@ -32,6 +34,14 @@ router.post(
   '/:category/:clubNum/:boardNum/:cmtNum',
   loginCheck.loginCheck,
   commentCtrl.process.createReplyCommentNum
+);
+
+// 동아리 별 활동 일지 스크랩 요청 API
+router.post(
+  '/:category/personal/scrap/:clubNum/:boardNum',
+  loginCheck.loginCheck,
+  clubJoinCheck.clubJoinCheck,
+  myPageCtrl.process.createScrapNum
 );
 
 router.put(
