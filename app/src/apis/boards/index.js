@@ -25,12 +25,12 @@ router.post(
 );
 
 router.get(
-  '/:category/:sort/:order',
+  '/:category',
   identityCheck.identityCheck,
   boardCtrl.process.findAllByCategoryNum
 );
 router.get(
-  '/promotion/:clubCategory/:sort/:order',
+  '/promotion/club',
   identityCheck.identityCheck,
   boardCtrl.process.findAllByPromotionCategory
 );

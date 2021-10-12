@@ -63,7 +63,7 @@ class BoardStorage {
       conn = await mariadb.getConnection();
       let whole = '';
 
-      if (criteriaRead.clubCategory !== 'whole') {
+      if (criteriaRead.category !== undefined) {
         whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
       }
 
@@ -79,7 +79,7 @@ class BoardStorage {
       GROUP BY no
       ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
 
-      const boardList = conn.query(query);
+      const boardList = await conn.query(query);
 
       return boardList;
     } catch (err) {
@@ -222,6 +222,30 @@ class BoardStorage {
         searchInfo.category,
         searchInfo.clubno,
       ]);
+
+      return boards;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllPromotionSearch(searchInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const keyword = `%${searchInfo.keyword}%`;
+      const query = `
+      SELECT bo.no, bo.title, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate
+      FROM boards AS bo
+      JOIN clubs
+      ON club_no = clubs.no
+      WHERE ${searchInfo.type} like ? AND board_category_no = 4;`;
+
+      const boards = await conn.query(query, [keyword]);
 
       return boards;
     } catch (err) {
