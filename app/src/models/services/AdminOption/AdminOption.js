@@ -127,7 +127,7 @@ class AdminOption {
   async deleteMemberById() {
     const user = this.auth;
     const { clubNum } = this.params;
-    const memberId = this.body.studentId;
+    const { memberId } = this.params;
 
     try {
       const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);

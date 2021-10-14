@@ -63,7 +63,7 @@ class BoardStorage {
       conn = await mariadb.getConnection();
       let whole = '';
 
-      if (criteriaRead.clubCategory !== 'whole') {
+      if (criteriaRead.clubCategory !== undefined) {
         whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
       }
 

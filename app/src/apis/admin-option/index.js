@@ -40,7 +40,7 @@ router.put(
 );
 
 router.delete(
-  '/:clubNum/member',
+  '/:clubNum/:memberId',
   loginAuth.loginCheck,
   ctrl.process.deleteMemberById
 );
