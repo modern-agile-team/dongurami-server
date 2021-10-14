@@ -50,9 +50,12 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mariadb": "^2.5.4",
+    "morgan": "^1.10.0",
     "nodemailer": "^6.6.3",
     "nodemon": "^2.0.12",
     "redis": "^3.1.2",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.5"
   }
 }
