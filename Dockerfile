@@ -1,4 +1,4 @@
-FROM node:14
+[200~FROM node:14
 
 RUN mkdir /dongurami-server
 
@@ -15,5 +15,3 @@ COPY ./app ./app
 WORKDIR /dongurami/app
 
 EXPOSE 8080
-
-CMD ["npm", "run", "dev"]
