@@ -7,8 +7,11 @@ const process = {
     const s3 = new S3(req);
     const response = await s3.createPutUrl();
 
-    if (response.success) return res.status(200).json(response);
-    return res.status(500).json({ success: false, msg: response.clientMsg });
+    if (response.success) return res.status(201).json(response);
+    if (response.isError) {
+      return res.status(500).json({ success: false, msg: response.clientMsg });
+    }
+    return res.status(400).json(response);
   },
 };
 

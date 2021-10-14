@@ -9,6 +9,12 @@ class S3 {
   }
 
   async createPutUrl() {
+    const { img } = this.body;
+
+    if (img === undefined) {
+      return { success: false, msg: '객체 이름을 적어주세요' };
+    }
+
     try {
       const s3 = new AWS.S3({
         accessKeyId: process.env.S3_ACCESS_KEY,
@@ -18,7 +24,7 @@ class S3 {
 
       const preSignedPutUrl = await s3.getSignedUrl('putObject', {
         Bucket: process.env.S3_BUCKET_NAME,
-        Key: this.body.img,
+        Key: img,
         Expires: 5,
       });
 
