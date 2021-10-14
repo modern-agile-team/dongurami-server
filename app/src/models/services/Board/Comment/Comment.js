@@ -33,7 +33,6 @@ class Comment {
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
       const notificationInfo = {
         senderId: commentInfo.id,
-        recipientId: comment.recipientId,
         title: comment.boardTitle,
         content: commentInfo.description,
       };
@@ -75,7 +74,6 @@ class Comment {
         if (senderId !== recipientId) {
           const notificationInfo = {
             senderId,
-            recipientId,
             title: replyComment.boardTitle,
             content: replyCommentInfo.description,
           };
