@@ -1,17 +1,19 @@
 [200~FROM node:14
 
+MAINTAINER 류가희 <qufslarkgml@gmail.com>
+
 RUN mkdir /dongurami-server
 
 WORKDIR /dongurami-server
 
 RUN mkdir ./app
 
-COPY ./app/package*.json ./app
+COPY ./app/package*.json ./app/
 
-RUN npm install -g http-server
+WORKDIR /app
 
-COPY ./app ./app
+COPY ./app /app/    
 
-WORKDIR /dongurami/app
+RUN npm install
 
 EXPOSE 8080
