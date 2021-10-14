@@ -24,21 +24,27 @@ class Comment {
         id: user.id,
         description: comment.description,
       };
-      const board = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
+      const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
 
-      if (board === undefined) {
+      if (exist === undefined) {
         return { success: false, msg: '해당 게시글이 존재하지 않습니다.' };
       }
 
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
+
+      await CommentStorage.updateOnlyGroupNum(commentNum);
+
+      const { studentId, title } =
+        await BoardStorage.findstudentIdAndTitleByBoardNum(
+          commentInfo.boardNum
+        );
+
       const notificationInfo = {
         senderId: commentInfo.id,
-        recipientId: board.studentId,
-        title: board.title,
+        recipientId: studentId,
+        title,
         content: commentInfo.description,
       };
-      console.log(notificationInfo);
-      await CommentStorage.updateOnlyGroupNum(commentNum);
 
       await notification.createByIdAndTitle(notificationInfo);
 
@@ -61,7 +67,7 @@ class Comment {
         id: user.id,
         description: replyComment.description,
       };
-      const senderId = replyCommentInfo.id;
+
       const exist = await CommentStorage.existOnlyCmtNum(
         replyCommentInfo.cmtNum,
         replyCommentInfo.boardNum
@@ -70,13 +76,26 @@ class Comment {
       if (exist === undefined) {
         return { success: false, msg: '해당 게시글이나 댓글이 없습니다.' };
       }
+
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      replyComment.recipientIds.forEach(async (recipientId) => {
+      const senderId = replyCommentInfo.id;
+
+      const recipientIds = await CommentStorage.findStudentIdsByCmtNum(
+        replyCommentInfo.cmtNum,
+        replyCommentInfo.boardNum
+      );
+
+      const { title } = await BoardStorage.findstudentIdAndTitleByBoardNum(
+        replyCommentInfo.boardNum
+      );
+
+      recipientIds.forEach(async (recipientId) => {
         if (senderId !== recipientId) {
           const notificationInfo = {
             senderId,
-            title: replyComment.boardTitle,
+            recipientId,
+            title,
             content: replyCommentInfo.description,
           };
 

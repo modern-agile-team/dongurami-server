@@ -166,7 +166,7 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no, student_id AS studentId, title FROM boards WHERE no = ?;`;
+      const query = `SELECT no FROM boards WHERE no = ?;`;
 
       const board = await conn.query(query, [boardNum]);
 
@@ -248,6 +248,24 @@ class BoardStorage {
       const boards = await conn.query(query, [keyword]);
 
       return boards;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findstudentIdAndTitleByBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT student_id AS studentId, title FROM boards WHERE no = ?;`;
+
+      const board = await conn.query(query, [boardNum]);
+
+      return { studentId: board[0].studentId, title: board[0].title };
     } catch (err) {
       throw err;
     } finally {
