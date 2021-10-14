@@ -246,15 +246,15 @@ class Student {
   async findPassword() {
     const saveInfo = this.body;
     const { params } = this;
+    const reqInfo = {
+      id: saveInfo.id,
+      token: params.token,
+    };
 
     try {
       // 토큰 검증
-      const reqInfo = {
-        id: saveInfo.id,
-        params,
-      };
-      const checkedToken = await EmailAuth.useableToken(reqInfo);
-      if (!checkedToken.useable) return checkedToken;
+      const checkedByToken = await EmailAuth.checkByUseableToken(reqInfo);
+      if (!checkedByToken.useable) return checkedByToken;
 
       // 비밀번호 검증
       const checkedByChangePassword = await this.checkByChangePassword();
@@ -292,11 +292,17 @@ class Student {
   async checkByChangePassword() {
     const client = this.body;
 
-    if (client.newPassword !== client.checkNewPassword) {
-      return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
+    if (!client.newPassword.length) {
+      return { success: false, msg: '비밀번호를 입력해주세요.' };
     }
     if (client.newPassword.length < 8) {
       return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
+    }
+    if (client.newPassword !== client.checkNewPassword) {
+      return {
+        success: false,
+        msg: '비밀번호와 비밀번호확인이 일치하지 않습니다.',
+      };
     }
     return { success: true };
   }
