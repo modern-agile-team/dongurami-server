@@ -30,7 +30,7 @@ class MyPageStorage {
       FROM scraps AS s
       INNER JOIN boards AS b ON b.no = board_no
       WHERE s.student_id = ? AND club_no = ?;`;
-      const board = `SELECT no AS boardNo, title, description, in_date AS inDate, modify_date AS modifyDate 
+      const board = `SELECT no AS boardNo, title, in_date AS inDate, modify_date AS modifyDate 
       FROM boards WHERE board_category_no = 7 AND student_id = ? AND club_no = ?;`;
       const scraps = await conn.query(scrap, [userInfo.id, userInfo.clubNum]);
       const boards = await conn.query(board, [userInfo.id, userInfo.clubNum]);
