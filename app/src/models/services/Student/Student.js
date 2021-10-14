@@ -19,6 +19,10 @@ class Student {
   async login() {
     const client = this.body;
 
+    if (client.id.length === 0 || client.password.length === 0) {
+      return { success: false, msg: '아이디 또는 비밀번호를 확인해주세요.' };
+    }
+
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
 
