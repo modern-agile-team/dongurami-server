@@ -166,7 +166,7 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no FROM boards WHERE no = ?;`;
+      const query = `SELECT no, student_id AS studentId, title FROM boards WHERE no = ?;`;
 
       const board = await conn.query(query, [boardNum]);
 

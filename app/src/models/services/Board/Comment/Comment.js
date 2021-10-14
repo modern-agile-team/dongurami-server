@@ -24,20 +24,22 @@ class Comment {
         id: user.id,
         description: comment.description,
       };
-      const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
+      const board = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
 
-      if (exist === undefined) {
+      if (board === undefined) {
         return { success: false, msg: '해당 게시글이 존재하지 않습니다.' };
       }
 
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
       const notificationInfo = {
         senderId: commentInfo.id,
-        title: comment.boardTitle,
+        recipientId: board.studentId,
+        title: board.title,
         content: commentInfo.description,
       };
-
+      console.log(notificationInfo);
       await CommentStorage.updateOnlyGroupNum(commentNum);
+
       await notification.createByIdAndTitle(notificationInfo);
 
       return { success: true, msg: '댓글 생성 성공' };
