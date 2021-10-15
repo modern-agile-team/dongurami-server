@@ -257,6 +257,7 @@ class ApplicationStorage {
         userInfo.clubNum,
         userInfo.applicant,
       ]);
+
       if (updateRejectedApplicant.affectedRows) return true;
       return false;
     } catch (err) {
