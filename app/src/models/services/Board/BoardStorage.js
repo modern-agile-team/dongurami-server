@@ -254,6 +254,24 @@ class BoardStorage {
       conn?.release();
     }
   }
+
+  static async findStudentIdAndTitleByBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT student_id AS studentId, title FROM boards WHERE no = ?;`;
+
+      const board = await conn.query(query, [boardNum]);
+
+      return { studentId: board[0].studentId, title: board[0].title };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = BoardStorage;
