@@ -120,12 +120,14 @@ class Schedule {
           params.clubNum
         );
 
+        const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+
         recipientIds.forEach(async (recipientId) => {
           if (senderId !== recipientId) {
             const notificationInfo = {
               recipientId,
               senderId,
-              clubName: data.clubName,
+              clubName,
               content: scheduleInfo.startDate,
             };
 
