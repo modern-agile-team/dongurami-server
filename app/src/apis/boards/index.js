@@ -30,7 +30,7 @@ router.get(
   boardCtrl.process.findAllByCategoryNum
 );
 router.get(
-  '/promotion/:clubCategory',
+  '/promotion/club',
   identityCheck.identityCheck,
   boardCtrl.process.findAllByPromotionCategory
 );

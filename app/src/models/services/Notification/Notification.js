@@ -25,6 +25,7 @@ class Notification {
           notifications,
         };
       }
+
       return {
         success: false,
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
@@ -74,7 +75,6 @@ class Notification {
         url: body.url,
         notiCategoryNum: body.notiCategoryNum,
       };
-
       const success = await NotificationStorage.createByIdAndClubName(
         notificationInfo
       );

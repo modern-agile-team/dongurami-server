@@ -63,7 +63,7 @@ class BoardStorage {
       conn = await mariadb.getConnection();
       let whole = '';
 
-      if (criteriaRead.clubCategory !== 'whole') {
+      if (criteriaRead.clubCategory !== undefined) {
         whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
       }
 
@@ -224,6 +224,48 @@ class BoardStorage {
       ]);
 
       return boards;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllPromotionSearch(searchInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const keyword = `%${searchInfo.keyword}%`;
+      const query = `
+      SELECT bo.no, bo.title, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate
+      FROM boards AS bo
+      JOIN clubs
+      ON club_no = clubs.no
+      WHERE ${searchInfo.type} like ? AND board_category_no = 4;`;
+
+      const boards = await conn.query(query, [keyword]);
+
+      return boards;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findStudentIdAndTitleByBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT student_id AS studentId, title FROM boards WHERE no = ?;`;
+
+      const board = await conn.query(query, [boardNum]);
+
+      return { studentId: board[0].studentId, title: board[0].title };
     } catch (err) {
       throw err;
     } finally {

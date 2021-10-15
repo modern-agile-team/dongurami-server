@@ -10,7 +10,7 @@ const clubJoinCheck = require('../../middlewares/club-auth');
 const router = express.Router();
 
 router.get(
-  '/:category/:clubNum/:sort/:order',
+  '/:category/:clubNum',
   loginCheck.loginCheck,
   boardCtrl.process.findAllByCategoryNum
 );

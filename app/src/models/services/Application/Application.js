@@ -2,6 +2,7 @@
 
 const ApplicationStorage = require('./ApplicationStorage');
 const Notification = require('../Notification/Notification');
+const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Application {
@@ -96,14 +97,19 @@ class Application {
         clubNum,
         id: auth.id,
       };
-      const isMember = await ApplicationStorage.findMember(applicantInfo);
 
-      // 멤버 o
-      if (isMember !== undefined) {
-        return { success: false, msg: '이미 가입된 동아리입니다.' };
+      // 중복 가입 신청 방지 (승인 전 OR 멤버)
+      const isApplicant = await ApplicationStorage.findApplicant(applicantInfo);
+
+      if (isApplicant !== undefined && isApplicant.readingFlag !== 2) {
+        const msg = isApplicant.readingFlag
+          ? '이미 가입된 동아리입니다.'
+          : '가입 승인 대기중입니다.';
+
+        return { success: false, msg };
       }
 
-      // 멤버 x
+      // 멤버 x , 중복 가입 신청 x
       const answerInfo = {
         id: auth.id,
         name: auth.name,
@@ -157,7 +163,6 @@ class Application {
     }
   }
 
-  // 동아리 가입 신청 승인.
   async createMemberById() {
     const { clubNum } = this.params;
     const { body } = this;
@@ -174,6 +179,8 @@ class Application {
         userInfo
       );
 
+      const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+
       if (isUpdate) {
         const isCreate = await ApplicationStorage.createMemberById(userInfo);
 
@@ -181,7 +188,7 @@ class Application {
           const notificationInfo = {
             senderId,
             recipientId: userInfo.applicant,
-            clubName: body.clubName,
+            clubName,
             content: '동아리 가입 신청 결과',
           };
 
@@ -203,7 +210,6 @@ class Application {
     }
   }
 
-  // 동아리 가입 신청 거절.
   async updateApplicantById() {
     const { clubNum } = this.params;
     const { body } = this;
@@ -219,11 +225,13 @@ class Application {
         userInfo
       );
 
+      const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+
       if (isUpdate) {
         const notificationInfo = {
           senderId,
           recipientId: userInfo.applicant,
-          clubName: body.clubName,
+          clubName,
           content: '동아리 가입 신청 결과',
         };
 
