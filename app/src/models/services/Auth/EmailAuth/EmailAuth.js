@@ -32,16 +32,15 @@ class Auth {
     }
   }
 
-  static async useableToken(reqInfo) {
+  static async checkByUseableToken(reqInfo) {
     try {
       const token = await EmailAuthStorage.findOneByStudentId(reqInfo.id);
-
-      if (token === reqInfo.params.token) {
+      if (token === reqInfo.token) {
         return { useable: true };
       }
       return {
         useable: false,
-        msg: '미등록 토큰이거나 유효시간 (10분)이 만료된 토큰입니다.',
+        msg: '토큰이 유효하지 않거나 입력한 아이디와 일치하지 않습니다.',
       };
     } catch (err) {
       throw err;
