@@ -3,7 +3,6 @@
 const Review = require('../../models/services/Review/Review');
 
 const process = {
-  // 후기 작성
   createByReview: async (req, res) => {
     const review = new Review(req);
     const response = await review.createByReivew();
@@ -17,7 +16,6 @@ const process = {
     return res.status(400).json(response);
   },
 
-  // 모든 후기 리스트를 보여줌.
   findOneByClubNum: async (req, res) => {
     const review = new Review(req);
     const response = await review.findOneByClubNum();
@@ -31,7 +29,6 @@ const process = {
     return res.status(400).json(response);
   },
 
-  // 등록된 후기 글 수정.
   updateById: async (req, res) => {
     const review = new Review(req);
     const response = await review.updateById();
@@ -45,7 +42,6 @@ const process = {
     return res.status(400).json(response);
   },
 
-  // 등록된 후기 글 삭제.
   deleteByNum: async (req, res) => {
     const review = new Review(req);
     const response = await review.deleteByNum();
