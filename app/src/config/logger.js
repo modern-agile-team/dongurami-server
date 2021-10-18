@@ -16,7 +16,6 @@ const printLogFormat = {
     }),
     printFormat
   ),
-
   console: combine(colorize(), simple()),
 };
 
