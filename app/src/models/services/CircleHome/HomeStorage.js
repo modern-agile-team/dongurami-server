@@ -76,7 +76,7 @@ class HomeStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE clubs SET logo_url = ?, WHERE no = ?;`;
+      const query = `UPDATE clubs SET logo_url = ? WHERE no = ?;`;
 
       // 로고 변경 시 업데이트
       await conn.query(query, [logoInfo.logoUrl, logoInfo.clubNum]);
