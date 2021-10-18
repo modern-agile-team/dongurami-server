@@ -1,6 +1,7 @@
 'use strict';
 
 const ImageStorage = require('./ImageStorage');
+const boardCategory = require('../Category/board');
 const Error = require('../../utils/Error');
 
 class Image {
@@ -12,12 +13,26 @@ class Image {
   async saveBoardImg(boardNum) {
     const { images } = this.body;
     const imgInfo = [];
+    const category = boardCategory[this.params.category];
 
-    if (images === undefined || images.length === 0) return [];
+    if (category === 4 && (images === undefined || images.length === 0)) {
+      return [];
+    }
 
     try {
-      for (const image of images) {
-        imgInfo.push([boardNum, image.path, image.name]);
+      if (category === 6) {
+        const { description } = this.body;
+        const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
+
+        imgReg.test(description);
+
+        const thumbnail = RegExp.$2;
+
+        imgInfo.push([boardNum, thumbnail]);
+      } else {
+        for (const image of images) {
+          imgInfo.push([boardNum, image.path]);
+        }
       }
 
       const imgNum = await ImageStorage.saveBoardImg(imgInfo);
