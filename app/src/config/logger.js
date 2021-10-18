@@ -30,7 +30,6 @@ const opts = {
     maxFiles: '7d',
     format: printLogFormat.file,
   }),
-
   console: new transports.Console({
     level: 'info',
     format: printLogFormat.console,
