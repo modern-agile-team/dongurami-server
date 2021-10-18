@@ -3,6 +3,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const morgan = require('morgan');
+const logger = require('./src/config/logger');
 
 const app = express();
 dotenv.config();
@@ -10,6 +12,7 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(morgan(':method :status :response-time ms', { stream: logger.stream }));
 
 const board = require('./src/apis/boards');
 const root = require('./src/apis/root');
