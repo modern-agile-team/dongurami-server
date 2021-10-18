@@ -108,11 +108,11 @@ const process = {
     const response = await student.findPassword();
 
     if (response.useable === false) {
-      logger.info(`PATCH /api/find-password/token 403: ${response.msg}`);
+      logger.error(`PATCH /api/find-password/token 403: ${response.msg}`);
       return res.status(403).json(response);
     }
     if (!response.success) {
-      logger.info(`PATCH /api/find-password/token 400: ${response.msg}`);
+      logger.error(`PATCH /api/find-password/token 400: ${response.msg}`);
       return res.status(400).json(response);
     }
     if (response.isError) {
