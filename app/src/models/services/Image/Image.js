@@ -1,8 +1,8 @@
 'use strict';
 
 const ImageStorage = require('./ImageStorage');
-const boardCategory = require('../Category/board');
 const Error = require('../../utils/Error');
+const boardCategory = require('../Category/board');
 
 class Image {
   constructor(req) {

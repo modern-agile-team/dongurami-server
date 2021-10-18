@@ -67,7 +67,7 @@ class BoardStorage {
         whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
       }
 
-      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, bo.hit
+      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit
       FROM boards AS bo
       LEFT JOIN images AS img
       ON bo.no = img.board_no
