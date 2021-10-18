@@ -10,7 +10,8 @@ class ImageStorage {
       conn = await mariadb.getConnection();
 
       const imgNums = [];
-      let query = 'INSERT INTO images (board_no, url, file_id) VALUES (?)';
+      let query = 'INSERT INTO images (board_no, url) VALUES (?)';
+
       for (let i = 1; i < imgInfo.length; i += 1) query += ', (?)';
       query += ';';
 
@@ -35,7 +36,7 @@ class ImageStorage {
       conn = await mariadb.getConnection();
 
       const query =
-        'SELECT url AS imgPath, file_id AS imgName FROM images WHERE images.board_no = ?;';
+        'SELECT url AS imgPath FROM images WHERE images.board_no = ?;';
 
       const imgPath = await conn.query(query, [boardNum]);
 
