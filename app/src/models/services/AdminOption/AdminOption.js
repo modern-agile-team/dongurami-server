@@ -15,9 +15,9 @@ class AdminOption {
     const { clubNum } = this.params;
     const adminInfo = {
       id: payload.id,
-
       clubNum,
     };
+
     try {
       const clubAdminId = await AdminOptionStorage.findOneById(adminInfo);
 
