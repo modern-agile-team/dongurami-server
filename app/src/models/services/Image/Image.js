@@ -20,7 +20,7 @@ class Image {
     }
 
     try {
-      if (category === 6) {
+      if (category === 6 || category === 7) {
         const { description } = this.body;
         const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
 
