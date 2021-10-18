@@ -88,7 +88,6 @@ class MyPageStorage {
 
       return scrap.affectedRows;
     } catch (err) {
-      console.log(err);
       throw err;
     } finally {
       conn?.release();
