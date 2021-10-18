@@ -11,6 +11,7 @@ class ImageStorage {
 
       const imgNums = [];
       let query = 'INSERT INTO images (board_no, url, file_id) VALUES (?)';
+
       for (let i = 1; i < imgInfo.length; i += 1) query += ', (?)';
       query += ';';
 

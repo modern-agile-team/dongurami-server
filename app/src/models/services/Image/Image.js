@@ -10,15 +10,20 @@ class Image {
   }
 
   async saveBoardImg(boardNum) {
-    const { images } = this.body;
+    const { description } = this.body;
+    const imgReg = /(<img[^>]*(src\s*=\s*"([']?([^>"'])+)["']?[^>]*)>)/gi;
+    const images = description.match(imgReg);
     const imgInfo = [];
 
-    if (images === undefined || images.length === 0) return [];
+    if (images === null || images.length === 0) return images;
 
     try {
-      for (const image of images) {
-        imgInfo.push([boardNum, image.path, image.name]);
-      }
+      images.forEach((url) => {
+        const imgPath = url.match(/^.*\//gi)[0];
+        const imgName = url.replace(/^.*\//gi, '');
+
+        imgInfo.push([boardNum, imgPath, imgName]);
+      });
 
       const imgNum = await ImageStorage.saveBoardImg(imgInfo);
 
