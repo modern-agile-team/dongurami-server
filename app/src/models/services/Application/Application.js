@@ -2,6 +2,7 @@
 
 const ApplicationStorage = require('./ApplicationStorage');
 const Notification = require('../Notification/Notification');
+const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Application {
@@ -162,7 +163,6 @@ class Application {
     }
   }
 
-  // 동아리 가입 신청 승인.
   async createMemberById() {
     const { clubNum } = this.params;
     const { body } = this;
@@ -179,6 +179,8 @@ class Application {
         userInfo
       );
 
+      const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+
       if (isUpdate) {
         const isCreate = await ApplicationStorage.createMemberById(userInfo);
 
@@ -186,7 +188,7 @@ class Application {
           const notificationInfo = {
             senderId,
             recipientId: userInfo.applicant,
-            clubName: body.clubName,
+            clubName,
             content: '동아리 가입 신청 결과',
           };
 
@@ -208,7 +210,6 @@ class Application {
     }
   }
 
-  // 동아리 가입 신청 거절.
   async updateApplicantById() {
     const { clubNum } = this.params;
     const { body } = this;
@@ -224,11 +225,13 @@ class Application {
         userInfo
       );
 
+      const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+
       if (isUpdate) {
         const notificationInfo = {
           senderId,
           recipientId: userInfo.applicant,
-          clubName: body.clubName,
+          clubName,
           content: '동아리 가입 신청 결과',
         };
 

@@ -31,14 +31,21 @@ class Comment {
       }
 
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
+
+      await CommentStorage.updateOnlyGroupNum(commentNum);
+
+      const { studentId, title } =
+        await BoardStorage.findStudentIdAndTitleByBoardNum(
+          commentInfo.boardNum
+        );
+
       const notificationInfo = {
         senderId: commentInfo.id,
-        recipientId: comment.recipientId,
-        title: comment.boardTitle,
+        recipientId: studentId,
+        title,
         content: commentInfo.description,
       };
 
-      await CommentStorage.updateOnlyGroupNum(commentNum);
       await notification.createByIdAndTitle(notificationInfo);
 
       return { success: true, msg: '댓글 생성 성공' };
@@ -60,7 +67,7 @@ class Comment {
         id: user.id,
         description: replyComment.description,
       };
-      const senderId = replyCommentInfo.id;
+
       const exist = await CommentStorage.existOnlyCmtNum(
         replyCommentInfo.cmtNum,
         replyCommentInfo.boardNum
@@ -69,14 +76,26 @@ class Comment {
       if (exist === undefined) {
         return { success: false, msg: '해당 게시글이나 댓글이 없습니다.' };
       }
+
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      replyComment.recipientIds.forEach(async (recipientId) => {
+      const senderId = replyCommentInfo.id;
+
+      const recipientIds = await CommentStorage.findStudentIdsByCmtNum(
+        replyCommentInfo.cmtNum,
+        replyCommentInfo.boardNum
+      );
+
+      const { title } = await BoardStorage.findStudentIdAndTitleByBoardNum(
+        replyCommentInfo.boardNum
+      );
+
+      recipientIds.forEach(async (recipientId) => {
         if (senderId !== recipientId) {
           const notificationInfo = {
             senderId,
             recipientId,
-            title: replyComment.boardTitle,
+            title,
             content: replyCommentInfo.description,
           };
 

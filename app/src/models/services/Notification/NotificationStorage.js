@@ -16,6 +16,7 @@ class NotificationStorage {
         AND no.reading_flag = 0
         ORDER BY inDate DESC
         LIMIT 10;`;
+
       const notifications = await conn.query(query, studentId);
 
       return { success: true, notifications };
@@ -34,6 +35,7 @@ class NotificationStorage {
 
       const query =
         'SELECT student_id AS studentId FROM members WHERE club_no = ?;';
+
       const members = await conn.query(query, clubNum);
       const studentIds = [];
 
@@ -108,6 +110,7 @@ class NotificationStorage {
       conn = await mariadb.getConnection();
 
       const query = 'UPDATE notifications SET reading_flag = 1 WHERE no = ?;';
+
       const notification = await conn.query(query, notificationNum);
 
       if (notification.affectedRows) return true;
@@ -127,10 +130,29 @@ class NotificationStorage {
 
       const query =
         'UPDATE notifications SET reading_flag = 1 WHERE recipient_id = ?;';
+
       const notification = await conn.query(query, studentId);
 
       if (notification.affectedRows) return true;
       return false;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findOneByClubNum(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'SELECT name FROM clubs WHERE no = ?;';
+
+      const club = await conn.query(query, clubNum);
+
+      return club[0].name;
     } catch (err) {
       throw err;
     } finally {

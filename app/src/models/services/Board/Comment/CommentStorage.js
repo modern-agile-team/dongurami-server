@@ -230,6 +230,29 @@ class CommentStorage {
       conn?.release();
     }
   }
+
+  static async findStudentIdsByCmtNum(cmtNum, boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT student_id AS studentId FROM comments WHERE board_no = ? AND group_no = ?;`;
+
+      const comments = await conn.query(query, [boardNum, cmtNum]);
+
+      const recipientIds = [];
+
+      comments.forEach((comment) => {
+        recipientIds.push(comment.studentId);
+      });
+      return recipientIds;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = CommentStorage;
