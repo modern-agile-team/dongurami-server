@@ -86,6 +86,7 @@ class Board {
     }
     if (category === 5 || category === 6) {
       const isClub = await BoardStorage.findClub(clubNum);
+
       if (!isClub) {
         return { success: false, msg: '존재하지 않는 동아리입니다.' };
       }
