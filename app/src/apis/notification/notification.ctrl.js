@@ -8,14 +8,14 @@ const process = {
     const response = await notification.findAllById();
 
     if (response.success) {
-      logger.info(`GET /entire 200: ${response.msg}`);
+      logger.info(`GET /api/notification/entire 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.info(`GET /entire 500:\n${response.errMsg}`);
+      logger.info(`GET /api/notification/entire 500:\n${response.errMsg}`);
       return res.status(500).json(response.clientMsg);
     }
-    logger.info(`GET /entire 400: ${response.msg}`);
+    logger.info(`GET /api/notification/entire 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
@@ -24,14 +24,18 @@ const process = {
     const response = await notification.updateOneByNotificationNum();
 
     if (response.success) {
-      logger.info(`PATCH /notificationNum 200: ${response.msg}`);
+      logger.info(
+        `PATCH /api/notification/notificationNum 200: ${response.msg}`
+      );
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.info(`PATCH /notificationNum 500: ${response.errMsg}`);
+      logger.info(
+        `PATCH /api/notification/notificationNum 500: ${response.errMsg}`
+      );
       return res.status(500).json(response.clientMsg);
     }
-    logger.info(`PATCH /notificationNum 400: ${response.msg}`);
+    logger.info(`PATCH /api/notification/notificationNum 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
@@ -40,14 +44,16 @@ const process = {
     const response = await notification.updateAllById();
 
     if (response.success) {
-      logger.info(`PUT /notificationNum 200: ${response.msg}`);
+      logger.info(`PUT /api/notification/notificationNum 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.info(`PUT /notificationNum 500: ${response.errMsg}`);
+      logger.info(
+        `PUT /api/notification/notificationNum 500: ${response.errMsg}`
+      );
       return res.status(500).json(response.clientMsg);
     }
-    logger.info(`PUT /notificationNum 400: ${response.msg}`);
+    logger.info(`PUT /api/notification/notificationNum 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 };
