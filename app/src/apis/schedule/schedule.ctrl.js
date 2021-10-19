@@ -60,12 +60,12 @@ const process = {
     const response = await notification.createTodayByIdAndClubName();
 
     if (response.isError) {
-      logger.info(
+      logger.error(
         `POST /api/club/schedule/clubNum/today 500: ${response.errMsg}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    logger.error(`POST /api/club/schedule/clubNum/today 201: ${response.msg}`);
+    logger.info(`POST /api/club/schedule/clubNum/today 201: ${response.msg}`);
     return res.status(201).json(response);
   },
 
