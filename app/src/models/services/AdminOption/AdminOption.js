@@ -17,6 +17,7 @@ class AdminOption {
       id: payload.id,
       clubNum,
     };
+
     try {
       const clubAdminId = await AdminOptionStorage.findOneById(adminInfo);
 

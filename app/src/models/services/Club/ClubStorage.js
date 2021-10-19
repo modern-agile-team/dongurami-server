@@ -8,7 +8,7 @@ class ClubStorage {
 
     try {
       const query =
-        'SELECT no, name, category, logo_url AS logoUrl, file_id AS fileId FROM clubs;';
+        'SELECT no, name, category, logo_url AS logoUrl FROM clubs;';
       const result = await conn.query(query);
 
       return { success: true, result };

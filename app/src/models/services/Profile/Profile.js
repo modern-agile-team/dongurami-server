@@ -60,7 +60,6 @@ class Profile {
       phoneNumber: request.phoneNumber,
       grade: request.grade,
       profileImageUrl: request.profileImageUrl,
-      fileId: request.fileId,
       userId: this.auth.id,
     };
     const emailRegExp =

@@ -49,7 +49,6 @@ class Home {
       const logoInfo = {
         clubNum: this.params.clubNum,
         logoUrl: data.logoUrl,
-        fileId: data.fileId,
       };
       await HomeStorage.updateClubLogo(logoInfo);
 
