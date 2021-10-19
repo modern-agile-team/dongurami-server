@@ -28,7 +28,7 @@ class ScheduleStorage {
 
       const query = `SELECT no, color_code AS colorCode, title, start_date AS startDate, end_date AS endDate, important 
       FROM schedules
-      WHERE LEFT(start_date, 7) = LEFT(NOW(), 7) OR LEFT(end_date, 7) = LEFT(NOW(), 7) AND club_no = ?
+      WHERE LEFT(NOW(), 7) BETWEEN LEFT(start_date, 7) AND LEFT(end_date, 7)  AND club_no = ?
       ORDER BY start_date;`;
 
       const result = await conn.query(query, clubNum);
@@ -49,12 +49,11 @@ class ScheduleStorage {
 
       const query = `SELECT no, color_code AS colorCode, title, start_date AS startDate, end_date AS endDate, important 
       FROM schedules 
-      WHERE club_no = ? AND LEFT(start_date, 7) = ? OR LEFT(end_date, 7) = ?
+      WHERE ? BETWEEN LEFT(start_date, 7) AND LEFT(end_date, 7) AND club_no = ?
       ORDER BY start_date;`;
       const result = await conn.query(query, [
+        scheduleInfo.date,
         scheduleInfo.clubNum,
-        scheduleInfo.date,
-        scheduleInfo.date,
       ]);
 
       return result;
