@@ -85,6 +85,9 @@ class Student {
     const client = this.body;
 
     try {
+      if (!(client.name && client.email)) {
+        return { success: false, msg: '아이디 또는 이메일을 확인해주세요.' };
+      }
       const clientInfo = {
         name: client.name,
         email: client.email,
@@ -92,11 +95,7 @@ class Student {
       const student = await StudentStorage.findOneByNameAndEmail(clientInfo);
 
       if (student) {
-        return {
-          success: true,
-          msg: '해당하는 아이디를 확인했습니다.',
-          id: student.id,
-        };
+        return { success: true, id: student.id };
       }
       return { success: false, msg: '해당하는 아이디가 없습니다.' };
     } catch (err) {

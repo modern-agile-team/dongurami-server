@@ -57,7 +57,7 @@ const process = {
     const response = await student.findId();
 
     if (response.success) {
-      logger.info(`POST /api/find-id 200: ${response.msg}`);
+      logger.info(`POST /api/find-id 200: 해당 아이디를 확인했습니다.`);
       return res.status(200).json(response);
     }
     if (response.isError) {
