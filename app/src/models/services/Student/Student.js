@@ -84,10 +84,10 @@ class Student {
   async findId() {
     const client = this.body;
 
+    if (!(client.name && client.email)) {
+      return { success: false, msg: '아이디 또는 이메일을 확인해주세요.' };
+    }
     try {
-      if (!(client.name && client.email)) {
-        return { success: false, msg: '아이디 또는 이메일을 확인해주세요.' };
-      }
       const clientInfo = {
         name: client.name,
         email: client.email,
