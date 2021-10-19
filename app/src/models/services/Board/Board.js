@@ -85,6 +85,11 @@ class Board {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
     }
     if (category === 5 || category === 6) {
+      const isClub = await BoardStorage.findClub(clubNum);
+
+      if (!isClub) {
+        return { success: false, msg: '존재하지 않는 동아리입니다.' };
+      }
       if (category === 5 && !user.clubNum.includes(Number(clubNum))) {
         return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
       }

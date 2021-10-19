@@ -19,14 +19,14 @@ class Student {
   async login() {
     const client = this.body;
 
-    if (client.id.length === 0 || client.password.length === 0) {
+    if (!(client.id && client.password)) {
       return { success: false, msg: '아이디 또는 비밀번호를 확인해주세요.' };
     }
 
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
 
-      if (checkedId === undefined) {
+      if (!checkedId) {
         return { success: false, msg: '가입된 아이디가 아닙니다.' };
       }
 
@@ -305,6 +305,20 @@ class Student {
       };
     }
     return { success: true };
+  }
+
+  async getUserInfoByJWT() {
+    const user = this.auth;
+
+    delete user.iat;
+    delete user.exp;
+    delete user.iss;
+
+    if (user) return { success: true, msg: '유저 정보 조회 성공', user };
+    return {
+      success: false,
+      msg: '서버 에러입니다. 서버 개발자에게 얘기해주세요.',
+    };
   }
 }
 
