@@ -36,9 +36,12 @@ const process = {
       logger.info(`GET /category 200: ${response.msg}`);
       return res.status(200).json(response);
     }
-    if (response.isError) return res.status(500).json(response.clientMsg);
+    if (response.isError) {
+      logger.error(`GET /category 500: \n${response.errMsg}`);
+      return res.status(500).json(response.clientMsg);
+    }
     if (response.msg === '해당 동아리에 가입하지 않았습니다.') {
-      logger.error(`GET /category 403: ${response.msg}`);
+      logger.error(`GET /category/clubNum 403: ${response.msg}`);
       return res.status(403).json(response);
     }
     logger.error(`GET /category 404: ${response.msg}`);
