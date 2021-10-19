@@ -10,25 +10,48 @@ class Review {
     this.auth = req.auth;
   }
 
+  async findOneByClubNum() {
+    const clubNum = Number(this.params.clubNum);
+    const user = this.auth;
+    const { id } = user;
+
+    try {
+      const { success, reviewList } = await ReviewStorage.findOneByClubNum(
+        clubNum
+      );
+      if (success) {
+        return { success: true, reviewList, studentId: id };
+      }
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
   async createByReivew() {
     const review = this.body;
-    const paramsClubNum = Number(this.params.clubNum);
-    const payload = this.auth;
-    const userInfo = {
-      studentId: payload.id,
-      clubNum: paramsClubNum,
-    };
+    const clubNum = Number(this.params.clubNum);
+    const user = this.auth;
 
-    const isReview = await ReviewStorage.findAllById(userInfo);
+    try {
+      const userInfo = {
+        studentId: user.id,
+        clubNum,
+      };
 
-    if (isReview) {
-      try {
+      const isReview = await ReviewStorage.findOneById(userInfo);
+
+      if (!isReview) {
         const reviewInfo = {
-          clubNum: paramsClubNum,
-          id: payload.id,
+          clubNum,
+          id: user.id,
           description: review.description,
           score: review.score,
         };
+
         const success = await ReviewStorage.saveReview(reviewInfo);
 
         if (success) {
@@ -38,32 +61,8 @@ class Review {
           success: false,
           msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
         };
-      } catch (err) {
-        return Error.ctrl(
-          '서버 에러입니다. 서버 개발자에게 문의해주세요.',
-          err
-        );
       }
-    }
-    return { success: false, msg: '이미 후기를 작성했습니다.' };
-  }
-
-  async findOneByClubNum() {
-    const paramsClubNum = Number(this.params.clubNum);
-    const payload = this.auth;
-    const { id } = payload;
-
-    try {
-      const { success, reviewList } = await ReviewStorage.findOneByClubNum(
-        paramsClubNum
-      );
-      if (success) {
-        return { success: true, reviewList, studentId: id };
-      }
-      return {
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      return { success: false, msg: '이미 후기를 작성했습니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }

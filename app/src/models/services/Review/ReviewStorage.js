@@ -5,16 +5,20 @@ const mariadb = require('../../../config/mariadb');
 class ReviewStorage {
   static async saveReview(reviewInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
+
       const query =
         'INSERT INTO reviews (club_no, student_id, description, score) VALUES (?, ?, ?, ?);';
+
       await conn.query(query, [
         reviewInfo.clubNum,
         reviewInfo.id,
         reviewInfo.description,
         reviewInfo.score,
       ]);
+
       return true;
     } catch (err) {
       throw err;
@@ -23,22 +27,22 @@ class ReviewStorage {
     }
   }
 
-  static async findAllById(userInfo) {
+  static async findOneById(userInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
-      const query =
-        'SELECT club_no AS clubNum FROM reviews WHERE student_id = ?;';
-      const review = await conn.query(query, [userInfo.studentId]);
-      let isReview = true;
 
-      for (let i = 0; i < review.length; i += 1) {
-        if (review[i].clubNum === userInfo.clubNum) {
-          isReview = false;
-          break;
-        }
-      }
-      return isReview;
+      const query =
+        'SELECT * FROM reviews WHERE student_id = ? AND club_no = ?;';
+
+      const review = await conn.query(query, [
+        userInfo.studentId,
+        userInfo.clubNum,
+      ]);
+
+      if (!review[0]) return false;
+      return true;
     } catch (err) {
       throw err;
     } finally {
