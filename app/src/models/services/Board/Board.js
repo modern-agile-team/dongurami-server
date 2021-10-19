@@ -245,30 +245,19 @@ class Board {
 
   async search() {
     const searchInfo = this.query;
-    const searchType = ['title', 'name', 'clubname'];
+    const searchType = ['title', 'name'];
+
     searchInfo.category = boardCategory[this.params.category];
 
-    if (searchInfo.category === undefined) {
+    if (!searchInfo.category) {
       return { success: false, msg: '존재하지 않는 게시판입니다.' };
     }
     if (!searchType.includes(searchInfo.type)) {
       return { success: false, msg: '검색 타입을 확인해주세요' };
     }
     if (searchInfo.type === 'name') searchInfo.type = 'st.name';
-    if (searchInfo.type === 'clubname') searchInfo.type = 'clubs.name';
 
     try {
-      if (searchInfo.category === 4) {
-        const promotionSearch = await BoardStorage.findAllPromotionSearch(
-          searchInfo
-        );
-        return {
-          success: true,
-          msg: `${searchInfo.keyword}(을)를 검색한 결과입니다.`,
-          promotionSearch,
-        };
-      }
-
       if (searchInfo.category === 5) {
         if (searchInfo.clubno === '1' || !searchInfo.clubno) {
           return {
