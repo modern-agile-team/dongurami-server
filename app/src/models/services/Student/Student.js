@@ -57,7 +57,6 @@ class Student {
     const saveInfo = this.body;
 
     try {
-      // 아이디 이메일 중복여부 확인
       const checkedIdAndEmail = await this.checkIdAndEmail();
 
       if (checkedIdAndEmail.saveable) {
@@ -67,7 +66,6 @@ class Student {
           saveInfo.passwordSalt
         );
 
-        // DB에 회원 추가
         const response = await StudentStorage.save(saveInfo);
 
         if (response) {
@@ -148,7 +146,7 @@ class Student {
     try {
       const student = await StudentStorage.findOneByIdOrEmail(clientInfo);
 
-      if (student === undefined) {
+      if (!student) {
         return { saveable: true };
       }
       if (student.id === client.id) {
