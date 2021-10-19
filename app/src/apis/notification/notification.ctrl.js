@@ -12,10 +12,10 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.info(`GET /api/notification/entire 500:\n${response.errMsg}`);
+      logger.error(`GET /api/notification/entire 500:\n${response.errMsg}`);
       return res.status(500).json(response.clientMsg);
     }
-    logger.info(`GET /api/notification/entire 400: ${response.msg}`);
+    logger.error(`GET /api/notification/entire 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
@@ -30,12 +30,14 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.info(
+      logger.error(
         `PATCH /api/notification/notificationNum 500: ${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.info(`PATCH /api/notification/notificationNum 400: ${response.msg}`);
+    logger.error(
+      `PATCH /api/notification/notificationNum 400: ${response.msg}`
+    );
     return res.status(400).json(response);
   },
 
@@ -48,12 +50,12 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.info(
+      logger.error(
         `PUT /api/notification/notificationNum 500: ${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.info(`PUT /api/notification/notificationNum 400: ${response.msg}`);
+    logger.error(`PUT /api/notification/notificationNum 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 };
