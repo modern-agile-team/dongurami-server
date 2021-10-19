@@ -68,7 +68,6 @@ class BoardStorage {
       if (criteriaRead.clubCategory !== undefined) {
         whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
       }
-
       if (criteriaRead.lastNum >= 0) {
         limit = `LIMIT 8`;
         if (criteriaRead.lastNum > 0) {
