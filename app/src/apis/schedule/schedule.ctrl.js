@@ -10,7 +10,7 @@ const process = {
     const response = await schedule.findAllByClubNum();
 
     if (response.success) {
-      logger.error(`GET /api/club/schedule/clubNum 200: ${response.msg}`);
+      logger.info(`GET /api/club/schedule/clubNum 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
@@ -26,7 +26,7 @@ const process = {
     const response = await schedule.findAllByDate();
 
     if (response.success) {
-      logger.error(`GET /api/club/schedule/clubNum/date 200: ${response.msg}`);
+      logger.info(`GET /api/club/schedule/clubNum/date 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
@@ -44,7 +44,7 @@ const process = {
     const response = await schedule.createSchedule();
 
     if (response.success) {
-      logger.error(`POST /api/club/schedule/clubNum 201: ${response.msg}`);
+      logger.info(`POST /api/club/schedule/clubNum 201: ${response.msg}`);
       return res.status(201).json(response);
     }
     if (response.isError) {
@@ -60,7 +60,7 @@ const process = {
     const response = await notification.createTodayByIdAndClubName();
 
     if (response.isError) {
-      logger.error(
+      logger.info(
         `POST /api/club/schedule/clubNum/today 500: ${response.errMsg}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
@@ -75,7 +75,7 @@ const process = {
     const response = await schedule.updateSchedule();
 
     if (response.success) {
-      logger.error(`PUT /api/club/schedule/clubNum/no 200: ${response.msg}`);
+      logger.info(`PUT /api/club/schedule/clubNum/no 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
@@ -92,7 +92,7 @@ const process = {
     const response = await schedule.updateOnlyImportant();
 
     if (response.success) {
-      logger.error(`PATCH /api/club/schedule/clubNum/no 200: ${response.msg}`);
+      logger.info(`PATCH /api/club/schedule/clubNum/no 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
@@ -110,7 +110,7 @@ const process = {
     const response = await schedule.deleteSchedule();
 
     if (response.success) {
-      logger.error(`DELETE /api/club/schedule/clubNum/no 200: ${response.msg}`);
+      logger.info(`DELETE /api/club/schedule/clubNum/no 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
