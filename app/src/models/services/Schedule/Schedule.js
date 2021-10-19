@@ -22,7 +22,7 @@ class Schedule {
       if (success) {
         const result = await ScheduleStorage.findAllByClubNum(clubNum);
 
-        return { success: true, result };
+        return { success: true, msg: '일정 조회 성공', result };
       }
       return { success: false, msg: '존재하지 않는 동아리입니다.' };
     } catch (err) {
@@ -44,7 +44,7 @@ class Schedule {
       if (success) {
         const result = await ScheduleStorage.findAllByDate(ScheduleInfo);
 
-        return { success: true, result };
+        return { success: true, msg: '일정 조회 성공', result };
       }
       return { success: false, msg: '존재하지 않는 동아리입니다.' };
     } catch (err) {
@@ -86,6 +86,7 @@ class Schedule {
               clubName,
               content: scheduleInfo.startDate,
             };
+
             await notification.createByIdAndClubName(notificationInfo);
           }
         });
