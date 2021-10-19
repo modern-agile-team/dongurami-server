@@ -9,7 +9,7 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT id, name, email, phone_number AS phoneNumber, grade, gender, major, profile_image_url AS profileImageUrl, file_id AS fileId
+      const query = `SELECT id, name, email, phone_number AS phoneNumber, grade, gender, major, profile_image_url AS profileImageUrl
       FROM students
       WHERE id = ?;`;
 

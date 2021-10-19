@@ -40,6 +40,7 @@ class Board {
 
       if (category === 5) {
         const senderId = boardInfo.id;
+
         const recipientIds = await NotificationStorage.findAllByClubNum(
           boardInfo.clubNum
         );
@@ -54,12 +55,10 @@ class Board {
               clubName,
               content: boardInfo.title,
             };
-
             await notification.createByIdAndClubName(notificationInfo);
           }
         });
       }
-
       return { success: true, msg: '게시글 생성 성공', boardNum };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
@@ -85,6 +84,11 @@ class Board {
       return { success: false, msg: '잘못된 URL의 접근입니다' };
     }
     if (category === 5 || category === 6) {
+      const isClub = await BoardStorage.findClub(clubNum);
+
+      if (!isClub) {
+        return { success: false, msg: '존재하지 않는 동아리입니다.' };
+      }
       if (category === 5 && !user.clubNum.includes(Number(clubNum))) {
         return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
       }
@@ -118,6 +122,7 @@ class Board {
     try {
       const criteriaRead = {
         clubCategory: query.category,
+        lastNum: query.lastNum,
         sort: query.sort || 'inDate',
         order: query.order || 'desc',
       };

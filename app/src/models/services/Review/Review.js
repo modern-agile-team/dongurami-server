@@ -10,55 +10,16 @@ class Review {
     this.auth = req.auth;
   }
 
-  async createByReivew() {
-    const review = this.body;
-    const paramsClubNum = Number(this.params.clubNum);
-    const payload = this.auth;
-    const userInfo = {
-      studentId: payload.id,
-      clubNum: paramsClubNum,
-    };
-
-    const isReview = await ReviewStorage.findAllById(userInfo);
-
-    if (isReview) {
-      try {
-        const reviewInfo = {
-          clubNum: paramsClubNum,
-          id: payload.id,
-          description: review.description,
-          score: review.score,
-        };
-        const success = await ReviewStorage.saveReview(reviewInfo);
-
-        if (success) {
-          return { success: true, msg: '후기 작성이 완료되었습니다.' };
-        }
-        return {
-          success: false,
-          msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-        };
-      } catch (err) {
-        return Error.ctrl(
-          '서버 에러입니다. 서버 개발자에게 문의해주세요.',
-          err
-        );
-      }
-    }
-    return { success: false, msg: '이미 후기를 작성했습니다.' };
-  }
-
   async findOneByClubNum() {
-    const paramsClubNum = Number(this.params.clubNum);
-    const payload = this.auth;
-    const { id } = payload;
+    const clubNum = Number(this.params.clubNum);
+    const user = this.auth;
 
     try {
       const { success, reviewList } = await ReviewStorage.findOneByClubNum(
-        paramsClubNum
+        clubNum
       );
       if (success) {
-        return { success: true, reviewList, studentId: id };
+        return { success: true, reviewList, studentId: user.id };
       }
       return {
         success: false,
@@ -69,18 +30,55 @@ class Review {
     }
   }
 
-  async updateById() {
+  async createByReivew() {
     const review = this.body;
-    const paramsNum = Number(this.params.num);
-
-    const reviewInfo = {
-      num: paramsNum,
-      description: review.description,
-      score: review.score,
-    };
+    const clubNum = Number(this.params.clubNum);
+    const user = this.auth;
 
     try {
-      const isUpdate = await ReviewStorage.updateById(reviewInfo);
+      const userInfo = {
+        studentId: user.id,
+        clubNum,
+      };
+
+      const isReview = await ReviewStorage.findOneById(userInfo);
+
+      if (!isReview) {
+        const reviewInfo = {
+          clubNum,
+          id: user.id,
+          description: review.description,
+          score: review.score,
+        };
+
+        const success = await ReviewStorage.saveReview(reviewInfo);
+
+        if (success) {
+          return { success: true, msg: '후기 작성이 완료되었습니다.' };
+        }
+        return {
+          success: false,
+          msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+        };
+      }
+      return { success: false, msg: '이미 후기를 작성했습니다.' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async updateById() {
+    const review = this.body;
+    const reviewNum = Number(this.params.num);
+
+    try {
+      const reviewInfo = {
+        num: reviewNum,
+        description: review.description,
+        score: review.score,
+      };
+
+      const isUpdate = await ReviewStorage.updateOneById(reviewInfo);
 
       if (isUpdate) {
         return {
@@ -98,10 +96,10 @@ class Review {
   }
 
   async deleteByNum() {
-    const paramsNum = Number(this.params.num);
+    const reviewNum = Number(this.params.num);
 
     try {
-      const isDelete = await ReviewStorage.deleteByNum(paramsNum);
+      const isDelete = await ReviewStorage.deleteOneByNum(reviewNum);
 
       if (isDelete) {
         return { success: true, msg: '작성된 후기가 삭제되었습니다.' };

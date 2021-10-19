@@ -143,7 +143,6 @@ class Application {
     }
   }
 
-  // 관리자 페이지에 보여지는 신청서
   async findOneByClubNum() {
     const { clubNum } = this.params;
 

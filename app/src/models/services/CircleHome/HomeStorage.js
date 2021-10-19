@@ -10,7 +10,7 @@ class HomeStorage {
       conn = await mariadb.getConnection();
       // 동아리 정보 조회
       const findClubInfo =
-        'SELECT name, category, logo_url AS logoUrl, file_id AS fileId, introduce FROM clubs WHERE no = ?;';
+        'SELECT name, category, logo_url AS logoUrl, introduce FROM clubs WHERE no = ?;';
       // 동아리 성별 수 조회
       const gender = `SELECT SUM(M) AS man, SUM(W) AS women FROM 
         (SELECT (CASE gender WHEN 1 THEN 1 ELSE 0 END) AS M, 
@@ -76,14 +76,10 @@ class HomeStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE clubs SET logo_url = ?, file_id = ?  WHERE no = ?;`;
+      const query = `UPDATE clubs SET logo_url = ? WHERE no = ?;`;
 
       // 로고 변경 시 업데이트
-      await conn.query(query, [
-        logoInfo.logoUrl,
-        logoInfo.fileId,
-        logoInfo.clubNum,
-      ]);
+      await conn.query(query, [logoInfo.logoUrl, logoInfo.clubNum]);
       return true;
     } catch (err) {
       throw err;

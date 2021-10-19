@@ -25,7 +25,6 @@ class Notification {
           notifications,
         };
       }
-
       return {
         success: false,
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
@@ -47,6 +46,7 @@ class Notification {
         url: body.url,
         notiCategoryNum: body.notiCategoryNum,
       };
+
       const success = await NotificationStorage.createByIdAndTitle(
         notificationInfo
       );
@@ -75,6 +75,7 @@ class Notification {
         url: body.url,
         notiCategoryNum: body.notiCategoryNum,
       };
+
       const success = await NotificationStorage.createByIdAndClubName(
         notificationInfo
       );
@@ -93,7 +94,7 @@ class Notification {
 
   async createTodayByIdAndClubName() {
     const todaySchedule = this.body;
-    const { clubNum } = this.params;
+    const clubNum = Number(this.params.clubNum);
 
     try {
       const recipientIds = await NotificationStorage.findAllByClubNum(clubNum);
@@ -118,7 +119,7 @@ class Notification {
   }
 
   async updateOneByNotificationNum() {
-    const { notificationNum } = this.params;
+    const notificationNum = Number(this.params.notificationNum);
 
     try {
       const isUpdate = await NotificationStorage.updateOneByNotificationNum(
