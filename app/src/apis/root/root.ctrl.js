@@ -129,10 +129,12 @@ const process = {
     try {
       const response = await oauth.naverLogin();
 
-      logger.info(`GET /api/naver-login 200: ${response.msg}`);
+      logger.info(
+        `GET /api/naver-login 200: Authentication succeed (인증 성공하였습니다.)`
+      );
       return res.status(200).json(response);
     } catch (err) {
-      logger.error(`GET /api/naver-login 401: ${response.msg}`);
+      logger.error(`GET /api/naver-login 401: ${err.message}`);
       return res.status(401).json(err);
     }
   },
