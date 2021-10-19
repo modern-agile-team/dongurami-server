@@ -11,6 +11,7 @@ class StudentStorage {
 
       const query =
         'SELECT id, password, name, email, admin_flag AS adminFlag, profile_image_url AS profileImageUrl FROM students WHERE id = ?;';
+
       const result = await conn.query(query, id);
 
       return result[0];
@@ -28,6 +29,7 @@ class StudentStorage {
       conn = await mariadb.getConnection();
 
       const query = 'SELECT id FROM students WHERE name = ? AND email = ?;';
+
       const result = await conn.query(query, [
         clientInfo.name,
         clientInfo.email,
@@ -49,6 +51,7 @@ class StudentStorage {
 
       const query =
         'INSERT INTO students (id, password, name, email, password_salt, major) VALUES (?, ?, ?, ?, ?, ?);';
+
       await conn.query(query, [
         saveInfo.id,
         saveInfo.hash,
@@ -73,6 +76,7 @@ class StudentStorage {
       conn = await mariadb.getConnection();
 
       const query = 'SELECT id, email FROM students WHERE id = ? OR email = ?;';
+
       const idEmailList = await conn.query(query, [
         clientInfo.id,
         clientInfo.email,
@@ -93,6 +97,7 @@ class StudentStorage {
       conn = await mariadb.getConnection();
 
       const query = 'SELECT id, email FROM students WHERE id = ? OR email = ?;';
+
       const idEmailList = await conn.query(query, [
         clientInfo.id,
         clientInfo.email,
@@ -108,11 +113,15 @@ class StudentStorage {
 
   static async findOneByLoginedId(studentId) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
+
       const query =
         'SELECT club_no AS clubNum FROM members WHERE student_id = ?;';
+
       const clubList = await conn.query(query, [studentId]);
+
       const clubs = [];
 
       for (let i = 0; i < clubList.length; i += 1) {
@@ -133,6 +142,7 @@ class StudentStorage {
       conn = await mariadb.getConnection();
 
       const query = 'SELECT * FROM students WHERE email = ?;';
+
       const result = await conn.query(query, email);
 
       return result[0];
@@ -151,6 +161,7 @@ class StudentStorage {
 
       const query =
         'UPDATE students SET password = ?, password_salt = ? WHERE id = ?;';
+
       await conn.query(query, [
         saveInfo.hash,
         saveInfo.passwordSalt,
