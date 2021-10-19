@@ -1,61 +1,70 @@
 'use strict';
 
 const Review = require('../../models/services/Review/Review');
+const logger = require('../../config/logger');
 
 const process = {
-  // 후기 작성
-  createByReview: async (req, res) => {
-    const review = new Review(req);
-    const response = await review.createByReivew();
-
-    if (response.success) {
-      return res.status(201).json(response);
-    }
-    if (response.isError) {
-      return res.status(500).json(response.clientMsg);
-    }
-    return res.status(400).json(response);
-  },
-
-  // 모든 후기 리스트를 보여줌.
   findOneByClubNum: async (req, res) => {
     const review = new Review(req);
     const response = await review.findOneByClubNum();
 
     if (response.success) {
+      logger.info(`GET /clubNum 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
+      logger.error(`GET /clubNum 500: \n${response.errMsg}`);
       return res.status(500).json(response.clientMsg);
     }
+    logger.error(`GET /clubNum 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
-  // 등록된 후기 글 수정.
+  createByReview: async (req, res) => {
+    const review = new Review(req);
+    const response = await review.createByReivew();
+
+    if (response.success) {
+      logger.info(`POST /clubNum 201: ${response.msg}`);
+      return res.status(201).json(response);
+    }
+    if (response.isError) {
+      logger.error(`POST /clubNum 500: \n${response.errMsg}`);
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.error(`POST /clubNum 400: \n${response.msg}`);
+    return res.status(400).json(response);
+  },
+
   updateById: async (req, res) => {
     const review = new Review(req);
     const response = await review.updateById();
 
     if (response.success) {
-      return res.status(201).json(response);
+      logger.info(`PUT /clubNum/num 200: ${response.msg}`);
+      return res.status(200).json(response);
     }
     if (response.isError) {
+      logger.error(`PUT /clubNum/num 500: \n${response.errMsg}`);
       return res.status(500).json(response.clientMsg);
     }
+    logger.error(`PUT /clubNum/num 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
-  // 등록된 후기 글 삭제.
   deleteByNum: async (req, res) => {
     const review = new Review(req);
     const response = await review.deleteByNum();
 
     if (response.success) {
-      return res.status(201).json(response);
+      logger.info(`DELETE /clubNum/num 200: ${response.msg}`);
+      return res.status(200).json(response);
     }
     if (response.isError) {
+      logger.error(`DELETE /clubNum/num 500: \n${response.errMsg}`);
       return res.status(500).json(response.clientMsg);
     }
+    logger.error(`DELETE /clubNum/num 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 };
