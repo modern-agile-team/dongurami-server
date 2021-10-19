@@ -138,6 +138,18 @@ const process = {
       return res.status(401).json(err);
     }
   },
+
+  getUserInfoById: async (req, res) => {
+    const student = new Student(req);
+    const response = await student.getUserInfoById();
+
+    if (response.success) {
+      logger.info(`GET /api/student 200: ${response.msg}`);
+      return res.status(200).json(response);
+    }
+    logger.error(`GET /api/student 500: ${response.msg}`);
+    return res.status(500).json(response);
+  },
 };
 
 module.exports = {
