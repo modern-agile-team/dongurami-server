@@ -9,6 +9,7 @@ const process = {
     const response = await application.findAllByClubNum();
 
     if (response.success) {
+      logger.info(`GET /clubNum 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
@@ -24,6 +25,7 @@ const process = {
     const response = await application.createQuestion();
 
     if (response.success) {
+      logger.info(`POST /clubNum 201: ${response.msg}`);
       return res.status(201).json(response);
     }
     if (response.isError) {
@@ -39,6 +41,7 @@ const process = {
     const response = await application.updateQuestion();
 
     if (response.success) {
+      logger.info(`PUT /clubNum 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
@@ -54,6 +57,7 @@ const process = {
     const response = await application.deleteQuestion();
 
     if (response.success) {
+      logger.info(`DELETE /clubNum 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
@@ -69,13 +73,15 @@ const process = {
     const response = await application.createAnswer();
 
     if (response.success) {
+      logger.info(`POST /clubNum 201: ${response.msg}`);
       return res.status(201).json(response);
     }
     if (response.isError) {
       logger.error(`POST /clubNum 500: \n${response.errMsg}`);
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    return res.status(400).json(response); // 캐치 에러 x
+    logger.error(`POST /clubNum 400: ${response.msg}`);
+    return res.status(400).json(response);
   },
 };
 
