@@ -62,9 +62,21 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
       let whole = '';
+      let where = '';
+      let limit = '';
 
       if (criteriaRead.clubCategory !== undefined) {
         whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
+      }
+
+      if (criteriaRead.lastNum >= 0) {
+        limit = `LIMIT 8`;
+        if (criteriaRead.lastNum > 0) {
+          where = ` AND bo.no < ${criteriaRead.lastNum}`;
+        }
+        if (criteriaRead.order === 'asc') {
+          where = ` AND bo.no > ${criteriaRead.lastNum}`;
+        }
       }
 
       const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit
@@ -75,9 +87,10 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = 4${whole}
+      WHERE bo.board_category_no = 4${whole}${where}
       GROUP BY no
-      ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
+      ORDER BY ${criteriaRead.sort} ${criteriaRead.order}
+      ${limit};`;
 
       const boardList = await conn.query(query);
 
