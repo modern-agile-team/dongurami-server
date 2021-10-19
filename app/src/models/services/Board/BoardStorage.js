@@ -25,6 +25,23 @@ class BoardStorage {
     }
   }
 
+  static async findClub(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'SELECT no FROM clubs WHERE no = ?;';
+      const club = await conn.query(query, clubNum);
+
+      return club[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findAllByCategoryNum(criteriaRead) {
     let conn;
 

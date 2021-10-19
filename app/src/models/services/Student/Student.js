@@ -306,6 +306,20 @@ class Student {
     }
     return { success: true };
   }
+
+  async getUserInfoByJWT() {
+    const user = this.auth;
+
+    delete user.iat;
+    delete user.exp;
+    delete user.iss;
+
+    if (user) return { success: true, msg: '유저 정보 조회 성공', user };
+    return {
+      success: false,
+      msg: '서버 에러입니다. 서버 개발자에게 얘기해주세요.',
+    };
+  }
 }
 
 module.exports = Student;
