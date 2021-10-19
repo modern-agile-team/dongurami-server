@@ -96,10 +96,10 @@ class Review {
   }
 
   async deleteByNum() {
-    const paramsNum = Number(this.params.num);
+    const reviewNum = Number(this.params.num);
 
     try {
-      const isDelete = await ReviewStorage.deleteByNum(paramsNum);
+      const isDelete = await ReviewStorage.deleteOneByNum(reviewNum);
 
       if (isDelete) {
         return { success: true, msg: '작성된 후기가 삭제되었습니다.' };

@@ -93,11 +93,14 @@ class ReviewStorage {
     }
   }
 
-  static async deleteByNum(reviewNum) {
+  static async deleteOneByNum(reviewNum) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
+
       const query = 'DELETE FROM reviews WHERE no = ?;';
+
       const deleteReview = await conn.query(query, [reviewNum]);
 
       if (deleteReview.affectedRows) return true;
