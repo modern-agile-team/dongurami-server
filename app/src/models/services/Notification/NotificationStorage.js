@@ -13,7 +13,7 @@ class NotificationStorage {
         no.url, no.notification_category_no AS notificationCategoryNum, 
         no.in_date AS inDate FROM notifications AS no 
         WHERE no.recipient_id = (SELECT id FROM students WHERE id = ?) AND no.reading_flag = 0
-        ORDER BY inDate DESC LIMIT 10;`;
+        ORDER BY inDate DESC;`;
 
       const notifications = await conn.query(query, studentId);
 
