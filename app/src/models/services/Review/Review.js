@@ -13,14 +13,13 @@ class Review {
   async findOneByClubNum() {
     const clubNum = Number(this.params.clubNum);
     const user = this.auth;
-    const { id } = user;
 
     try {
       const { success, reviewList } = await ReviewStorage.findOneByClubNum(
         clubNum
       );
       if (success) {
-        return { success: true, reviewList, studentId: id };
+        return { success: true, reviewList, studentId: user.id };
       }
       return {
         success: false,

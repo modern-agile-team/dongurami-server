@@ -52,13 +52,16 @@ class ReviewStorage {
 
   static async findOneByClubNum(clubNum) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
+
       const query =
         'SELECT no, student_id AS studentId, description, score, in_date AS inDate FROM reviews WHERE club_no = ?;';
-      const reviewList = await conn.query(query, [clubNum]);
 
-      return { success: true, reviewList };
+      const reviews = await conn.query(query, [clubNum]);
+
+      return { success: true, reviews };
     } catch (err) {
       throw err;
     } finally {
