@@ -69,16 +69,16 @@ class Review {
 
   async updateById() {
     const review = this.body;
-    const paramsNum = Number(this.params.num);
-
-    const reviewInfo = {
-      num: paramsNum,
-      description: review.description,
-      score: review.score,
-    };
+    const ReviewNum = Number(this.params.num);
 
     try {
-      const isUpdate = await ReviewStorage.updateById(reviewInfo);
+      const reviewInfo = {
+        num: ReviewNum,
+        description: review.description,
+        score: review.score,
+      };
+
+      const isUpdate = await ReviewStorage.updateOneById(reviewInfo);
 
       if (isUpdate) {
         return {

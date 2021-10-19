@@ -69,17 +69,21 @@ class ReviewStorage {
     }
   }
 
-  static async updateById(reviewInfo) {
+  static async updateOneById(reviewInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
+
       const query =
         'UPDATE reviews SET description = ?, score = ? WHERE no = ?;';
+
       const updateReview = await conn.query(query, [
         reviewInfo.description,
         reviewInfo.score,
         reviewInfo.num,
       ]);
+
       if (updateReview.affectedRows) return true;
       return false;
     } catch (err) {
