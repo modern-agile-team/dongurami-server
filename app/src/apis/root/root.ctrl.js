@@ -139,9 +139,9 @@ const process = {
     }
   },
 
-  getUserInfoById: async (req, res) => {
+  getUserInfoByJWT: async (req, res) => {
     const student = new Student(req);
-    const response = await student.getUserInfoById();
+    const response = await student.getUserInfoByJWT();
 
     if (response.success) {
       logger.info(`GET /api/student 200: ${response.msg}`);

@@ -307,7 +307,7 @@ class Student {
     return { success: true };
   }
 
-  async getUserInfoById() {
+  async getUserInfoByJWT() {
     const user = this.auth;
 
     delete user.iat;
