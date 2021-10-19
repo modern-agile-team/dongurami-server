@@ -40,6 +40,7 @@ class Board {
 
       if (category === 5) {
         const senderId = boardInfo.id;
+
         const recipientIds = await NotificationStorage.findAllByClubNum(
           boardInfo.clubNum
         );
@@ -54,12 +55,10 @@ class Board {
               clubName,
               content: boardInfo.title,
             };
-
             await notification.createByIdAndClubName(notificationInfo);
           }
         });
       }
-
       return { success: true, msg: '게시글 생성 성공', boardNum };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
