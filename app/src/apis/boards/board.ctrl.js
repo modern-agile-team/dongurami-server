@@ -128,10 +128,10 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`PUT /clubNum 500: \n${response.errMsg}`);
+      logger.error(`DELETE /clubNum 500: \n${response.errMsg}`);
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`GET /clubNum 400: ${response.msg}`);
+    logger.error(`DELETE /clubNum 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 };
