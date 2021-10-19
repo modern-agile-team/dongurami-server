@@ -59,9 +59,9 @@ class ReviewStorage {
       const query =
         'SELECT no, student_id AS studentId, description, score, in_date AS inDate FROM reviews WHERE club_no = ?;';
 
-      const reviews = await conn.query(query, [clubNum]);
+      const reviewList = await conn.query(query, [clubNum]);
 
-      return { success: true, reviews };
+      return { success: true, reviewList };
     } catch (err) {
       throw err;
     } finally {
