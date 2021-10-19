@@ -122,6 +122,7 @@ class Board {
     try {
       const criteriaRead = {
         clubCategory: query.category,
+        lastNum: query.lastNum,
         sort: query.sort || 'inDate',
         order: query.order || 'desc',
       };
