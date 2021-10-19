@@ -32,7 +32,7 @@ const process = {
       logger.error(`POST /clubNum 500: \n${response.errMsg}`);
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`POST /clubNum 500: \n${response.msg}`);
+    logger.error(`POST /clubNum 400: \n${response.msg}`);
     return res.status(400).json(response);
   },
 

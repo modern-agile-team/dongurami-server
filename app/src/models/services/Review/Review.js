@@ -69,11 +69,11 @@ class Review {
 
   async updateById() {
     const review = this.body;
-    const ReviewNum = Number(this.params.num);
+    const reviewNum = Number(this.params.num);
 
     try {
       const reviewInfo = {
-        num: ReviewNum,
+        num: reviewNum,
         description: review.description,
         score: review.score,
       };
