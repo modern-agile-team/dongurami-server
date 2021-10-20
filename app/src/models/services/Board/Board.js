@@ -283,6 +283,38 @@ class Board {
       );
     }
   }
+
+  async promotionSearch() {
+    const { query } = this;
+    const searchType = ['title', 'clubName'];
+
+    if (!searchType.includes(query.type)) {
+      return { success: false, msg: '검색 타입을 확인해주세요' };
+    }
+    if (query.type === 'clubName') query.type = 'clubs.name';
+
+    try {
+      const searchInfo = {
+        type: query.type,
+        keyword: query.keyword,
+        sort: query.sort || 'inDate',
+        order: query.order || 'desc',
+        lastNum: query.lastNum,
+      };
+      const boards = await BoardStorage.findAllPromotionSearch(searchInfo);
+
+      return {
+        success: true,
+        msg: `${searchInfo.keyword}(을)를 검색한 결과입니다.`,
+        boards,
+      };
+    } catch (err) {
+      return Error.ctrl(
+        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+        err
+      );
+    }
+  }
 }
 
 module.exports = Board;
