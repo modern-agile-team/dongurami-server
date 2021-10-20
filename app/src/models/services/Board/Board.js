@@ -292,6 +292,7 @@ class Board {
       return { success: false, msg: '검색 타입을 확인해주세요' };
     }
     if (query.type === 'clubName') query.type = 'clubs.name';
+
     try {
       const searchInfo = {
         type: query.type,
