@@ -1,6 +1,7 @@
 'use strict';
 
 const Notification = require('../../models/services/Notification/Notification');
+const logger = require('../../config/logger');
 
 const process = {
   findAllById: async (req, res) => {

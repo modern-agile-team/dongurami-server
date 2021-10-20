@@ -27,6 +27,7 @@ class Application {
       if (result.success) {
         return {
           success: true,
+          msg: '동아리 가입 신청서 조회 성공',
           clientInfo: result.clientInfo,
           leader: result.clubLeader[0].leader,
           questions: result.questions,
