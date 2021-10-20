@@ -20,7 +20,7 @@ class Home {
         await HomeStorage.findOneByClubNum(clubInfo);
 
       if (success) {
-        return { success: true, clientInfo, result };
+        return { success: true, msg: '동아리홈 조회 성공', clientInfo, result };
       }
       return { success: false, msg: result };
     } catch (err) {
@@ -34,25 +34,25 @@ class Home {
         clubNum: this.params.clubNum,
         introduce: this.body.introduce,
       };
+
       await HomeStorage.updateClubInfo(clubInfo);
 
-      return { success: true };
+      return { success: true, msg: '동아리 소개가 수정되었습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요', err);
     }
   }
 
   async updateClubLogo() {
-    const data = this.body;
-
     try {
       const logoInfo = {
         clubNum: this.params.clubNum,
-        logoUrl: data.logoUrl,
+        logoUrl: this.body.logoUrl,
       };
+
       await HomeStorage.updateClubLogo(logoInfo);
 
-      return { success: true };
+      return { success: true, msg: '로고가 수정되었습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요', err);
     }
