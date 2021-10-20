@@ -26,8 +26,7 @@ class HomeStorage {
         return { success: false, result: '존재하지 않는 동아리입니다.' };
       }
 
-      // 동아리가 존재한다면
-      // clubInfo 조회
+      // 동아리가 존재한다면 clubInfo 조회
       const result = await conn.query(findClubInfo, clubInfo.clubNum);
       const cntGender = await conn.query(gender, clubInfo.clubNum);
 
