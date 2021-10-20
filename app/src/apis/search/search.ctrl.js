@@ -1,19 +1,22 @@
 'use strict';
 
 const Board = require('../../models/services/Board/Board');
+const logger = require('../../config/logger');
 
 const process = {
-  // 검색
   search: async (req, res) => {
     const board = new Board(req);
     const response = await board.search();
 
     if (response.success) {
+      logger.info(`GET /api/search/category 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
+      logger.error(`GET /api/search/category 500:\n${response.errMsg}`);
       return res.status(500).json(response.clientMsg);
     }
+    logger.error(`GET /api/search/category 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 };

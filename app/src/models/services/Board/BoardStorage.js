@@ -232,7 +232,6 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      // query문 대입을 위한 변수 설정
       const keyword = `%${searchInfo.keyword}%`;
       const query = `
       SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit
@@ -251,30 +250,6 @@ class BoardStorage {
         searchInfo.category,
         searchInfo.clubno,
       ]);
-
-      return boards;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findAllPromotionSearch(searchInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const keyword = `%${searchInfo.keyword}%`;
-      const query = `
-      SELECT bo.no, bo.title, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate
-      FROM boards AS bo
-      JOIN clubs
-      ON club_no = clubs.no
-      WHERE ${searchInfo.type} like ? AND board_category_no = 4;`;
-
-      const boards = await conn.query(query, [keyword]);
 
       return boards;
     } catch (err) {
