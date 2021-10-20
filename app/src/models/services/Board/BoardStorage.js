@@ -259,6 +259,49 @@ class BoardStorage {
     }
   }
 
+  static async findAllPromotionSearch(searchInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const keyword = `%${searchInfo.keyword}%`;
+      let where = '';
+      let limit = '';
+
+      if (searchInfo.lastNum >= 0) {
+        limit = `LIMIT 8`;
+        if (searchInfo.lastNum > 0) {
+          where = ` AND bo.no < ${searchInfo.lastNum}`;
+        }
+        if (searchInfo.order === 'asc') {
+          where = ` AND bo.no > ${searchInfo.lastNum}`;
+        }
+      }
+
+      const query = `
+      SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit
+      FROM boards AS bo
+      LEFT JOIN images AS img
+      ON bo.no = img.board_no
+      JOIN students AS st
+      ON bo.student_id = st.id
+      JOIN clubs
+      ON bo.club_no = clubs.no
+      WHERE ${searchInfo.type} LIKE ? AND board_category_no = 4${where}
+      ORDER BY ${searchInfo.sort} ${searchInfo.order}
+      ${limit};`;
+
+      const boards = await conn.query(query, [keyword]);
+
+      return boards;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findStudentIdAndTitleByBoardNum(boardNum) {
     let conn;
 
