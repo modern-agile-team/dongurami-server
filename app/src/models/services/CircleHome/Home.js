@@ -20,7 +20,7 @@ class Home {
         await HomeStorage.findOneByClubNum(clubInfo);
 
       if (success) {
-        return { success: true, clientInfo, result };
+        return { success: true, msg: '동아리홈 조회 성공', clientInfo, result };
       }
       return { success: false, msg: result };
     } catch (err) {
@@ -29,14 +29,21 @@ class Home {
   }
 
   async updateClubInfo() {
+    const data = this.body;
+
     try {
+      const { leader } = data;
       const clubInfo = {
         clubNum: this.params.clubNum,
-        introduce: this.body.introduce,
+        introduce: data.introduce,
       };
-      await HomeStorage.updateClubInfo(clubInfo);
 
-      return { success: true };
+      if (leader) {
+        await HomeStorage.updateClubInfo(clubInfo);
+
+        return { success: true, msg: '동아리 소개가 수정되었습니다.' };
+      }
+      return { success: false, msg: '소개 수정 권한이 없습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요', err);
     }
@@ -46,13 +53,18 @@ class Home {
     const data = this.body;
 
     try {
+      const { leader } = data;
       const logoInfo = {
         clubNum: this.params.clubNum,
         logoUrl: data.logoUrl,
       };
-      await HomeStorage.updateClubLogo(logoInfo);
 
-      return { success: true };
+      if (leader) {
+        await HomeStorage.updateClubLogo(logoInfo);
+
+        return { success: true, msg: '로고가 수정되었습니다.' };
+      }
+      return { success: false, msg: '로고 수정 권한이 없습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요', err);
     }
