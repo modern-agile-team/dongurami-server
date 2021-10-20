@@ -5,11 +5,6 @@ const EmailAuthStorage = require('./EmailAuthStorage');
 const Error = require('../../../utils/Error');
 
 class Auth {
-  constructor(req) {
-    this.req = req;
-    this.body = req.body;
-  }
-
   static async createToken(id) {
     try {
       // 토큰 생성
@@ -18,7 +13,6 @@ class Auth {
         token,
         id,
       };
-
       // redis -> 토큰, 아이디, 유효시간 설정
       const isSave = await EmailAuthStorage.saveToken(student);
 
