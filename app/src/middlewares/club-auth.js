@@ -8,7 +8,7 @@ const clubJoinCheck = (req, res, next) => {
 
   if (!clubs.includes(paramsClubNum) || clubs.length === 0) {
     logger.error(
-      `GET /api/sign-up 401: JWT 토큰이 존재하지 않습니다. 로그인 후 이용해주세요.`
+      `club-join-check 403: JWT 토큰이 존재하지 않습니다. 로그인 후 이용해주세요.`
     );
     return res
       .status(403)
