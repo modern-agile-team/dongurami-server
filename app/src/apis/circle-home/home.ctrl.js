@@ -24,12 +24,16 @@ const process = {
     const home = new Home(req);
     const response = await home.updateClubInfo();
 
+    if (response.success) {
+      logger.info(`PATCH /api/club/home/clubNum 200 : ${response.msg}`);
+      return res.status(200).json(response);
+    }
     if (response.isError) {
-      logger.error(`PATCH /api/club/home/clubNum 500 : \n${response.msg}`);
+      logger.error(`PATCH /api/club/home/clubNum 500 : \n${response.errMsg}`);
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    logger.info(`PATCH /api/club/home/clubNum 200 : ${response.msg}`);
-    return res.status(200).json(response);
+    logger.error(`PATCH /api/club/home/clubNum 403 : ${response.msg}`);
+    return res.status(403).json(response);
   },
 
   updateClubLogo: async (req, res) => {
@@ -37,7 +41,7 @@ const process = {
     const response = await home.updateClubLogo();
 
     if (response.isError) {
-      logger.error(`PUT /api/club/home/clubNum 500 : \n${response.msg}`);
+      logger.error(`PUT /api/club/home/clubNum 500 : \n${response.errMsg}`);
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     logger.info(`PUT /api/club/home/clubNum 200 : \n${response.msg}`);
