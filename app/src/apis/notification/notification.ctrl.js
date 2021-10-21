@@ -13,7 +13,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`GET /api/notification/entire 500:\n${response.errMsg}`);
+      logger.error(`GET /api/notification/entire 500: \n${response.errMsg}`);
       return res.status(500).json(response.clientMsg);
     }
     logger.error(`GET /api/notification/entire 400: ${response.msg}`);
@@ -26,18 +26,18 @@ const process = {
 
     if (response.success) {
       logger.info(
-        `PATCH /api/notification/notificationNum 200: ${response.msg}`
+        `PATCH /api/notification/${notificationNum} 200: ${response.msg}`
       );
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `PATCH /api/notification/notificationNum 500: ${response.errMsg}`
+        `PATCH /api/notification/${notificationNum} 500: \n${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
     logger.error(
-      `PATCH /api/notification/notificationNum 400: ${response.msg}`
+      `PATCH /api/notification/${notificationNum} 400: ${response.msg}`
     );
     return res.status(400).json(response);
   },
@@ -47,16 +47,20 @@ const process = {
     const response = await notification.updateAllById();
 
     if (response.success) {
-      logger.info(`PUT /api/notification/notificationNum 200: ${response.msg}`);
+      logger.info(
+        `PUT /api/notification/${notificationNum} 200: ${response.msg}`
+      );
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/notification/notificationNum 500: ${response.errMsg}`
+        `PUT /api/notification/${notificationNum} 500: \n${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`PUT /api/notification/notificationNum 400: ${response.msg}`);
+    logger.error(
+      `PUT /api/notification/${notificationNum} 400: ${response.msg}`
+    );
     return res.status(400).json(response);
   },
 };
