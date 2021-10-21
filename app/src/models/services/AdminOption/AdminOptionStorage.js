@@ -5,14 +5,16 @@ const mariadb = require('../../../config/mariadb');
 class AdminoOptionStorage {
   static async findOneById(adminInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT student_id AS studentId FROM members WHERE club_no = ? AND student_id = ? AND join_admin_flag = 1;`;
+      const query = `SELECT student_id AS studentId FROM members 
+        WHERE club_no = ? AND student_id = ? AND join_admin_flag = 1;`;
 
-      const id = await conn.query(query, [adminInfo.clubNum, adminInfo.id]);
+      const member = await conn.query(query, [adminInfo.clubNum, adminInfo.id]);
 
-      return id[0].studentId;
+      return member[0].studentId;
     } catch (err) {
       throw err;
     } finally {
@@ -22,16 +24,18 @@ class AdminoOptionStorage {
 
   static async findOneByClubNum(clubNum) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
       const memberAndAuthQuery = `SELECT s.name, s.id, m.join_admin_flag AS joinAdminFlag, 
         m.board_admin_flag AS boardAdminFlag FROM members AS m JOIN students AS s 
         ON s.id = m.student_id AND m.club_no = ?;`;
-      const leaderAndClubNameQuery = `SELECT s.name AS leader , c.name 
-        FROM students AS s JOIN clubs AS c ON c.leader = s.id AND c.no = ?;`;
+      const leaderAndClubNameQuery = `SELECT s.name AS leader , c.name FROM students AS s 
+        JOIN clubs AS c ON c.leader = s.id AND c.no = ?;`;
 
       const memberAndAuthList = await conn.query(memberAndAuthQuery, clubNum);
+
       const leaderAndClubName = await conn.query(
         leaderAndClubNameQuery,
         clubNum
@@ -52,10 +56,12 @@ class AdminoOptionStorage {
 
   static async findLeaderByClubNum(clubNum) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
       const query = 'SELECT leader FROM clubs WHERE no = ?;';
+
       const leader = await conn.query(query, clubNum);
 
       return leader[0].leader;
@@ -68,6 +74,7 @@ class AdminoOptionStorage {
 
   static async updateNewLeaderByClubNum(leaderInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
@@ -114,6 +121,7 @@ class AdminoOptionStorage {
 
   static async updateAdminOptionById(adminInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
