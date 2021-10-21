@@ -43,7 +43,9 @@ const process = {
         );
         return res.status(400).json(response);
       }
-      logger.info(`GET /api/club/admin-option/${clubNum} 200: ${response.msg}`);
+      logger.info(
+        `GET /api/club/admin-option/${clubNum} 200: ${response.clubAdminOption.msg}`
+      );
       return res.status(200).json(response);
     }
     if (response.isError) {
