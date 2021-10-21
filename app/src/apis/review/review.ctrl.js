@@ -9,14 +9,14 @@ const process = {
     const response = await review.findOneByClubNum();
 
     if (response.success) {
-      logger.info(`GET /api/club/review/clubNum 200: ${response.msg}`);
+      logger.info(`GET /api/club/review/${clubNum} 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`GET /api/club/review/clubNum 500: \n${response.errMsg}`);
+      logger.error(`GET /api/club/review/${clubNum} 500: \n${response.errMsg}`);
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`GET /api/club/review/clubNum 400: ${response.msg}`);
+    logger.error(`GET /api/club/review/${clubNum} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
@@ -25,14 +25,16 @@ const process = {
     const response = await review.createByReivew();
 
     if (response.success) {
-      logger.info(`POST /api/club/review/clubNum 201: ${response.msg}`);
+      logger.info(`POST /api/club/review/${clubNum} 201: ${response.msg}`);
       return res.status(201).json(response);
     }
     if (response.isError) {
-      logger.error(`POST /api/club/review/clubNum 500: \n${response.errMsg}`);
+      logger.error(
+        `POST /api/club/review/${clubNum} 500: \n${response.errMsg}`
+      );
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`POST /api/club/review/clubNum 400: \n${response.msg}`);
+    logger.error(`POST /api/club/review/${clubNum} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
@@ -41,16 +43,18 @@ const process = {
     const response = await review.updateById();
 
     if (response.success) {
-      logger.info(`PUT /api/club/review/clubNum/num 200: ${response.msg}`);
+      logger.info(
+        `PUT /api/club/review/${clubNum}/${num} 200: ${response.msg}`
+      );
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/club/review/clubNum/num 500: \n${response.errMsg}`
+        `PUT /api/club/review/${clubNum}/${num} 500: \n${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`PUT /api/club/review/clubNum/num 400: ${response.msg}`);
+    logger.error(`PUT /api/club/review/${clubNum}/${num} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
@@ -59,16 +63,20 @@ const process = {
     const response = await review.deleteByNum();
 
     if (response.success) {
-      logger.info(`DELETE /api/club/review/clubNum/num 200: ${response.msg}`);
+      logger.info(
+        `DELETE /api/club/review/${clubNum}/${num} 200: ${response.msg}`
+      );
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/club/review/clubNum/num 500: \n${response.errMsg}`
+        `DELETE /api/club/review/${clubNum}/${num} 500: \n${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`DELETE /api/club/review/clubNum/num 400: ${response.msg}`);
+    logger.error(
+      `DELETE /api/club/review/${clubNum}/${num} 400: ${response.msg}`
+    );
     return res.status(400).json(response);
   },
 };
