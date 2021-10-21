@@ -13,6 +13,7 @@ const process = {
 
     if (response.success) {
       response.imgNums = await image.saveBoardImg(response.boardNum);
+
       if (response.imgNums.isError) {
         logger.error(`POST /api/board/category 500: \n${response.errMsg}`);
         return res.status(500).json(response.imgNums.clientMsg);

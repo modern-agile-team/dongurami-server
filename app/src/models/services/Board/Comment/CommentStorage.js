@@ -10,6 +10,7 @@ class CommentStorage {
       conn = await mariadb.getConnection();
 
       const query = `INSERT INTO comments (board_no, student_id, description) VALUES (?, ?, ?);`;
+
       const comment = await conn.query(query, [
         commentInfo.boardNum,
         commentInfo.id,
@@ -32,6 +33,7 @@ class CommentStorage {
 
       const query = `INSERT INTO comments (board_no, student_id, description, group_no, depth) VALUES (?, ?, ?, ?, 1);
       UPDATE comments SET reply_flag = 1, modify_date = modify_date WHERE no = ?;`;
+
       await conn.query(query, [
         replyCommentInfo.boardNum,
         replyCommentInfo.id,
@@ -246,6 +248,7 @@ class CommentStorage {
       comments.forEach((comment) => {
         recipientIds.push(comment.studentId);
       });
+
       return recipientIds;
     } catch (err) {
       throw err;
