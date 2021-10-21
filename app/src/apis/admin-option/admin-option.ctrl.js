@@ -33,7 +33,7 @@ const process = {
 
       if (response.applicant.isError) {
         logger.error(
-          `GET /api/club/admin-option/${clubNum} 500: ${response.msg}`
+          `GET /api/club/admin-option/${clubNum} 500: ${response.errMsg}`
         );
         return res.status(500).json(response.applicant.clientMsg);
       }

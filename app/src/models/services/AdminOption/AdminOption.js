@@ -21,7 +21,7 @@ class AdminOption {
 
       const clubAdminId = await AdminOptionStorage.findOneById(adminInfo);
 
-      if (clubAdminId === user.id) {
+      if (clubAdminId === adminInfo.id) {
         return {
           success: true,
           msg: '권한 있음',
