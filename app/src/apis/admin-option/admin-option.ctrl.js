@@ -33,7 +33,7 @@ const process = {
 
       if (response.applicant.isError) {
         logger.error(
-          `GET /api/club/admin-option/${clubNum} 500: ${response.errMsg}`
+          `GET /api/club/admin-option/${clubNum} 500: \n${response.errMsg}`
         );
         return res.status(500).json(response.applicant.clientMsg);
       }
@@ -94,7 +94,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/club/admin-option/${clubNum}/leader 500: ${response.errMsg}`
+        `PUT /api/club/admin-option/${clubNum}/leader 500: \n${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
