@@ -97,7 +97,7 @@ const process = {
       }
       if (updateBoardHit.isError) {
         logger.error(
-          `GET /api/board/${category}/${boardNum} 500: \n${response.updateBoardHit.errMsg}`
+          `GET /api/board/${category}/${boardNum} 500: \n${updateBoardHit.errMsg}`
         );
         return res.status(500).json(updateBoardHit.clientMsg);
       }
