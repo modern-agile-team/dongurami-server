@@ -8,6 +8,7 @@ const process = {
   checkClubAdmin: async (req, res, next) => {
     const adminOption = new AdminOption(req);
     const response = await adminOption.checkClubAdmin();
+    const { clubNum } = req.params;
 
     if (!response.success) {
       logger.error(
@@ -23,6 +24,8 @@ const process = {
     const application = new Application(req);
 
     const response = {};
+    const { clubNum } = req.params;
+
     response.clubAdminOption = await adminOption.findOneByClubNum();
 
     if (response.clubAdminOption.success) {
@@ -44,8 +47,8 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.info(
-        `GET /api/club/admin-option/${clubNum} 200: \n${response.errMsg}`
+      logger.error(
+        `GET /api/club/admin-option/${clubNum} 500: \n${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -56,10 +59,11 @@ const process = {
   createMemberById: async (req, res) => {
     const application = new Application(req);
     const response = await application.createMemberById();
+    const { clubNum } = req.params;
 
     if (response.success) {
       logger.info(
-        `POST /api/club/admin-option/${clubNum}/applicant 400: ${response.msg}`
+        `POST /api/club/admin-option/${clubNum}/applicant 201: ${response.msg}`
       );
       return res.status(201).json(response);
     }
@@ -78,6 +82,7 @@ const process = {
   updateLeaderById: async (req, res) => {
     const adminOption = new AdminOption(req);
     const response = await adminOption.updateLeaderById();
+    const { clubNum } = req.params;
 
     if (response.success) {
       logger.info(
@@ -100,6 +105,7 @@ const process = {
   updateAdminOptionById: async (req, res) => {
     const adminOption = new AdminOption(req);
     const response = await adminOption.updateAdminOptionById();
+    const { clubNum } = req.params;
 
     if (response.success) {
       logger.info(
@@ -122,6 +128,7 @@ const process = {
   updateApplicantById: async (req, res) => {
     const application = new Application(req);
     const response = await application.updateApplicantById();
+    const { clubNum } = req.params;
 
     if (response.success) {
       logger.info(
@@ -144,21 +151,22 @@ const process = {
   deleteMemberById: async (req, res) => {
     const adminOption = new AdminOption(req);
     const response = await adminOption.deleteMemberById();
+    const { params } = req;
 
     if (response.success) {
       logger.info(
-        `DELETE /api/club/admin-option/${clubNum}/${memberId} 200: ${response.msg}`
+        `DELETE /api/club/admin-option/${params.clubNum}/${params.memberId} 200: ${response.msg}`
       );
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/club/admin-option/${clubNum}/${memberId} 500: \n${response.errMsg}`
+        `DELETE /api/club/admin-option/${params.clubNum}/${params.memberId} 500: \n${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
     logger.error(
-      `DELETE /api/club/admin-option/${clubNum}/${memberId} 400: ${response.msg}`
+      `DELETE /api/club/admin-option/${params.clubNum}/${params.memberId} 400: ${response.msg}`
     );
     return res.status(400).json(response);
   },

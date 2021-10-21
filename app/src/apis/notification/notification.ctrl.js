@@ -23,6 +23,7 @@ const process = {
   updateOneByNotificationNum: async (req, res) => {
     const notification = new Notification(req);
     const response = await notification.updateOneByNotificationNum();
+    const { notificationNum } = req.params;
 
     if (response.success) {
       logger.info(
@@ -45,6 +46,7 @@ const process = {
   updateAllById: async (req, res) => {
     const notification = new Notification(req);
     const response = await notification.updateAllById();
+    const { notificationNum } = req.params;
 
     if (response.success) {
       logger.info(
