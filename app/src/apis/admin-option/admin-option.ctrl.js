@@ -33,13 +33,13 @@ const process = {
 
       if (response.applicant.isError) {
         logger.error(
-          `GET /api/club/admin-option/${clubNum} 500: \n${response.errMsg}`
+          `GET /api/club/admin-option/${clubNum} 500: \n${response.applicant.errMsg}`
         );
         return res.status(500).json(response.applicant.clientMsg);
       }
       if (!response.applicant.success) {
         logger.error(
-          `GET /api/club/admin-option/${clubNum} 400: ${response.msg}`
+          `GET /api/club/admin-option/${clubNum} 400: ${response.applicant.msg}`
         );
         return res.status(400).json(response);
       }
@@ -48,13 +48,15 @@ const process = {
       );
       return res.status(200).json(response);
     }
-    if (response.isError) {
+    if (response.clubAdminOption.isError) {
       logger.error(
-        `GET /api/club/admin-option/${clubNum} 500: \n${response.errMsg}`
+        `GET /api/club/admin-option/${clubNum} 500: \n${response.clubAdminOption.errMsg}`
       );
-      return res.status(500).json(response.clientMsg);
+      return res.status(500).json(response.clubAdminOption.clientMsg);
     }
-    logger.error(`GET /api/club/admin-option/${clubNum} 400: ${response.msg}`);
+    logger.error(
+      `GET /api/club/admin-option/${clubNum} 400: ${response.clubAdminOption.msg}`
+    );
     return res.status(400).json(response);
   },
 
@@ -153,22 +155,23 @@ const process = {
   deleteMemberById: async (req, res) => {
     const adminOption = new AdminOption(req);
     const response = await adminOption.deleteMemberById();
-    const { params } = req;
+    const { clubNum } = req.params;
+    const { memberId } = req.params;
 
     if (response.success) {
       logger.info(
-        `DELETE /api/club/admin-option/${params.clubNum}/${params.memberId} 200: ${response.msg}`
+        `DELETE /api/club/admin-option/${clubNum}/${memberId} 200: ${response.msg}`
       );
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/club/admin-option/${params.clubNum}/${params.memberId} 500: \n${response.errMsg}`
+        `DELETE /api/club/admin-option/${clubNum}/${memberId} 500: \n${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
     logger.error(
-      `DELETE /api/club/admin-option/${params.clubNum}/${params.memberId} 400: ${response.msg}`
+      `DELETE /api/club/admin-option/${clubNum}/${memberId} 400: ${response.msg}`
     );
     return res.status(400).json(response);
   },

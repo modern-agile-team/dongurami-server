@@ -43,23 +43,22 @@ const process = {
   updateById: async (req, res) => {
     const review = new Review(req);
     const response = await review.updateById();
-    const { params } = req;
+    const { clubNum } = req.params;
+    const { num } = req.params;
 
     if (response.success) {
       logger.info(
-        `PUT /api/club/review/${params.clubNum}/${params.num}} 200: ${response.msg}`
+        `PUT /api/club/review/${clubNum}/${num} 200: ${response.msg}`
       );
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/club/review/${params.clubNum}/${params.num} 500: \n${response.errMsg}`
+        `PUT /api/club/review/${clubNum}/${num} 500: \n${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(
-      `PUT /api/club/review/${params.clubNum}/${params.num} 400: ${response.msg}`
-    );
+    logger.error(`PUT /api/club/review/${clubNum}/${num} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
