@@ -11,17 +11,17 @@ class AdminOption {
   }
 
   async checkClubAdmin() {
-    const payload = this.auth;
-    const { clubNum } = this.params;
-    const adminInfo = {
-      id: payload.id,
-      clubNum,
-    };
+    const user = this.auth;
 
     try {
+      const adminInfo = {
+        id: user.id,
+        clubNum: Number(this.params.clubNum),
+      };
+
       const clubAdminId = await AdminOptionStorage.findOneById(adminInfo);
 
-      if (clubAdminId === payload.id) {
+      if (clubAdminId === adminInfo.id) {
         return {
           success: true,
           msg: '권한 있음',
@@ -37,14 +37,20 @@ class AdminOption {
   }
 
   async findOneByClubNum() {
-    const { clubNum } = this.params;
+    const clubNum = Number(this.params.clubNum);
 
     try {
       const { success, leader, clubName, memberAndAuthList } =
         await AdminOptionStorage.findOneByClubNum(clubNum);
 
       if (success) {
-        return { success: true, leader, clubName, memberAndAuthList };
+        return {
+          success: true,
+          msg: '동아리원 정보 조회 성공',
+          leader,
+          clubName,
+          memberAndAuthList,
+        };
       }
       return {
         success: false,
@@ -56,18 +62,19 @@ class AdminOption {
   }
 
   async updateLeaderById() {
-    const payload = this.auth;
-    const { clubNum } = this.params;
+    const user = this.auth;
+    const clubNum = Number(this.params.clubNum);
     const { newLeader } = this.body;
 
     try {
       const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
 
-      if (leader === payload.id) {
+      if (leader === user.id) {
         const leaderInfo = {
           clubNum,
           newLeader,
         };
+
         const isChangeLeader =
           await AdminOptionStorage.updateNewLeaderByClubNum(leaderInfo);
 
@@ -95,18 +102,19 @@ class AdminOption {
   }
 
   async updateAdminOptionById() {
-    const payload = this.auth;
-    const { clubNum } = this.params;
+    const user = this.auth;
+    const clubNum = Number(this.params.clubNum);
     const adminOption = this.body;
 
     try {
       const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
 
-      if (leader === payload.id) {
+      if (leader === user.id) {
         const adminInfo = {
           clubNum,
           adminOption: adminOption.adminOptions,
         };
+
         const isUpdate = await AdminOptionStorage.updateAdminOptionById(
           adminInfo
         );
@@ -127,7 +135,7 @@ class AdminOption {
 
   async deleteMemberById() {
     const user = this.auth;
-    const { clubNum } = this.params;
+    const clubNum = Number(this.params.clubNum);
     const { memberId } = this.params;
 
     try {
@@ -138,6 +146,7 @@ class AdminOption {
           clubNum,
           memberId,
         };
+
         const isDelete = await AdminOptionStorage.deleteMemberById(memberInfo);
 
         if (isDelete) {
