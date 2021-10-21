@@ -100,6 +100,7 @@ class Board {
 
     try {
       const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
+
       let userInfo = '비로그인 회원입니다.';
 
       if (user) {
@@ -130,11 +131,13 @@ class Board {
       const boards = await BoardStorage.findAllByPromotionCategory(
         criteriaRead
       );
+
       let userInfo = '비로그인 회원입니다.';
 
       if (user) {
         userInfo = {
           id: user.id,
+          isAdmin: user.isAdmin,
           club: user.clubNum,
         };
       }
@@ -159,7 +162,6 @@ class Board {
       if (category === 5 && !user.clubNum.includes(Number(params.clubNum))) {
         return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
       }
-
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
       if (board === undefined)
@@ -200,6 +202,7 @@ class Board {
         description: board.description,
         boardNum: params.boardNum,
       };
+
       const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
 
       if (updateBoardCnt === 0) {
@@ -220,6 +223,7 @@ class Board {
         category,
         boardNum: params.boardNum,
       };
+
       const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
       if (deleteBoardCnt === 0) {
