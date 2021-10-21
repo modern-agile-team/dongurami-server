@@ -16,27 +16,27 @@ class Email {
 
   async sendLinkForPassword() {
     const client = this.body;
+    const { req } = this;
+    const student = new Student(req);
 
     try {
-      const { req } = this;
-      const student = new Student(req);
-
-      // id, email 유효성 검사
       const existInfo = await student.isExistIdAndEmail();
+
       if (!existInfo.isExist) return existInfo;
 
-      // 토큰 생성 함수로 이동
       const tokenInfo = await EmailAuth.createToken(client.id);
+
       if (!tokenInfo.success) return tokenInfo;
 
       const message = {
         from: process.env.MAIL_SENDER,
-        to: client.email, // 받는 사람 주소
-        subject: `${existInfo.name}님, 동그라미에서 보낸 메일입니다.`, // 제목
+        to: client.email,
+        subject: `${existInfo.name}님, 동그라미에서 보낸 메일입니다.`,
         html: `<p>안녕하십니까, <b>${existInfo.name}</b>님.<br> 비밀번호를 변경하시려면 <a href="${CHANGE_PASSWORD_URL}/${tokenInfo.token}">링크</a>를 눌러주세요</p>`,
       };
 
       const transporter = nodemailer.createTransport(mailConfig);
+      // 메일 전송
       transporter.sendMail(message);
       return {
         success: true,
