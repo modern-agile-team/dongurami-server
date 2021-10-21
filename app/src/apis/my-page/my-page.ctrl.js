@@ -17,7 +17,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `GET /api/my-page/${params.id}/personal/${params.clubNum}m 500: \n${response.errMsg}`
+        `GET /api/my-page/${params.id}/personal/${params.clubNum} 500: \n${response.errMsg}`
       );
       return res.status(500).json(response.clientMsg);
     }
