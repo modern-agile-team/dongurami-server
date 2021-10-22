@@ -30,9 +30,9 @@ class MyPage {
       );
 
       if (scraps || boards) {
-        return { success: true, scraps, boards };
+        return { success: true, msg: '전체 글 조회 성공', scraps, boards };
       }
-      return { success: true, msg: '스크랩 내역이 존재하지 않습니다.' };
+      return { success: true, msg: '글 내역이 존재하지 않습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -50,7 +50,7 @@ class MyPage {
 
       const scrap = await MyPageStorage.findOneScrap(userInfo);
 
-      if (scrap) return { success: true, scrap };
+      if (scrap) return { success: true, msg: '스크랩 상세 조회 성공', scrap };
       return { success: false, msg: '존재하지 않는 글입니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
