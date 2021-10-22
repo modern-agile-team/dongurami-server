@@ -38,20 +38,6 @@ const process = {
     return res.status(409).json(response);
   },
 
-  resUserInfo: (req, res) => {
-    const studentInfo = req.auth;
-
-    delete studentInfo.iat;
-    delete studentInfo.exp;
-
-    logger.info(`GET /api/login-check 200: 로그인이 된 사용자입니다.`);
-    return res.status(200).json({
-      success: true,
-      msg: '로그인이 된 사용자입니다.',
-      studentInfo,
-    });
-  },
-
   findId: async (req, res) => {
     const student = new Student(req);
     const response = await student.findId();
