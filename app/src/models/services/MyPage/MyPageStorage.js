@@ -83,7 +83,6 @@ class MyPageStorage {
         scrapInfo.description,
       ];
       const query = `INSERT INTO scraps (board_no, student_id, title, description) VALUES (?, ?, ?, ?);`;
-
       const scrap = await conn.query(query, infoOfScrap);
 
       return scrap.affectedRows;

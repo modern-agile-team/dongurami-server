@@ -15,6 +15,12 @@ router.get(
   ctrl.process.findOneByClubNum
 );
 
+router.post(
+  '/:clubNum/applicant',
+  loginAuth.loginCheck,
+  ctrl.process.createMemberById
+);
+
 router.put(
   '/:clubNum/leader',
   loginAuth.loginCheck,
@@ -25,12 +31,6 @@ router.put(
   '/:clubNum/admin-functions',
   loginAuth.loginCheck,
   ctrl.process.updateAdminOptionById
-);
-
-router.post(
-  '/:clubNum/applicant',
-  loginAuth.loginCheck,
-  ctrl.process.createMemberById
 );
 
 router.put(
