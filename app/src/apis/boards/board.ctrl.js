@@ -9,17 +9,15 @@ const process = {
   createBoardNum: async (req, res) => {
     const board = new Board(req);
     const image = new Image(req);
-    const response = await board.createBoardNum();
+    const { response, boardNum } = await board.createBoardNum();
     const { category } = req.params;
 
     if (response.success) {
-      response.imgNums = await image.saveBoardImg(response.boardNum);
+      const imgNums = await image.saveBoardImg(boardNum);
 
-      if (response.imgNums.isError) {
-        logger.error(
-          `POST /api/board/${category} 500: \n${response.imgNums.errMsg}`
-        );
-        return res.status(500).json(response.imgNums.clientMsg);
+      if (imgNums.isError) {
+        logger.error(`POST /api/board/${category} 500: \n${imgNums.errMsg}`);
+        return res.status(500).json(imgNums.clientMsg);
       }
       logger.info(`POST /api/board/${category} 201: ${response.msg}`);
       return res.status(201).json(response);
@@ -76,8 +74,16 @@ const process = {
     const { boardNum } = req.params;
 
     if (response.success) {
-      const updateBoardHit = await board.updateOnlyHitByNum();
-      response.images = await image.findAllByBoardImg();
+      if (response.category === 4) {
+        response.images = await image.findAllByBoardImg();
+
+        if (response.images.isError) {
+          logger.error(
+            `GET /api/board/${category}/${boardNum} 500: \n${response.images.errMsg}`
+          );
+          return res.status(500).json(response.images.clientMsg);
+        }
+      }
       // 동아리 활동일지 & 마이페이지는 댓글이 달리지 않기 때문에 조건문을 사용해 주어야됨.
       if (response.category < 6) {
         response.comments = await comment.findAllByBoardNum();
@@ -89,27 +95,23 @@ const process = {
           return res.status(500).json(response.comments.clientMsg);
         }
       }
-      if (response.images.isError) {
-        logger.error(
-          `GET /api/board/${category}/${boardNum} 500: \n${response.images.errMsg}`
-        );
-        return res.status(500).json(response.images.clientMsg);
-      }
+      const updateBoardHit = await board.updateOnlyHitByNum();
+
       if (updateBoardHit.isError) {
         logger.error(
           `GET /api/board/${category}/${boardNum} 500: \n${updateBoardHit.errMsg}`
         );
         return res.status(500).json(updateBoardHit.clientMsg);
       }
-      if (response.success) {
-        delete response.category;
 
-        response.board.hit += 1;
-        logger.info(
-          `GET /api/board/${category}/${boardNum} 200: ${response.msg}`
-        );
-        return res.status(200).json(response);
-      }
+      delete response.category;
+
+      response.board.hit += 1;
+
+      logger.info(
+        `GET /api/board/${category}/${boardNum} 200: ${response.msg}`
+      );
+      return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
