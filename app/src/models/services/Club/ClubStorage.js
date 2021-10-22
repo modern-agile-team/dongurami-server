@@ -11,7 +11,7 @@ class ClubStorage {
         'SELECT no, name, category, logo_url AS logoUrl FROM clubs;';
       const result = await conn.query(query);
 
-      return { success: true, result };
+      return { success: true, msg: '동아리 목록 조회 성공', result };
     } catch (err) {
       throw err;
     } finally {
