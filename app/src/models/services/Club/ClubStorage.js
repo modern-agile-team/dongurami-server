@@ -1,6 +1,7 @@
 'use strict';
 
 const mariadb = require('../../../config/mariadb');
+const Error = require('../../utils/Error');
 
 class ClubStorage {
   static async readClubList() {
@@ -13,7 +14,7 @@ class ClubStorage {
 
       return { success: true, msg: '동아리 목록 조회 성공', result };
     } catch (err) {
-      throw err;
+      return Error.ctrl('개발자에게 문의해주세요.', err);
     } finally {
       conn?.release();
     }
