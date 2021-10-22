@@ -8,6 +8,7 @@ class ApplicationStorage {
 
     try {
       conn = await mariadb.getConnection();
+
       const client =
         'SELECT id, name, major, grade, gender, phone_number AS phoneNumber FROM students WHERE id = ?;';
       const leader = 'SELECT leader FROM clubs WHERE no = ?;'; // 동아리 회장만 수정 가능 -> 동아리 회장 학번 조회
@@ -36,6 +37,7 @@ class ApplicationStorage {
 
     try {
       conn = await mariadb.getConnection();
+
       const query =
         'INSERT INTO questions (club_no, description) VALUE (?, ?);';
       const question = await conn.query(query, [
@@ -56,6 +58,7 @@ class ApplicationStorage {
 
     try {
       conn = await mariadb.getConnection();
+
       const query = 'UPDATE questions SET description = ? WHERE no = ?;';
       const question = await conn.query(query, [
         questionInfo.description,
@@ -75,8 +78,8 @@ class ApplicationStorage {
 
     try {
       conn = await mariadb.getConnection();
-      const query = 'DELETE FROM questions WHERE no = ?;';
 
+      const query = 'DELETE FROM questions WHERE no = ?;';
       const question = await conn.query(query, no);
 
       return question.affectedRows;
@@ -92,6 +95,7 @@ class ApplicationStorage {
 
     try {
       conn = await mariadb.getConnection();
+
       const applicant = `SELECT reading_flag AS readingFlag FROM applicants WHERE club_no = ? AND student_id = ? ORDER BY no DESC;`;
       const isApplicant = await conn.query(applicant, [
         applicantInfo.clubNum,
@@ -111,6 +115,7 @@ class ApplicationStorage {
 
     try {
       conn = await mariadb.getConnection();
+
       const studentInfo = `UPDATE students SET grade = ?, gender = ?, phone_number = ? WHERE id = ?;`;
       const basic = await conn.query(studentInfo, [
         answerInfo.grade,
@@ -132,6 +137,7 @@ class ApplicationStorage {
 
     try {
       conn = await mariadb.getConnection();
+
       let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
 
       answerInfo.extra.forEach((x, idx) => {
@@ -156,6 +162,7 @@ class ApplicationStorage {
 
     try {
       conn = await mariadb.getConnection();
+
       const query = `INSERT INTO applicants (club_no, student_id) VALUE (?, ?);`;
       const result = await conn.query(query, [
         applicantInfo.clubNum,
@@ -179,7 +186,6 @@ class ApplicationStorage {
         s.grade, s.gender, s.phone_number AS phoneNum 
         FROM students AS s JOIN applicants AS app ON app.club_no = ?
         AND app.student_id = s.id AND app.reading_flag = 0 ORDER BY app.in_date ASC, app.student_id;`;
-
       const questionAnswerQuery = `SELECT app.student_id AS id, q.description AS question, 
         a.description AS answer 
         FROM answers AS a JOIN applicants AS app ON a.student_id = app.student_id 
@@ -203,6 +209,7 @@ class ApplicationStorage {
 
   static async updateAcceptedApplicantById(userInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
@@ -225,6 +232,7 @@ class ApplicationStorage {
 
   static async createMemberById(userInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
@@ -247,6 +255,7 @@ class ApplicationStorage {
 
   static async updateRejectedApplicantById(userInfo) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
