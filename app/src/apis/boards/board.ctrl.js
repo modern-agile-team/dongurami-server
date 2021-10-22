@@ -10,6 +10,7 @@ const process = {
     const board = new Board(req);
     const image = new Image(req);
     const response = await board.createBoardNum();
+    console.log(response);
 
     if (response.success) {
       response.imgNums = await image.saveBoardImg(response.boardNum);

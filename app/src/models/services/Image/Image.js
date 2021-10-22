@@ -11,15 +11,21 @@ class Image {
   }
 
   async saveBoardImg(boardNum) {
-    const { images } = this.body;
-    const imgInfo = [];
     const category = boardCategory[this.params.category];
+    const imgInfo = [];
 
-    if (category === 4 && (images === undefined || images.length === 0)) {
-      return [];
-    }
+    if (category < 4) return { success: true };
 
     try {
+      if (category === 4) {
+        const { images } = this.body;
+
+        if (!images.length) return { success: true };
+
+        for (const image of images) {
+          imgInfo.push([boardNum, image.path]);
+        }
+      }
       if (category === 6 || category === 7) {
         const { description } = this.body;
         const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
@@ -28,16 +34,13 @@ class Image {
 
         const thumbnail = RegExp.$2;
 
-        imgInfo.push([boardNum, thumbnail]);
-      } else {
-        for (const image of images) {
-          imgInfo.push([boardNum, image.path]);
-        }
+        if (thumbnail.length) imgInfo.push([boardNum, thumbnail]);
       }
 
-      const imgNum = await ImageStorage.saveBoardImg(imgInfo);
-
-      return imgNum;
+      if (imgInfo) {
+        await ImageStorage.saveBoardImg(imgInfo);
+      }
+      return { success: true };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
