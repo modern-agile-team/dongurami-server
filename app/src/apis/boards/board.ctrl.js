@@ -131,11 +131,26 @@ const process = {
 
   updateOneByBoardNum: async (req, res) => {
     const board = new Board(req);
+    const image = new Image(req);
     const response = await board.updateOneByBoardNum();
     const { category } = req.params;
     const { boardNum } = req.params;
 
     if (response.success) {
+      const updateImage = await image.updateBoardImg();
+
+      if (updateImage.isError) {
+        logger.error(
+          `PUT /api/board/${category}/${boardNum} 500: \n${updateImage.errMsg}`
+        );
+        return res.status(500).json(updateImage.clientMsg);
+      }
+      if (!updateImage.success) {
+        logger.error(
+          `PUT /api/board/${category}/${boardNum} 400: ${updateImage.msg}`
+        );
+        return res.status(400).json(updateImage);
+      }
       logger.info(
         `PUT /api/board/${category}/${boardNum} 200: ${response.msg}`
       );

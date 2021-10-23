@@ -47,6 +47,24 @@ class ImageStorage {
       conn?.release();
     }
   }
+
+  static async deleteBoardImg(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `DELETE FROM images where url in (?);`;
+
+      await conn.query(query, [boardInfo]);
+
+      return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = ImageStorage;
