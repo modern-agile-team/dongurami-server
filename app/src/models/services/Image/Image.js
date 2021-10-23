@@ -93,8 +93,8 @@ class Image {
         addImageInfo.push([boardNum, image]);
       }
 
-      await ImageStorage.saveBoardImg(addImageInfo);
-      await ImageStorage.deleteBoardImg(deleteImages);
+      if (addImageInfo.length) await ImageStorage.saveBoardImg(addImageInfo);
+      if (deleteImages.length) await ImageStorage.deleteBoardImg(deleteImages);
 
       return { success: true };
     } catch (err) {
