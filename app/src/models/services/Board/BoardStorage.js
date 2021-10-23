@@ -289,6 +289,7 @@ class BoardStorage {
       JOIN clubs
       ON bo.club_no = clubs.no
       WHERE ${searchInfo.type} LIKE ? AND board_category_no = 4${where}
+      GROUP BY no
       ORDER BY ${searchInfo.sort} ${searchInfo.order}
       ${limit};`;
 

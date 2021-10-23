@@ -11,15 +11,24 @@ class Image {
   }
 
   async saveBoardImg(boardNum) {
-    const { images } = this.body;
-    const imgInfo = [];
     const category = boardCategory[this.params.category];
+    const imgInfo = [];
 
-    if (category === 4 && (images === undefined || images.length === 0)) {
-      return [];
-    }
+    // 이미지, 썸네일 저장 필요 x 게시판
+    if (category < 4) return { success: true };
 
     try {
+      // 홍보 게시판 => 이미지 따로 저장
+      if (category === 4) {
+        const { images } = this.body;
+
+        if (!images.length) return { success: true };
+
+        for (const image of images) {
+          imgInfo.push([boardNum, image.imgPath]);
+        }
+      }
+      // 동아리별 활동일지 및 my-page 글 => 썸네일 지정
       if (category === 6 || category === 7) {
         const { description } = this.body;
         const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
@@ -28,16 +37,15 @@ class Image {
 
         const thumbnail = RegExp.$2;
 
-        imgInfo.push([boardNum, thumbnail]);
-      } else {
-        for (const image of images) {
-          imgInfo.push([boardNum, image.path]);
-        }
+        if (thumbnail.length) imgInfo.push([boardNum, thumbnail]);
       }
 
-      const imgNum = await ImageStorage.saveBoardImg(imgInfo);
-
-      return imgNum;
+      // 저장될 이미지가 있을때만 images 테이블에 저장
+      if (imgInfo.length) {
+        await ImageStorage.saveBoardImg(imgInfo);
+      }
+      // 이미지의 여부와는 상관없이 글이 생성되므로 항상 true를 반환한다.
+      return { success: true };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }

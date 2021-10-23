@@ -306,7 +306,6 @@ class Student {
     const user = this.auth;
 
     delete user.iat;
-    delete user.exp;
     delete user.iss;
 
     if (user) return { success: true, msg: '유저 정보 조회 성공', user };
