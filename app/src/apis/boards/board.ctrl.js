@@ -147,8 +147,8 @@ const process = {
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`PUT /api/board/${category}/${boardNum} 400: ${response.msg}`);
-    return res.status(400).json(response);
+    logger.error(`PUT /api/board/${category}/${boardNum} 404: ${response.msg}`);
+    return res.status(404).json(response);
   },
 
   deleteOneByBoardNum: async (req, res) => {
@@ -170,9 +170,9 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.error(
-      `DELETE /api/board/${category}/${boardNum} 400: ${response.msg}`
+      `DELETE /api/board/${category}/${boardNum} 404: ${response.msg}`
     );
-    return res.status(400).json(response);
+    return res.status(404).json(response);
   },
 };
 
