@@ -25,7 +25,7 @@ class Image {
         if (!images.length) return { success: true };
 
         for (const image of images) {
-          imgInfo.push([boardNum, image.imgPath]);
+          imgInfo.push([boardNum, image]);
         }
       }
       // 동아리별 활동일지 및 my-page 글 => 썸네일 지정
@@ -60,6 +60,45 @@ class Image {
       return imgInfo;
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async updateBoardImg() {
+    const { boardNum } = this.params;
+    const newImages = this.body.images;
+    const category = boardCategory[this.params.category];
+    const existingImages = [];
+    const addImageInfo = [];
+
+    if (category !== 4 || !newImages) return { success: true };
+    if (!Array.isArray(newImages)) {
+      return { success: false, msg: '잘못된 형식입니다.' };
+    }
+
+    try {
+      const images = await ImageStorage.findAllByBoardImg(boardNum);
+
+      for (const image of images) {
+        existingImages.push(image.imgPath);
+      }
+
+      const addImages = newImages.filter(
+        (image) => !existingImages.includes(image)
+      );
+      const deleteImages = existingImages.filter(
+        (image) => !newImages.includes(image)
+      );
+
+      for (const image of addImages) {
+        addImageInfo.push([boardNum, image]);
+      }
+
+      if (addImageInfo.length) await ImageStorage.saveBoardImg(addImageInfo);
+      if (deleteImages.length) await ImageStorage.deleteBoardImg(deleteImages);
+
+      return { success: true };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
     }
   }
 }
