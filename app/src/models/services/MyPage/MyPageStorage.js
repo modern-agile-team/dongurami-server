@@ -32,11 +32,11 @@ class MyPageStorage {
       JOIN boards AS b ON b.no = s.board_no
       WHERE s.student_id = ? AND club_no = ?;`;
       const board = `SELECT b.no AS boardNo, title, in_date AS inDate, modify_date AS modifyDate, url AS imgPath
-      FROM boards AS b left JOIN images ON b.no = board_no 
+      FROM boards AS b LEFT JOIN images ON b.no = board_no 
       WHERE board_category_no = 7 AND student_id = ? AND club_no = ?
-      union
+      UNION
       SELECT b.no AS boardNo, title, in_date AS inDate, modify_date AS modifyDate, url AS imgPath
-      FROM images right JOIN boards AS b ON b.no = board_no 
+      FROM images RIGTH JOIN boards AS b ON b.no = board_no 
       WHERE board_category_no = 7 AND student_id = ? AND club_no = ?;`;
       const scraps = await conn.query(scrap, [userInfo.id, userInfo.clubNum]);
       const boards = await conn.query(board, [
