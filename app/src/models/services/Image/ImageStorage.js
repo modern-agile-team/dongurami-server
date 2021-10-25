@@ -9,19 +9,14 @@ class ImageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const imgNums = [];
       let query = 'INSERT INTO images (board_no, url) VALUES (?)';
 
       for (let i = 1; i < imgInfo.length; i += 1) query += ', (?)';
       query += ';';
 
-      const img = await conn.query(query, imgInfo);
+      await conn.query(query, imgInfo);
 
-      for (let i = 0; i < img.affectedRows; i += 1) {
-        imgNums.push(img.insertId + i);
-      }
-
-      return imgNums;
+      return;
     } catch (err) {
       throw err;
     } finally {
@@ -41,6 +36,24 @@ class ImageStorage {
       const imgPath = await conn.query(query, [boardNum]);
 
       return imgPath;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteBoardImg(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `DELETE FROM images where url in (?);`;
+
+      await conn.query(query, [boardInfo]);
+
+      return;
     } catch (err) {
       throw err;
     } finally {
