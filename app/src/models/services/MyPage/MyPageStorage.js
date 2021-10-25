@@ -10,6 +10,7 @@ class MyPageStorage {
       conn = await mariadb.getConnection();
 
       const query = 'SELECT no FROM clubs WHERE no = ?;';
+
       const club = await conn.query(query, clubNum);
 
       return club[0];
@@ -32,11 +33,20 @@ class MyPageStorage {
       JOIN boards AS b ON b.no = s.board_no
       WHERE s.student_id = ? AND club_no = ?;`;
       const board = `SELECT b.no AS boardNo, title, in_date AS inDate, modify_date AS modifyDate, url AS imgPath
-      FROM boards AS b
-      INNER JOIN images AS i ON b.no = i.board_no 
+      FROM boards AS b LEFT JOIN images ON b.no = board_no 
+      WHERE board_category_no = 7 AND student_id = ? AND club_no = ?
+      UNION
+      SELECT b.no AS boardNo, title, in_date AS inDate, modify_date AS modifyDate, url AS imgPath
+      FROM images RIGTH JOIN boards AS b ON b.no = board_no 
       WHERE board_category_no = 7 AND student_id = ? AND club_no = ?;`;
+
       const scraps = await conn.query(scrap, [userInfo.id, userInfo.clubNum]);
-      const boards = await conn.query(board, [userInfo.id, userInfo.clubNum]);
+      const boards = await conn.query(board, [
+        userInfo.id,
+        userInfo.clubNum,
+        userInfo.id,
+        userInfo.clubNum,
+      ]);
 
       return { scraps, boards };
     } catch (err) {
@@ -56,6 +66,7 @@ class MyPageStorage {
       FROM scraps AS s
       INNER JOIN boards AS b ON b.no = board_no
       WHERE s.student_id = ? AND club_no = ? AND s.no = ?;`;
+
       const scrap = await conn.query(findScrap, [
         userInfo.id,
         userInfo.clubNum,
@@ -76,14 +87,14 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const infoOfScrap = [
+      const query = `INSERT INTO scraps (board_no, student_id, title, description) VALUES (?, ?, ?, ?);`;
+
+      const scrap = await conn.query(query, [
         scrapInfo.boardNum,
         scrapInfo.id,
         scrapInfo.title,
         scrapInfo.description,
-      ];
-      const query = `INSERT INTO scraps (board_no, student_id, title, description) VALUES (?, ?, ?, ?);`;
-      const scrap = await conn.query(query, infoOfScrap);
+      ]);
 
       return scrap.affectedRows;
     } catch (err) {
@@ -100,6 +111,7 @@ class MyPageStorage {
       conn = await mariadb.getConnection();
 
       const query = `UPDATE scraps SET title = ?, description = ? WHERE no = ?;`;
+
       const scrap = await conn.query(query, [
         scrapInfo.title,
         scrapInfo.description,
@@ -121,6 +133,7 @@ class MyPageStorage {
       conn = await mariadb.getConnection();
 
       const query = 'DELETE FROM scraps WHERE no = ?;';
+
       const scrap = await conn.query(query, scrapNum);
 
       return scrap.affectedRows;
