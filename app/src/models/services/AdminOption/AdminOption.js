@@ -149,7 +149,11 @@ class AdminOption {
 
         const isDelete = await AdminOptionStorage.deleteMemberById(memberInfo);
 
-        if (isDelete) {
+        const isUpdate = await AdminOptionStorage.updateReadingFlagById(
+          memberInfo
+        );
+
+        if (isDelete && isUpdate) {
           return { success: true, msg: `${memberId}님이 추방되었습니다.` };
         }
         return {

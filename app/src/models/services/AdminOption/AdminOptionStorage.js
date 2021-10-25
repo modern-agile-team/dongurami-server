@@ -167,6 +167,28 @@ class AdminoOptionStorage {
       conn?.release();
     }
   }
+
+  static async updateReadingFlagById(memberInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `UPDATE applicants SET reading_flag = 2 WHERE club_no = ? AND student_id = ?;`;
+
+      const updateApplicant = await conn.query(query, [
+        memberInfo.clubNum,
+        memberInfo.memberId,
+      ]);
+
+      if (!updateApplicant.affectedRows) return false;
+      return true;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = AdminoOptionStorage;
