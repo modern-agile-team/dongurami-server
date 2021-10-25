@@ -24,6 +24,7 @@ class Comment {
         id: user.id,
         description: comment.description,
       };
+
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
 
       if (exist === undefined) {
@@ -40,9 +41,9 @@ class Comment {
         );
 
       const notificationInfo = {
+        title,
         senderId: commentInfo.id,
         recipientId: studentId,
-        title,
         content: commentInfo.description,
       };
 
@@ -112,6 +113,7 @@ class Comment {
   async findAllByBoardNum() {
     try {
       const { boardNum } = this.params;
+
       const comments = await CommentStorage.findAllByBoardNum(boardNum);
 
       return comments;
@@ -122,12 +124,14 @@ class Comment {
 
   async updateByCommentNum() {
     const { params } = this;
+
     try {
       const cmtInfo = {
         boardNum: params.boardNum,
         cmtNum: params.cmtNum,
         description: this.body.description,
       };
+
       const updateCmtCount = await CommentStorage.updateByCommentNum(cmtInfo);
 
       if (updateCmtCount === 0) {
@@ -141,6 +145,7 @@ class Comment {
 
   async updateByReplyCommentNum() {
     const { params } = this;
+
     try {
       const replyCmtInfo = {
         boardNum: params.boardNum,
@@ -148,6 +153,7 @@ class Comment {
         replyCmtNum: params.replyCmtNum,
         description: this.body.description,
       };
+
       const updateReplyCmtCount = await CommentStorage.updateByReplyCommentNum(
         replyCmtInfo
       );
@@ -169,6 +175,7 @@ class Comment {
         boardNum: params.boardNum,
         cmtNum: params.cmtNum,
       };
+
       const deleteCmtCount = await CommentStorage.deleteAllByGroupNum(cmtInfo);
 
       if (deleteCmtCount === 0) {
@@ -189,6 +196,7 @@ class Comment {
         cmtNum: params.cmtNum,
         replyCmtNum: params.replyCmtNum,
       };
+
       const deleteReplyCmtCount = await CommentStorage.deleteOneReplyCommentNum(
         replyCmtInfo
       );
