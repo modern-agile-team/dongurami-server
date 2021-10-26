@@ -43,13 +43,34 @@ class ImageStorage {
     }
   }
 
+  static async updateBoardImg(newThumbnailInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'UPDATE images SET url = ? WHERE board_no = ?;';
+
+      await conn.query(query, [
+        newThumbnailInfo.newThumbnail,
+        newThumbnailInfo.boardNum,
+      ]);
+
+      return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async deleteBoardImg(boardInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `DELETE FROM images where url in (?);`;
+      const query = `DELETE FROM images WHERE url IN (?);`;
 
       await conn.query(query, [boardInfo]);
 
