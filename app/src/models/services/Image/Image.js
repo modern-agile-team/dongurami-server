@@ -77,11 +77,11 @@ class Image {
         const existingImages = [];
         const addImageInfo = [];
 
-        if (!newImages.length) return { success: true };
-
         if (!Array.isArray(newImages)) {
           return { success: false, msg: '잘못된 형식입니다.' };
         }
+
+        if (!newImages.length) return { success: true };
 
         for (const image of images) {
           existingImages.push(image.imgPath);

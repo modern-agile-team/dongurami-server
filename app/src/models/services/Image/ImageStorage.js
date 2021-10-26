@@ -51,12 +51,12 @@ class ImageStorage {
 
       const query = 'UPDATE images SET url = ? WHERE board_no = ?;';
 
-      await conn.query(query, [
+      const result = await conn.query(query, [
         newThumbnailInfo.newThumbnail,
         newThumbnailInfo.boardNum,
       ]);
 
-      return;
+      return result.affectedRows;
     } catch (err) {
       throw err;
     } finally {
