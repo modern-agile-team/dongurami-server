@@ -65,37 +65,75 @@ class Image {
 
   async updateBoardImg() {
     const { boardNum } = this.params;
-    const newImages = this.body.images;
     const category = boardCategory[this.params.category];
-    const existingImages = [];
-    const addImageInfo = [];
+    const images = await ImageStorage.findAllByBoardImg(boardNum);
 
-    if (category !== 4 || !newImages) return { success: true };
-    if (!Array.isArray(newImages)) {
-      return { success: false, msg: '잘못된 형식입니다.' };
-    }
+    // 이미지와 썸네일이 필요없는 카테고리
+    if (category < 4 || category === 5) return { success: true };
 
     try {
-      const images = await ImageStorage.findAllByBoardImg(boardNum);
+      if (category === 4) {
+        const newImages = this.body.images;
+        const existingImages = [];
+        const addImageInfo = [];
 
-      for (const image of images) {
-        existingImages.push(image.imgPath);
+        if (!newImages.length) return { success: true };
+
+        if (!Array.isArray(newImages)) {
+          return { success: false, msg: '잘못된 형식입니다.' };
+        }
+
+        for (const image of images) {
+          existingImages.push(image.imgPath);
+        }
+
+        const addImages = newImages.filter(
+          (image) => !existingImages.includes(image)
+        );
+        const deleteImages = existingImages.filter(
+          (image) => !newImages.includes(image)
+        );
+
+        for (const image of addImages) {
+          addImageInfo.push([boardNum, image]);
+        }
+
+        if (addImageInfo.length) await ImageStorage.saveBoardImg(addImageInfo);
+        if (deleteImages.length)
+          await ImageStorage.deleteBoardImg(deleteImages);
       }
+      if (category >= 6) {
+        const { description } = this.body;
+        const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
 
-      const addImages = newImages.filter(
-        (image) => !existingImages.includes(image)
-      );
-      const deleteImages = existingImages.filter(
-        (image) => !newImages.includes(image)
-      );
+        imgReg.test(description);
 
-      for (const image of addImages) {
-        addImageInfo.push([boardNum, image]);
+        const newThumbnail = RegExp.$2;
+
+        // 기존 썸넬 존재 x, 새로운 썸넬 존재 o
+        if (!images[0]) {
+          if (newThumbnail.length) {
+            const thumbnailInfo = [[boardNum, newThumbnail]];
+
+            await ImageStorage.saveBoardImg(thumbnailInfo);
+          }
+          return { success: true };
+        }
+        // 기존 썸넬 존재 o
+        if (images[0].imgPath !== newThumbnail) {
+          if (newThumbnail.length) {
+            // 새 썸넬 존재
+            const newThumbnailInfo = {
+              newThumbnail,
+              boardNum,
+            };
+            await ImageStorage.updateBoardImg(newThumbnailInfo);
+          } else {
+            // 새 썸넬 존재x
+            await ImageStorage.deleteBoardImg([images[0].imgPath]);
+          }
+        }
       }
-
-      if (addImageInfo.length) await ImageStorage.saveBoardImg(addImageInfo);
-      if (deleteImages.length) await ImageStorage.deleteBoardImg(deleteImages);
-
       return { success: true };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
