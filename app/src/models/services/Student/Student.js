@@ -7,6 +7,7 @@ const Error = require('../../utils/Error');
 const Auth = require('../Auth/Auth');
 const EmailAuth = require('../Auth/EmailAuth/EmailAuth');
 const EmailAuthStorage = require('../Auth/EmailAuth/EmailAuthStorage');
+const ProfileStorage = require('../Profile/ProfileStorage');
 
 class Student {
   constructor(req) {
@@ -307,6 +308,9 @@ class Student {
 
     delete user.iat;
     delete user.iss;
+    delete user.clubNum;
+
+    user.club = await ProfileStorage.findAllClubByStudentId(user.id);
 
     if (user) return { success: true, msg: '유저 정보 조회 성공', user };
     return {
