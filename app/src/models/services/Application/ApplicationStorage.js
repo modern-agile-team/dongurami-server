@@ -141,15 +141,29 @@ class ApplicationStorage {
       let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
 
       answerInfo.extra.forEach((x, idx) => {
-        if (idx)
+        if (idx) {
           answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-        else answer += `("${x.no}", "${answerInfo.id}", "${x.description}")`;
+        } else answer += `("${x.no}", "${answerInfo.id}", "${x.description}")`;
       });
       answer += ';';
 
       const extra = await conn.query(`${answer}`);
 
       return extra.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateExtraAnswer(answerInfo) {
+    let conn;
+
+    console.log(answerInfo);
+    try {
+      conn = await mariadb.getConnection();
+      await conn.query(query);
     } catch (err) {
       throw err;
     } finally {

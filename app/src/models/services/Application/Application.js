@@ -119,16 +119,23 @@ class Application {
         phoneNum: answer.basic.phoneNum,
         extra: answer.extra,
       };
+
       const isBasic = await ApplicationStorage.createBasicAnswer(answerInfo);
 
       // 필수 질문 추가 완 x
-      if (!isBasic)
+      if (!isBasic) {
         return { success: false, msg: '필수 질문이 작성되지않았습니다.' };
+      }
 
       // 필수 질문 추가 완 / 추가 질문 여부
       if (answerInfo.extra.length) {
         // 추가 질문이 있을 시
-        const isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
+        let isExtra;
+        if (isApplicant === 2) {
+          const extra = await ApplicationStorage.findAllByClubNum(clubInfo);
+          console.log(extra.questions);
+          isExtra = await ApplicationStorage.updateExtraAnswer(answerInfo);
+        } else isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
 
         if (isExtra !== answerInfo.extra.length) {
           return { success: false, msg: '추가 질문이 작성되지 않았습니다.' };
