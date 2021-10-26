@@ -22,6 +22,10 @@ class Image {
       if (category === 4) {
         const { images } = this.body;
 
+        if (!Array.isArray(images)) {
+          return { success: false, msg: '잘못된 형식입니다.' };
+        }
+
         if (!images.length) return { success: true };
 
         for (const image of images) {
@@ -99,8 +103,13 @@ class Image {
         }
 
         if (addImageInfo.length) await ImageStorage.saveBoardImg(addImageInfo);
-        if (deleteImages.length)
-          await ImageStorage.deleteBoardImg(deleteImages);
+        if (deleteImages.length) {
+          const deletedImage = await ImageStorage.deleteBoardImg(deleteImages);
+
+          if (deletedImage !== deleteImages.length) {
+            return { success: false, msg: '이미지가 삭제되지 않았습니다.' };
+          }
+        }
       }
       if (category >= 6) {
         const { description } = this.body;
@@ -121,16 +130,20 @@ class Image {
         }
         // 기존 썸넬 존재 o
         if (images[0].imgPath !== newThumbnail) {
+          let result;
           if (newThumbnail.length) {
             // 새 썸넬 존재
             const newThumbnailInfo = {
               newThumbnail,
               boardNum,
             };
-            await ImageStorage.updateBoardImg(newThumbnailInfo);
+            result = await ImageStorage.updateBoardImg(newThumbnailInfo);
           } else {
             // 새 썸넬 존재x
-            await ImageStorage.deleteBoardImg([images[0].imgPath]);
+            result = await ImageStorage.deleteBoardImg([images[0].imgPath]);
+          }
+          if (!result) {
+            return { success: false, msg: '썸네일이 수정되지 않았습니다.' };
           }
         }
       }

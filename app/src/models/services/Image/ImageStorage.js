@@ -72,9 +72,9 @@ class ImageStorage {
 
       const query = `DELETE FROM images WHERE url IN (?);`;
 
-      await conn.query(query, [boardInfo]);
+      const result = await conn.query(query, [boardInfo]);
 
-      return;
+      return result.affectedRows;
     } catch (err) {
       throw err;
     } finally {
