@@ -52,7 +52,7 @@ class ProfileStorage {
       conn = await mariadb.getConnection();
 
       const query = `UPDATE students
-      SET email = ?, phone_number = ?, grade = ?, profile_image_url = ?, file_id = ?
+      SET email = ?, phone_number = ?, grade = ?, profile_image_url = ?
       WHERE id = ?;`;
 
       const student = await conn.query(query, [
@@ -60,7 +60,6 @@ class ProfileStorage {
         userInfo.phoneNumber,
         userInfo.grade,
         userInfo.profileImageUrl,
-        userInfo.fileId,
         userInfo.userId,
       ]);
 
