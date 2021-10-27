@@ -101,13 +101,14 @@ class Schedule {
 
   async updateSchedule() {
     const data = this.body;
-    const { params } = this;
+    const { no } = this.params;
+    const { clubNum } = this.params;
     const userInfo = this.auth;
     const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
-        no: params.no,
+        no,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
@@ -118,7 +119,7 @@ class Schedule {
       if (success) {
         const senderId = userInfo.id;
         const recipientIds = await NotificationStorage.findAllByClubNum(
-          params.clubNum
+          clubNum
         );
 
         const clubName = await NotificationStorage.findOneByClubNum(clubNum);

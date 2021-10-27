@@ -32,7 +32,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `POST /api/club/review/${clubNum} 500: \n${response.errMsg}`
+        `POST /api/club/review/${clubNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
