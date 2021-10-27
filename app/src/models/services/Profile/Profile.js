@@ -69,12 +69,13 @@ class Profile {
 
     if (this.params.studentId !== userInfo.userId) {
       msg = '로그인된 사람의 프로필이 아닙니다.';
-    } else if (userInfo.email.match(emailRegExp) === null) {
+    } else if (userInfo.email && userInfo.email.match(emailRegExp) === null) {
       msg = '이메일 형식이 맞지 않습니다.';
     } else if (
-      userInfo.phoneNumber.length !== 11 ||
-      Number.isNaN(Number(userInfo.phoneNumber)) ||
-      !(userInfo.phoneNumber.match(phoneNumberRegExp) === null)
+      userInfo.phoneNumber &&
+      (userInfo.phoneNumber.length !== 11 ||
+        Number.isNaN(Number(userInfo.phoneNumber)) ||
+        !(userInfo.phoneNumber.match(phoneNumberRegExp) === null))
     ) {
       msg = '전화번호 형식이 맞지 않습니다.';
     }
