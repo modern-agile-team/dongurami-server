@@ -157,13 +157,27 @@ class ApplicationStorage {
     }
   }
 
-  static async updateExtraAnswer(answerInfo) {
+  static async updateExtraAnswer(id, answerInfo) {
     let conn;
 
-    console.log(answerInfo);
     try {
       conn = await mariadb.getConnection();
-      await conn.query(query);
+
+      let query = '';
+
+      answerInfo.extra.forEach((answer) => {
+        query += `UPDATE answers SET description = "${answer.description}" WHERE question_no = ${answer.no} AND student_id = "${id}";`;
+      });
+
+      const result = await conn.query(`${query}`);
+
+      let updates = 0;
+
+      for (let i = 0; i < result.length; i += 1) {
+        updates += result[i].affectedRows;
+      }
+
+      return updates;
     } catch (err) {
       throw err;
     } finally {

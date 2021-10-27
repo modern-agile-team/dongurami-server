@@ -131,11 +131,17 @@ class Application {
       if (answerInfo.extra.length) {
         // 추가 질문이 있을 시
         let isExtra;
-        if (isApplicant === 2) {
-          const extra = await ApplicationStorage.findAllByClubNum(clubInfo);
-          console.log(extra.questions);
-          isExtra = await ApplicationStorage.updateExtraAnswer(answerInfo);
-        } else isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
+
+        // 첫 가입 신청 시
+        if (!isApplicant) {
+          isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
+        } else {
+          // 거절 당한 기록 존재
+          isExtra = await ApplicationStorage.updateExtraAnswer(
+            auth.id,
+            answerInfo
+          );
+        }
 
         if (isExtra !== answerInfo.extra.length) {
           return { success: false, msg: '추가 질문이 작성되지 않았습니다.' };
