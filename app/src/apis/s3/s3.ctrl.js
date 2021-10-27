@@ -1,6 +1,7 @@
 'use strict';
 
 const S3 = require('../../models/services/S3PreSignedUrl/S3PreSignedUrl');
+const logger = require('../../config/logger');
 
 const process = {
   createPutUrl: async (req, res) => {

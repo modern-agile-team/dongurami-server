@@ -9,11 +9,13 @@ const process = {
   createBoardNum: async (req, res) => {
     const board = new Board(req);
     const image = new Image(req);
-    const { response, boardNum } = await board.createBoardNum();
+    const response = await board.createBoardNum();
     const { category } = req.params;
 
     if (response.success) {
-      const imgNums = await image.saveBoardImg(boardNum);
+      const imgNums = await image.saveBoardImg(response.boardNum);
+
+      delete response.boardNum;
 
       if (imgNums.isError) {
         logger.error(

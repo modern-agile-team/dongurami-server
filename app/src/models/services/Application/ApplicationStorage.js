@@ -173,9 +173,9 @@ class ApplicationStorage {
 
       let updates = 0;
 
-      for (let i = 0; i < result.length; i += 1) {
-        updates += result[i].affectedRows;
-      }
+      result.forEach((v) => {
+        updates += v.affectedRows;
+      });
 
       return updates;
     } catch (err) {
