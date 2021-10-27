@@ -310,13 +310,15 @@ class Student {
     delete user.iss;
     delete user.clubNum;
 
-    user.club = await ProfileStorage.findAllClubByStudentId(user.id);
-
-    if (user) return { success: true, msg: '유저 정보 조회 성공', user };
-    return {
-      success: false,
-      msg: '서버 에러입니다. 서버 개발자에게 얘기해주세요.',
-    };
+    try {
+      if (user) {
+        user.club = await ProfileStorage.findAllClubByStudentId(user.id);
+        return { success: true, msg: '유저 정보 조회 성공', user };
+      }
+      return { success: false, msg: '유저 정보 조회 실패' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
   }
 }
 
