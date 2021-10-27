@@ -6,8 +6,13 @@ const router = express.Router();
 const ctrl = require('./root.ctrl');
 const loginAuth = require('../../middlewares/login-auth');
 const signUpAuth = require('../../middlewares/signUp-auth');
+const identityCheck = require('../../middlewares/identify-auth');
 
-router.get('/student', loginAuth.loginCheck, ctrl.process.getUserInfoByJWT);
+router.get(
+  '/student',
+  identityCheck.identityCheck,
+  ctrl.process.getUserInfoByJWT
+);
 router.get('/naver-login', ctrl.process.naverLogin);
 
 router.post('/login', ctrl.process.login);
