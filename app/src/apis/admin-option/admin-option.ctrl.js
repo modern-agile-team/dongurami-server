@@ -33,7 +33,7 @@ const process = {
 
       if (response.applicant.isError) {
         logger.error(
-          `GET /api/club/admin-option/${clubNum} 500: \n${response.applicant.errMsg}`
+          `GET /api/club/admin-option/${clubNum} 500: \n${response.applicant.errMsg.stack}`
         );
         return res.status(500).json(response.applicant.clientMsg);
       }
@@ -50,7 +50,7 @@ const process = {
     }
     if (response.clubAdminOption.isError) {
       logger.error(
-        `GET /api/club/admin-option/${clubNum} 500: \n${response.clubAdminOption.errMsg}`
+        `GET /api/club/admin-option/${clubNum} 500: \n${response.clubAdminOption.errMsg.stack}`
       );
       return res.status(500).json(response.clubAdminOption.clientMsg);
     }
@@ -73,7 +73,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `POST /api/club/admin-option/${clubNum}/applicant 500: \n${response.errMsg}`
+        `POST /api/club/admin-option/${clubNum}/applicant 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -96,7 +96,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/club/admin-option/${clubNum}/leader 500: \n${response.errMsg}`
+        `PUT /api/club/admin-option/${clubNum}/leader 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -119,7 +119,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/club/admin-option/${clubNum}/admin-function 500: \n${response.errMsg}`
+        `PUT /api/club/admin-option/${clubNum}/admin-function 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -142,7 +142,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/club/admin-option/${clubNum}/applicant 500: \n${response.errMsg}`
+        `PUT /api/club/admin-option/${clubNum}/applicant 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -166,7 +166,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/club/admin-option/${clubNum}/${memberId} 500: \n${response.errMsg}`
+        `DELETE /api/club/admin-option/${clubNum}/${memberId} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }

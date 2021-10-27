@@ -14,7 +14,9 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`GET /api/club/home/${clubNum} 500: \n${response.errMsg}`);
+      logger.error(
+        `GET /api/club/home/${clubNum} 500: \n${response.errMsg.stack}`
+      );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     logger.error(`GET /api/club/home/${clubNum} 404: ${response.msg}`);
@@ -31,7 +33,9 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`PATCH /api/club/home/${clubNum} 500: \n${response.errMsg}`);
+      logger.error(
+        `PATCH /api/club/home/${clubNum} 500: \n${response.errMsg.stack}`
+      );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     logger.error(`PATCH /api/club/home/${clubNum} 403: ${response.msg}`);
@@ -48,7 +52,9 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`PUT /api/club/home/${clubNum} 500: \n${response.errMsg}`);
+      logger.error(
+        `PUT /api/club/home/${clubNum} 500: \n${response.errMsg.stack}`
+      );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     logger.error(`PUT /api/club/home/${clubNum} 403: ${response.msg}`);

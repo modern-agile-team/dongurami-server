@@ -13,7 +13,9 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`GET /api/notification/entire 500: \n${response.errMsg}`);
+      logger.error(
+        `GET /api/notification/entire 500: \n${response.errMsg.stack}`
+      );
       return res.status(500).json(response.clientMsg);
     }
     logger.error(`GET /api/notification/entire 400: ${response.msg}`);
@@ -33,7 +35,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PATCH /api/notification/${notificationNum} 500: \n${response.errMsg}`
+        `PATCH /api/notification/${notificationNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -56,7 +58,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/notification/${notificationNum} 500: \n${response.errMsg}`
+        `PUT /api/notification/${notificationNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
