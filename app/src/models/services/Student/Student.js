@@ -200,7 +200,7 @@ class Student {
         }
         return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
       }
-      return { success: false, msg: '비밀번호가 틀렸습니다.' };
+      return { success: false, msg: '기존 비밀번호가 틀렸습니다.' };
     } catch (err) {
       return Error.ctrl(
         '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
