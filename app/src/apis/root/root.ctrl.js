@@ -15,7 +15,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`POST /api/login 500: \n${response.errMsg}`);
+      logger.error(`POST /api/login 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
     logger.error(`POST /api/login 400: ${response.msg}`);
@@ -31,7 +31,7 @@ const process = {
       return res.status(201).json(response);
     }
     if (response.isError) {
-      logger.error(`POST /api/sign-up 500: \n${response.errMsg}`);
+      logger.error(`POST /api/sign-up 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
     logger.error(`POST /api/sign-up 409: ${response.msg}`);
@@ -47,7 +47,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`POST /api/find-id 500: \n${response.errMsg}`);
+      logger.error(`POST /api/find-id 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
     logger.error(`POST /api/find-id 400: ${response.msg}`);
@@ -64,7 +64,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`PATCH /api/reset-password 500: \n${response.errMsg}`);
+      logger.error(`PATCH /api/reset-password 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
     logger.error(`PATCH /api/reset-password 400: ${response.msg}`);
@@ -81,7 +81,7 @@ const process = {
       return res.status(201).json(response);
     }
     if (response.isError) {
-      logger.error(`POST /api/forgot-password 500: \n${response.errMsg}`);
+      logger.error(`POST /api/forgot-password 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
     logger.error(`POST /api/forgot-password 400: ${response.msg}`);
@@ -102,7 +102,9 @@ const process = {
       return res.status(400).json(response);
     }
     if (response.isError) {
-      logger.error(`PATCH /api/find-password/token 500: \n${response.errMsg}`);
+      logger.error(
+        `PATCH /api/find-password/token 500: \n${response.errMsg.stack}`
+      );
       return res.status(500).json(response.clientMsg);
     }
     logger.info(`PATCH /api/find-password/token 200: ${response.msg}`);
@@ -133,8 +135,12 @@ const process = {
       logger.info(`GET /api/student 200: ${response.msg}`);
       return res.status(200).json(response);
     }
-    logger.error(`GET /api/student 500: ${response.msg}`);
-    return res.status(500).json(response);
+    if (response.isError) {
+      logger.error(`GET /api/student 500: \n${response.errMsg.stack}`);
+      return res.status(500).json(response);
+    }
+    logger.error(`GET /api/student 400: ${response.msg}`);
+    return res.status(400).json(response);
   },
 };
 
