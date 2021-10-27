@@ -306,6 +306,8 @@ class Student {
   async getUserInfoByJWT() {
     const user = this.auth;
 
+    if (!user) return { success: false, msg: '비로그인 사용자입니다.' };
+
     delete user.iat;
     delete user.iss;
     delete user.clubNum;
