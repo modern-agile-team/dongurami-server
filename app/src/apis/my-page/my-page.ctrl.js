@@ -18,7 +18,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `GET /api/my-page/${id}/personal/${clubNum} 500: \n${response.errMsg}`
+        `GET /api/my-page/${id}/personal/${clubNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -43,7 +43,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `GET /api/my-page/${id}/personal/scrap/${clubNum}/${scrapNum} 500: \n${response.errMsg}`
+        `GET /api/my-page/${id}/personal/scrap/${clubNum}/${scrapNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -68,7 +68,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `POST /api/club/board/${category}/personal/scrap/${clubNum}/${boardNum} 500: \n${response.errMsg}`
+        `POST /api/club/board/${category}/personal/scrap/${clubNum}/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -93,7 +93,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/my-page/${id}/personal/scrap/${clubNum}/${scrapNum} 500: \n${response.errMsg}`
+        `PUT /api/my-page/${id}/personal/scrap/${clubNum}/${scrapNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -118,7 +118,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/my-page/${id}/personal/scrap/${clubNum}/${scrapNum} 500:\n${response.errMsg}`
+        `DELETE /api/my-page/${id}/personal/scrap/${clubNum}/${scrapNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response);
     }

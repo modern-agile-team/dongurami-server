@@ -16,7 +16,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `GET /api/club/schedule/${clubNum} 500: \n${response.errMsg}`
+        `GET /api/club/schedule/${clubNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
@@ -38,7 +38,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `GET /api/club/schedule/${clubNum}/${date} 500: \n${response.errMsg}`
+        `GET /api/club/schedule/${clubNum}/${date} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
@@ -59,7 +59,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `POST /api/club/schedule/${clubNum} 500: \n${response.errMsg}`
+        `POST /api/club/schedule/${clubNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
@@ -74,7 +74,7 @@ const process = {
 
     if (response.isError) {
       logger.error(
-        `POST /api/club/schedule/${clubNum}/today 500: \n${response.errMsg}`
+        `POST /api/club/schedule/${clubNum}/today 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
@@ -99,7 +99,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/club/schedule/${clubNum}/${no} 500: \n${response.errMsg}`
+        `PUT /api/club/schedule/${clubNum}/${no} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
@@ -124,7 +124,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PATCH /api/club/schedule/${clubNum}/${no} 500: \n${response.errMsg}`
+        `PATCH /api/club/schedule/${clubNum}/${no} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
@@ -148,7 +148,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/club/schedule/${clubNum}/${no} 500: \n${response.errMsg}`
+        `DELETE /api/club/schedule/${clubNum}/${no} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }

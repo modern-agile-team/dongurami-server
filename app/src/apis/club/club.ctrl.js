@@ -8,7 +8,7 @@ const process = {
     const response = await ClubStorage.readClubList();
 
     if (response.isError) {
-      logger.error(`GET /api/club/list 500: \n${response.errMsg}`);
+      logger.error(`GET /api/club/list 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
     logger.info(`GET /api/club/list 200: ${response.msg}`);

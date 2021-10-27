@@ -14,7 +14,9 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`GET /api/club/review/${clubNum} 500: \n${response.errMsg}`);
+      logger.error(
+        `GET /api/club/review/${clubNum} 500: \n${response.errMsg.stack}`
+      );
       return res.status(500).json(response.clientMsg);
     }
     logger.error(`GET /api/club/review/${clubNum} 400: ${response.msg}`);
@@ -32,7 +34,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `POST /api/club/review/${clubNum} 500: \n${response.errMsg}`
+        `POST /api/club/review/${clubNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -54,7 +56,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/club/review/${clubNum}/${num} 500: \n${response.errMsg}`
+        `PUT /api/club/review/${clubNum}/${num} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -75,7 +77,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/club/review/${params.clubNum}/${params.num} 500: \n${response.errMsg}`
+        `DELETE /api/club/review/${params.clubNum}/${params.num} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }

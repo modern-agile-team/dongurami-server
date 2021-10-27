@@ -16,14 +16,18 @@ const process = {
       const imgNums = await image.saveBoardImg(boardNum);
 
       if (imgNums.isError) {
-        logger.error(`POST /api/board/${category} 500: \n${imgNums.errMsg}`);
+        logger.error(
+          `POST /api/board/${category} 500: \n${imgNums.errMsg.stack}`
+        );
         return res.status(500).json(imgNums.clientMsg);
       }
       logger.info(`POST /api/board/${category} 201: ${response.msg}`);
       return res.status(201).json(response);
     }
     if (response.isError) {
-      logger.error(`POST /api/board/${category} 500: \n${response.errMsg}`);
+      logger.error(
+        `POST /api/board/${category} 500: \n${response.errMsg.stack}`
+      );
       return res.status(500).json(response.clientMsg);
     }
     logger.error(`POST /api/board/${category} 400: ${response.msg}`);
@@ -40,7 +44,9 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`GET /api/board/${category} 500: \n${response.errMsg}`);
+      logger.error(
+        `GET /api/board/${category} 500: \n${response.errMsg.stack}`
+      );
       return res.status(500).json(response.clientMsg);
     }
     if (response.msg === '해당 동아리에 가입하지 않았습니다.') {
@@ -61,7 +67,9 @@ const process = {
       logger.info(`GET /api/board/promotion/club 200: ${response.msg}`);
       return res.status(200).json(response);
     }
-    logger.error(`GET /api/board/promotion/club 500: \n${response.errMsg}`);
+    logger.error(
+      `GET /api/board/promotion/club 500: \n${response.errMsg.stack}`
+    );
     return res.status(500).json(response.clientMsg);
   },
 
@@ -79,7 +87,7 @@ const process = {
 
         if (response.images.isError) {
           logger.error(
-            `GET /api/board/${category}/${boardNum} 500: \n${response.images.errMsg}`
+            `GET /api/board/${category}/${boardNum} 500: \n${response.images.errMsg.stack}`
           );
           return res.status(500).json(response.images.clientMsg);
         }
@@ -90,7 +98,7 @@ const process = {
 
         if (response.comments.isError) {
           logger.error(
-            `GET /api/board/${category}/${boardNum} 500: \n${response.comments.errMsg}`
+            `GET /api/board/${category}/${boardNum} 500: \n${response.comments.errMsg.stack}`
           );
           return res.status(500).json(response.comments.clientMsg);
         }
@@ -99,7 +107,7 @@ const process = {
 
       if (updateBoardHit.isError) {
         logger.error(
-          `GET /api/board/${category}/${boardNum} 500: \n${updateBoardHit.errMsg}`
+          `GET /api/board/${category}/${boardNum} 500: \n${updateBoardHit.errMsg.stack}`
         );
         return res.status(500).json(updateBoardHit.clientMsg);
       }
@@ -115,7 +123,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `GET /api/board/${category}/${boardNum} 500: \n${response.errMsg}`
+        `GET /api/board/${category}/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -141,7 +149,7 @@ const process = {
 
       if (updateImage.isError) {
         logger.error(
-          `PUT /api/board/${category}/${boardNum} 500: \n${updateImage.errMsg}`
+          `PUT /api/board/${category}/${boardNum} 500: \n${updateImage.errMsg.stack}`
         );
         return res.status(500).json(updateImage.clientMsg);
       }
@@ -158,7 +166,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/board/${category}/${boardNum} 500: \n${response.errMsg}`
+        `PUT /api/board/${category}/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -180,7 +188,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/board/${category}/${boardNum} 500: \n${response.errMsg}`
+        `DELETE /api/board/${category}/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }

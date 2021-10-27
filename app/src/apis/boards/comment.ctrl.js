@@ -18,7 +18,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `POST /api/board/${category}/${boardNum} 500: \n${response.errMsg}`
+        `POST /api/board/${category}/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -43,7 +43,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `POST /api/board/${category}/${boardNum}/${cmtNum} 500: \n${response.errMsg}`
+        `POST /api/board/${category}/${boardNum}/${cmtNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -68,7 +68,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/board/${category}/${boardNum}/${cmtNum} 500: \n${response.errMsg}`
+        `PUT /api/board/${category}/${boardNum}/${cmtNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -94,7 +94,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/board/${category}/${boardNum}/${cmtNum}/${replyCmtNum} 500: \n${response.errMsg}`
+        `PUT /api/board/${category}/${boardNum}/${cmtNum}/${replyCmtNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -119,7 +119,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/board/${category}/${boardNum}/${cmtNum} 500: \n${response.errMsg}`
+        `DELETE /api/board/${category}/${boardNum}/${cmtNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
@@ -145,7 +145,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/board/${category}/${boardNum}/${cmtNum}/${replyCmtNum} 500: \n${response.errMsg}`
+        `DELETE /api/board/${category}/${boardNum}/${cmtNum}/${replyCmtNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
