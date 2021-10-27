@@ -12,7 +12,7 @@ const printFormat = printf(
 const printLogFormat = {
   file: combine(
     timestamp({
-      format: 'YYYY-MM-DD HH:mm:dd',
+      format: 'YYYY-MM-DD HH:mm:ss',
     }),
     printFormat
   ),
