@@ -2,6 +2,7 @@
 
 const ReviewStorage = require('./ReviewStorage');
 const Error = require('../../utils/Error');
+const WriterCheck = require('../../utils/WriterCheck');
 
 class Review {
   constructor(req) {
@@ -70,6 +71,7 @@ class Review {
   async updateById() {
     const review = this.body;
     const reviewNum = Number(this.params.num);
+    const user = this.auth;
 
     try {
       const reviewInfo = {
@@ -77,6 +79,14 @@ class Review {
         description: review.description,
         score: review.score,
       };
+
+      const isWriterCheck = await WriterCheck.ctrl(
+        user.id,
+        reviewInfo.num,
+        'reviews'
+      );
+
+      if (!isWriterCheck.success) return isWriterCheck;
 
       const isUpdate = await ReviewStorage.updateOneById(reviewInfo);
 
@@ -97,8 +107,17 @@ class Review {
 
   async deleteByNum() {
     const reviewNum = Number(this.params.num);
+    const user = this.auth;
 
     try {
+      const isWriterCheck = await WriterCheck.ctrl(
+        user.id,
+        reviewNum,
+        'reviews'
+      );
+
+      if (!isWriterCheck.success) return isWriterCheck;
+
       const isDelete = await ReviewStorage.deleteOneByNum(reviewNum);
 
       if (isDelete) {
