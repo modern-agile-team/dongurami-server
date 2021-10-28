@@ -2,6 +2,7 @@
 
 const MyPageStorage = require('./MyPageStorage');
 const Error = require('../../utils/Error');
+const WriterCheck = require('../../utils/WriterCheck');
 
 class MyPage {
   constructor(req) {
@@ -78,11 +79,20 @@ class MyPage {
   }
 
   async updateOneByScrapNum() {
+    const { scrapNum } = this.params;
     const data = this.body;
 
     try {
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        scrapNum,
+        'scraps'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
       const scrapInfo = {
-        scrapNum: this.params.scrapNum,
+        scrapNum,
         title: data.title,
         description: data.description,
       };
@@ -100,6 +110,14 @@ class MyPage {
     const { scrapNum } = this.params;
 
     try {
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        scrapNum,
+        'scraps'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
       const scrap = await MyPageStorage.deleteOneByScrapNum(scrapNum);
 
       if (scrap) return { success: true, msg: '글이 삭제되었습니다.' };
