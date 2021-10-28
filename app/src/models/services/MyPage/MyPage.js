@@ -79,7 +79,7 @@ class MyPage {
   }
 
   async updateOneByScrapNum() {
-    const { scrapNum } = this.pareams;
+    const { scrapNum } = this.params;
     const data = this.body;
 
     try {
