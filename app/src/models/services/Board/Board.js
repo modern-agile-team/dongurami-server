@@ -17,6 +17,7 @@ class Board {
   }
 
   async createBoardNum() {
+    const user = this.auth;
     const board = this.body;
     const { clubNum } = this.params;
     const category = boardCategory[this.params.category];
@@ -26,7 +27,7 @@ class Board {
       const boardInfo = {
         category,
         clubNum: 1,
-        id: this.auth.id,
+        id: user.id,
         title: board.title,
         description: board.description,
       };
@@ -39,6 +40,12 @@ class Board {
         boardInfo.clubNum = clubNum;
       } else if (category === 4) {
         boardInfo.clubNum = board.clubNo;
+      }
+
+      if (category === 5 || category === 6) {
+        if (!user.clubNum.includes(Number(clubNum))) {
+          return { success: false, msg: '동아리원만 작성할 수 있습니다.' };
+        }
       }
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
