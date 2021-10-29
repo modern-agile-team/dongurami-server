@@ -26,6 +26,10 @@ class Comment {
         description: comment.description,
       };
 
+      if (!comment.description) {
+        return { success: false, msg: '댓글 본문이 존재하지 않습니다.' };
+      }
+
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
 
       if (exist === undefined) {
@@ -69,6 +73,10 @@ class Comment {
         id: user.id,
         description: replyComment.description,
       };
+
+      if (!replyComment.description) {
+        return { success: false, msg: '답글 본문이 존재하지 않습니다.' };
+      }
 
       const exist = await CommentStorage.existOnlyCmtNum(
         replyCommentInfo.cmtNum,
@@ -133,6 +141,10 @@ class Comment {
         description: this.body.description,
       };
 
+      if (!comment.description) {
+        return { success: false, msg: '댓글 본문이 존재하지 않습니다.' };
+      }
+
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
         cmtInfo.cmtNum,
@@ -162,6 +174,10 @@ class Comment {
         replyCmtNum: params.replyCmtNum,
         description: this.body.description,
       };
+
+      if (!comment.description) {
+        return { success: false, msg: '답글 본문이 존재하지 않습니다.' };
+      }
 
       const updateReplyCmtCount = await CommentStorage.updateByReplyCommentNum(
         replyCmtInfo

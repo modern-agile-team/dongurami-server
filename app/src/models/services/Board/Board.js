@@ -31,6 +31,10 @@ class Board {
         description: board.description,
       };
 
+      if (!(board.title && board.description)) {
+        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      }
+
       if (clubNum !== undefined && this.params.clubNum > 1) {
         boardInfo.clubNum = clubNum;
       } else if (category === 4) {
@@ -203,6 +207,10 @@ class Board {
         description: board.description,
         boardNum: params.boardNum,
       };
+
+      if (!(board.title && board.description)) {
+        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      }
 
       const writerCheck = await WiterCheck.ctrl(
         this.auth.id,
