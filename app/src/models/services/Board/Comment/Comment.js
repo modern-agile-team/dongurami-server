@@ -4,6 +4,7 @@ const CommentStorage = require('./CommentStorage');
 const BoardStorage = require('../BoardStorage');
 const Notification = require('../../Notification/Notification');
 const Error = require('../../../utils/Error');
+const WriterCheck = require('../../../utils/WriterCheck');
 
 class Comment {
   constructor(req) {
@@ -132,6 +133,14 @@ class Comment {
         description: this.body.description,
       };
 
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        cmtInfo.cmtNum,
+        'comments'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
       const updateCmtCount = await CommentStorage.updateByCommentNum(cmtInfo);
 
       if (updateCmtCount === 0) {
@@ -158,6 +167,14 @@ class Comment {
         replyCmtInfo
       );
 
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        replyCmtInfo.cmtNum,
+        'comments'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
       if (updateReplyCmtCount === 0) {
         return { success: false, msg: '존재하지 않는 답글입니다.' };
       }
@@ -175,6 +192,14 @@ class Comment {
         boardNum: params.boardNum,
         cmtNum: params.cmtNum,
       };
+
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        cmtInfo.cmtNum,
+        'comments'
+      );
+
+      if (!writerCheck.success) return writerCheck;
 
       const deleteCmtCount = await CommentStorage.deleteAllByGroupNum(cmtInfo);
 
@@ -196,6 +221,14 @@ class Comment {
         cmtNum: params.cmtNum,
         replyCmtNum: params.replyCmtNum,
       };
+
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        replyCmtInfo.cmtNum,
+        'comments'
+      );
+
+      if (!writerCheck.success) return writerCheck;
 
       const deleteReplyCmtCount = await CommentStorage.deleteOneReplyCommentNum(
         replyCmtInfo
