@@ -179,10 +179,6 @@ class Comment {
         return { success: false, msg: '답글 본문이 존재하지 않습니다.' };
       }
 
-      const updateReplyCmtCount = await CommentStorage.updateByReplyCommentNum(
-        replyCmtInfo
-      );
-
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
         replyCmtInfo.cmtNum,
@@ -190,6 +186,10 @@ class Comment {
       );
 
       if (!writerCheck.success) return writerCheck;
+
+      const updateReplyCmtCount = await CommentStorage.updateByReplyCommentNum(
+        replyCmtInfo
+      );
 
       if (updateReplyCmtCount === 0) {
         return { success: false, msg: '존재하지 않는 답글입니다.' };
