@@ -132,7 +132,7 @@ class Notification {
         'recipient_id'
       );
 
-      if (!isWriterCheck) return isWriterCheck;
+      if (!isWriterCheck.success) return isWriterCheck;
 
       const isUpdate = await NotificationStorage.updateOneByNotificationNum(
         notificationNum
