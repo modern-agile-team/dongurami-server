@@ -4,7 +4,7 @@ const BoardStorage = require('./BoardStorage');
 const Notification = require('../Notification/Notification');
 const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
-const WiterCheck = require('../../utils/WriterCheck');
+const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
 
 class Board {
@@ -212,7 +212,7 @@ class Board {
         return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
       }
 
-      const writerCheck = await WiterCheck.ctrl(
+      const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
         boardInfo.boardNum,
         'boards'
@@ -241,7 +241,7 @@ class Board {
         boardNum: params.boardNum,
       };
 
-      const writerCheck = await WiterCheck.ctrl(
+      const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
         boardInfo.boardNum,
         'boards'
