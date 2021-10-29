@@ -87,6 +87,10 @@ class MyPage {
     const data = this.body;
 
     try {
+      if (!(data.title && data.description)) {
+        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      }
+
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
         scrapNum,
