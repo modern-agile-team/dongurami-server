@@ -4,6 +4,7 @@ const BoardStorage = require('./BoardStorage');
 const Notification = require('../Notification/Notification');
 const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
+const WiterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
 
 class Board {
@@ -29,6 +30,10 @@ class Board {
         title: board.title,
         description: board.description,
       };
+
+      if (!(board.title && board.description)) {
+        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      }
 
       if (clubNum !== undefined && this.params.clubNum > 1) {
         boardInfo.clubNum = clubNum;
@@ -203,6 +208,18 @@ class Board {
         boardNum: params.boardNum,
       };
 
+      if (!(board.title && board.description)) {
+        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      }
+
+      const writerCheck = await WiterCheck.ctrl(
+        this.auth.id,
+        boardInfo.boardNum,
+        'boards'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
       const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
 
       if (updateBoardCnt === 0) {
@@ -223,6 +240,14 @@ class Board {
         category,
         boardNum: params.boardNum,
       };
+
+      const writerCheck = await WiterCheck.ctrl(
+        this.auth.id,
+        boardInfo.boardNum,
+        'boards'
+      );
+
+      if (!writerCheck.success) return writerCheck;
 
       const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
