@@ -4,6 +4,7 @@ const BoardStorage = require('./BoardStorage');
 const Notification = require('../Notification/Notification');
 const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
+const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
 
 class Board {
@@ -16,6 +17,7 @@ class Board {
   }
 
   async createBoardNum() {
+    const user = this.auth;
     const board = this.body;
     const { clubNum } = this.params;
     const category = boardCategory[this.params.category];
@@ -25,15 +27,25 @@ class Board {
       const boardInfo = {
         category,
         clubNum: 1,
-        id: this.auth.id,
+        id: user.id,
         title: board.title,
         description: board.description,
       };
+
+      if (!(board.title && board.description)) {
+        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      }
 
       if (clubNum !== undefined && this.params.clubNum > 1) {
         boardInfo.clubNum = clubNum;
       } else if (category === 4) {
         boardInfo.clubNum = board.clubNo;
+      }
+
+      if (category === 5 || category === 6) {
+        if (!user.clubNum.includes(Number(clubNum))) {
+          return { success: false, msg: '동아리원만 작성할 수 있습니다.' };
+        }
       }
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
@@ -203,6 +215,18 @@ class Board {
         boardNum: params.boardNum,
       };
 
+      if (!(board.title && board.description)) {
+        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      }
+
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        boardInfo.boardNum,
+        'boards'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
       const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
 
       if (updateBoardCnt === 0) {
@@ -223,6 +247,14 @@ class Board {
         category,
         boardNum: params.boardNum,
       };
+
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        boardInfo.boardNum,
+        'boards'
+      );
+
+      if (!writerCheck.success) return writerCheck;
 
       const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
 

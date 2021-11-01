@@ -2,6 +2,7 @@
 
 const MyPageStorage = require('./MyPageStorage');
 const Error = require('../../utils/Error');
+const WriterCheck = require('../../utils/WriterCheck');
 
 class MyPage {
   constructor(req) {
@@ -61,6 +62,10 @@ class MyPage {
     const data = this.body;
 
     try {
+      if (!(data.title && data.description)) {
+        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      }
+
       const scrapInfo = {
         id: this.auth.id,
         boardNum: this.params.boardNum,
@@ -78,11 +83,24 @@ class MyPage {
   }
 
   async updateOneByScrapNum() {
+    const { scrapNum } = this.params;
     const data = this.body;
 
     try {
+      if (!(data.title && data.description)) {
+        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      }
+
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        scrapNum,
+        'scraps'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
       const scrapInfo = {
-        scrapNum: this.params.scrapNum,
+        scrapNum,
         title: data.title,
         description: data.description,
       };
@@ -100,6 +118,14 @@ class MyPage {
     const { scrapNum } = this.params;
 
     try {
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        scrapNum,
+        'scraps'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
       const scrap = await MyPageStorage.deleteOneByScrapNum(scrapNum);
 
       if (scrap) return { success: true, msg: '글이 삭제되었습니다.' };

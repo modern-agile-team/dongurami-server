@@ -2,6 +2,7 @@
 
 const NotificationStorage = require('./NotificationStorage');
 const Error = require('../../utils/Error');
+const WriterCheck = require('../../utils/WriterCheck');
 
 class Notification {
   constructor(req) {
@@ -120,8 +121,19 @@ class Notification {
 
   async updateOneByNotificationNum() {
     const notificationNum = Number(this.params.notificationNum);
+    const userId = this.auth.id;
 
     try {
+      const isWriterCheck = await WriterCheck.ctrl(
+        userId,
+        notificationNum,
+        'notifications',
+        'no',
+        'recipient_id'
+      );
+
+      if (!isWriterCheck.success) return isWriterCheck;
+
       const isUpdate = await NotificationStorage.updateOneByNotificationNum(
         notificationNum
       );

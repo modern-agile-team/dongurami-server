@@ -4,6 +4,7 @@ const CommentStorage = require('./CommentStorage');
 const BoardStorage = require('../BoardStorage');
 const Notification = require('../../Notification/Notification');
 const Error = require('../../../utils/Error');
+const WriterCheck = require('../../../utils/WriterCheck');
 
 class Comment {
   constructor(req) {
@@ -24,6 +25,10 @@ class Comment {
         id: user.id,
         description: comment.description,
       };
+
+      if (!comment.description) {
+        return { success: false, msg: '댓글 본문이 존재하지 않습니다.' };
+      }
 
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
 
@@ -68,6 +73,10 @@ class Comment {
         id: user.id,
         description: replyComment.description,
       };
+
+      if (!replyComment.description) {
+        return { success: false, msg: '답글 본문이 존재하지 않습니다.' };
+      }
 
       const exist = await CommentStorage.existOnlyCmtNum(
         replyCommentInfo.cmtNum,
@@ -132,6 +141,18 @@ class Comment {
         description: this.body.description,
       };
 
+      if (!comment.description) {
+        return { success: false, msg: '댓글 본문이 존재하지 않습니다.' };
+      }
+
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        cmtInfo.cmtNum,
+        'comments'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
       const updateCmtCount = await CommentStorage.updateByCommentNum(cmtInfo);
 
       if (updateCmtCount === 0) {
@@ -153,6 +174,18 @@ class Comment {
         replyCmtNum: params.replyCmtNum,
         description: this.body.description,
       };
+
+      if (!comment.description) {
+        return { success: false, msg: '답글 본문이 존재하지 않습니다.' };
+      }
+
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        replyCmtInfo.cmtNum,
+        'comments'
+      );
+
+      if (!writerCheck.success) return writerCheck;
 
       const updateReplyCmtCount = await CommentStorage.updateByReplyCommentNum(
         replyCmtInfo
@@ -176,6 +209,14 @@ class Comment {
         cmtNum: params.cmtNum,
       };
 
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        cmtInfo.cmtNum,
+        'comments'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
       const deleteCmtCount = await CommentStorage.deleteAllByGroupNum(cmtInfo);
 
       if (deleteCmtCount === 0) {
@@ -196,6 +237,14 @@ class Comment {
         cmtNum: params.cmtNum,
         replyCmtNum: params.replyCmtNum,
       };
+
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        replyCmtInfo.cmtNum,
+        'comments'
+      );
+
+      if (!writerCheck.success) return writerCheck;
 
       const deleteReplyCmtCount = await CommentStorage.deleteOneReplyCommentNum(
         replyCmtInfo
