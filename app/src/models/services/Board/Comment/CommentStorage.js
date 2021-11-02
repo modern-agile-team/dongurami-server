@@ -241,7 +241,7 @@ class CommentStorage {
 
       const query = `SELECT s.name FROM comments AS c 
         JOIN students AS s ON c.student_id = s.id 
-        WHERE board_no = ? AND group_no = ?;`;
+        WHERE c.board_no = ? AND c.group_no = ?;`;
 
       const comments = await conn.query(query, [boardNum, cmtNum]);
 

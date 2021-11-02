@@ -36,13 +36,13 @@ class NotificationStorage {
 
       const members = await conn.query(query, clubNum);
 
-      const studentIds = [];
+      const studentNames = [];
 
       members.forEach((member) => {
-        studentIds.push(member.studentId);
+        studentNames.push(member.studentId);
       });
 
-      return studentIds;
+      return studentNames;
     } catch (err) {
       throw err;
     } finally {

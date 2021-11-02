@@ -40,7 +40,7 @@ class Comment {
 
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
-      const { name, title } =
+      const { recipientName, title } =
         await BoardStorage.findStudentNameAndTitleByBoardNum(
           commentInfo.boardNum
         );
@@ -48,7 +48,7 @@ class Comment {
       const notificationInfo = {
         title,
         senderName: user.name,
-        recipientName: name,
+        recipientName,
         content: commentInfo.description,
       };
 
