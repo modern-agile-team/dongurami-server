@@ -137,7 +137,7 @@ class Application {
 
       // 필수 질문 추가 완 x
       if (!isBasic) {
-        return { success: false, msg: '필수 답변이 작성되지않았습니다.' };
+        return { success: false, msg: '필수 답변이 작성되지 않았습니다.' };
       }
 
       // 필수 질문 추가 완 / 추가 질문 여부
