@@ -54,19 +54,19 @@ class Board {
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
       if (category === 5) {
-        const senderId = user.name;
+        const senderName = user.name;
 
-        const recipientIds = await NotificationStorage.findAllByClubNum(
+        const recipientNames = await NotificationStorage.findAllByClubNum(
           boardInfo.clubNum
         );
 
         const clubName = await NotificationStorage.findOneByClubNum(clubNum);
 
-        recipientIds.forEach(async (recipientId) => {
-          if (senderId !== recipientId) {
+        recipientNames.forEach(async (recipientName) => {
+          if (senderId !== recipientName) {
             const notificationInfo = {
-              recipientId,
-              senderId,
+              recipientName,
+              senderName,
               clubName,
               content: boardInfo.title,
             };
