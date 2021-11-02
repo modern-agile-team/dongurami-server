@@ -120,11 +120,24 @@ class Application {
         extra: answer.extra,
       };
 
+      if (!(answerInfo.grade && answerInfo.gender && answerInfo.phoneNum)) {
+        return { success: false, msg: '필수 답변을 다 가입해주세요.' };
+      }
+
+      const phoneNumberRegExp = /^[0-9]+$/;
+
+      if (
+        answerInfo.phoneNum.length !== 11 ||
+        !answerInfo.phoneNum.match(phoneNumberRegExp)
+      ) {
+        return { success: false, msg: '전화번호 형식이 맞지 않습니다.' };
+      }
+
       const isBasic = await ApplicationStorage.createBasicAnswer(answerInfo);
 
       // 필수 질문 추가 완 x
       if (!isBasic) {
-        return { success: false, msg: '필수 질문이 작성되지않았습니다.' };
+        return { success: false, msg: '필수 답변이 작성되지않았습니다.' };
       }
 
       // 필수 질문 추가 완 / 추가 질문 여부
@@ -144,7 +157,7 @@ class Application {
         }
 
         if (isExtra !== answerInfo.extra.length) {
-          return { success: false, msg: '추가 질문이 작성되지 않았습니다.' };
+          return { success: false, msg: '추가 답변이 작성되지 않았습니다.' };
         }
       }
       // 질문 추가 완 => 동아리 지원자 테이블 추가

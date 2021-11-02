@@ -207,6 +207,7 @@ class ApplicationStorage {
 
   static async findOneByClubNum(clubNum) {
     let conn;
+
     try {
       conn = await mariadb.getConnection();
 
