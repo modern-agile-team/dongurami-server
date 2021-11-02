@@ -121,7 +121,7 @@ class Application {
       };
 
       if (!(answerInfo.grade && answerInfo.gender && answerInfo.phoneNum)) {
-        return { success: false, msg: '필수 답변을 전부 가입해주세요.' };
+        return { success: false, msg: '필수 답변을 전부 기입해주세요.' };
       }
 
       const phoneNumberRegExp = /^[0-9]+$/;
