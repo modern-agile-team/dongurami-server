@@ -32,6 +32,13 @@ class Board {
         description: board.description,
       };
 
+      if (category === 1 && user.isAdmin === 0) {
+        return {
+          success: false,
+          msg: '공지게시판은 관리자만 접근할 수 있습니다.',
+        };
+      }
+
       if (!(board.title && board.description)) {
         return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
       }
@@ -218,6 +225,13 @@ class Board {
         boardNum: params.boardNum,
       };
 
+      if (category === 1 && user.isAdmin === 0) {
+        return {
+          success: false,
+          msg: '공지게시판은 관리자만 접근할 수 있습니다.',
+        };
+      }
+
       if (!(board.title && board.description)) {
         return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
       }
@@ -253,6 +267,13 @@ class Board {
         category,
         boardNum: params.boardNum,
       };
+
+      if (category === 1 && user.isAdmin === 0) {
+        return {
+          success: false,
+          msg: '공지게시판은 관리자만 접근할 수 있습니다.',
+        };
+      }
 
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
