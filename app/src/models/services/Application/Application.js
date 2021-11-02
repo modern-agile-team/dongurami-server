@@ -182,7 +182,7 @@ class Application {
     const notification = new Notification(this.req);
 
     try {
-      const senderId = this.auth.id;
+      const senderName = this.auth.name;
       const userInfo = {
         clubNum,
         applicant: body.applicant,
@@ -199,7 +199,7 @@ class Application {
 
         if (isCreate) {
           const notificationInfo = {
-            senderId,
+            senderName,
             recipientId: userInfo.applicant,
             clubName,
             content: '동아리 가입 신청 결과',
