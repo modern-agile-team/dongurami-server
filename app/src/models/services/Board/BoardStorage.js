@@ -242,7 +242,7 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE replace(${searchInfo.type}, ' ', '') LIKE ? AND board_category_no = ? AND club_no = ?
+      WHERE REPLACE(${searchInfo.type}, ' ', '') LIKE ? AND board_category_no = ? AND club_no = ?
       ORDER BY ${searchInfo.sort} ${searchInfo.order};`;
 
       const boards = await conn.query(query, [
@@ -288,7 +288,7 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE replace(${searchInfo.type}, ' ', '') LIKE ? AND board_category_no = 4${where}
+      WHERE REPLACE(${searchInfo.type}, ' ', '') LIKE ? AND board_category_no = 4${where}
       GROUP BY no
       ORDER BY ${searchInfo.sort} ${searchInfo.order}
       ${limit};`;

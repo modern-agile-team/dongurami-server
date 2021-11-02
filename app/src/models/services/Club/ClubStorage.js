@@ -26,7 +26,7 @@ class ClubStorage {
     const keyword = `%${name.replace(/(\s*)/g, '')}%`;
 
     try {
-      const query = `SELECT no, name, category, logo_url AS logoUrl FROM clubs where replace(name, ' ', '') like ?;`;
+      const query = `SELECT no, name, category, logo_url AS logoUrl FROM clubs WHERE REPLACE(name, ' ', '') like ?;`;
       const result = await conn.query(query, [keyword]);
 
       return result;
