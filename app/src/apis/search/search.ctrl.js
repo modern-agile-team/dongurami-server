@@ -47,11 +47,11 @@ const process = {
     const response = await club.clubListSearch();
 
     if (response.success) {
-      logger.info(`GET /api/search//club-list/category 200: ${response.msg}`);
+      logger.info(`GET /api/search/club-list/category 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     logger.error(
-      `GET /api/search//club-list/category 500: \n${response.errMsg.stack}`
+      `GET /api/search/club-list/category 500: \n${response.errMsg.stack}`
     );
     return res.status(500).json(response.clientMsg);
   },
