@@ -41,7 +41,7 @@ class Comment {
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
       const { name, title } =
-        await BoardStorage.findStudentIdAndTitleByBoardNum(
+        await BoardStorage.findStudentNameAndTitleByBoardNum(
           commentInfo.boardNum
         );
 
