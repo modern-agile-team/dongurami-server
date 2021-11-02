@@ -265,7 +265,7 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const keyword = `%${searchInfo.keyword}%`;
+      const keyword = `%${searchInfo.keyword.replace(/(\s*)/g, '')}%`;
       let where = '';
       let limit = '';
 
@@ -288,7 +288,7 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE ${searchInfo.type} LIKE ? AND board_category_no = 4${where}
+      WHERE replace(${searchInfo.type}, ' ', '') LIKE ? AND board_category_no = 4${where}
       GROUP BY no
       ORDER BY ${searchInfo.sort} ${searchInfo.order}
       ${limit};`;
