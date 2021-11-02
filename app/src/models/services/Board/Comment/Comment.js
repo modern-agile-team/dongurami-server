@@ -96,7 +96,7 @@ class Comment {
 
       const senderName = user.name;
 
-      const { title } = await BoardStorage.findStudentIdAndTitleByBoardNum(
+      const { title } = await BoardStorage.findStudentNameAndTitleByBoardNum(
         replyCommentInfo.boardNum
       );
 
