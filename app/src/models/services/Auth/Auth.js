@@ -9,7 +9,6 @@ class Auth {
       clubNum,
       id: student.id,
       name: student.name,
-      email: student.email,
       profilePath: student.profileImageUrl,
       isAdmin: student.adminFlag,
     };

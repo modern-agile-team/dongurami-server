@@ -39,6 +39,9 @@ class Board {
       if (clubNum !== undefined && this.params.clubNum > 1) {
         boardInfo.clubNum = clubNum;
       } else if (category === 4) {
+        if (board.images.length === 0) {
+          return { success: false, msg: '사진을 첨부해주세요' };
+        }
         boardInfo.clubNum = board.clubNo;
       }
 
@@ -217,6 +220,9 @@ class Board {
 
       if (!(board.title && board.description)) {
         return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      }
+      if (category === 4 && board.images.length === 0) {
+        return { success: false, msg: '사진을 첨부해주세요' };
       }
 
       const writerCheck = await WriterCheck.ctrl(
