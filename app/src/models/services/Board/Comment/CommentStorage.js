@@ -239,17 +239,19 @@ class CommentStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT student_id AS studentId FROM comments WHERE board_no = ? AND group_no = ?;`;
+      const query = `SELECT s.name FROM comments AS c 
+        JOIN students AS s ON c.student_id = s.id 
+        WHERE board_no = ? AND group_no = ?;`;
 
       const comments = await conn.query(query, [boardNum, cmtNum]);
 
-      const recipientIds = [];
+      const recipientNames = [];
 
       comments.forEach((comment) => {
-        recipientIds.push(comment.studentId);
+        recipientNames.push(comment.name);
       });
 
-      return recipientIds;
+      return recipientNames;
     } catch (err) {
       throw err;
     } finally {

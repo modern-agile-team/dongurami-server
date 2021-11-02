@@ -40,15 +40,15 @@ class Comment {
 
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
-      const { studentId, title } =
+      const { name, title } =
         await BoardStorage.findStudentIdAndTitleByBoardNum(
           commentInfo.boardNum
         );
 
       const notificationInfo = {
         title,
-        senderId: commentInfo.id,
-        recipientId: studentId,
+        senderName: user.name,
+        recipientName: name,
         content: commentInfo.description,
       };
 
@@ -89,22 +89,22 @@ class Comment {
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      const senderId = replyCommentInfo.id;
-
-      const recipientIds = await CommentStorage.findStudentIdsByCmtNum(
+      const recipientNames = await CommentStorage.findStudentIdsByCmtNum(
         replyCommentInfo.cmtNum,
         replyCommentInfo.boardNum
       );
+
+      const senderName = user.name;
 
       const { title } = await BoardStorage.findStudentIdAndTitleByBoardNum(
         replyCommentInfo.boardNum
       );
 
-      recipientIds.forEach(async (recipientId) => {
-        if (senderId !== recipientId) {
+      recipientNames.forEach(async (recipientName) => {
+        if (senderName !== recipientName) {
           const notificationInfo = {
-            senderId,
-            recipientId,
+            senderName,
+            recipientName,
             title,
             content: replyCommentInfo.description,
           };
