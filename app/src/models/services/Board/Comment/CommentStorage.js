@@ -233,7 +233,7 @@ class CommentStorage {
     }
   }
 
-  static async findStudentIdsByCmtNum(cmtNum, boardNum) {
+  static async findStudentNamesByCmtNum(cmtNum, boardNum) {
     let conn;
 
     try {

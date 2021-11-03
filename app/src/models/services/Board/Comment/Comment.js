@@ -89,7 +89,7 @@ class Comment {
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      const recipientNames = await CommentStorage.findStudentIdsByCmtNum(
+      const recipientNames = await CommentStorage.findStudentNamesByCmtNum(
         replyCommentInfo.cmtNum,
         replyCommentInfo.boardNum
       );
