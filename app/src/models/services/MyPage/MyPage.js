@@ -71,7 +71,7 @@ class MyPage {
       }
 
       const descriptions = data.scrapDescription + data.boardDescription;
-      const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
+      const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/i;
 
       imgReg.test(descriptions);
 
