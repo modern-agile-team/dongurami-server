@@ -2,6 +2,8 @@
 
 const ProfileStorage = require('./ProfileStorage');
 const Error = require('../../utils/Error');
+const StudentStorage = require('../Student/StudentStorage');
+const Auth = require('../Auth/Auth');
 
 class Profile {
   constructor(req) {
@@ -55,12 +57,13 @@ class Profile {
 
   async updateStudentInfo() {
     const request = this.body;
+    const user = this.auth;
     const userInfo = {
       email: request.email,
       phoneNumber: request.phoneNumber,
       grade: request.grade,
       profileImageUrl: request.profileImageUrl,
-      userId: this.auth.id,
+      userId: user.id,
     };
     const emailRegExp =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
@@ -86,6 +89,13 @@ class Profile {
 
       if (studentUpdateCnt === 0) {
         return { success: false, msg: '존재하지 않는 회원입니다.' };
+      }
+      if (userInfo.profileImageUrl !== user.profilePath) {
+        const checkedId = await StudentStorage.findOneById(user.id);
+        const clubs = await StudentStorage.findOneByLoginedId(user.id);
+        const jwt = await Auth.createJWT(checkedId, clubs);
+
+        return { success: true, msg: '회원정보 수정 성공', jwt };
       }
       return { success: true, msg: '회원정보 수정 성공' };
     } catch (err) {
