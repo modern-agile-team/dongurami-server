@@ -192,15 +192,12 @@ class Application {
         userInfo
       );
 
-      const { applicantName, clubName } =
-        await NotificationStorage.findApplicantNameAndClubNameByClubNum(
-          clubNum
-        );
-
       if (isUpdate) {
         const isCreate = await ApplicationStorage.createMemberById(userInfo);
 
         if (isCreate) {
+          const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+
           const notificationInfo = {
             senderName,
             recipientName: applicantName,
@@ -241,12 +238,9 @@ class Application {
         userInfo
       );
 
-      const { applicantName, clubName } =
-        await NotificationStorage.findApplicantNameAndClubNameByClubNum(
-          clubNum
-        );
-
       if (isUpdate) {
+        const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+
         const notificationInfo = {
           senderName,
           recipientName: applicantName,
