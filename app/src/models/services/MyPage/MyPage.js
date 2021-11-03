@@ -15,6 +15,10 @@ class MyPage {
     const { params } = this;
 
     try {
+      if (params.id !== this.auth.id) {
+        return { succeess: false, msg: '본인만 열람 가능합니다.' };
+      }
+
       const userInfo = {
         id: params.id,
         clubNum: params.clubNum,
@@ -62,15 +66,24 @@ class MyPage {
     const data = this.body;
 
     try {
-      if (!(data.title && data.description)) {
-        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      if (!data.title) {
+        return { success: false, msg: '제목이 존재하지 않습니다.' };
       }
 
+      const descriptions = data.scrapDescription + data.boardDescription;
+      const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/i;
+
+      imgReg.test(descriptions);
+
+      const fileUrl = RegExp.$2;
+
       const scrapInfo = {
+        fileUrl,
         id: this.auth.id,
-        boardNum: this.params.boardNum,
+        clubNum: this.params.clubNum,
         title: data.title,
-        description: data.description,
+        scrapDescription: data.scrapDescription,
+        boardDescription: data.boardDescription,
       };
 
       const scrap = await MyPageStorage.createScrapNum(scrapInfo);
@@ -87,8 +100,8 @@ class MyPage {
     const data = this.body;
 
     try {
-      if (!(data.title && data.description)) {
-        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      if (!data.title) {
+        return { success: false, msg: '제목이 존재하지 않습니다.' };
       }
 
       const writerCheck = await WriterCheck.ctrl(
@@ -99,10 +112,23 @@ class MyPage {
 
       if (!writerCheck.success) return writerCheck;
 
+      const boardDescription = await MyPageStorage.findBoardDescription(
+        scrapNum
+      );
+
+      const descriptions = data.description + boardDescription;
+
+      const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
+
+      imgReg.test(descriptions);
+
+      const fileUrl = RegExp.$2;
+
       const scrapInfo = {
         scrapNum,
         title: data.title,
         description: data.description,
+        fileUrl,
       };
 
       const scrap = await MyPageStorage.updateOneByScrapNum(scrapInfo);

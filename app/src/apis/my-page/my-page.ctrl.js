@@ -6,8 +6,8 @@ const logger = require('../../config/logger');
 const process = {
   findAllScrapsByClubNum: async (req, res) => {
     const myPage = new MyPage(req);
-    const { id } = req.body;
-    const { clubNum } = req.body;
+    const { id } = req.params;
+    const { clubNum } = req.params;
     const response = await myPage.findAllScrapsByClubNum();
 
     if (response.success) {
@@ -22,6 +22,12 @@ const process = {
       );
       return res.status(500).json(response.clientMsg);
     }
+    if (response.msg === '본인만 열람 가능합니다.') {
+      logger.error(
+        `GET /api/my-page/${id}/personal/${clubNum} 403: ${response.msg}`
+      );
+      return res.status(403).json(response);
+    }
     logger.error(
       `GET /api/my-page/${id}/personal/${clubNum} 404: ${response.msg}`
     );
@@ -30,9 +36,9 @@ const process = {
 
   findOneScrap: async (req, res) => {
     const myPage = new MyPage(req);
-    const { id } = req.body;
-    const { clubNum } = req.body;
-    const { scrapNum } = req.body;
+    const { id } = req.params;
+    const { clubNum } = req.params;
+    const { scrapNum } = req.params;
     const response = await myPage.findOneScrap();
 
     if (response.success) {
@@ -54,11 +60,11 @@ const process = {
   },
 
   createScrapNum: async (req, res) => {
-    const board = new MyPage(req);
-    const { category } = req.body;
-    const { clubNum } = req.body;
-    const { boardNum } = req.body;
-    const response = await board.createScrapNum();
+    const myPage = new MyPage(req);
+    const { category } = req.params;
+    const { clubNum } = req.params;
+    const { boardNum } = req.params;
+    const response = await myPage.createScrapNum();
 
     if (response.success) {
       logger.info(
@@ -80,9 +86,9 @@ const process = {
 
   updateOneByScrapNum: async (req, res) => {
     const myPage = new MyPage(req);
-    const { id } = req.body;
-    const { clubNum } = req.body;
-    const { scrapNum } = req.body;
+    const { id } = req.params;
+    const { clubNum } = req.params;
+    const { scrapNum } = req.params;
     const response = await myPage.updateOneByScrapNum();
 
     if (response.success) {
@@ -105,9 +111,9 @@ const process = {
 
   deleteOneByScrapNum: async (req, res) => {
     const myPage = new MyPage(req);
-    const { id } = req.body;
-    const { clubNum } = req.body;
-    const { scrapNum } = req.body;
+    const { id } = req.params;
+    const { clubNum } = req.params;
+    const { scrapNum } = req.params;
     const response = await myPage.deleteOneByScrapNum();
 
     if (response.success) {

@@ -31,9 +31,9 @@ class Image {
         }
       }
       // 동아리별 활동일지 및 my-page 글 => 썸네일 지정
-      if (category === 6 || category === 7) {
+      if (category <= 6) {
         const { description } = this.body;
-        const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
+        const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/i;
 
         imgReg.test(description);
 
@@ -109,7 +109,7 @@ class Image {
       }
       if (category >= 6) {
         const { description } = this.body;
-        const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
+        const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/i;
 
         imgReg.test(description);
 
