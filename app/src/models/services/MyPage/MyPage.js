@@ -62,15 +62,24 @@ class MyPage {
     const data = this.body;
 
     try {
-      if (!(data.title && data.description)) {
-        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+      if (!data.title) {
+        return { success: false, msg: '제목이 존재하지 않습니다.' };
       }
 
+      const descriptions = data.scrapDescription + data.boardDescription;
+      const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
+
+      imgReg.test(descriptions);
+
+      const fileUrl = RegExp.$2;
+
       const scrapInfo = {
+        fileUrl,
         id: this.auth.id,
-        boardNum: this.params.boardNum,
+        clubNum: this.params.clubNum,
         title: data.title,
-        description: data.description,
+        scrapDescription: data.scrapDescription,
+        boardDescription: data.boardDescription,
       };
 
       const scrap = await MyPageStorage.createScrapNum(scrapInfo);
@@ -87,7 +96,7 @@ class MyPage {
     const data = this.body;
 
     try {
-      if (!(data.title && data.description)) {
+      if (!data.title) {
         return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
       }
 
@@ -99,10 +108,23 @@ class MyPage {
 
       if (!writerCheck.success) return writerCheck;
 
+      const boardDescription = await MyPageStorage.findBoardDescription(
+        scrapNum
+      );
+
+      const descriptions = data.description + boardDescription;
+
+      const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
+
+      imgReg.test(descriptions);
+
+      const fileUrl = RegExp.$2;
+
       const scrapInfo = {
         scrapNum,
         title: data.title,
         description: data.description,
+        fileUrl,
       };
 
       const scrap = await MyPageStorage.updateOneByScrapNum(scrapInfo);
