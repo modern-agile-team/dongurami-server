@@ -101,7 +101,7 @@ class MyPage {
 
     try {
       if (!data.title) {
-        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+        return { success: false, msg: '제목이 존재하지 않습니다.' };
       }
 
       const writerCheck = await WriterCheck.ctrl(
