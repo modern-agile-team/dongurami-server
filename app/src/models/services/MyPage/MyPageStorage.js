@@ -27,11 +27,9 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const scrap = `SELECT s.no AS scrapNo, s.title, s.in_date AS inDate, s.modify_date AS modifyDate, url AS imgPath
-      FROM scraps AS s
-      LEFT JOIN images AS i ON i.board_no = s.board_no
-      JOIN boards AS b ON b.no = s.board_no
-      WHERE s.student_id = ? AND club_no = ?;`;
+      const scrap = `SELECT no AS scrapNo, title, in_date AS inDate, modify_date AS modifyDate, file_url AS imgPath
+      FROM scraps
+      WHERE student_id = ? AND club_no = ?;`;
       const board = `SELECT b.no AS boardNo, title, in_date AS inDate, modify_date AS modifyDate, url AS imgPath
       FROM boards AS b LEFT JOIN images ON b.no = board_no 
       WHERE board_category_no = 7 AND student_id = ? AND club_no = ?
@@ -62,15 +60,13 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const findScrap = `SELECT s.no, s.student_id AS studentId, st.name, s.title, s.description, b.description AS scrapDescription, LEFT(s.in_date, 7) AS inDate, LEFT(s.modify_date, 7) AS modifyDate
+      const findScrap = `SELECT no, student_id AS studentId, st.name, title, scrap_description AS scrapDescription, board_description AS boardDescription, LEFT(s.in_date, 10) AS inDate, LEFT(s.modify_date, 10) AS modifyDate
       FROM scraps AS s
-      INNER JOIN students AS st ON st.id = s.student_id
-      INNER JOIN boards AS b ON b.no = board_no
-      WHERE s.student_id = ? AND club_no = ? AND s.no = ?;`;
+      INNER JOIN students AS st ON st.id = student_id
+      WHERE student_id = ? AND no = ?;`;
 
       const scrap = await conn.query(findScrap, [
         userInfo.id,
-        userInfo.clubNum,
         userInfo.scrapNum,
       ]);
 
@@ -88,16 +84,36 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO scraps (board_no, student_id, title, description) VALUES (?, ?, ?, ?);`;
+      const query = `INSERT INTO scraps (student_id, club_no, title, scrap_description, board_description, file_url) VALUES (?, ?, ?, ?, ?, ?);`;
 
       const scrap = await conn.query(query, [
-        scrapInfo.boardNum,
         scrapInfo.id,
+        scrapInfo.clubNum,
         scrapInfo.title,
-        scrapInfo.description,
+        scrapInfo.scrapDescription,
+        scrapInfo.boardDescription,
+        scrapInfo.fileUrl,
       ]);
 
       return scrap.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findBoardDescription(scrapNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT board_description AS description FROM scraps WHERE no = ?;`;
+
+      const board = await conn.query(query, scrapNum);
+
+      return board[0].description;
     } catch (err) {
       throw err;
     } finally {
@@ -111,11 +127,12 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE scraps SET title = ?, description = ? WHERE no = ?;`;
+      const query = `UPDATE scraps SET title = ?, scrap_description = ? , file_url = ? WHERE no = ?;`;
 
       const scrap = await conn.query(query, [
         scrapInfo.title,
         scrapInfo.description,
+        scrapInfo.fileUrl,
         scrapInfo.scrapNum,
       ]);
 
