@@ -22,6 +22,12 @@ const process = {
       );
       return res.status(500).json(response.clientMsg);
     }
+    if (response.msg === '본인만 열람 가능합니다.') {
+      logger.error(
+        `GET /api/my-page/${id}/personal/${clubNum} 403: ${response.msg}`
+      );
+      return res.status(403).json(response);
+    }
     logger.error(
       `GET /api/my-page/${id}/personal/${clubNum} 404: ${response.msg}`
     );

@@ -15,6 +15,10 @@ class MyPage {
     const { params } = this;
 
     try {
+      if (params.id !== this.auth.id) {
+        return { succeess: false, msg: '본인만 열람 가능합니다.' };
+      }
+
       const userInfo = {
         id: params.id,
         clubNum: params.clubNum,
