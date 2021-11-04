@@ -9,10 +9,10 @@ class NotificationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no.no AS notificationNum, no.sender_id AS senderId, 
+      const query = `SELECT no.no AS notificationNum, no.sender AS sender, 
         no.url, no.notification_category_no AS notificationCategoryNum, 
         no.in_date AS inDate FROM notifications AS no 
-        WHERE no.recipient_id = (SELECT id FROM students WHERE id = ?) AND no.reading_flag = 0
+        WHERE no.recipient = (SELECT id FROM students WHERE id = ?) AND no.reading_flag = 0
         ORDER BY inDate DESC;`;
 
       const notifications = await conn.query(query, studentId);
