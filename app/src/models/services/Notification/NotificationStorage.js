@@ -56,7 +56,7 @@ class NotificationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, title, content) VALUES (?, ?, ?, ?, ?, ?);`;
+      const query = `INSERT INTO notifications (sender, recipient, url, notification_category_no, title, content) VALUES (?, ?, ?, ?, ?, ?);`;
 
       await conn.query(query, [
         notificationInfo.senderName,
