@@ -93,32 +93,6 @@ class Notification {
     }
   }
 
-  async createTodayByIdAndClubName() {
-    const todaySchedule = this.body;
-    const clubNum = Number(this.params.clubNum);
-
-    try {
-      const recipientIds = await NotificationStorage.findAllByClubNum(clubNum);
-
-      recipientIds.forEach(async (recipientId) => {
-        const notificationInfo = {
-          recipientId,
-          senderId: todaySchedule.clubName,
-          title: todaySchedule.clubName,
-          content: todaySchedule.title,
-          url: todaySchedule.url,
-          notiCategoryNum: todaySchedule.notiCategoryNum,
-        };
-
-        await NotificationStorage.createByIdAndClubName(notificationInfo);
-      });
-
-      return { success: true, msg: '오늘의 일정 알림이 생성되었습니다.' };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
-    }
-  }
-
   async updateOneByNotificationNum() {
     const notificationNum = Number(this.params.notificationNum);
     const userId = this.auth.id;

@@ -50,7 +50,6 @@ class NotificationStorage {
     }
   }
 
-  // 댓글 알림
   static async createCmtNotification(notificationInfo) {
     let conn;
 
