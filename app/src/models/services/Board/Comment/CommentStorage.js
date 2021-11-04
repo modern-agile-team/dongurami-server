@@ -239,19 +239,19 @@ class CommentStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT DISTINCT s.name FROM comments AS c 
+      const query = `SELECT DISTINCT s.name, s.id FROM comments AS c 
         JOIN students AS s ON c.student_id = s.id 
         WHERE c.board_no = ? AND c.group_no = ?;`;
 
-      const comments = await conn.query(query, [boardNum, cmtNum]);
+      const students = await conn.query(query, [boardNum, cmtNum]);
 
-      const recipientNames = [];
+      // const recipientNames = [];
 
-      comments.forEach((comment) => {
-        recipientNames.push(comment.name);
-      });
+      // comments.forEach((comment) => {
+      //   recipientNames.push(comment.name);
+      // });
 
-      return recipientNames;
+      return students;
     } catch (err) {
       throw err;
     } finally {
