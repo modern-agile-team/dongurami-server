@@ -200,6 +200,11 @@ class Application {
             userInfo.clubNum
           );
 
+          const applicantName =
+            await NotificationStorage.findApplicantNameByClubNum(
+              userInfo.clubNum
+            );
+
           const notificationInfo = {
             senderName,
             recipientName: applicantName,

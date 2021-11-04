@@ -14,6 +14,7 @@ class AdminoOptionStorage {
 
       const member = await conn.query(query, [adminInfo.clubNum, adminInfo.id]);
 
+      if (!member.studentId) return false;
       return member[0].studentId;
     } catch (err) {
       throw err;
