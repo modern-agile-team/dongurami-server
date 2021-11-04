@@ -35,20 +35,20 @@ class Notification {
     }
   }
 
-  async createByIdAndTitle(notification) {
+  async createCmtNotification(notification) {
     const { body } = this;
 
     try {
       const notificationInfo = {
-        senderId: notification.senderId,
-        recipientId: notification.recipientId,
+        senderName: notification.senderName,
+        recipientName: notification.recipientName,
         title: notification.title,
         content: notification.content,
         url: body.url,
         notiCategoryNum: body.notiCategoryNum,
       };
 
-      const success = await NotificationStorage.createByIdAndTitle(
+      const success = await NotificationStorage.createCmtNotification(
         notificationInfo
       );
 
@@ -64,20 +64,20 @@ class Notification {
     }
   }
 
-  async createByIdAndClubName(notification) {
+  async createNotification(notification) {
     const { body } = this;
 
     try {
       const notificationInfo = {
-        recipientId: notification.recipientId,
-        senderId: notification.senderId,
+        recipientName: notification.recipientName,
+        senderName: notification.senderName,
         title: notification.clubName,
         content: notification.content,
         url: body.url,
         notiCategoryNum: body.notiCategoryNum,
       };
 
-      const success = await NotificationStorage.createByIdAndClubName(
+      const success = await NotificationStorage.createNotification(
         notificationInfo
       );
 
@@ -88,32 +88,6 @@ class Notification {
         success: false,
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
-    }
-  }
-
-  async createTodayByIdAndClubName() {
-    const todaySchedule = this.body;
-    const clubNum = Number(this.params.clubNum);
-
-    try {
-      const recipientIds = await NotificationStorage.findAllByClubNum(clubNum);
-
-      recipientIds.forEach(async (recipientId) => {
-        const notificationInfo = {
-          recipientId,
-          senderId: todaySchedule.clubName,
-          title: todaySchedule.clubName,
-          content: todaySchedule.title,
-          url: todaySchedule.url,
-          notiCategoryNum: todaySchedule.notiCategoryNum,
-        };
-
-        await NotificationStorage.createByIdAndClubName(notificationInfo);
-      });
-
-      return { success: true, msg: '오늘의 일정 알림이 생성되었습니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }

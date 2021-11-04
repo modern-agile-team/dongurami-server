@@ -233,23 +233,43 @@ class CommentStorage {
     }
   }
 
-  static async findStudentIdsByCmtNum(cmtNum, boardNum) {
+  static async findStudentNamesByCmtAndBoardNum(cmtNum, boardNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT student_id AS studentId FROM comments WHERE board_no = ? AND group_no = ?;`;
+      const query = `SELECT DISTINCT s.name FROM comments AS c 
+        JOIN students AS s ON c.student_id = s.id 
+        WHERE c.board_no = ? AND c.group_no = ?;`;
 
       const comments = await conn.query(query, [boardNum, cmtNum]);
 
-      const recipientIds = [];
+      const recipientNames = [];
 
       comments.forEach((comment) => {
-        recipientIds.push(comment.studentId);
+        recipientNames.push(comment.name);
       });
 
-      return recipientIds;
+      return recipientNames;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findOneByBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT student_id AS studentId FROM boards WHERE no = ?;`;
+
+      const writer = await conn.query(query, [boardNum]);
+
+      return writer[0].studentId;
     } catch (err) {
       throw err;
     } finally {

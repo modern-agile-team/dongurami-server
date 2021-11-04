@@ -40,19 +40,25 @@ class Comment {
 
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
-      const { studentId, title } =
-        await BoardStorage.findStudentIdAndTitleByBoardNum(
-          commentInfo.boardNum
-        );
+      const writerId = await CommentStorage.findOneByBoardNum(
+        commentInfo.boardNum
+      );
 
-      const notificationInfo = {
-        title,
-        senderId: commentInfo.id,
-        recipientId: studentId,
-        content: commentInfo.description,
-      };
+      if (user.id !== writerId) {
+        const { recipientName, title } =
+          await BoardStorage.findRecipientNameAndTitleByBoardNum(
+            commentInfo.boardNum
+          );
 
-      await notification.createByIdAndTitle(notificationInfo);
+        const notificationInfo = {
+          title,
+          recipientName,
+          senderName: user.name,
+          content: commentInfo.description,
+        };
+
+        await notification.createCmtNotification(notificationInfo);
+      }
 
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {
@@ -89,27 +95,28 @@ class Comment {
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      const senderId = replyCommentInfo.id;
+      const recipientNames =
+        await CommentStorage.findStudentNamesByCmtAndBoardNum(
+          replyCommentInfo.cmtNum,
+          replyCommentInfo.boardNum
+        );
 
-      const recipientIds = await CommentStorage.findStudentIdsByCmtNum(
-        replyCommentInfo.cmtNum,
+      const senderName = user.name;
+
+      const { title } = await BoardStorage.findRecipientNameAndTitleByBoardNum(
         replyCommentInfo.boardNum
       );
 
-      const { title } = await BoardStorage.findStudentIdAndTitleByBoardNum(
-        replyCommentInfo.boardNum
-      );
-
-      recipientIds.forEach(async (recipientId) => {
-        if (senderId !== recipientId) {
+      recipientNames.forEach(async (recipientName) => {
+        if (senderName !== recipientName) {
           const notificationInfo = {
-            senderId,
-            recipientId,
+            senderName,
+            recipientName,
             title,
             content: replyCommentInfo.description,
           };
 
-          await notification.createByIdAndTitle(notificationInfo);
+          await notification.createCmtNotification(notificationInfo);
         }
       });
 
