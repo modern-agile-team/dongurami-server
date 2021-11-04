@@ -161,6 +161,42 @@ class MyPageStorage {
       conn?.release();
     }
   }
+
+  static async findOneByClubLeader(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'SELECT leader FROM clubs WHERE leader = ? AND no = ?;';
+
+      const result = await conn.query(query, [userInfo.id, userInfo.clubNum]);
+
+      return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteOneByJoinedClub(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'DELETE FROM members WHERE student_id = ? AND club_no = ?;';
+
+      const result = await conn.query(query, [userInfo.id, userInfo.clubNum]);
+
+      return result.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = MyPageStorage;
