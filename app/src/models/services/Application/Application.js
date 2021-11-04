@@ -150,12 +150,15 @@ class Application {
           isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
         } else {
           // 거절 당한 기록 존재
+          // 기존 질문보다 추가되면 => db의 질문이랑 비교할 필요 있음
+          // preQuestions = await ApplicationStorage.findAnswers(applicantInfo);
           isExtra = await ApplicationStorage.updateExtraAnswer(
             auth.id,
             answerInfo
           );
         }
 
+        console.log(isExtra);
         if (isExtra !== answerInfo.extra.length) {
           return { success: false, msg: '추가 답변이 작성되지 않았습니다.' };
         }

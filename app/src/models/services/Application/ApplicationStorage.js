@@ -157,6 +157,31 @@ class ApplicationStorage {
     }
   }
 
+  static async findAnswers(applicantInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      console.log(applicantInfo);
+
+      const query = `SELECT question_no AS questionNo FROM answers WHERE club_no = ?, student_id = ?;`;
+
+      const questions = await conn.query(query, [
+        applicantInfo.clubNum,
+        applicantInfo.id,
+      ]);
+
+      console.log(questions);
+
+      return questions;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async updateExtraAnswer(id, answerInfo) {
     let conn;
 
@@ -173,9 +198,13 @@ class ApplicationStorage {
 
       let updates = 0;
 
-      result.forEach((v) => {
-        updates += v.affectedRows;
-      });
+      if (!result.lenght) {
+        updates += result.affectedRows;
+      } else {
+        for (let i = 0; i < result.length; i += 1) {
+          updates += result[i].affectedRows;
+        }
+      }
 
       return updates;
     } catch (err) {
