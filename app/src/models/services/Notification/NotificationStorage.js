@@ -32,17 +32,11 @@ class NotificationStorage {
       conn = await mariadb.getConnection();
 
       const query =
-        'SELECT s.name FROM members AS m JOIN students AS s ON m.student_id = s.id WHERE m.club_no = ?;';
+        'SELECT s.name, s.id FROM members AS m JOIN students AS s ON m.student_id = s.id WHERE m.club_no = ?;';
 
       const members = await conn.query(query, clubNum);
 
-      const studentNames = [];
-
-      members.forEach((member) => {
-        studentNames.push(member.name);
-      });
-
-      return studentNames;
+      return members;
     } catch (err) {
       throw err;
     } finally {

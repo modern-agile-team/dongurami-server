@@ -32,13 +32,6 @@ class Board {
         description: board.description,
       };
 
-      if (category === 1 && user.isAdmin === 0) {
-        return {
-          success: false,
-          msg: '공지게시판은 관리자만 접근할 수 있습니다.',
-        };
-      }
-
       if (!(board.title && board.description)) {
         return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
       }
@@ -61,9 +54,9 @@ class Board {
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
       if (category === 5) {
-        const senderName = user.name;
+        const senderId = boardInfo.id;
 
-        const recipientNames = await NotificationStorage.findAllByClubNum(
+        const recipients = await NotificationStorage.findAllByClubNum(
           boardInfo.clubNum
         );
 
@@ -71,12 +64,13 @@ class Board {
           boardInfo.clubNum
         );
 
-        recipientNames.forEach(async (recipientName) => {
-          if (senderName !== recipientName) {
+        recipients.forEach(async (recipient) => {
+          if (senderId !== recipient.id) {
             const notificationInfo = {
-              recipientName,
-              senderName,
               clubName,
+              senderName: user.name,
+              recipientName: recipient.name,
+              recipientId: recipient.id,
               content: boardInfo.title,
             };
 
@@ -228,13 +222,6 @@ class Board {
         boardNum: params.boardNum,
       };
 
-      if (category === 1 && user.isAdmin === 0) {
-        return {
-          success: false,
-          msg: '공지게시판은 관리자만 접근할 수 있습니다.',
-        };
-      }
-
       if (!(board.title && board.description)) {
         return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
       }
@@ -270,13 +257,6 @@ class Board {
         category,
         boardNum: params.boardNum,
       };
-
-      if (category === 1 && user.isAdmin === 0) {
-        return {
-          success: false,
-          msg: '공지게시판은 관리자만 접근할 수 있습니다.',
-        };
-      }
 
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,

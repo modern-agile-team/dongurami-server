@@ -245,12 +245,6 @@ class CommentStorage {
 
       const students = await conn.query(query, [boardNum, cmtNum]);
 
-      // const recipientNames = [];
-
-      // comments.forEach((comment) => {
-      //   recipientNames.push(comment.name);
-      // });
-
       return students;
     } catch (err) {
       throw err;
