@@ -310,7 +310,7 @@ class BoardStorage {
       conn = await mariadb.getConnection();
 
       const query = `SELECT s.name, b.title FROM boards AS b 
-        JOIN students AS s ON b.student_id = s.name 
+        JOIN students AS s ON b.student_id = s.id 
         WHERE b.no = ?;`;
 
       const board = await conn.query(query, [boardNum]);
