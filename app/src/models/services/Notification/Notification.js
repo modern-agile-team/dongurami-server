@@ -70,8 +70,9 @@ class Notification {
 
     try {
       const notificationInfo = {
-        recipientName: notification.recipientName,
         senderName: notification.senderName,
+        recipientName: notification.recipientName,
+        recipientId: notification.recipientId,
         title: notification.clubName,
         content: notification.content,
         url: body.url,
