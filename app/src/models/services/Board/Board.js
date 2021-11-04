@@ -61,23 +61,26 @@ class Board {
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
       if (category === 5) {
-        const senderId = boardInfo.id;
+        const senderName = user.name;
 
-        const recipientIds = await NotificationStorage.findAllByClubNum(
+        const recipientNames = await NotificationStorage.findAllByClubNum(
           boardInfo.clubNum
         );
 
-        const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+        const clubName = await NotificationStorage.findOneByClubNum(
+          boardInfo.clubNum
+        );
 
-        recipientIds.forEach(async (recipientId) => {
-          if (senderId !== recipientId) {
+        recipientNames.forEach(async (recipientName) => {
+          if (senderName !== recipientName) {
             const notificationInfo = {
-              recipientId,
-              senderId,
+              recipientName,
+              senderName,
               clubName,
               content: boardInfo.title,
             };
-            await notification.createByIdAndClubName(notificationInfo);
+
+            await notification.createNotification(notificationInfo);
           }
         });
       }
