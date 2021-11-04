@@ -97,15 +97,15 @@ class Notification {
 
   async updateOneByNotificationNum() {
     const notificationNum = Number(this.params.notificationNum);
-    const userName = this.auth;
+    const user = this.auth;
 
     try {
       const isWriterCheck = await WriterCheck.ctrl(
-        userName,
+        user.id,
         notificationNum,
         'notifications',
         'no',
-        'recipient'
+        'recipient_id'
       );
 
       if (!isWriterCheck.success) return isWriterCheck;
