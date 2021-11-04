@@ -50,18 +50,18 @@ class NotificationStorage {
     }
   }
 
-  static async createByIdAndTitle(notificationInfo) {
+  // 댓글 알림
+  static async createCmtNotification(notificationInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, title, content) 
-      VALUES (?, ?, ?, ?, ?, ?);`;
+      const query = `INSERT INTO notifications (sender_id, recipient_id, url, notification_category_no, title, content) VALUES (?, ?, ?, ?, ?, ?);`;
 
       await conn.query(query, [
-        notificationInfo.senderId,
-        notificationInfo.recipientId,
+        notificationInfo.senderName,
+        notificationInfo.recipientName,
         notificationInfo.url,
         notificationInfo.notiCategoryNum,
         notificationInfo.title,

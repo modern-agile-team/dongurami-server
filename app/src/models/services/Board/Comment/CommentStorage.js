@@ -233,13 +233,13 @@ class CommentStorage {
     }
   }
 
-  static async findStudentNamesByCmtNum(cmtNum, boardNum) {
+  static async findStudentNamesByCmtAndBoardNum(cmtNum, boardNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT s.name FROM comments AS c 
+      const query = `SELECT DISTINCT s.name FROM comments AS c 
         JOIN students AS s ON c.student_id = s.id 
         WHERE c.board_no = ? AND c.group_no = ?;`;
 

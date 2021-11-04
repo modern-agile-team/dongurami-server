@@ -35,20 +35,20 @@ class Notification {
     }
   }
 
-  async createByIdAndTitle(notification) {
+  async createCmtNotification(notification) {
     const { body } = this;
 
     try {
       const notificationInfo = {
-        senderId: notification.senderId,
-        recipientId: notification.recipientId,
+        senderName: notification.senderName,
+        recipientName: notification.recipientName,
         title: notification.title,
         content: notification.content,
         url: body.url,
         notiCategoryNum: body.notiCategoryNum,
       };
 
-      const success = await NotificationStorage.createByIdAndTitle(
+      const success = await NotificationStorage.createCmtNotification(
         notificationInfo
       );
 

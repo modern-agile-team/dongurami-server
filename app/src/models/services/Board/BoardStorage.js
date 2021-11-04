@@ -303,7 +303,7 @@ class BoardStorage {
     }
   }
 
-  static async findStudentNameAndTitleByBoardNum(boardNum) {
+  static async findRecipientNameAndTitleByBoardNum(boardNum) {
     let conn;
 
     try {

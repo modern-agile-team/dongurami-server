@@ -41,7 +41,7 @@ class Comment {
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
       const { recipientName, title } =
-        await BoardStorage.findStudentNameAndTitleByBoardNum(
+        await BoardStorage.findRecipientNameAndTitleByBoardNum(
           commentInfo.boardNum
         );
 
@@ -52,7 +52,7 @@ class Comment {
         content: commentInfo.description,
       };
 
-      await notification.createByIdAndTitle(notificationInfo);
+      await notification.createCmtNotification(notificationInfo);
 
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {
@@ -89,14 +89,15 @@ class Comment {
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      const recipientNames = await CommentStorage.findStudentNamesByCmtNum(
-        replyCommentInfo.cmtNum,
-        replyCommentInfo.boardNum
-      );
+      const recipientNames =
+        await CommentStorage.findStudentNamesByCmtAndBoardNum(
+          replyCommentInfo.cmtNum,
+          replyCommentInfo.boardNum
+        );
 
       const senderName = user.name;
 
-      const { title } = await BoardStorage.findStudentNameAndTitleByBoardNum(
+      const { title } = await BoardStorage.findRecipientNameAndTitleByBoardNum(
         replyCommentInfo.boardNum
       );
 
@@ -109,7 +110,7 @@ class Comment {
             content: replyCommentInfo.description,
           };
 
-          await notification.createByIdAndTitle(notificationInfo);
+          await notification.createCmtNotification(notificationInfo);
         }
       });
 
