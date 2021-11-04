@@ -120,16 +120,16 @@ class NotificationStorage {
     }
   }
 
-  static async updateAllById(studentId) {
+  static async updateAllById(studentName) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
       const query =
-        'UPDATE notifications SET reading_flag = 1 WHERE recipient_id = ?;';
+        'UPDATE notifications SET reading_flag = 1 WHERE recipient = ?;';
 
-      const notification = await conn.query(query, studentId);
+      const notification = await conn.query(query, studentName);
 
       if (notification.affectedRows) return true;
       return false;
