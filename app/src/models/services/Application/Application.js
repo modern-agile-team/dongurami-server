@@ -200,12 +200,12 @@ class Application {
             userInfo.clubNum
           );
 
-          const applicantName =
+          const recipientName =
             await ApplicationStorage.findOneByApplicantIdAndClubNum(userInfo);
 
           const notificationInfo = {
             senderName,
-            recipientName: applicantName,
+            recipientName,
             clubName,
             content: '동아리 가입 신청 결과',
           };
