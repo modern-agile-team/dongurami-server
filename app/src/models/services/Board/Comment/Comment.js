@@ -111,7 +111,7 @@ class Comment {
         if (senderId !== recipient.id) {
           const notificationInfo = {
             title,
-            senderName: replyCommentInfo.id,
+            senderName: user.name,
             recipientName: recipient.name,
             recipientId: recipient.id,
             content: replyCommentInfo.description,
