@@ -266,8 +266,8 @@ class Application {
 
         const notificationInfo = {
           senderName,
-          recipientName: applicantName,
           clubName,
+          recipientName: applicantName,
           content: '동아리 가입 신청 결과',
         };
 

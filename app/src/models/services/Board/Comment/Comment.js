@@ -52,8 +52,8 @@ class Comment {
 
         const notificationInfo = {
           title,
-          senderName: user.name,
           recipientName,
+          senderName: user.name,
           content: commentInfo.description,
         };
 
