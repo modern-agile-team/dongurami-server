@@ -258,6 +258,24 @@ class CommentStorage {
       conn?.release();
     }
   }
+
+  static async findOneByBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT student_id AS studentId FROM boards WHERE no = ?;`;
+
+      const writer = await conn.query(query, [boardNum]);
+
+      return writer[0].studentId;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = CommentStorage;

@@ -40,19 +40,25 @@ class Comment {
 
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
-      const { recipientName, title } =
-        await BoardStorage.findRecipientNameAndTitleByBoardNum(
-          commentInfo.boardNum
-        );
+      const writerId = await CommentStorage.findOneByBoardNum(
+        commentInfo.boardNum
+      );
 
-      const notificationInfo = {
-        title,
-        senderName: user.name,
-        recipientName,
-        content: commentInfo.description,
-      };
+      if (user.id !== writerId) {
+        const { recipientName, title } =
+          await BoardStorage.findRecipientNameAndTitleByBoardNum(
+            commentInfo.boardNum
+          );
 
-      await notification.createCmtNotification(notificationInfo);
+        const notificationInfo = {
+          title,
+          senderName: user.name,
+          recipientName,
+          content: commentInfo.description,
+        };
+
+        await notification.createCmtNotification(notificationInfo);
+      }
 
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {
