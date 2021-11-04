@@ -67,22 +67,22 @@ class Schedule {
         startDate: data.startDate,
         endDate: data.endDate,
       };
-      const senderId = scheduleInfo.studentId;
+      const senderName = user.name;
 
       const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
       if (success) {
-        const recipientIds = await NotificationStorage.findAllByClubNum(
+        const recipientNames = await NotificationStorage.findAllByClubNum(
           clubNum
         );
 
         const clubName = await NotificationStorage.findOneByClubNum(clubNum);
 
-        recipientIds.forEach(async (recipientId) => {
-          if (senderId !== recipientId) {
+        recipientNames.forEach(async (recipientName) => {
+          if (senderName !== recipientName) {
             const notificationInfo = {
-              recipientId,
-              senderId,
+              recipientName,
+              senderName,
               clubName,
               content: scheduleInfo.startDate,
             };
@@ -117,7 +117,7 @@ class Schedule {
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
       if (success) {
-        const senderId = userInfo.id;
+        const senderName = userInfo.id;
         const recipientIds = await NotificationStorage.findAllByClubNum(
           clubNum
         );
@@ -125,10 +125,10 @@ class Schedule {
         const clubName = await NotificationStorage.findOneByClubNum(clubNum);
 
         recipientIds.forEach(async (recipientId) => {
-          if (senderId !== recipientId) {
+          if (senderName !== recipientId) {
             const notificationInfo = {
               recipientId,
-              senderId,
+              senderName,
               clubName,
               content: scheduleInfo.startDate,
             };
