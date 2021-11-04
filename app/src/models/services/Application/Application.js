@@ -248,10 +248,9 @@ class Application {
           userInfo.clubNum
         );
 
-        // const applicantName = await ApplicationStorage.findOneByApplicantId(
-        //   userInfo.applicant
-        // );
-        console.log(applicantName);
+        const applicantName =
+          await ApplicationStorage.findOneByApplicantIdAndClubNum(userInfo);
+
         const notificationInfo = {
           senderName,
           recipientName: applicantName,
