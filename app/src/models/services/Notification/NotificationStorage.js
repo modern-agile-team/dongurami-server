@@ -76,7 +76,7 @@ class NotificationStorage {
     }
   }
 
-  static async createByIdAndClubName(notificationInfo) {
+  static async createNotification(notificationInfo) {
     let conn;
 
     try {
@@ -86,8 +86,8 @@ class NotificationStorage {
       VALUES (?, ?, ?, ?, ?, ?);`;
 
       await conn.query(query, [
-        notificationInfo.senderId,
-        notificationInfo.recipientId,
+        notificationInfo.senderName,
+        notificationInfo.recipientName,
         notificationInfo.url,
         notificationInfo.notiCategoryNum,
         notificationInfo.title,

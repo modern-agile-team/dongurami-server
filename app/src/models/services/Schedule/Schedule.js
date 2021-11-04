@@ -87,7 +87,7 @@ class Schedule {
               content: scheduleInfo.startDate,
             };
 
-            await notification.createByIdAndClubName(notificationInfo);
+            await notification.createNotification(notificationInfo);
           }
         });
 
@@ -133,7 +133,7 @@ class Schedule {
               content: scheduleInfo.startDate,
             };
 
-            await notification.createByIdAndClubName(notificationInfo);
+            await notification.createNotification(notificationInfo);
           }
         });
 

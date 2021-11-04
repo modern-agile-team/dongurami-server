@@ -64,20 +64,20 @@ class Notification {
     }
   }
 
-  async createByIdAndClubName(notification) {
+  async createNotification(notification) {
     const { body } = this;
 
     try {
       const notificationInfo = {
-        recipientId: notification.recipientId,
-        senderId: notification.senderId,
+        recipientName: notification.recipientName,
+        senderName: notification.senderName,
         title: notification.clubName,
         content: notification.content,
         url: body.url,
         notiCategoryNum: body.notiCategoryNum,
       };
 
-      const success = await NotificationStorage.createByIdAndClubName(
+      const success = await NotificationStorage.createNotification(
         notificationInfo
       );
 
