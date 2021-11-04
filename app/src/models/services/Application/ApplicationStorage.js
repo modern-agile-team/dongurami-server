@@ -143,7 +143,7 @@ class ApplicationStorage {
       answerInfo.extra.forEach((x, idx) => {
         if (idx) {
           answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-        } else answer += `("${x.no}", "${answerInfo.id}", "${x.description}")`;
+        } else answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
       });
       answer += ';';
 
@@ -157,56 +157,16 @@ class ApplicationStorage {
     }
   }
 
-  static async findAnswers(applicantInfo) {
+  static async deleteExtraAnswer(extraQuestionNums, id) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      console.log(applicantInfo);
+      const query = `DELETE FROM answers WHERE question_no IN (?) AND student_id = ?;`;
 
-      const query = `SELECT question_no AS questionNo FROM answers WHERE club_no = ?, student_id = ?;`;
-
-      const questions = await conn.query(query, [
-        applicantInfo.clubNum,
-        applicantInfo.id,
-      ]);
-
-      console.log(questions);
-
-      return questions;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async updateExtraAnswer(id, answerInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      let query = '';
-
-      answerInfo.extra.forEach((answer) => {
-        query += `UPDATE answers SET description = "${answer.description}" WHERE question_no = ${answer.no} AND student_id = "${id}";`;
-      });
-
-      const result = await conn.query(`${query}`);
-
-      let updates = 0;
-
-      if (!result.lenght) {
-        updates += result.affectedRows;
-      } else {
-        for (let i = 0; i < result.length; i += 1) {
-          updates += result[i].affectedRows;
-        }
-      }
-
-      return updates;
+      await conn.query(query, [extraQuestionNums, id]);
+      return;
     } catch (err) {
       throw err;
     } finally {
