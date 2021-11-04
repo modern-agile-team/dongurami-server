@@ -117,17 +117,18 @@ class Schedule {
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
       if (success) {
-        const senderName = userInfo.id;
-        const recipientIds = await NotificationStorage.findAllByClubNum(
+        const senderName = userInfo.name;
+
+        const recipientNames = await NotificationStorage.findAllByClubNum(
           clubNum
         );
 
         const clubName = await NotificationStorage.findOneByClubNum(clubNum);
 
-        recipientIds.forEach(async (recipientId) => {
-          if (senderName !== recipientId) {
+        recipientNames.forEach(async (recipientName) => {
+          if (senderName !== recipientName) {
             const notificationInfo = {
-              recipientId,
+              recipientName,
               senderName,
               clubName,
               content: scheduleInfo.startDate,
