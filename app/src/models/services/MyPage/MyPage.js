@@ -189,9 +189,15 @@ class MyPage {
         const isDelete = await AdminOptionStorage.deleteMemberById(userInfo);
 
         if (!isDelete) {
-          return { success: true, msg: '동아리 탈퇴에 실패하였습니다.' };
+          return { success: false, msg: '동아리 탈퇴에 실패하였습니다.' };
         }
-        await AdminOptionStorage.updateReadingFlagById(userInfo);
+        const isUpdate = await AdminOptionStorage.updateReadingFlagById(
+          userInfo
+        );
+
+        if (!isUpdate) {
+          return { success: false, msg: '동아리 탈퇴에 실패하였습니다.' };
+        }
         return { success: true, msg: '동아리 탈퇴에 성공하였습니다.' };
       }
       return {
