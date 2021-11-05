@@ -56,4 +56,10 @@ router.delete(
   myPageCtrl.process.deleteOneByScrapNum
 );
 
+router.delete(
+  '/:id/personal/:clubNum',
+  loginAuth.loginCheck,
+  myPageCtrl.process.deleteOneByJoinedClub
+);
+
 module.exports = router;

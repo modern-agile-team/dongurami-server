@@ -161,6 +161,27 @@ class MyPageStorage {
       conn?.release();
     }
   }
+
+  static async findOneByClubLeader(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'SELECT leader FROM clubs WHERE leader = ? AND no = ?;';
+
+      const result = await conn.query(query, [
+        userInfo.memberId,
+        userInfo.clubNum,
+      ]);
+
+      return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = MyPageStorage;

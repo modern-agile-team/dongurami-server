@@ -3,6 +3,7 @@
 const MyPageStorage = require('./MyPageStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
+const AdminOptionStorage = require('../AdminOption/AdminOptionStorage');
 
 class MyPage {
   constructor(req) {
@@ -156,6 +157,53 @@ class MyPage {
 
       if (scrap) return { success: true, msg: '글이 삭제되었습니다.' };
       return { success: false, msg: '글이 삭제되지 않았습니다.' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async deleteOneByJoinedClub() {
+    const user = this.auth;
+    const { clubNum } = this.params;
+    const { id } = this.params;
+
+    try {
+      if (user.id !== id) {
+        return {
+          success: false,
+          msg: '로그인 계정과 삭제 요청자가 일치하지 않습니다.',
+        };
+      }
+      if (!user.clubNum.includes(Number(clubNum))) {
+        return { success: false, msg: '가입된 동아리가 아닙니다.' };
+      }
+
+      const userInfo = {
+        memberId: user.id,
+        clubNum: Number(clubNum),
+      };
+
+      const clubLeader = await MyPageStorage.findOneByClubLeader(userInfo);
+
+      if (!clubLeader) {
+        const isDelete = await AdminOptionStorage.deleteMemberById(userInfo);
+
+        if (!isDelete) {
+          return { success: false, msg: '동아리 탈퇴에 실패하였습니다.' };
+        }
+        const isUpdate = await AdminOptionStorage.updateReadingFlagById(
+          userInfo
+        );
+
+        if (!isUpdate) {
+          return { success: false, msg: '동아리 탈퇴에 실패하였습니다.' };
+        }
+        return { success: true, msg: '동아리 탈퇴에 성공하였습니다.' };
+      }
+      return {
+        success: false,
+        msg: '동아리 회장은 탈퇴가 불가능합니다. 회장을 위임한 후 탈퇴해주세요.',
+      };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
