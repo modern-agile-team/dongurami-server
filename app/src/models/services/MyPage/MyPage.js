@@ -194,7 +194,6 @@ class MyPage {
         await AdminOptionStorage.updateReadingFlagById(userInfo);
         return { success: true, msg: '동아리 탈퇴에 성공하였습니다.' };
       }
-
       return {
         success: false,
         msg: '동아리 회장은 탈퇴가 불가능합니다. 회장을 위임한 후 탈퇴해주세요.',
