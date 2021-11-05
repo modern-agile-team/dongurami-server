@@ -1,7 +1,6 @@
 'use strict';
 
 const Schedule = require('../../models/services/Schedule/Schedule');
-const Notification = require('../../models/services/Notification/Notification');
 const logger = require('../../config/logger');
 
 const process = {
@@ -65,23 +64,6 @@ const process = {
     }
     logger.error(`POST /api/club/schedule/${clubNum} 400: ${response.msg}`);
     return res.status(400).json(response);
-  },
-
-  createTodayByIdAndClubName: async (req, res) => {
-    const notification = new Notification(req);
-    const { clubNum } = req.params;
-    const response = await notification.createTodayByIdAndClubName();
-
-    if (response.isError) {
-      logger.error(
-        `POST /api/club/schedule/${clubNum}/today 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.info(
-      `POST /api/club/schedule/${clubNum}/today 201: ${response.msg}`
-    );
-    return res.status(201).json(response);
   },
 
   updateSchedule: async (req, res) => {
