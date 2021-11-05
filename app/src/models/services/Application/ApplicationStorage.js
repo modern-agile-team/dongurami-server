@@ -40,6 +40,7 @@ class ApplicationStorage {
 
       const query =
         'INSERT INTO questions (club_no, description) VALUE (?, ?);';
+
       const question = await conn.query(query, [
         questionInfo.clubNum,
         questionInfo.description,
@@ -60,6 +61,7 @@ class ApplicationStorage {
       conn = await mariadb.getConnection();
 
       const query = 'UPDATE questions SET description = ? WHERE no = ?;';
+
       const question = await conn.query(query, [
         questionInfo.description,
         questionInfo.no,
@@ -80,6 +82,7 @@ class ApplicationStorage {
       conn = await mariadb.getConnection();
 
       const query = 'DELETE FROM questions WHERE no = ?;';
+
       const question = await conn.query(query, no);
 
       return question.affectedRows;
@@ -97,6 +100,7 @@ class ApplicationStorage {
       conn = await mariadb.getConnection();
 
       const applicant = `SELECT reading_flag AS readingFlag FROM applicants WHERE club_no = ? AND student_id = ? ORDER BY no DESC;`;
+
       const isApplicant = await conn.query(applicant, [
         applicantInfo.clubNum,
         applicantInfo.id,
@@ -117,6 +121,7 @@ class ApplicationStorage {
       conn = await mariadb.getConnection();
 
       const studentInfo = `UPDATE students SET grade = ?, gender = ?, phone_number = ? WHERE id = ?;`;
+
       const basic = await conn.query(studentInfo, [
         answerInfo.grade,
         answerInfo.gender,
@@ -181,6 +186,7 @@ class ApplicationStorage {
       conn = await mariadb.getConnection();
 
       const query = `INSERT INTO applicants (club_no, student_id) VALUE (?, ?);`;
+
       const result = await conn.query(query, [
         applicantInfo.clubNum,
         applicantInfo.id,
