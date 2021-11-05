@@ -16,7 +16,6 @@ class NotificationStorage {
 
       const notifications = await conn.query(query, [studentId]);
 
-      console.log(notifications);
       return { success: true, notifications };
     } catch (err) {
       throw err;
