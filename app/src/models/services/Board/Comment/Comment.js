@@ -53,6 +53,7 @@ class Comment {
         const notificationInfo = {
           title,
           recipientName,
+          recipientId: commentInfo.id,
           senderName: user.name,
           content: commentInfo.description,
         };
@@ -95,24 +96,24 @@ class Comment {
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      const recipientNames =
-        await CommentStorage.findStudentNamesByCmtAndBoardNum(
-          replyCommentInfo.cmtNum,
-          replyCommentInfo.boardNum
-        );
+      const recipients = await CommentStorage.findStudentNamesByCmtAndBoardNum(
+        replyCommentInfo.cmtNum,
+        replyCommentInfo.boardNum
+      );
 
-      const senderName = user.name;
+      const senderId = replyCommentInfo.id;
 
       const { title } = await BoardStorage.findRecipientNameAndTitleByBoardNum(
         replyCommentInfo.boardNum
       );
 
-      recipientNames.forEach(async (recipientName) => {
-        if (senderName !== recipientName) {
+      recipients.forEach(async (recipient) => {
+        if (senderId !== recipient.id) {
           const notificationInfo = {
-            senderName,
-            recipientName,
             title,
+            senderName: user.name,
+            recipientName: recipient.name,
+            recipientId: recipient.id,
             content: replyCommentInfo.description,
           };
 
