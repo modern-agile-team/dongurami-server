@@ -143,18 +143,20 @@ class Application {
       // 필수 질문 추가 완 / 추가 질문 여부
       if (answerInfo.extra.length) {
         // 추가 질문이 있을 시
-        let isExtra;
+        // 첫 가입 신청 시 아닐 때
+        if (isApplicant) {
+          const extraQuestionNums = [];
 
-        // 첫 가입 신청 시
-        if (!isApplicant) {
-          isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
-        } else {
-          // 거절 당한 기록 존재
-          isExtra = await ApplicationStorage.updateExtraAnswer(
-            auth.id,
-            answerInfo
+          answerInfo.extra.forEach((x) => {
+            extraQuestionNums.push(x.no);
+          });
+
+          await ApplicationStorage.deleteExtraAnswer(
+            extraQuestionNums,
+            auth.id
           );
         }
+        const isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
 
         if (isExtra !== answerInfo.extra.length) {
           return { success: false, msg: '추가 답변이 작성되지 않았습니다.' };
