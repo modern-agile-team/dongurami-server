@@ -3,6 +3,7 @@
 const BoardStorage = require('./BoardStorage');
 const Notification = require('../Notification/Notification');
 const NotificationStorage = require('../Notification/NotificationStorage');
+const AdminoOptionStorage = require('../AdminOption/AdminOptionStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
@@ -216,6 +217,7 @@ class Board {
   }
 
   async updateOneByBoardNum() {
+    const user = this.auth;
     const board = this.body;
     const { params } = this;
 
@@ -243,12 +245,20 @@ class Board {
       }
 
       const writerCheck = await WriterCheck.ctrl(
-        this.auth.id,
+        user.id,
         boardInfo.boardNum,
         'boards'
       );
 
-      if (!writerCheck.success) return writerCheck;
+      // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 수정 가능
+      if (category === 5 || category === 6) {
+        const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
+          params.clubNum,
+          user.id
+        );
+
+        if (!(writerCheck.success || boardFlag)) return writerCheck;
+      } else if (!writerCheck.success) return writerCheck;
 
       const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
 
@@ -262,6 +272,7 @@ class Board {
   }
 
   async deleteOneByBoardNum() {
+    const user = this.auth;
     const { params } = this;
 
     try {
@@ -279,12 +290,20 @@ class Board {
       }
 
       const writerCheck = await WriterCheck.ctrl(
-        this.auth.id,
+        user.id,
         boardInfo.boardNum,
         'boards'
       );
 
-      if (!writerCheck.success) return writerCheck;
+      // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 삭제 가능
+      if (category === 5 || category === 6) {
+        const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
+          params.clubNum,
+          user.id
+        );
+
+        if (!(writerCheck.success || boardFlag)) return writerCheck;
+      } else if (!writerCheck.success) return writerCheck;
 
       const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
