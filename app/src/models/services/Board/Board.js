@@ -216,6 +216,7 @@ class Board {
   }
 
   async updateOneByBoardNum() {
+    const user = this.auth;
     const board = this.body;
     const { params } = this;
 
@@ -243,7 +244,7 @@ class Board {
       }
 
       const writerCheck = await WriterCheck.ctrl(
-        this.auth.id,
+        user.id,
         boardInfo.boardNum,
         'boards'
       );
@@ -262,6 +263,7 @@ class Board {
   }
 
   async deleteOneByBoardNum() {
+    const user = this.auth;
     const { params } = this;
 
     try {
@@ -279,7 +281,7 @@ class Board {
       }
 
       const writerCheck = await WriterCheck.ctrl(
-        this.auth.id,
+        user.id,
         boardInfo.boardNum,
         'boards'
       );
