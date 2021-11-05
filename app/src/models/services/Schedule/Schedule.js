@@ -124,7 +124,7 @@ class Schedule {
         const senderId = userInfo.id;
 
         recipients.forEach(async (recipient) => {
-          if (senderId !== recipient) {
+          if (senderId !== recipient.id) {
             const notificationInfo = {
               clubName,
               senderName: userInfo.name,
