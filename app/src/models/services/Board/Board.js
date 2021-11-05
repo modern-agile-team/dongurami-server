@@ -257,7 +257,12 @@ class Board {
           user.id
         );
 
-        if (!(writerCheck.success || boardFlag)) return writerCheck;
+        if (!writerCheck.success) {
+          if (!boardFlag) {
+            return { success: false, msg: '게시글 수정 권한이 없습니다.' };
+          }
+          return writerCheck;
+        }
       } else if (!writerCheck.success) return writerCheck;
 
       const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
@@ -302,7 +307,12 @@ class Board {
           user.id
         );
 
-        if (!(writerCheck.success || boardFlag)) return writerCheck;
+        if (!writerCheck.success) {
+          if (!boardFlag) {
+            return { success: false, msg: '게시글 수정 권한이 없습니다.' };
+          }
+          return writerCheck;
+        }
       } else if (!writerCheck.success) return writerCheck;
 
       const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
