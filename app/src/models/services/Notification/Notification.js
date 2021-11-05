@@ -42,6 +42,7 @@ class Notification {
       const notificationInfo = {
         senderName: notification.senderName,
         recipientName: notification.recipientName,
+        recipientId: notification.recipientId,
         title: notification.title,
         content: notification.content,
         url: body.url,
@@ -69,8 +70,9 @@ class Notification {
 
     try {
       const notificationInfo = {
-        recipientName: notification.recipientName,
         senderName: notification.senderName,
+        recipientName: notification.recipientName,
+        recipientId: notification.recipientId,
         title: notification.clubName,
         content: notification.content,
         url: body.url,
@@ -95,11 +97,11 @@ class Notification {
 
   async updateOneByNotificationNum() {
     const notificationNum = Number(this.params.notificationNum);
-    const userId = this.auth.id;
+    const user = this.auth;
 
     try {
       const isWriterCheck = await WriterCheck.ctrl(
-        userId,
+        user.id,
         notificationNum,
         'notifications',
         'no',
@@ -125,10 +127,10 @@ class Notification {
   }
 
   async updateAllById() {
-    const studentId = this.auth.id;
+    const studentName = this.auth.name;
 
     try {
-      const isUpdate = await NotificationStorage.updateAllById(studentId);
+      const isUpdate = await NotificationStorage.updateAllById(studentName);
 
       if (isUpdate) {
         return { success: true, msg: '전체 알림이 삭제되었습니다.' };

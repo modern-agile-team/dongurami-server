@@ -219,9 +219,10 @@ class Application {
             await ApplicationStorage.findOneByApplicantIdAndClubNum(userInfo);
 
           const notificationInfo = {
+            clubName,
             senderName,
             recipientName,
-            clubName,
+            recipientId: userInfo.applicant,
             content: '동아리 가입 신청 결과',
           };
 
@@ -267,9 +268,10 @@ class Application {
           await ApplicationStorage.findOneByApplicantIdAndClubNum(userInfo);
 
         const notificationInfo = {
-          senderName,
           clubName,
+          senderName,
           recipientName: applicantName,
+          recipientId: userInfo.applicant,
           content: '동아리 가입 신청 결과',
         };
 

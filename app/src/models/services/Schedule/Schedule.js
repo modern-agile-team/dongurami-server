@@ -67,23 +67,23 @@ class Schedule {
         startDate: data.startDate,
         endDate: data.endDate,
       };
-      const senderName = user.name;
 
       const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
       if (success) {
-        const recipientNames = await NotificationStorage.findAllByClubNum(
-          clubNum
-        );
+        const recipients = await NotificationStorage.findAllByClubNum(clubNum);
 
         const clubName = await NotificationStorage.findOneByClubNum(clubNum);
 
-        recipientNames.forEach(async (recipientName) => {
-          if (senderName !== recipientName) {
+        const senderId = scheduleInfo.studentId;
+
+        recipients.forEach(async (recipient) => {
+          if (senderId !== recipient.id) {
             const notificationInfo = {
-              recipientName,
-              senderName,
               clubName,
+              senderName: user.name,
+              recipientName: recipient.name,
+              recipientId: recipient.id,
               content: scheduleInfo.startDate,
             };
 
@@ -117,20 +117,19 @@ class Schedule {
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
       if (success) {
-        const senderName = userInfo.name;
-
-        const recipientNames = await NotificationStorage.findAllByClubNum(
-          clubNum
-        );
+        const recipients = await NotificationStorage.findAllByClubNum(clubNum);
 
         const clubName = await NotificationStorage.findOneByClubNum(clubNum);
 
-        recipientNames.forEach(async (recipientName) => {
-          if (senderName !== recipientName) {
+        const senderId = userInfo.id;
+
+        recipients.forEach(async (recipient) => {
+          if (senderId !== recipient.id) {
             const notificationInfo = {
-              recipientName,
-              senderName,
               clubName,
+              senderName: userInfo.name,
+              recipientName: recipient.name,
+              recipientId: recipient.id,
               content: scheduleInfo.startDate,
             };
 
