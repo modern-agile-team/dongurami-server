@@ -148,7 +148,7 @@ class Comment {
         description: this.body.description,
       };
 
-      if (!comment.description) {
+      if (!cmtInfo.description) {
         return { success: false, msg: '댓글 본문이 존재하지 않습니다.' };
       }
 
@@ -182,13 +182,13 @@ class Comment {
         description: this.body.description,
       };
 
-      if (!comment.description) {
+      if (!replyCmtInfo.description) {
         return { success: false, msg: '답글 본문이 존재하지 않습니다.' };
       }
 
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
-        replyCmtInfo.cmtNum,
+        replyCmtInfo.replyCmtNum,
         'comments'
       );
 
@@ -247,7 +247,7 @@ class Comment {
 
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
-        replyCmtInfo.cmtNum,
+        replyCmtInfo.replyCmtNum,
         'comments'
       );
 
