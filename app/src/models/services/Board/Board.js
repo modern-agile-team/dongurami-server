@@ -3,6 +3,7 @@
 const BoardStorage = require('./BoardStorage');
 const Notification = require('../Notification/Notification');
 const NotificationStorage = require('../Notification/NotificationStorage');
+const AdminoOptionStorage = require('../AdminOption/AdminOptionStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
@@ -249,7 +250,20 @@ class Board {
         'boards'
       );
 
-      if (!writerCheck.success) return writerCheck;
+      // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 수정 가능
+      if (category === 5 || category === 6) {
+        const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
+          params.clubNum,
+          user.id
+        );
+
+        if (!writerCheck.success) {
+          if (!boardFlag) {
+            return { success: false, msg: '게시글 수정 권한이 없습니다.' };
+          }
+          return writerCheck;
+        }
+      } else if (!writerCheck.success) return writerCheck;
 
       const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
 
@@ -286,7 +300,20 @@ class Board {
         'boards'
       );
 
-      if (!writerCheck.success) return writerCheck;
+      // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 삭제 가능
+      if (category === 5 || category === 6) {
+        const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
+          params.clubNum,
+          user.id
+        );
+
+        if (!writerCheck.success) {
+          if (!boardFlag) {
+            return { success: false, msg: '게시글 수정 권한이 없습니다.' };
+          }
+          return writerCheck;
+        }
+      } else if (!writerCheck.success) return writerCheck;
 
       const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
