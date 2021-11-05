@@ -3,6 +3,7 @@
 const MyPageStorage = require('./MyPageStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
+const AdminOptionStorage = require('../AdminOption/AdminOptionStorage');
 
 class MyPage {
   constructor(req) {
@@ -178,17 +179,22 @@ class MyPage {
       }
 
       const userInfo = {
-        id: user.id,
+        memberId: user.id,
         clubNum: Number(clubNum),
       };
 
       const clubLeader = await MyPageStorage.findOneByClubLeader(userInfo);
 
       if (!clubLeader) {
-        await MyPageStorage.deleteOneByJoinedClub(userInfo);
+        const isDelete = await AdminOptionStorage.deleteMemberById(userInfo);
 
+        if (!isDelete) {
+          return { success: true, msg: '동아리 탈퇴에 실패하였습니다.' };
+        }
+        await AdminOptionStorage.updateReadingFlagById(userInfo);
         return { success: true, msg: '동아리 탈퇴에 성공하였습니다.' };
       }
+
       return {
         success: false,
         msg: '동아리 회장은 탈퇴가 불가능합니다. 회장을 위임한 후 탈퇴해주세요.',
