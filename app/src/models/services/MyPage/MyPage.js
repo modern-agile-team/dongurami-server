@@ -4,6 +4,8 @@ const MyPageStorage = require('./MyPageStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const AdminOptionStorage = require('../AdminOption/AdminOptionStorage');
+const StudentStorage = require('../Student/StudentStorage');
+const Auth = require('../Auth/Auth');
 
 class MyPage {
   constructor(req) {
@@ -186,19 +188,27 @@ class MyPage {
       const clubLeader = await MyPageStorage.findOneByClubLeader(userInfo);
 
       if (!clubLeader) {
-        const isDelete = await AdminOptionStorage.deleteMemberById(userInfo);
-
-        if (!isDelete) {
-          return { success: false, msg: '동아리 탈퇴에 실패하였습니다.' };
-        }
         const isUpdate = await AdminOptionStorage.updateReadingFlagById(
           userInfo
         );
 
         if (!isUpdate) {
+          return {
+            success: false,
+            msg: '동아리 탈퇴에 실패하였습니다. 관리자에게 문의해주세요.',
+          };
+        }
+
+        const isDelete = await AdminOptionStorage.deleteMemberById(userInfo);
+
+        if (!isDelete) {
           return { success: false, msg: '동아리 탈퇴에 실패하였습니다.' };
         }
-        return { success: true, msg: '동아리 탈퇴에 성공하였습니다.' };
+        const checkedId = await StudentStorage.findOneById(user.id);
+        const clubs = await StudentStorage.findOneByLoginedId(user.id);
+        const jwt = await Auth.createJWT(checkedId, clubs);
+
+        return { success: true, msg: '동아리 탈퇴에 성공하였습니다.', jwt };
       }
       return {
         success: false,
