@@ -133,6 +133,30 @@ const process = {
     );
     return res.status(400).json(response);
   },
+
+  deleteOneByJoinedClub: async (req, res) => {
+    const myPage = new MyPage(req);
+    const { id } = req.params;
+    const { clubNum } = req.params;
+    const response = await myPage.deleteOneByJoinedClub();
+
+    if (response.success) {
+      logger.info(
+        `DELETE /api/my-page/${id}/personal/${clubNum} 200: ${response.msg}`
+      );
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      logger.error(
+        `DELETE /api/my-page/${id}/personal/${clubNum} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.error(
+      `DELETE /api/my-page/${id}/personal/${clubNum} 400: ${response.msg}`
+    );
+    return res.status(400).json(response);
+  },
 };
 
 module.exports = {
