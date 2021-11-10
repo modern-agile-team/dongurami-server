@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon ./bin/www.js",
-    "test": "test"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
