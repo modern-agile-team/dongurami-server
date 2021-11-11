@@ -7,6 +7,7 @@ const review = {
   description: '너무 재밌어요!!',
   score: '5',
 };
+
 it('POST 로그인 시 201 반환', async () => {
   try {
     const res = await server
