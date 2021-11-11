@@ -24,4 +24,20 @@ describe('동아리 후기 API 테스트', () => {
       console.log(err);
     }
   });
+
+  it('PUT 후기 수정 성공 시 200 반환', async () => {
+    try {
+      const res = await server
+        .put('/api/club/review/2/2')
+        .set(
+          'x-auth-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+        )
+        .set('Content-Type', 'application/json')
+        .send(review);
+      expect(res.statusCode).toEqual(200);
+    } catch (err) {
+      console.log(err);
+    }
+  });
 });
