@@ -58,6 +58,7 @@
     "nodemon": "^2.0.12",
     "redis": "^3.1.2",
     "request": "^2.88.2",
+    "supertest": "^6.1.6",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5"
   }
