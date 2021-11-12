@@ -19,6 +19,7 @@ describe('동아리 후기 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(review);
+
       expect(res.statusCode).toEqual(201);
     } catch (err) {
       console.log(err);
@@ -35,6 +36,7 @@ describe('동아리 후기 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(review);
+
       expect(res.statusCode).toEqual(200);
     } catch (err) {
       console.log(err);
@@ -51,6 +53,7 @@ describe('동아리 후기 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(review);
+
       expect(res.statusCode).toEqual(200);
     } catch (err) {
       console.log(err);
@@ -67,6 +70,7 @@ describe('동아리 후기 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(review);
+
       expect(res.statusCode).toEqual(200);
     } catch (err) {
       console.log(err);

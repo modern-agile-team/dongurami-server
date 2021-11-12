@@ -64,6 +64,7 @@ describe('알림 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(comment);
+
       expect(res.statusCode).toEqual(201);
     } catch (err) {
       console.log(err);
@@ -80,6 +81,7 @@ describe('알림 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(reply);
+
       expect(res.statusCode).toEqual(201);
     } catch (err) {
       console.log(err);
@@ -96,6 +98,7 @@ describe('알림 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(apply);
+
       expect(res.statusCode).toEqual(201);
     } catch (err) {
       console.log(err);
@@ -112,6 +115,7 @@ describe('알림 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(reject);
+
       expect(res.statusCode).toEqual(200);
     } catch (err) {
       console.log(err);
@@ -128,6 +132,7 @@ describe('알림 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(modifySchedule);
+
       expect(res.statusCode).toEqual(201);
     } catch (err) {
       console.log(err);
@@ -144,6 +149,7 @@ describe('알림 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(createSchedule);
+
       expect(res.statusCode).toEqual(200);
     } catch (err) {
       console.log(err);
@@ -160,6 +166,7 @@ describe('알림 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(clubNotice);
+
       expect(res.statusCode).toEqual(201);
     } catch (err) {
       console.log(err);
@@ -175,6 +182,7 @@ describe('알림 API 테스트', () => {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
         )
         .set('Content-Type', 'application/json');
+
       expect(res.statusCode).toEqual(200);
     } catch (err) {
       console.log(err);
@@ -190,6 +198,7 @@ describe('알림 API 테스트', () => {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
         )
         .set('Content-Type', 'application/json');
+
       expect(res.statusCode).toEqual(200);
     } catch (err) {
       console.log(err);
@@ -205,6 +214,7 @@ describe('알림 API 테스트', () => {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
         )
         .set('Content-Type', 'application/json');
+
       expect(res.statusCode).toEqual(200);
     } catch (err) {
       console.log(err);
