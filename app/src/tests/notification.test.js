@@ -15,6 +15,10 @@ const reply = {
   url: 'test/url',
 };
 
+const clubAdmin = {
+  applicant: '000000011',
+};
+
 describe('알림 API 테스트', () => {
   it('POST 댓글알림 생성 시 201 반환', async () => {
     try {
@@ -43,6 +47,38 @@ describe('알림 API 테스트', () => {
         .set('Content-Type', 'application/json')
         .send(reply);
       expect(res.statusCode).toEqual(201);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it('POST 동아리 가입승인 알림생성 시 201 반환', async () => {
+    try {
+      const res = await server
+        .post('/api/club/admin-option/2/applicant')
+        .set(
+          'x-auth-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+        )
+        .set('Content-Type', 'application/json')
+        .send(clubAdmin);
+      expect(res.statusCode).toEqual(201);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it('PUT 동아리 가입승인 알림생성 시 200 반환', async () => {
+    try {
+      const res = await server
+        .put('/api/club/admin-option/2/applicant')
+        .set(
+          'x-auth-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+        )
+        .set('Content-Type', 'application/json')
+        .send(clubAdmin);
+      expect(res.statusCode).toEqual(200);
     } catch (err) {
       console.log(err);
     }
