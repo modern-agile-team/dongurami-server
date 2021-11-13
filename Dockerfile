@@ -8,12 +8,14 @@ WORKDIR /dongurami-server
 
 RUN mkdir ./app
 
-COPY ./app/package*.json ./app/
+COPY ./app ./app/  
 
-WORKDIR /app
+WORKDIR ./app
 
-COPY ./app /app/    
+COPY /package*.json ./
 
 RUN npm install
 
 EXPOSE 8080
+
+CMD ["npm", "run", "dev"]

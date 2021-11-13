@@ -34,6 +34,29 @@ const process = {
     return res.status(404).json(response);
   },
 
+  findAllBoards: async (req, res) => {
+    const myPage = new MyPage(req);
+    const { id } = req.params;
+    const response = await myPage.findAllBoards();
+
+    if (response.success) {
+      logger.info(
+        `GET /api/my-page/${id}/personal/my-boards 200: ${response.msg}`
+      );
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      logger.error(
+        `GET /api/my-page/${id}/personal/my-boards 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.error(
+      `GET /api/my-page/${id}/personal/my-boards 403: ${response.msg}`
+    );
+    return res.status(403).json(response);
+  },
+
   findOneScrap: async (req, res) => {
     const myPage = new MyPage(req);
     const { id } = req.params;

@@ -54,6 +54,24 @@ class MyPageStorage {
     }
   }
 
+  static async findAllBoards(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT * FROM boards WHERE board_category_no <=6 AND student_id = ?;`;
+
+      const boards = conn.query(query, id);
+
+      return boards;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findOneScrap(userInfo) {
     let conn;
 

@@ -46,6 +46,25 @@ class MyPage {
     }
   }
 
+  async findAllBoards() {
+    const { id } = this.params;
+
+    try {
+      if (id !== this.auth.id) {
+        return { success: false, msg: '본인만 열람 가능합니다.' };
+      }
+
+      const boards = await MyPageStorage.findAllBoards(id);
+
+      if (boards) {
+        return { success: true, msg: '작성글 내역 조회 성공', boards };
+      }
+      return { success: true, msg: '작성글 내역이 존재하지 않습니다.' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
   async findOneScrap() {
     const { params } = this;
 
