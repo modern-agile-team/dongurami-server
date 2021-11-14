@@ -12,10 +12,17 @@ router.get(
   loginAuth.loginCheck,
   myPageCtrl.process.findAllScrapsByClubNum
 );
+
 router.get(
   '/:id/personal/my-boards',
   loginAuth.loginCheck,
   myPageCtrl.process.findAllBoards
+);
+
+router.get(
+  '/:id/personal/my-comments',
+  loginAuth.loginCheck,
+  myPageCtrl.process.findAllComments
 );
 
 router.get(

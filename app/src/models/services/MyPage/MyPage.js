@@ -65,6 +65,24 @@ class MyPage {
     }
   }
 
+  async findAllComments() {
+    const { id } = this.params;
+
+    try {
+      if (id !== this.auth.id) {
+        return { success: false, msg: '본인만 열람 가능합니다.' };
+      }
+      const comments = await MyPageStorage.findAllComments(id);
+
+      if (comments) {
+        return { success: true, msg: '작성한 댓글 내역 조회 성공', comments };
+      }
+      return { success: true, msg: '작성한 댓글 내역이 존재하지 않습니다.' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
   async findOneScrap() {
     const { params } = this;
 

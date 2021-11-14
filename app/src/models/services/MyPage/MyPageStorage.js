@@ -72,6 +72,24 @@ class MyPageStorage {
     }
   }
 
+  static async findAllComments(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no, board_no AS boardNo, description, in_date AS inDate, modify_date AS modifyDate WHERE student_id = ?;`;
+
+      const comments = conn.query(query, id);
+
+      return comments;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findOneScrap(userInfo) {
     let conn;
 

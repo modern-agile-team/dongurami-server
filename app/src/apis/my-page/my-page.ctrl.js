@@ -57,6 +57,29 @@ const process = {
     return res.status(403).json(response);
   },
 
+  findAllComments: async (req, res) => {
+    const myPage = new MyPage(req);
+    const { id } = req.params;
+    const response = await myPage.findAllComments();
+
+    if (response.success) {
+      logger.info(
+        `GET /api/my-page/${id}/personal/my-comments 200: ${response.msg}`
+      );
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      logger.error(
+        `GET /api/my-page/${id}/personal/my-comments 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.error(
+      `GET /api/my-page/${id}/personal/my-comments 403: ${response.msg}`
+    );
+    return res.status(403).json(response);
+  },
+
   findOneScrap: async (req, res) => {
     const myPage = new MyPage(req);
     const { id } = req.params;
