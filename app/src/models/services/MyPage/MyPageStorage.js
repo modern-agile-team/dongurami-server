@@ -60,7 +60,7 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT * FROM boards WHERE board_category_no <=6 AND student_id = ?;`;
+      const query = `SELECT no, title, in_date AS inDate, modify_date AS modifyDate FROM boards WHERE board_category_no <= 6 AND student_id = ?;`;
 
       const boards = conn.query(query, id);
 
