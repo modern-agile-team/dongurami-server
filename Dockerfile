@@ -8,11 +8,11 @@ WORKDIR /dongurami-server
 
 RUN mkdir ./app
 
-COPY ./app ./app/  
+COPY ./app/package*.json ./app/
+
+COPY ./app ./app/
 
 WORKDIR ./app
-
-COPY ./package*.json ./
 
 RUN npm install
 
