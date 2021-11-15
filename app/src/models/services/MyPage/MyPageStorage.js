@@ -60,29 +60,11 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no, title, in_date AS inDate, modify_date AS modifyDate FROM boards WHERE board_category_no <= 6 AND student_id = ?;`;
+      const query = `SELECT * FROM boards WHERE board_category_no <= 6 AND student_id = ?;`;
 
       const boards = conn.query(query, id);
 
       return boards;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findAllComments(id) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT no, board_no AS boardNo, description, in_date AS inDate, modify_date AS modifyDate WHERE student_id = ?;`;
-
-      const comments = conn.query(query, id);
-
-      return comments;
     } catch (err) {
       throw err;
     } finally {
