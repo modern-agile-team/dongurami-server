@@ -31,6 +31,7 @@ class Board {
         id: user.id,
         title: board.title,
         description: board.description,
+        hiddenFlag: board.hiddenFlag,
       };
 
       if (!(board.title && board.description)) {
@@ -91,8 +92,8 @@ class Board {
     const user = this.auth;
     const { query } = this;
     const criteriaRead = {
-      clubNum: 1,
       category,
+      clubNum: 1,
       sort: query.sort || 'inDate',
       order: query.order || 'desc',
     };

@@ -7,7 +7,7 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO boards (board_category_no, student_id, club_no, title, description) VALUES (?, ?, ?, ?, ?);`;
+      const query = `INSERT INTO boards (board_category_no, student_id, club_no, title, description, writer_hidden_flag) VALUES (?, ?, ?, ?, ?, ?);`;
 
       const board = await conn.query(query, [
         boardInfo.category,
@@ -15,6 +15,7 @@ class BoardStorage {
         boardInfo.clubNum,
         boardInfo.title,
         boardInfo.description,
+        boardInfo.hiddenFlag,
       ]);
 
       return board.insertId;
@@ -48,7 +49,11 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit
+      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit,
+      (SELECT COUNT(no) FROM comments
+      WHERE board_no = bo.no) AS commentCount,
+      (SELECT COUNT(no) FROM board_emotions
+      WHERE board_no = bo.no) AS emotionCount
       FROM boards AS bo
       LEFT JOIN images AS img
       ON bo.no = img.board_no
@@ -95,7 +100,11 @@ class BoardStorage {
         }
       }
 
-      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit
+      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit,
+      (SELECT COUNT(no) FROM comments
+      WHERE board_no = bo.no) AS commentCount,
+      (SELECT COUNT(no) FROM board_emotions
+      WHERE board_no = bo.no) AS emotionCount
       FROM boards AS bo
       LEFT JOIN images AS img
       ON bo.no = img.board_no
@@ -124,7 +133,9 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, bo.hit, st.profile_image_url AS profileImageUrl
+      const query = `SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, bo.hit, st.profile_image_url AS profileImageUrl,
+      (SELECT COUNT(no) FROM board_emotions
+      WHERE board_no = bo.no) AS emotionCount
       FROM boards AS bo
       JOIN students AS st
       ON bo.student_id = st.id
