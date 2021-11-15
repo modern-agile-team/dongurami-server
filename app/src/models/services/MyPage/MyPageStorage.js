@@ -60,8 +60,8 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const board = `SELECT no, club_no AS clubNo, board_category_no AS boardCategoryNo, title, LEFT(in_date, 10) AS inDate FROM boards WHERE student_id = ?;`;
-      const comment = `SELECT b.no, b.club_no AS clubNo, b.board_category_no AS boardCategoryNo, b.title, c.description, LEFT(c.in_date, 10) AS inDate 
+      const board = `SELECT no, club_no AS clubNo, board_category_no AS boardCategoryNum, title, LEFT(in_date, 10) AS inDate FROM boards WHERE student_id = ?;`;
+      const comment = `SELECT b.no, b.club_no AS clubNo, b.board_category_no AS boardCategoryNum, b.title, c.description, LEFT(c.in_date, 10) AS inDate 
       FROM comments AS c
       JOIN boards AS b ON c.board_no = b.no
       WHERE c.student_id = ?;`;
