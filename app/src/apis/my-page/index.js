@@ -14,15 +14,9 @@ router.get(
 );
 
 router.get(
-  '/:id/personal/my-boards',
+  '/:id/my-post',
   loginAuth.loginCheck,
-  myPageCtrl.process.findAllBoards
-);
-
-router.get(
-  '/:id/personal/my-comments',
-  loginAuth.loginCheck,
-  myPageCtrl.process.findAllComments
+  myPageCtrl.process.findAllBoardsAndComments
 );
 
 router.get(
