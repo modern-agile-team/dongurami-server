@@ -34,7 +34,7 @@ class NotificationStorage {
         'SELECT s.name, s.id FROM members AS m JOIN students AS s ON m.student_id = s.id WHERE m.club_no = ?;';
 
       const members = await conn.query(query, clubNum);
-
+      console.log(members);
       return members;
     } catch (err) {
       throw err;
