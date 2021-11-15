@@ -171,16 +171,18 @@ class Application {
           applicantInfo.clubNum
         );
 
-        const leader = await NotificationStorage.findAllByClubNum(clubNum);
+        const leader = await NotificationStorage.findLeaderNameAndIdByClubNum(
+          applicantInfo.clubNum
+        );
 
         const notificationInfo = {
           clubName,
           senderName: auth.name,
-          recipientName: leader[0].name,
-          recipientId: leader[0].id,
+          recipientName: leader.name,
+          recipientId: leader.id,
           content: '동아리 가입 신청 완료',
         };
-        console.log(notificationInfo);
+
         await notification.createNotification(notificationInfo);
 
         return { success: true, msg: '가입 신청이 완료 되었습니다.' };
