@@ -39,6 +39,7 @@ class Oauth {
 
     try {
       const snsResult = await StudentStorage.findOneBySnsId(saveInfo.sns_id);
+      const userResult = await StudentStorage.findOneById(saveInfo.id);
 
       if (snsResult.success) {
         student.body.id = student.body.sns_id;
@@ -46,13 +47,10 @@ class Oauth {
 
         return loginResult;
       }
-
-      const userResult = await StudentStorage.findOneById(saveInfo.id);
-
       if (userResult) {
         return { success: false, msg: '이미 가입된 회원입니다.' };
       }
-      return { success: true };
+      return { success: false };
     } catch (err) {
       return Error.ctrl(
         '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
