@@ -34,7 +34,6 @@ const process = {
       }
       // 회원가입
       const result = await student.naverSignUp();
-      console.log('result : ', result);
 
       if (result.success) {
         const naverLogin = await student.naverLogin(result.saveInfo);
