@@ -25,9 +25,16 @@ const process = {
     const oauth = new Oauth(req);
     const student = new Student(req);
     const response = await oauth.signUpCheck();
+    // response true이면 회원가입 미진행
 
-    if (response.success) {
+    if (!response.success) {
+      if (response.msg) {
+        logger.error(`POST /api/naver/sign-up 409: ${response.msg}`);
+        return res.status(409).json(response);
+      }
+      // 회원가입
       const result = await student.naverSignUp();
+      console.log('result : ', result);
 
       if (result.success) {
         const naverLogin = await student.naverLogin(result.saveInfo);
@@ -56,8 +63,9 @@ const process = {
       logger.error(`POST /api/naver/sign-up 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`POST /api/naver/sign-up 409: ${response.msg}`);
-    return res.status(409).json(response);
+
+    logger.info(`POST /api/naver/sign-up 200: ${response.msg}`);
+    return res.status(200).json(response);
   },
 };
 
