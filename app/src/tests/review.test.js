@@ -46,7 +46,7 @@ describe('동아리 후기 API 테스트', () => {
   it('PUT 후기 수정 성공 시 200 반환', async () => {
     try {
       const res = await server
-        .put('/api/club/review/2/26')
+        .put('/api/club/review/2/27')
         .set(
           'x-auth-token',
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
@@ -63,7 +63,7 @@ describe('동아리 후기 API 테스트', () => {
   it('DELETE 후기 삭제 성공 시 200 반환', async () => {
     try {
       const res = await server
-        .delete('/api/club/review/2/26')
+        .delete('/api/club/review/2/27')
         .set(
           'x-auth-token',
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
