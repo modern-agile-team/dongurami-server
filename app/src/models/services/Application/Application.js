@@ -92,6 +92,7 @@ class Application {
     const { clubNum } = this.params;
     const { auth } = this;
     const answer = this.body;
+    const notification = new Notification(this.req);
 
     try {
       const applicantInfo = {
@@ -165,7 +166,27 @@ class Application {
       // 질문 추가 완 => 동아리 지원자 테이블 추가
       const result = await ApplicationStorage.createApplicant(applicantInfo);
 
-      if (result) return { success: true, msg: '가입 신청이 완료 되었습니다.' };
+      if (result) {
+        const clubName = await NotificationStorage.findOneByClubNum(
+          applicantInfo.clubNum
+        );
+
+        const leader = await NotificationStorage.findLeaderNameAndIdByClubNum(
+          applicantInfo.clubNum
+        );
+
+        const notificationInfo = {
+          clubName,
+          senderName: auth.name,
+          recipientName: leader.name,
+          recipientId: leader.id,
+          content: '동아리 가입 신청 완료',
+        };
+
+        await notification.createNotification(notificationInfo);
+
+        return { success: true, msg: '가입 신청이 완료 되었습니다.' };
+      }
       return { success: false, msg: '가입 신청이 완료되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);

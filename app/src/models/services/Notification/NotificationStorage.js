@@ -43,6 +43,25 @@ class NotificationStorage {
     }
   }
 
+  static async findLeaderNameAndIdByClubNum(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'SELECT s.name, s.id FROM clubs AS c JOIN students AS s ON c.leader = s.id WHERE c.no = ?;';
+
+      const leader = await conn.query(query, clubNum);
+
+      return leader[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async createCmtNotification(notificationInfo) {
     let conn;
 
