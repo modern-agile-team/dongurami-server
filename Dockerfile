@@ -10,10 +10,12 @@ RUN mkdir ./app
 
 COPY ./app/package*.json ./app/
 
-WORKDIR /app
+COPY ./app ./app/
 
-COPY ./app /app/    
+WORKDIR ./app
 
 RUN npm install
 
 EXPOSE 8080
+
+CMD ["npm", "run", "dev"]
