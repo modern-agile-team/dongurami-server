@@ -1,11 +1,13 @@
 'use sctrict';
 
 const MyPageStorage = require('./MyPageStorage');
-const Error = require('../../utils/Error');
+const Auth = require('../Auth/Auth');
 const WriterCheck = require('../../utils/WriterCheck');
+const Notification = require('../Notification/Notification');
+const NotificationStorage = require('../Notification/NotificationStorage');
 const AdminOptionStorage = require('../AdminOption/AdminOptionStorage');
 const StudentStorage = require('../Student/StudentStorage');
-const Auth = require('../Auth/Auth');
+const Error = require('../../utils/Error');
 
 class MyPage {
   constructor(req) {
@@ -168,6 +170,7 @@ class MyPage {
     const user = this.auth;
     const { clubNum } = this.params;
     const { id } = this.params;
+    const notification = new Notification(this.req);
 
     try {
       if (user.id !== id) {
@@ -207,6 +210,24 @@ class MyPage {
         const checkedId = await StudentStorage.findOneById(user.id);
         const clubs = await StudentStorage.findOneByLoginedId(user.id);
         const jwt = await Auth.createJWT(checkedId, clubs);
+
+        const clubName = await NotificationStorage.findOneByClubNum(
+          userInfo.clubNum
+        );
+
+        const leader = await NotificationStorage.findLeaderNameAndIdByClubNum(
+          userInfo.clubNum
+        );
+
+        const notificationInfo = {
+          clubName,
+          senderName: user.name,
+          recipientName: leader.name,
+          recipientId: leader.id,
+          content: '동아리 탈퇴',
+        };
+
+        await notification.createNotification(notificationInfo);
 
         return { success: true, msg: '동아리 탈퇴에 성공하였습니다.', jwt };
       }
