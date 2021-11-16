@@ -235,19 +235,16 @@ class MyPage {
         const clubs = await StudentStorage.findOneByLoginedId(user.id);
         const jwt = await Auth.createJWT(checkedId, clubs);
 
-        const clubName = await NotificationStorage.findOneByClubNum(
-          userInfo.clubNum
-        );
-
-        const leader = await NotificationStorage.findLeaderNameAndIdByClubNum(
-          userInfo.clubNum
-        );
+        const { clubName, leaderName, leaderId } =
+          await NotificationStorage.findLeaderNameAndIdByClubNum(
+            userInfo.clubNum
+          );
 
         const notificationInfo = {
           title: clubName,
           senderName: user.name,
-          recipientName: leader.name,
-          recipientId: leader.id,
+          recipientName: leaderName,
+          recipientId: leaderId,
           content: '동아리 탈퇴',
           url: 'null',
           notiCategoryNum: 8,
