@@ -52,9 +52,13 @@ class NotificationStorage {
       const query =
         'SELECT s.name, s.id c.name AS clubName FROM clubs AS c JOIN students AS s ON c.leader = s.id WHERE c.no = ?;';
 
-      const leader = await conn.query(query, clubNum);
+      const club = await conn.query(query, clubNum);
 
-      return leader[0];
+      return {
+        clubName: club[0].clubName,
+        leaderName: club[0].name,
+        leaderId: club[0].id,
+      };
     } catch (err) {
       throw err;
     } finally {
