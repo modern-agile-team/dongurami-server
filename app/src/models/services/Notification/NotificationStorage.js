@@ -157,23 +157,23 @@ class NotificationStorage {
     }
   }
 
-  // static async findOneByClubNum(clubNum) {
-  //   let conn;
+  static async findOneByClubNum(clubNum) {
+    let conn;
 
-  //   try {
-  //     conn = await mariadb.getConnection();
+    try {
+      conn = await mariadb.getConnection();
 
-  //     const query = 'SELECT name FROM clubs WHERE no = ?;';
+      const query = 'SELECT name FROM clubs WHERE no = ?;';
 
-  //     const club = await conn.query(query, clubNum);
+      const club = await conn.query(query, clubNum);
 
-  //     return club[0].name;
-  //   } catch (err) {
-  //     throw err;
-  //   } finally {
-  //     conn?.release();
-  //   }
-  // }
+      return club[0].name;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = NotificationStorage;
