@@ -15,6 +15,43 @@ const reply = {
   notiCategoryNum: 1,
 };
 
+const application = {
+  basic: {
+    grade: 1,
+    gender: 2,
+    phoneNum: '01012121212',
+  },
+
+  extra: [
+    {
+      no: 6,
+      description: '테스트1',
+    },
+    {
+      no: 7,
+      description: '테스트2',
+    },
+    {
+      no: 8,
+      description: '테스트3',
+    },
+    {
+      no: 9,
+      description: '테스트4',
+    },
+    {
+      no: 10,
+      description: '테스트5',
+    },
+    {
+      no: 11,
+      description: '테스트6',
+    },
+  ],
+  notiCategoryNum: '4',
+  url: 'sdlfijjsfdl',
+};
+
 const apply = {
   applicant: '200010255',
   url: 'test/url',
@@ -81,6 +118,23 @@ describe('알림 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(reply);
+
+      expect(res.statusCode).toEqual(201);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it('POST 동아리 가입신청 알림생성 시 201 반환', async () => {
+    try {
+      const res = await server
+        .post('/api/club/application/2/answer')
+        .set(
+          'x-auth-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbXSwiaWQiOiIyMDAwMTAyNTUiLCJuYW1lIjoi7KeA7IiY7YWM7Iqk7Yq4IiwicHJvZmlsZVBhdGgiOiJza2RmaCIsImlzQWRtaW4iOiIxIiwiYWxnb3JpdGhtIjoiSFMyNTYiLCJpc3N1ZXIiOiJ3b29haGFuIGFnaWxlIn0.rfry4MDUAdxr_xnF0iE6Dyxe-ZyQnTL6CYU7YTtkCkM'
+        )
+        .set('Content-Type', 'application/json')
+        .send(application);
 
       expect(res.statusCode).toEqual(201);
     } catch (err) {
