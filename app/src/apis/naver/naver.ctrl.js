@@ -49,7 +49,7 @@ const process = {
           return res.status(500).json(naverLogin.clientMsg);
         }
         logger.error(`POST /api/naver/sign-up 400: ${naverLogin.msg}`);
-        return res.status(401).json(naverLogin);
+        return res.status(400).json(naverLogin);
       }
       if (result.isError) {
         logger.error(`POST /api/naver/sign-up 500: \n${result.errMsg.stack}`);
