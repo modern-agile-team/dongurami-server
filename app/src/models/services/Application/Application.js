@@ -279,9 +279,10 @@ class Application {
       );
 
       if (isUpdate) {
-        const clubName = await NotificationStorage.findOneByClubNum(
-          userInfo.clubNum
-        );
+        const { clubName } =
+          await NotificationStorage.findLeaderNameAndIdByClubNum(
+            userInfo.clubNum
+          );
 
         const applicantName =
           await ApplicationStorage.findOneByApplicantIdAndClubNum(userInfo);
