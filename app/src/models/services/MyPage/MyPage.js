@@ -3,7 +3,6 @@
 const MyPageStorage = require('./MyPageStorage');
 const Auth = require('../Auth/Auth');
 const WriterCheck = require('../../utils/WriterCheck');
-const Notification = require('../Notification/Notification');
 const NotificationStorage = require('../Notification/NotificationStorage');
 const AdminOptionStorage = require('../AdminOption/AdminOptionStorage');
 const StudentStorage = require('../Student/StudentStorage');
@@ -170,7 +169,6 @@ class MyPage {
     const user = this.auth;
     const { clubNum } = this.params;
     const { id } = this.params;
-    const notification = new Notification(this.req);
 
     try {
       if (user.id !== id) {
@@ -220,14 +218,16 @@ class MyPage {
         );
 
         const notificationInfo = {
-          clubName,
+          title: clubName,
           senderName: user.name,
           recipientName: leader.name,
           recipientId: leader.id,
           content: '동아리 탈퇴',
+          url: 'null',
+          notiCategoryNum: 8,
         };
 
-        await notification.createNotification(notificationInfo);
+        await NotificationStorage.createNotification(notificationInfo);
 
         return { success: true, msg: '동아리 탈퇴에 성공하였습니다.', jwt };
       }

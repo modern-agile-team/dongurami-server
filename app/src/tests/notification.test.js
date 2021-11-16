@@ -48,8 +48,8 @@ const application = {
       description: '테스트6',
     },
   ],
-  notiCategoryNum: '4',
-  url: 'sdlfijjsfdl',
+  notiCategoryNum: '7',
+  url: 'test/url',
 };
 
 const apply = {
@@ -169,6 +169,22 @@ describe('알림 API 테스트', () => {
         )
         .set('Content-Type', 'application/json')
         .send(reject);
+
+      expect(res.statusCode).toEqual(200);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it('DELETE 동아리 탈퇴 알림생성 시 200 반환', async () => {
+    try {
+      const res = await server
+        .delete('/api/my-page/200010255/personal/2')
+        .set(
+          'x-auth-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAwMDEwMjU1IiwibmFtZSI6IuyngOyImO2FjOyKpO2KuCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.gnPLoRHrkVCQnB3cKWJ6swDZM105GcNeCAS95tA5QOU'
+        )
+        .set('Content-Type', 'application/json');
 
       expect(res.statusCode).toEqual(200);
     } catch (err) {
