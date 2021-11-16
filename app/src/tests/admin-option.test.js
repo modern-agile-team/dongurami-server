@@ -70,6 +70,7 @@ describe('동아리 관리 API 테스트', () => {
         .set(
           'x-auth-token',
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
+
         )
         .set('Content-Type', 'application/json')
         .send(reject);

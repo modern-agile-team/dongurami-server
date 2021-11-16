@@ -12,11 +12,19 @@ router.get(
   loginAuth.loginCheck,
   myPageCtrl.process.findAllScrapsByClubNum
 );
+
+router.get(
+  '/:id/my-post',
+  loginAuth.loginCheck,
+  myPageCtrl.process.findAllBoardsAndComments
+);
+
 router.get(
   '/:id/personal/scrap/:clubNum/:scrapNum',
   loginAuth.loginCheck,
   myPageCtrl.process.findOneScrap
 );
+
 // category - > personal
 router.get(
   '/:id/:category/:clubNum/:boardNum',
