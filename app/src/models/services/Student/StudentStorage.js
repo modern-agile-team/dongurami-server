@@ -175,6 +175,55 @@ class StudentStorage {
       conn?.release();
     }
   }
+
+  static async snsSave(saveInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const save = `INSERT INTO students (id, password, name, email, password_salt, major) VALUES (?, ?, ?, ?, ?, ?);`;
+      const sns = `INSERT INTO sns_info (student_id, sns_id) VALUES (?, ?);`;
+
+      const saveResult = await conn.query(save, [
+        saveInfo.id,
+        saveInfo.hash,
+        saveInfo.name,
+        saveInfo.email,
+        saveInfo.passwordSalt,
+        saveInfo.major,
+      ]);
+      const snsResult = await conn.query(sns, [saveInfo.id, saveInfo.sns_id]);
+
+      if (snsResult.affectedRows && saveResult.affectedRows) return true;
+      return false;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findOneBySnsId(snsId) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT student_id AS studentId, sns_id AS snsId FROM sns_info WHERE sns_id =?;`;
+
+      const result = await conn.query(query, [snsId]);
+
+      if (result[0]) {
+        return { success: true, result: result[0] };
+      }
+      return { success: false };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = StudentStorage;
