@@ -167,19 +167,16 @@ class Application {
       const result = await ApplicationStorage.createApplicant(applicantInfo);
 
       if (result) {
-        const clubName = await NotificationStorage.findOneByClubNum(
-          applicantInfo.clubNum
-        );
-
-        const leader = await NotificationStorage.findLeaderNameAndIdByClubNum(
-          applicantInfo.clubNum
-        );
+        const { clubName, leaderName, leaderId } =
+          await NotificationStorage.findLeaderNameAndIdByClubNum(
+            applicantInfo.clubNum
+          );
 
         const notificationInfo = {
           clubName,
           senderName: auth.name,
-          recipientName: leader.name,
-          recipientId: leader.id,
+          recipientName: leaderName,
+          recipientId: leaderId,
           content: '동아리 가입 신청 완료',
         };
 
