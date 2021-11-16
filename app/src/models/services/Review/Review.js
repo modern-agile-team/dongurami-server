@@ -19,7 +19,6 @@ class Review {
       const { success, reviewList } = await ReviewStorage.findOneByClubNum(
         clubNum
       );
-
       if (success) {
         return { success: true, reviewList, studentId: user.id };
       }
