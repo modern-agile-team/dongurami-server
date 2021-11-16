@@ -36,7 +36,7 @@ describe('동아리 관리 API 테스트', () => {
         .get('/api/club/admin-option/2')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbXSwiaWQiOiIyMDAwMTAyNTUiLCJuYW1lIjoi7KeA7IiY7YWM7Iqk7Yq4IiwicHJvZmlsZVBhdGgiOm51bGwsImlzQWRtaW4iOiIwIiwiYWxnb3JpdGhtIjoiSFMyNTYiLCJpc3N1ZXIiOiJ3b29haGFuIGFnaWxlIn0.GkD_m2qIMrPdJ3Rc4rPS7ZIj2ygYGelsXHUcfNkXSMw'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
         )
         .set('Content-Type', 'application/json');
 
@@ -52,7 +52,7 @@ describe('동아리 관리 API 테스트', () => {
         .post('/api/club/admin-option/2/applicant')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbXSwiaWQiOiIyMDAwMTAyNTUiLCJuYW1lIjoi7KeA7IiY7YWM7Iqk7Yq4IiwicHJvZmlsZVBhdGgiOm51bGwsImlzQWRtaW4iOiIwIiwiYWxnb3JpdGhtIjoiSFMyNTYiLCJpc3N1ZXIiOiJ3b29haGFuIGFnaWxlIn0.GkD_m2qIMrPdJ3Rc4rPS7ZIj2ygYGelsXHUcfNkXSMw'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
         )
         .set('Content-Type', 'application/json')
         .send(apply);
@@ -69,7 +69,8 @@ describe('동아리 관리 API 테스트', () => {
         .put('/api/club/admin-option/2/applicant')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbXSwiaWQiOiIyMDAwMTAyNTUiLCJuYW1lIjoi7KeA7IiY7YWM7Iqk7Yq4IiwicHJvZmlsZVBhdGgiOm51bGwsImlzQWRtaW4iOiIwIiwiYWxnb3JpdGhtIjoiSFMyNTYiLCJpc3N1ZXIiOiJ3b29haGFuIGFnaWxlIn0.GkD_m2qIMrPdJ3Rc4rPS7ZIj2ygYGelsXHUcfNkXSMw'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
+
         )
         .set('Content-Type', 'application/json')
         .send(reject);
@@ -86,7 +87,7 @@ describe('동아리 관리 API 테스트', () => {
         .put('/api/club/admin-option/2/leader')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbXSwiaWQiOiIyMDAwMTAyNTUiLCJuYW1lIjoi7KeA7IiY7YWM7Iqk7Yq4IiwicHJvZmlsZVBhdGgiOm51bGwsImlzQWRtaW4iOiIwIiwiYWxnb3JpdGhtIjoiSFMyNTYiLCJpc3N1ZXIiOiJ3b29haGFuIGFnaWxlIn0.GkD_m2qIMrPdJ3Rc4rPS7ZIj2ygYGelsXHUcfNkXSMw'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
         )
         .set('Content-Type', 'application/json')
         .send(leader);
@@ -103,7 +104,7 @@ describe('동아리 관리 API 테스트', () => {
         .put('/api/club/admin-option/2/admin-functions')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbXSwiaWQiOiIyMDAwMTAyNTUiLCJuYW1lIjoi7KeA7IiY7YWM7Iqk7Yq4IiwicHJvZmlsZVBhdGgiOm51bGwsImlzQWRtaW4iOiIwIiwiYWxnb3JpdGhtIjoiSFMyNTYiLCJpc3N1ZXIiOiJ3b29haGFuIGFnaWxlIn0.GkD_m2qIMrPdJ3Rc4rPS7ZIj2ygYGelsXHUcfNkXSMw'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
         )
         .set('Content-Type', 'application/json')
         .send(adminFunctions);
@@ -117,10 +118,10 @@ describe('동아리 관리 API 테스트', () => {
   it('DELETE 동아리원 추방 시 200 반환', async () => {
     try {
       const res = await server
-        .delete('/api/club/admin-option/2/')
+        .delete('/api/club/admin-option/2/200010255')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbXSwiaWQiOiIyMDAwMTAyNTUiLCJuYW1lIjoi7KeA7IiY7YWM7Iqk7Yq4IiwicHJvZmlsZVBhdGgiOm51bGwsImlzQWRtaW4iOiIwIiwiYWxnb3JpdGhtIjoiSFMyNTYiLCJpc3N1ZXIiOiJ3b29haGFuIGFnaWxlIn0.GkD_m2qIMrPdJ3Rc4rPS7ZIj2ygYGelsXHUcfNkXSMw'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
         )
         .set('Content-Type', 'application/json');
 

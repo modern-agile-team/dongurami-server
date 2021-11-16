@@ -15,14 +15,51 @@ const reply = {
   notiCategoryNum: 1,
 };
 
+const application = {
+  basic: {
+    grade: 1,
+    gender: 2,
+    phoneNum: '01012121212',
+  },
+
+  extra: [
+    {
+      no: 6,
+      description: '테스트1',
+    },
+    {
+      no: 7,
+      description: '테스트2',
+    },
+    {
+      no: 8,
+      description: '테스트3',
+    },
+    {
+      no: 9,
+      description: '테스트4',
+    },
+    {
+      no: 10,
+      description: '테스트5',
+    },
+    {
+      no: 11,
+      description: '테스트6',
+    },
+  ],
+  notiCategoryNum: '7',
+  url: 'test/url',
+};
+
 const apply = {
-  applicant: '000000011',
+  applicant: '200010255',
   url: 'test/url',
   notiCategoryNum: 2,
 };
 
 const reject = {
-  applicant: '000000011',
+  applicant: '200010255',
   url: 'test/url',
   notiCategoryNum: 3,
 };
@@ -57,10 +94,10 @@ describe('알림 API 테스트', () => {
   it('POST 댓글알림 생성 시 201 반환', async () => {
     try {
       const res = await server
-        .post('/api/club/board/clubNotice/2/1')
+        .post('/api/club/board/clubNotice/2/26')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjoiWzJdIiwiaWQiOiIwMDAwMDAwMDYiLCJuYW1lIjoi7Jes7ISvIiwicHJvZmlsZVBhdGgiOm51bGwsImlzQWRtaW4iOjAsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.lUOA0roMJMWga0JnWPZEfAVgBch49LVhtibaBLV78Wg'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
         )
         .set('Content-Type', 'application/json')
         .send(comment);
@@ -74,13 +111,30 @@ describe('알림 API 테스트', () => {
   it('POST 답글알림 생성 시 201 반환', async () => {
     try {
       const res = await server
-        .post('/api/club/board/clubNotice/2/1/1')
+        .post('/api/club/board/clubNotice/2/26/126')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
         )
         .set('Content-Type', 'application/json')
         .send(reply);
+
+      expect(res.statusCode).toEqual(201);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it('POST 동아리 가입신청 알림생성 시 201 반환', async () => {
+    try {
+      const res = await server
+        .post('/api/club/application/2/answer')
+        .set(
+          'x-auth-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbXSwiaWQiOiIyMDAwMTAyNTUiLCJuYW1lIjoi7KeA7IiY7YWM7Iqk7Yq4IiwicHJvZmlsZVBhdGgiOiJza2RmaCIsImlzQWRtaW4iOiIxIiwiYWxnb3JpdGhtIjoiSFMyNTYiLCJpc3N1ZXIiOiJ3b29haGFuIGFnaWxlIn0.rfry4MDUAdxr_xnF0iE6Dyxe-ZyQnTL6CYU7YTtkCkM'
+        )
+        .set('Content-Type', 'application/json')
+        .send(application);
 
       expect(res.statusCode).toEqual(201);
     } catch (err) {
@@ -94,7 +148,7 @@ describe('알림 API 테스트', () => {
         .post('/api/club/admin-option/2/applicant')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
         )
         .set('Content-Type', 'application/json')
         .send(apply);
@@ -111,10 +165,26 @@ describe('알림 API 테스트', () => {
         .put('/api/club/admin-option/2/applicant')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
         )
         .set('Content-Type', 'application/json')
         .send(reject);
+
+      expect(res.statusCode).toEqual(200);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it('DELETE 동아리 탈퇴 알림생성 시 200 반환', async () => {
+    try {
+      const res = await server
+        .delete('/api/my-page/200010255/personal/2')
+        .set(
+          'x-auth-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAwMDEwMjU1IiwibmFtZSI6IuyngOyImO2FjOyKpO2KuCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.gnPLoRHrkVCQnB3cKWJ6swDZM105GcNeCAS95tA5QOU'
+        )
+        .set('Content-Type', 'application/json');
 
       expect(res.statusCode).toEqual(200);
     } catch (err) {
@@ -128,7 +198,7 @@ describe('알림 API 테스트', () => {
         .post('/api/club/schedule/2')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
         )
         .set('Content-Type', 'application/json')
         .send(modifySchedule);
@@ -145,7 +215,7 @@ describe('알림 API 테스트', () => {
         .put('/api/club/schedule/2/1')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
         )
         .set('Content-Type', 'application/json')
         .send(createSchedule);
@@ -162,7 +232,7 @@ describe('알림 API 테스트', () => {
         .post('/api/club/board/clubNotice/2')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
         )
         .set('Content-Type', 'application/json')
         .send(clubNotice);
@@ -179,7 +249,7 @@ describe('알림 API 테스트', () => {
         .get('/api/notification/entire')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
         )
         .set('Content-Type', 'application/json');
 
@@ -192,10 +262,10 @@ describe('알림 API 테스트', () => {
   it('PATCH 알림 삭제 시 200 반환', async () => {
     try {
       const res = await server
-        .patch('/api/notification/1')
+        .patch('/api/notification/1571')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
         )
         .set('Content-Type', 'application/json');
 
@@ -211,7 +281,7 @@ describe('알림 API 테스트', () => {
         .put('/api/notification/entire')
         .set(
           'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMDAwMDAwMDA1IiwibmFtZSI6IuuLpOyEryIsInByb2ZpbGVQYXRoIjpudWxsLCJpc0FkbWluIjowLCJpYXQiOjE2MzY2MzM4MjMsImV4cCI6MTYzNjcyMDIyMywiaXNzIjoid29vYWhhbiBhZ2lsZSJ9.nWkuNJp0Odo-y3on9VV18XDoTEgxvnuNOKyskPEM4Fg'
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
         )
         .set('Content-Type', 'application/json');
 
