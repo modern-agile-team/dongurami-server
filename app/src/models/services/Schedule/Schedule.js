@@ -120,7 +120,8 @@ class Schedule {
       if (success) {
         const recipients = await NotificationStorage.findAllByClubNum(clubNum);
 
-        const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+        const { clubName } =
+          await NotificationStorage.findLeaderNameAndIdByClubNum(clubNum);
 
         const senderId = userInfo.id;
 
