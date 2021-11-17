@@ -50,7 +50,7 @@ class NotificationStorage {
       conn = await mariadb.getConnection();
 
       const query =
-        'SELECT s.name, s.id c.name AS clubName FROM clubs AS c JOIN students AS s ON c.leader = s.id WHERE c.no = ?;';
+        'SELECT s.name, s.id, c.name AS clubName FROM clubs AS c JOIN students AS s ON c.leader = s.id WHERE c.no = ?;';
 
       const club = await conn.query(query, clubNum);
 
