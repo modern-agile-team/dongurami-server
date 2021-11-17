@@ -153,7 +153,7 @@ class Student {
       if (student.id === client.id) {
         return {
           saveable: false,
-          msg: '이미 가입된 아이디입니다.',
+          msg: '이미 가입된 학번입니다.',
         };
       }
       if (student.email === client.email) {
