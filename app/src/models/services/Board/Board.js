@@ -178,6 +178,7 @@ class Board {
       const boardInfo = {
         category,
         boardNum: params.boardNum,
+        studentId: user.id,
       };
 
       if (category === 5 && !user.clubNum.includes(Number(params.clubNum))) {
@@ -185,11 +186,12 @@ class Board {
       }
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
-      if (board === undefined)
+      if (board === undefined) {
         return {
           success: false,
           msg: '해당 게시판에 존재하지 않는 글 입니다.',
         };
+      }
 
       let userInfo = '비로그인 회원입니다.';
 

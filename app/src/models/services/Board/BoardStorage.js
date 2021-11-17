@@ -135,7 +135,9 @@ class BoardStorage {
 
       const query = `SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, bo.hit, st.profile_image_url AS profileImageUrl,
       (SELECT COUNT(no) FROM board_emotions
-      WHERE board_no = bo.no) AS emotionCount
+      WHERE board_no = bo.no) AS emotionCount,
+      (SELECT COUNT(no) FROM board_emotions
+      WHERE board_no = bo.no AND student_id = ?) AS likedFlag
       FROM boards AS bo
       JOIN students AS st
       ON bo.student_id = st.id
@@ -144,6 +146,7 @@ class BoardStorage {
       WHERE bo.board_category_no = ? AND bo.no = ?;`;
 
       const board = await conn.query(query, [
+        boardInfo.studentId,
         boardInfo.category,
         boardInfo.boardNum,
       ]);

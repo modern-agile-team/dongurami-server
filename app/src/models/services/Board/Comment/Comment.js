@@ -129,9 +129,12 @@ class Comment {
 
   async findAllByBoardNum() {
     try {
-      const { boardNum } = this.params;
+      const boardInfo = {
+        boardNum: this.params.boardNum,
+        studentId: this.auth.id,
+      };
 
-      const comments = await CommentStorage.findAllByBoardNum(boardNum);
+      const comments = await CommentStorage.findAllByBoardNum(boardInfo);
 
       return comments;
     } catch (err) {
