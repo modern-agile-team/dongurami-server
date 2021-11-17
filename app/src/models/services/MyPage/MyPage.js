@@ -236,9 +236,7 @@ class MyPage {
         const jwt = await Auth.createJWT(checkedId, clubs);
 
         const { clubName, leaderName, leaderId } =
-          await NotificationStorage.findLeaderNameAndIdByClubNum(
-            userInfo.clubNum
-          );
+          await NotificationStorage.findClubInfoByClubNum(userInfo.clubNum);
 
         const notificationInfo = {
           title: clubName,

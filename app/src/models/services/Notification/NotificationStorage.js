@@ -43,7 +43,7 @@ class NotificationStorage {
     }
   }
 
-  static async findLeaderNameAndIdByClubNum(clubNum) {
+  static async findClubInfoByClubNum(clubNum) {
     let conn;
 
     try {

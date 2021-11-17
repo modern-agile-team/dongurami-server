@@ -168,7 +168,7 @@ class Application {
 
       if (result) {
         const { clubName, leaderName, leaderId } =
-          await NotificationStorage.findLeaderNameAndIdByClubNum(
+          await NotificationStorage.findClubInfoByClubNum(
             applicantInfo.clubNum
           );
 
@@ -229,10 +229,9 @@ class Application {
         const isCreate = await ApplicationStorage.createMemberById(userInfo);
 
         if (isCreate) {
-          const { clubName } =
-            await NotificationStorage.findLeaderNameAndIdByClubNum(
-              userInfo.clubNum
-            );
+          const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+            userInfo.clubNum
+          );
 
           const recipientName =
             await ApplicationStorage.findOneByApplicantIdAndClubNum(userInfo);
@@ -279,10 +278,9 @@ class Application {
       );
 
       if (isUpdate) {
-        const { clubName } =
-          await NotificationStorage.findLeaderNameAndIdByClubNum(
-            userInfo.clubNum
-          );
+        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+          userInfo.clubNum
+        );
 
         const applicantName =
           await ApplicationStorage.findOneByApplicantIdAndClubNum(userInfo);
