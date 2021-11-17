@@ -52,13 +52,14 @@ class Letter {
     const data = this.body;
 
     try {
+      // 수신자가 익명일 경우
       if (!data.recipientId.length) {
         data.recipientId = data.boardFlag
-          ? await LetterStorage.findRecipientByBoard(data.boardNo)
+          ? await LetterStorage.findRecipientByBoard(data.boardNo) // 수신자 : 글 작성자
           : await LetterStorage.findRecipientByComment(
               data.boardNo,
               data.commentNo
-            );
+            ); // 수신자 : 댓글 작성자
       }
 
       const sendInfo = {
@@ -69,6 +70,41 @@ class Letter {
         writerHiddenFlag: data.writerHiddenFlag,
       };
 
+      const result = data.boardFlag
+        ? await LetterStorage.createLetterByBoard(sendInfo) // 수신자 :  글 작성자
+        : await LetterStorage.createLetterByComment(sendInfo); // 수신자 :  댓글 작성자
+
+      if (result) return { success: true, msg: '쪽지가 전송되었습니다.' };
+      return { success: false, msg: '쪽지가 전송되지 않았습니다.' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async createReplyLetter() {
+    const data = this.body;
+    const { id } = this.auth;
+
+    try {
+      // 수신자가 익명일 경우 => 해당 쪽지의 수신자, 발신자의 학번과 auth.id를 비교하여 수신자 찾아주기
+      if (!data.recipientId.length) {
+        const isRecipient = await LetterStorage.findRecipientByLetter();
+
+        data.recipientId =
+          isRecipient.senderId === id
+            ? isRecipient.recipientId
+            : isRecipient.senderId;
+      }
+
+      const sendInfo = {
+        senderId: id,
+        recipientId: data.recipientId,
+        description: data.description,
+        boardNo: data.boardNo,
+        writerHiddenFlag: data.writerHiddenFlag,
+      };
+
+      // => 그 전 대화들의 연관성을 위함
       const result = data.boardFlag
         ? await LetterStorage.createLetterByBoard(sendInfo)
         : await LetterStorage.createLetterByComment(sendInfo);

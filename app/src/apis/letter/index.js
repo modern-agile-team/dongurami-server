@@ -14,5 +14,10 @@ router.get(
 );
 
 router.post('/send', loginAuth.loginCheck, letterCtrl.process.createLetter);
+router.post(
+  '/:id/:letterNo/send',
+  loginAuth.loginCheck,
+  letterCtrl.process.createReplyLetter
+);
 
 module.exports = router;

@@ -60,6 +60,30 @@ const process = {
     logger.error(`POST /api/letter/send 400: ${response.msg}`);
     return res.status(400).json(response);
   },
+
+  createReplyLetter: async (req, res) => {
+    const letter = new Letter(req);
+    const { id } = req.params;
+    const { letterNo } = req.params;
+    const response = await letter.createReplyLetter();
+
+    if (response.success) {
+      logger.info(
+        `POST /api/letter/${id}/${letterNo}/send 200: ${response.msg}`
+      );
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      logger.error(
+        `POST /api/letter/${id}/${letterNo}/send 500: \n${response.clientMsg.stack}`
+      );
+      return res.status(500).json({ success: false, msg: response.clientMsg });
+    }
+    logger.error(
+      `POST /api/letter/${id}/${letterNo}/send 400: ${response.msg}`
+    );
+    return res.status(400).json(response);
+  },
 };
 module.exports = {
   process,

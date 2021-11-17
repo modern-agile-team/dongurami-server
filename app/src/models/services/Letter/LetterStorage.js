@@ -30,7 +30,7 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT description, in_date AS inDate, writer_hidden_flag AS writerHiddenFlag 
+      const query = `SELECT description, board_no AS boardNo, in_date AS inDate, writer_hidden_flag AS writerHiddenFlag 
       FROM letters WHERE sender_id = ? OR recipient_id = ? AND delete_flag = 0 
       ORDER BY inDate DESC;`;
 
@@ -73,6 +73,24 @@ class LetterStorage {
       const recipientId = await conn.query(query, [boardNo, commentNo]);
 
       return recipientId[0].studentId;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findRecipientByLetter(letterNo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT sender_id AS senderId, recipient_id AS recipientId FROM letters WHERE no = ?;`;
+
+      const recipientId = await conn.query(query, letterNo);
+
+      return recipientId;
     } catch (err) {
       throw err;
     } finally {
