@@ -167,19 +167,16 @@ class Application {
       const result = await ApplicationStorage.createApplicant(applicantInfo);
 
       if (result) {
-        const clubName = await NotificationStorage.findOneByClubNum(
-          applicantInfo.clubNum
-        );
-
-        const leader = await NotificationStorage.findLeaderNameAndIdByClubNum(
-          applicantInfo.clubNum
-        );
+        const { clubName, leaderName, leaderId } =
+          await NotificationStorage.findClubInfoByClubNum(
+            applicantInfo.clubNum
+          );
 
         const notificationInfo = {
           clubName,
           senderName: auth.name,
-          recipientName: leader.name,
-          recipientId: leader.id,
+          recipientName: leaderName,
+          recipientId: leaderId,
           content: '동아리 가입 신청 완료',
         };
 
@@ -232,7 +229,7 @@ class Application {
         const isCreate = await ApplicationStorage.createMemberById(userInfo);
 
         if (isCreate) {
-          const clubName = await NotificationStorage.findOneByClubNum(
+          const { clubName } = await NotificationStorage.findClubInfoByClubNum(
             userInfo.clubNum
           );
 
@@ -281,7 +278,7 @@ class Application {
       );
 
       if (isUpdate) {
-        const clubName = await NotificationStorage.findOneByClubNum(
+        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
           userInfo.clubNum
         );
 

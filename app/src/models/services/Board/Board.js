@@ -61,7 +61,7 @@ class Board {
           boardInfo.clubNum
         );
 
-        const clubName = await NotificationStorage.findOneByClubNum(
+        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
           boardInfo.clubNum
         );
 
