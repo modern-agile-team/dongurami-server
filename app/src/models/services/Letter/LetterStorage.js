@@ -9,31 +9,38 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT description, in_date AS inDate, writer_hidden_flag AS writerHiddenFlag FROM letters WHERE recipient_id = ? AND delete_flag = 0 ORDER BY inDate DESC;`;
+      const query = `SELECT description, in_date AS inDate, writer_hidden_flag AS writerHiddenFlag 
+      FROM letters 
+      WHERE sender_id = ? OR recipient_id = ? AND delete_flag = 0 
+      ORDER BY inDate DESC;`;
 
-      const letters = await conn.query(query, id);
+      const letters = await conn.query(query, [id, id]);
+
       return letters;
     } catch (err) {
       throw err;
     } finally {
-      conn?.realse();
+      conn?.release();
     }
   }
 
-  static async findLettersByGroup() {
+  static async findLettersByGroup(id) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = ``;
+      const query = `SELECT description, in_date AS inDate, writer_hidden_flag AS writerHiddenFlag 
+      FROM letters WHERE sender_id = ? OR recipient_id = ? AND delete_flag = 0 
+      ORDER BY inDate DESC;`;
 
-      const letters = await conn.query(query);
+      const letters = await conn.query(query, id);
+
       return letters;
     } catch (err) {
       throw err;
     } finally {
-      conn?.realse();
+      conn?.release();
     }
   }
 
