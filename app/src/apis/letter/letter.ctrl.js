@@ -5,7 +5,7 @@ const logger = require('../../config/logger');
 
 const process = {
   findLetters: async (req, res) => {
-    const letter = new Letter();
+    const letter = new Letter(req);
     const { id } = req.auth;
     const response = await letter.findLetters();
 
@@ -22,10 +22,10 @@ const process = {
   },
 
   createLetter: async (req, res) => {
-    const letter = new Letter();
+    const letter = new Letter(req);
     const response = await letter.createLetter();
 
-    if (resonse.success) {
+    if (response.success) {
       logger.info(`POST /api/letter/send 200: ${response.msg}`);
       return res.status(200).json(response);
     }
