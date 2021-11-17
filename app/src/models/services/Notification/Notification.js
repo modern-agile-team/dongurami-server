@@ -91,7 +91,7 @@ class Notification {
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      throw err;
     }
   }
 
