@@ -90,7 +90,7 @@ class LetterStorage {
 
       const recipientId = await conn.query(query, letterNo);
 
-      return recipientId;
+      return recipientId[0];
     } catch (err) {
       throw err;
     } finally {

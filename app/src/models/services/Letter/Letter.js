@@ -88,7 +88,9 @@ class Letter {
     try {
       // 수신자가 익명일 경우 => 해당 쪽지의 수신자, 발신자의 학번과 auth.id를 비교하여 수신자 찾아주기
       if (!data.recipientId.length) {
-        const isRecipient = await LetterStorage.findRecipientByLetter();
+        const isRecipient = await LetterStorage.findRecipientByLetter(
+          this.params.letterNo
+        );
 
         data.recipientId =
           isRecipient.senderId === id
