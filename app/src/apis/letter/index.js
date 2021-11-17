@@ -15,9 +15,15 @@ router.get(
 
 router.post('/send', loginAuth.loginCheck, letterCtrl.process.createLetter);
 router.post(
-  '/:id/:letterNo/send',
+  '/:id/:letterNo',
   loginAuth.loginCheck,
   letterCtrl.process.createReplyLetter
+);
+
+router.delete(
+  '/:id/:letterNo',
+  loginAuth.loginCheck,
+  letterCtrl.process.deleteLetters
 );
 
 module.exports = router;

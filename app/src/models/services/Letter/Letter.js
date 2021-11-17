@@ -117,6 +117,32 @@ class Letter {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
+
+  async deleteLetters() {
+    const { id } = this.auth;
+    const { letterNo } = this.params;
+
+    try {
+      const { boardFlag, boardNo } = await LetterStorage.findeLetterInfo(
+        letterNo
+      );
+
+      const letterInfo = {
+        id,
+        boardFlag,
+        boardNo,
+      };
+
+      const result = await LetterStorage.deleteLetters(letterInfo);
+
+      if (result) {
+        return { success: true, msg: '쪽지 대화 목록 전체 삭제 성공' };
+      }
+      return { success: false, msg: '쪽지 대화 목록 전체 삭제 실패' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
 }
 
 module.exports = Letter;

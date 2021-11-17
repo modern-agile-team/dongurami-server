@@ -68,20 +68,36 @@ const process = {
     const response = await letter.createReplyLetter();
 
     if (response.success) {
-      logger.info(
-        `POST /api/letter/${id}/${letterNo}/send 200: ${response.msg}`
-      );
+      logger.info(`POST /api/letter/${id}/${letterNo} 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `POST /api/letter/${id}/${letterNo}/send 500: \n${response.clientMsg.stack}`
+        `POST /api/letter/${id}/${letterNo} 500: \n${response.clientMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    logger.error(
-      `POST /api/letter/${id}/${letterNo}/send 400: ${response.msg}`
-    );
+    logger.error(`POST /api/letter/${id}/${letterNo} 400: ${response.msg}`);
+    return res.status(400).json(response);
+  },
+
+  deleteLetters: async (req, res) => {
+    const letter = new Letter(req);
+    const { id } = this.params;
+    const { letterNo } = this.params;
+    const response = await letter.deleteLetters();
+
+    if (response.success) {
+      logger.info(`DELETE /api/letter/${id}/${letterNo} 200: ${response.msg}`);
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      logger.error(
+        `DELETE /api/letter/${id}/${letterNo} 500: \n${response.clientMsg.stack}`
+      );
+      return res.status(500).json({ success: false, msg: response.clientMsg });
+    }
+    logger.error(`DELETE /api/letter/${id}/${letterNo} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 };

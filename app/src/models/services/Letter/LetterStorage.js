@@ -146,6 +146,49 @@ class LetterStorage {
       conn?.release();
     }
   }
+
+  static async findLetterInfo(letterNo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT board_flag AS boardFlag, board_no AS boardNo FROM letters WHERE no = ?;`;
+
+      const letterInfo = await conn.query(query, letterNo);
+
+      return {
+        boardFlag: ltterInfo[0].boardFlag,
+        boardNo: letterInfo[0].boardNo,
+      };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteLetters(letterInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `UPDATE letters SET delete_flag = 1 WHERE board_flag = ? AND board_no = ? AND host_id = ?;`;
+
+      const letter = await conn.query(query, [
+        letterInfo.boardFlag,
+        letterInfo.boardNo,
+        letterInfo.Id,
+      ]);
+
+      return letter.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = LetterStorage;
