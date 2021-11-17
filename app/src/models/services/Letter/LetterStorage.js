@@ -3,6 +3,23 @@
 const mariadb = require('../../../config/mariadb');
 
 class LetterStorage {
+  static async findLetters(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT description, in_date AS inDate FROM letters WHERE recipient_id = ? AND delete_flag = 0 ORDER BY inDate DESC;`;
+
+      const letters = await query(query, id);
+      return letters;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.realse();
+    }
+  }
+
   static async findRecipientByBoard(boardNo) {
     let conn;
 
@@ -46,11 +63,12 @@ class LetterStorage {
       conn = await mariadb.getConnection();
 
       const query =
-        'INSERT INTO letters (sender_id, recipient_id, board_flag, board_no, writer_hidden_flag) VALUES (?, ?, 1, ?, ?);';
+        'INSERT INTO letters (sender_id, recipient_id, description, board_flag, board_no, writer_hidden_flag) VALUES (?, ?, ?, 1, ?, ?);';
 
       const letter = await query(query, [
         sendInfo.senderId,
         sendInfo.recipientId,
+        sendInfo.description,
         sendInfo.boardNO,
         sendInfo.writerHiddenFlag,
       ]);
@@ -69,11 +87,12 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO letters (sender_id, recipient_id, board_flag, board_no, writer_hidden_flag) VALUES (?, ?, 0, ?, ?);`;
+      const query = `INSERT INTO letters (sender_id, recipient_id, description, board_flag, board_no, writer_hidden_flag) VALUES (?, ?, 0, ?, ?);`;
 
       const letter = await query(query, [
         sendInfo.senderId,
         sendInfo.recipientId,
+        sendInfo.description,
         sendInfo.boardNO,
         sendInfo.writerHiddenFlag,
       ]);
