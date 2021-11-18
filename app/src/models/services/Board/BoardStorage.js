@@ -49,7 +49,7 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit,
+      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
       (SELECT COUNT(no) FROM comments
       WHERE board_no = bo.no) AS commentCount,
       (SELECT COUNT(no) FROM board_emotions
@@ -100,7 +100,7 @@ class BoardStorage {
         }
       }
 
-      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit,
+      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
       (SELECT COUNT(no) FROM comments
       WHERE board_no = bo.no) AS commentCount,
       (SELECT COUNT(no) FROM board_emotions
@@ -133,7 +133,7 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, bo.hit, st.profile_image_url AS profileImageUrl,
+      const query = `SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.modify_date AS modifyDate, bo.hit, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
       (SELECT COUNT(no) FROM board_emotions
       WHERE board_no = bo.no) AS emotionCount,
       (SELECT COUNT(no) FROM board_emotions
@@ -165,11 +165,12 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE boards SET title = ?, description = ? WHERE no = ? AND board_category_no = ?;`;
+      const query = `UPDATE boards SET title = ?, description = ?, writer_hidden_flag = ? WHERE no = ? AND board_category_no = ?;`;
 
       const board = await conn.query(query, [
         boardInfo.title,
         boardInfo.description,
+        boardInfo.hiddenFlag,
         boardInfo.boardNum,
         boardInfo.category,
       ]);
