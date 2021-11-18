@@ -13,7 +13,7 @@ router.get(
   letterCtrl.process.findLettersByGroup
 );
 
-router.post('/send', loginAuth.loginCheck, letterCtrl.process.createLetter);
+router.post('/', loginAuth.loginCheck, letterCtrl.process.createLetter);
 router.post(
   '/:id/:letterNo',
   loginAuth.loginCheck,

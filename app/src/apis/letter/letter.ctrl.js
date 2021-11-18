@@ -14,7 +14,7 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`GET /api/letter/${id} 500: \n${response.clientMsg.stack}`);
+      logger.error(`GET /api/letter/${id} 500: \n${response.errMsg.stack}`);
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     logger.error(`GET /api/letter/${id} 403: ${response.msg}`);
@@ -33,11 +33,11 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `GET /api/letter/${id}/${letterNo} 500: \n${response.clientMsg.stack}`
+        `GET /api/letter/${id}/${letterNo} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
-    if (response.msg === '본인만 열람 가능합니다.') {
+    if (response.status === 403) {
       logger.error(`GET /api/letter/${id}/${letterNo} 403: ${response.msg}`);
       return res.status(403).json(response);
     }
@@ -51,10 +51,10 @@ const process = {
 
     if (response.success) {
       logger.info(`POST /api/letter/send 200: ${response.msg}`);
-      return res.status(200).json(response);
+      return res.status(201).json(response);
     }
     if (response.isError) {
-      logger.error(`POST /api/letter/send 500: \n${response.clientMsg.stack}`);
+      logger.error(`POST /api/letter/send 500: \n${response.errMsg.stack}`);
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     logger.error(`POST /api/letter/send 400: ${response.msg}`);
@@ -69,11 +69,11 @@ const process = {
 
     if (response.success) {
       logger.info(`POST /api/letter/${id}/${letterNo} 200: ${response.msg}`);
-      return res.status(200).json(response);
+      return res.status(201).json(response);
     }
     if (response.isError) {
       logger.error(
-        `POST /api/letter/${id}/${letterNo} 500: \n${response.clientMsg.stack}`
+        `POST /api/letter/${id}/${letterNo} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
@@ -93,7 +93,7 @@ const process = {
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/letter/${id}/${letterNo} 500: \n${response.clientMsg.stack}`
+        `DELETE /api/letter/${id}/${letterNo} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }

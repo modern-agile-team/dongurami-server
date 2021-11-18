@@ -37,10 +37,14 @@ class Letter {
       const isLetter = await LetterStorage.findLetterByNo(letterNo);
 
       if (!isLetter[0]) {
-        return { success: false, msg: '존재하지 않는 쪽지입니다.' };
+        return {
+          success: false,
+          msg: '존재하지 않는 쪽지입니다.',
+          status: 404,
+        };
       }
       if (this.params.id !== id) {
-        return { success: false, msg: '본인만 열람 가능합니다.' };
+        return { success: false, msg: '본인만 열람 가능합니다.', status: 403 };
       }
       const letterInfo = await LetterStorage.findLetterInfo(letterNo);
 
@@ -49,9 +53,6 @@ class Letter {
         letterInfo.senderId === id
           ? letterInfo.recipientId
           : letterInfo.senderId;
-
-      delete letterInfo.senderId;
-      delete letterInfo.recipientId;
 
       const letters = await LetterStorage.findLettersByGroup(letterInfo);
 
