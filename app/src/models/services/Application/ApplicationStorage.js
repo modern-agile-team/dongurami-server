@@ -217,7 +217,7 @@ class ApplicationStorage {
         ON a.student_id = app.student_id AND app.club_no = 2 AND app.reading_flag = 0 
         JOIN questions AS q 
         ON a.question_no = q.no AND app.club_no = q.club_no 
-        GROUP BY (app.student_id);`;
+        GROUP BY app.student_id;`;
 
       const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
       const questionsAnswers = await conn.query(questionAnswerQuery, clubNum);
