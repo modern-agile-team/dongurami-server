@@ -31,19 +31,47 @@ class Letter {
 
   async findLettersByGroup() {
     const { id } = this.auth;
+    const { letterNo } = this.params;
 
     try {
+      const isLetter = await LetterStorage.findLetterByNo(letterNo);
+
+      if (!isLetter[0]) {
+        return { success: false, msg: '존재하지 않는 쪽지입니다.' };
+      }
       if (this.params.id !== id) {
         return { success: false, msg: '본인만 열람 가능합니다.' };
       }
+      const letterInfo = await LetterStorage.findLetterInfo(letterNo);
 
-      const letters = await LetterStorage.findLettersByGroup(id);
+      letterInfo.id = id;
+      letterInfo.otherId =
+        letterInfo.senderId === id
+          ? letterInfo.recipientId
+          : letterInfo.senderId;
+
+      delete letterInfo.senderId;
+      delete letterInfo.recipientId;
+
+      const letters = await LetterStorage.findLettersByGroup(letterInfo);
+
+      console.log(letters);
+
+      if (letters[0].writerHiddenFlag) {
+        letters.forEach((letter) => {
+          letter.name = '익명';
+          if (letter.senderId !== id) {
+            letter.senderId = '익명';
+          }
+        });
+      }
 
       if (letters) {
         return { success: true, msg: '쪽지 대화 목록 조회 성공', letters };
       }
       return { success: false, msg: '쪽지 대화 목록 조회 실패' };
     } catch (err) {
+      console.log(err);
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
@@ -120,7 +148,7 @@ class Letter {
     const { letterNo } = this.params;
 
     try {
-      const { boardFlag, boardNo } = await LetterStorage.findeLetterInfo(
+      const { boardFlag, boardNo } = await LetterStorage.findLetterInfo(
         letterNo
       );
 

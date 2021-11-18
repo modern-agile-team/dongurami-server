@@ -14,7 +14,8 @@
     "no-undef": "off",
     "no-console": "off",
     "no-restricted-syntax": "off",
-    "no-continue": "off"
+    "no-continue": "off",
+    "no-param-reassign": ["error", { "props": false }]
   },
   "ignorePatterns": ["node_modules/"],
   "parserOptions": {

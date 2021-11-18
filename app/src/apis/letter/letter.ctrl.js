@@ -29,7 +29,7 @@ const process = {
 
     if (response.success) {
       logger.info(`GET /api/letter/${id}/${letterNo} 200: ${response.msg}`);
-      return res.status(200).json(resonse);
+      return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
@@ -38,11 +38,11 @@ const process = {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     if (response.msg === '본인만 열람 가능합니다.') {
-      logger.error(`GET /api/letter/${id}/${letterNo} 403: ${reponse.msg}`);
-      return res.status(403).json(resonse);
+      logger.error(`GET /api/letter/${id}/${letterNo} 403: ${response.msg}`);
+      return res.status(403).json(response);
     }
-    logger.error(`GET /api/letter/${id}/${letterNo} 400: ${reponse.msg}`);
-    return res.status(400).json(resonse);
+    logger.error(`GET /api/letter/${id}/${letterNo} 404: ${response.msg}`);
+    return res.status(404).json(response);
   },
 
   createLetter: async (req, res) => {
@@ -83,8 +83,8 @@ const process = {
 
   deleteLetters: async (req, res) => {
     const letter = new Letter(req);
-    const { id } = this.params;
-    const { letterNo } = this.params;
+    const { id } = req.params;
+    const { letterNo } = req.params;
     const response = await letter.deleteLetters();
 
     if (response.success) {
