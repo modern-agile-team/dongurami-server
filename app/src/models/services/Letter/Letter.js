@@ -55,8 +55,6 @@ class Letter {
 
       const letters = await LetterStorage.findLettersByGroup(letterInfo);
 
-      console.log(letters);
-
       if (letters[0].writerHiddenFlag) {
         letters.forEach((letter) => {
           letter.name = '익명';
@@ -71,7 +69,6 @@ class Letter {
       }
       return { success: false, msg: '쪽지 대화 목록 조회 실패' };
     } catch (err) {
-      console.log(err);
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
