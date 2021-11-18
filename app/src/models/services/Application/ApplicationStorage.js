@@ -211,7 +211,7 @@ class ApplicationStorage {
         FROM students AS s JOIN applicants AS app ON app.club_no = ?
         AND app.student_id = s.id AND app.reading_flag = 0;`;
 
-      const questionAnswerQuery = `SELECT app.student_id AS id, GROUP_CONCAT(q.description)  AS question, GROUP_CONCAT(a.description) AS answer 
+      const questionAnswerQuery = `SELECT app.student_id AS id, GROUP_CONCAT(q.description) AS question, GROUP_CONCAT(a.description) AS answer 
         FROM answers AS a 
         JOIN applicants AS app 
         ON a.student_id = app.student_id AND app.club_no = 2 AND app.reading_flag = 0 
