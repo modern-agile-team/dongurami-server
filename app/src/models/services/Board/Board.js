@@ -122,24 +122,11 @@ class Board {
 
       const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
 
-      const anonymous = {};
-
       for (const board of boards) {
         if (board.writerHiddenFlag) {
-          const samePersonIdx = Object.keys(anonymous).indexOf(board.studentId);
-
-          if (samePersonIdx > -1) {
-            board.studentId = anonymous[board.studentId];
-            board.studentName = anonymous[board.studentId];
-            board.profileImageUrl = null;
-          } else {
-            const newPerson = `익명${Object.keys(anonymous).length + 1}`;
-
-            anonymous[board.studentId] = newPerson;
-            board.studentId = newPerson;
-            board.studentName = newPerson;
-            board.profileImageUrl = null;
-          }
+          board.studentId = '익명';
+          board.studentName = '익명';
+          board.profileImageUrl = null;
         }
       }
 
@@ -199,7 +186,7 @@ class Board {
       const boardInfo = {
         category,
         boardNum: params.boardNum,
-        studentId: user.id,
+        studentId: user ? user.id : 0,
       };
 
       if (category === 5 && !user.clubNum.includes(Number(params.clubNum))) {
@@ -221,11 +208,12 @@ class Board {
 
       let userInfo = '비로그인 회원입니다.';
 
-      if (user)
+      if (user) {
         userInfo = {
           id: user.id,
           isAdmin: user.isAdmin,
         };
+      }
 
       return {
         success: true,

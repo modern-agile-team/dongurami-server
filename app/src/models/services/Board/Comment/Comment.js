@@ -134,7 +134,7 @@ class Comment {
     try {
       const boardInfo = {
         boardNum: this.params.boardNum,
-        studentId: this.auth.id,
+        studentId: this.auth ? this.auth.id : 0,
         category: boardCategory[this.params.category],
       };
       const anonymous = {};

@@ -78,7 +78,6 @@ class EmotionStorage {
         emotionInfo.studentId,
         emotionInfo.cmtNum,
       ]);
-      console.log(isDelete);
 
       return isDelete.affectedRows;
     } catch (err) {
