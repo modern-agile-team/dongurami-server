@@ -5,7 +5,7 @@ const Error = require('../../utils/Error');
 const Student = require('../Student/Student');
 const StudentStorage = require('../Student/StudentStorage');
 
-class Oauth {
+class OAuth {
   constructor(req) {
     this.query = req.query;
     this.body = req.body;
@@ -38,11 +38,11 @@ class Oauth {
     const saveInfo = this.body;
 
     try {
-      const snsResult = await StudentStorage.findOneBySnsId(saveInfo.sns_id);
+      const snsResult = await StudentStorage.findOneBySnsId(saveInfo.snsId);
       const userResult = await StudentStorage.findOneById(saveInfo.id);
 
       if (snsResult.success) {
-        student.body.id = student.body.sns_id;
+        student.body.id = student.body.snsId;
         const loginResult = await student.naverLogin(student);
 
         return loginResult;
@@ -59,4 +59,4 @@ class Oauth {
     }
   }
 }
-module.exports = Oauth;
+module.exports = OAuth;

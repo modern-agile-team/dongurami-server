@@ -1,15 +1,15 @@
 'use strict';
 
 const logger = require('../config/logger');
-const Oauth = require('../models/services/Oauth/Oauth');
+const OAuth = require('../models/services/OAuth/OAuth');
 
 const snsTokenCheck = async (req, res, next) => {
-  const oauth = new Oauth(req);
+  const oAuth = new OAuth(req);
 
   try {
-    const oauthUserInfo = await oauth.findOneByInformation();
+    const oAuthUserInfo = await oAuth.findOneByInformation();
 
-    req.body = oauthUserInfo;
+    req.body = oAuthUserInfo;
     return next();
   } catch (err) {
     logger.error(`GET /api/naver-login 401: ${err.message}`);

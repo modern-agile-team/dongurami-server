@@ -193,7 +193,7 @@ class StudentStorage {
         saveInfo.passwordSalt,
         saveInfo.major,
       ]);
-      const snsResult = await conn.query(sns, [saveInfo.id, saveInfo.sns_id]);
+      const snsResult = await conn.query(sns, [saveInfo.id, saveInfo.snsId]);
 
       if (snsResult.affectedRows && saveResult.affectedRows) return true;
       return false;
