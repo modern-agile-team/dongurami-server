@@ -39,13 +39,14 @@ class OAuth {
 
     try {
       const snsJoinedUser = await StudentStorage.findOneBySnsId(saveInfo.snsId);
-      const generalJoinedUser = await StudentStorage.findOneById(saveInfo.id);
 
       if (snsJoinedUser.success) {
         const loginResult = await student.naverLogin(student);
 
         return loginResult;
       }
+      const generalJoinedUser = await StudentStorage.findOneById(saveInfo.id);
+
       if (generalJoinedUser) {
         return { success: false, msg: '일반회원으로 가입된 회원입니다.' };
       }
