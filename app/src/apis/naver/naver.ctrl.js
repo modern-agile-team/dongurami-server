@@ -1,6 +1,6 @@
 'use strcit';
 
-const Oauth = require('../../models/services/Oauth/Oauth');
+const OAuth = require('../../models/services/OAuth/OAuth');
 const logger = require('../../config/logger');
 const Student = require('../../models/services/Student/Student');
 
@@ -22,17 +22,15 @@ const process = {
   },
 
   signUp: async (req, res) => {
-    const oauth = new Oauth(req);
+    const oAuth = new OAuth(req);
     const student = new Student(req);
-    const response = await oauth.signUpCheck();
-    // response true이면 회원가입 미진행
+    const response = await oAuth.signUpCheck();
 
     if (!response.success) {
       if (response.msg) {
         logger.error(`POST /api/naver/sign-up 409: ${response.msg}`);
         return res.status(409).json(response);
       }
-      // 회원가입
       const result = await student.naverSignUp();
 
       if (result.success) {

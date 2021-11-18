@@ -325,35 +325,29 @@ class Student {
   }
 
   async naverUserCheck() {
-    const oauthUserInfo = this.body;
+    const oAuthUserInfo = this.body;
 
     try {
-      const user = await StudentStorage.findOneBySnsId(oauthUserInfo.id);
+      const user = await StudentStorage.findOneBySnsId(oAuthUserInfo.snsId);
 
       if (user.success) {
-        const checkedId = await StudentStorage.findOneById(
-          user.result.studentId
-        );
-        if (!checkedId) {
-          return { success: false, msg: '가입된 아이디가 아닙니다.' };
-        }
-        return { success: true, checkedId };
+        return { success: true, checkedId: user.result.studentId };
       }
       return { success: false, msg: '비회원(회원가입이 필요합니다.)' };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      throw err;
     }
   }
 
   async naverLogin() {
-    const oauthUserInfo = this.body;
+    const oAuthUserInfo = this.body;
 
     try {
-      const naverUserCheck = await this.naverUserCheck(oauthUserInfo);
+      const naverUserCheck = await this.naverUserCheck();
 
       if (naverUserCheck.success) {
         const clubNum = await StudentStorage.findOneByLoginedId(
-          naverUserCheck.checkedId.id
+          naverUserCheck.checkedId
         );
         const jwt = await Auth.createJWT(naverUserCheck.checkedId, clubNum);
 
@@ -362,9 +356,9 @@ class Student {
       return {
         success: false,
         msg: '비회원(회원가입이 필요합니다.)',
-        sns_id: oauthUserInfo.id,
-        id: oauthUserInfo.name,
-        email: oauthUserInfo.email,
+        name: oAuthUserInfo.name,
+        email: oAuthUserInfo.email,
+        snsId: oAuthUserInfo.snsId,
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
@@ -383,7 +377,6 @@ class Student {
         const response = await StudentStorage.snsSave(saveInfo);
 
         if (response) {
-          saveInfo.id = saveInfo.sns_id;
           return { success: true, msg: '회원가입에 성공하셨습니다.', saveInfo };
         }
         return { success: false, msg: '회원가입에 실패하셨습니다.' };

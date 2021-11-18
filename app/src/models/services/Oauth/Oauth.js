@@ -5,7 +5,7 @@ const Error = require('../../utils/Error');
 const Student = require('../Student/Student');
 const StudentStorage = require('../Student/StudentStorage');
 
-class Oauth {
+class OAuth {
   constructor(req) {
     this.query = req.query;
     this.body = req.body;
@@ -38,17 +38,17 @@ class Oauth {
     const saveInfo = this.body;
 
     try {
-      const snsResult = await StudentStorage.findOneBySnsId(saveInfo.sns_id);
-      const userResult = await StudentStorage.findOneById(saveInfo.id);
+      const snsJoinedUser = await StudentStorage.findOneBySnsId(saveInfo.snsId);
 
-      if (snsResult.success) {
-        student.body.id = student.body.sns_id;
+      if (snsJoinedUser.success) {
         const loginResult = await student.naverLogin(student);
 
         return loginResult;
       }
-      if (userResult) {
-        return { success: false, msg: '이미 가입된 회원입니다.' };
+      const generalJoinedUser = await StudentStorage.findOneById(saveInfo.id);
+
+      if (generalJoinedUser) {
+        return { success: false, msg: '일반회원으로 가입된 회원입니다.' };
       }
       return { success: false };
     } catch (err) {
@@ -59,4 +59,4 @@ class Oauth {
     }
   }
 }
-module.exports = Oauth;
+module.exports = OAuth;
