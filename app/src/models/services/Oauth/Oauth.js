@@ -38,17 +38,16 @@ class OAuth {
     const saveInfo = this.body;
 
     try {
-      const snsResult = await StudentStorage.findOneBySnsId(saveInfo.snsId);
-      const userResult = await StudentStorage.findOneById(saveInfo.id);
+      const snsJoinedUser = await StudentStorage.findOneBySnsId(saveInfo.snsId);
+      const generalJoinedUser = await StudentStorage.findOneById(saveInfo.id);
 
-      if (snsResult.success) {
-        student.body.id = student.body.snsId;
+      if (snsJoinedUser.success) {
         const loginResult = await student.naverLogin(student);
 
         return loginResult;
       }
-      if (userResult) {
-        return { success: false, msg: '이미 가입된 회원입니다.' };
+      if (generalJoinedUser) {
+        return { success: false, msg: '일반회원으로 가입된 회원입니다.' };
       }
       return { success: false };
     } catch (err) {
