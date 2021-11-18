@@ -88,9 +88,9 @@ class LetterStorage {
 
       const query = `SELECT sender_id AS senderId, recipient_id AS recipientId FROM letters WHERE no = ?;`;
 
-      const recipientId = await conn.query(query, letterNo);
+      const recipientInfo = await conn.query(query, letterNo);
 
-      return recipientId[0];
+      return recipientInfo[0];
     } catch (err) {
       throw err;
     } finally {
@@ -98,49 +98,39 @@ class LetterStorage {
     }
   }
 
-  static async createLetterByBoard(sendInfo) {
+  static async createLetter(sendInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
       const query =
-        'INSERT INTO letters (sender_id, recipient_id, description, board_flag, board_no, writer_hidden_flag) VALUES (?, ?, ?, 1, ?, ?);';
+        'INSERT INTO letters (sender_id, recipient_id, host_id, description, board_flag, board_no, writer_hidden_flag) VALUES (?, ?, ?, ?, ?, ?, ?);';
 
-      const letter = await conn.query(query, [
+      // 쪽지는 전송자와 수신자 모두 저장이 되어 있어야 각자 따로 메세지를 지울 수 있기 때문에 host_id COLUMN 값만 다르게 두번 저장
+      const addLetterBysender = await conn.query(query, [
         sendInfo.senderId,
         sendInfo.recipientId,
+        sendInfo.senderId,
         sendInfo.description,
+        sendInfo.boardFlag,
         sendInfo.boardNo,
         sendInfo.writerHiddenFlag,
       ]);
 
-      return letter.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async createLetterByComment(sendInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `INSERT INTO letters (sender_id, recipient_id, description, board_flag, board_no, writer_hidden_flag) VALUES (?, ?, ?, 0, ?, ?);`;
-
-      const letter = await conn.query(query, [
+      const addLetterByRecipeint = await conn.query(query, [
         sendInfo.senderId,
         sendInfo.recipientId,
+        sendInfo.recipientId,
         sendInfo.description,
+        sendInfo.boardFlag,
         sendInfo.boardNo,
         sendInfo.writerHiddenFlag,
       ]);
 
-      return letter.affectedRows;
+      return addLetterBysender.affectedRows + addLetterByRecipeint.affectedRows;
     } catch (err) {
+      console.log(err);
       throw err;
     } finally {
       conn?.release();
