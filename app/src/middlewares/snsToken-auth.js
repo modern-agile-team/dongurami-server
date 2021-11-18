@@ -9,6 +9,9 @@ const snsTokenCheck = async (req, res, next) => {
   try {
     const oAuthUserInfo = await oAuth.findOneByInformation();
 
+    oAuthUserInfo.snsId = oAuthUserInfo.id;
+    delete oAuthUserInfo.id;
+
     req.body = oAuthUserInfo;
     return next();
   } catch (err) {
