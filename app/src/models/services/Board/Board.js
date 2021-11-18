@@ -31,6 +31,7 @@ class Board {
         id: user.id,
         title: board.title,
         description: board.description,
+        hiddenFlag: board.hiddenFlag || 0,
       };
 
       if (!(board.title && board.description)) {
@@ -91,35 +92,43 @@ class Board {
     const user = this.auth;
     const { query } = this;
     const criteriaRead = {
-      clubNum: 1,
       category,
+      clubNum: 1,
       sort: query.sort || 'inDate',
       order: query.order || 'desc',
     };
 
-    if (category === undefined) {
-      return { success: false, msg: '존재하지 않는 게시판 입니다.' };
-    }
-    if (category === 4 || category === 7) {
-      return { success: false, msg: '잘못된 URL의 접근입니다' };
-    }
-    if (category === 5 || category === 6) {
-      const isClub = await BoardStorage.findClub(clubNum);
-
-      if (!isClub) {
-        return { success: false, msg: '존재하지 않는 동아리입니다.' };
-      }
-      if (category === 5 && !user.clubNum.includes(Number(clubNum))) {
-        return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
-      }
-      criteriaRead.clubNum = clubNum;
-    }
-    if (category < 5 && this.params.clubNum !== undefined) {
-      return { success: false, msg: '잘못된 URL의 접근입니다.' };
-    }
-
     try {
+      if (category === undefined) {
+        return { success: false, msg: '존재하지 않는 게시판 입니다.' };
+      }
+      if (category === 4 || category === 7) {
+        return { success: false, msg: '잘못된 URL의 접근입니다' };
+      }
+      if (category === 5 || category === 6) {
+        const isClub = await BoardStorage.findClub(clubNum);
+
+        if (!isClub) {
+          return { success: false, msg: '존재하지 않는 동아리입니다.' };
+        }
+        if (category === 5 && !user.clubNum.includes(Number(clubNum))) {
+          return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
+        }
+        criteriaRead.clubNum = clubNum;
+      }
+      if (category < 5 && this.params.clubNum !== undefined) {
+        return { success: false, msg: '잘못된 URL의 접근입니다.' };
+      }
+
       const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
+
+      for (const board of boards) {
+        if (board.writerHiddenFlag) {
+          board.studentId = '익명';
+          board.studentName = '익명';
+          board.profileImageUrl = null;
+        }
+      }
 
       let userInfo = '비로그인 회원입니다.';
 
@@ -177,6 +186,7 @@ class Board {
       const boardInfo = {
         category,
         boardNum: params.boardNum,
+        studentId: user ? user.id : 0,
       };
 
       if (category === 5 && !user.clubNum.includes(Number(params.clubNum))) {
@@ -184,19 +194,26 @@ class Board {
       }
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
-      if (board === undefined)
+      if (board === undefined) {
         return {
           success: false,
           msg: '해당 게시판에 존재하지 않는 글 입니다.',
         };
+      }
+      if (board.writerHiddenFlag === 1) {
+        board.name = '익명1';
+        board.studentId = '익명1';
+        board.profileImageUrl = null;
+      }
 
       let userInfo = '비로그인 회원입니다.';
 
-      if (user)
+      if (user) {
         userInfo = {
           id: user.id,
           isAdmin: user.isAdmin,
         };
+      }
 
       return {
         success: true,
@@ -222,6 +239,7 @@ class Board {
         title: board.title,
         description: board.description,
         boardNum: params.boardNum,
+        hiddenFlag: board.hiddenFlag || 0,
       };
 
       if (!(board.title && board.description)) {
