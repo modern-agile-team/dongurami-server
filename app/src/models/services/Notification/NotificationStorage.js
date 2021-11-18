@@ -43,6 +43,29 @@ class NotificationStorage {
     }
   }
 
+  static async findClubInfoByClubNum(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'SELECT s.name, s.id, c.name AS clubName FROM clubs AS c JOIN students AS s ON c.leader = s.id WHERE c.no = ?;';
+
+      const club = await conn.query(query, clubNum);
+
+      return {
+        clubName: club[0].clubName,
+        leaderName: club[0].name,
+        leaderId: club[0].id,
+      };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async createCmtNotification(notificationInfo) {
     let conn;
 
@@ -127,24 +150,6 @@ class NotificationStorage {
 
       if (notification.affectedRows) return true;
       return false;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findOneByClubNum(clubNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = 'SELECT name FROM clubs WHERE no = ?;';
-
-      const club = await conn.query(query, clubNum);
-
-      return club[0].name;
     } catch (err) {
       throw err;
     } finally {

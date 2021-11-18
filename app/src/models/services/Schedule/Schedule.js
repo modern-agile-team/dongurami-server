@@ -73,7 +73,9 @@ class Schedule {
       if (success) {
         const recipients = await NotificationStorage.findAllByClubNum(clubNum);
 
-        const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+          clubNum
+        );
 
         const senderId = scheduleInfo.studentId;
 
@@ -119,7 +121,9 @@ class Schedule {
       if (success) {
         const recipients = await NotificationStorage.findAllByClubNum(clubNum);
 
-        const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+          clubNum
+        );
 
         const senderId = userInfo.id;
 

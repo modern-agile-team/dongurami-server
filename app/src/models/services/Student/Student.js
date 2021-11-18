@@ -11,6 +11,7 @@ const ProfileStorage = require('../Profile/ProfileStorage');
 
 class Student {
   constructor(req) {
+    this.req = req;
     this.body = req.body;
     this.auth = req.auth;
     this.params = req.params;
@@ -152,7 +153,7 @@ class Student {
       if (student.id === client.id) {
         return {
           saveable: false,
-          msg: '이미 가입된 아이디입니다.',
+          msg: '이미 가입된 학번입니다.',
         };
       }
       if (student.email === client.email) {
@@ -320,6 +321,79 @@ class Student {
       return { success: false, msg: '유저 정보 조회 실패' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async naverUserCheck() {
+    const oauthUserInfo = this.body;
+
+    try {
+      const user = await StudentStorage.findOneBySnsId(oauthUserInfo.id);
+
+      if (user.success) {
+        const checkedId = await StudentStorage.findOneById(
+          user.result.studentId
+        );
+        if (!checkedId) {
+          return { success: false, msg: '가입된 아이디가 아닙니다.' };
+        }
+        return { success: true, checkedId };
+      }
+      return { success: false, msg: '비회원(회원가입이 필요합니다.)' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async naverLogin() {
+    const oauthUserInfo = this.body;
+
+    try {
+      const naverUserCheck = await this.naverUserCheck(oauthUserInfo);
+
+      if (naverUserCheck.success) {
+        const clubNum = await StudentStorage.findOneByLoginedId(
+          naverUserCheck.checkedId.id
+        );
+        const jwt = await Auth.createJWT(naverUserCheck.checkedId, clubNum);
+
+        return { success: true, msg: '로그인에 성공하셨습니다.', jwt };
+      }
+      return {
+        success: false,
+        msg: '비회원(회원가입이 필요합니다.)',
+        sns_id: oauthUserInfo.id,
+        id: oauthUserInfo.name,
+        email: oauthUserInfo.email,
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async naverSignUp() {
+    const saveInfo = this.body;
+
+    try {
+      const checkedIdAndEmail = await this.checkIdAndEmail();
+      if (checkedIdAndEmail.saveable) {
+        saveInfo.hash = '';
+        saveInfo.passwordSalt = '';
+
+        const response = await StudentStorage.snsSave(saveInfo);
+
+        if (response) {
+          saveInfo.id = saveInfo.sns_id;
+          return { success: true, msg: '회원가입에 성공하셨습니다.', saveInfo };
+        }
+        return { success: false, msg: '회원가입에 실패하셨습니다.' };
+      }
+      return checkedIdAndEmail;
+    } catch (err) {
+      return Error.ctrl(
+        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+        err
+      );
     }
   }
 }

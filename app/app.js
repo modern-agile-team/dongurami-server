@@ -28,6 +28,7 @@ const myPage = require('./src/apis/my-page');
 const profile = require('./src/apis/profile');
 const notification = require('./src/apis/notification');
 const s3 = require('./src/apis/s3');
+const naver = require('./src/apis/naver');
 const emotion = require('./src/apis/emotions');
 
 app.use('/api/board', board);
@@ -44,6 +45,7 @@ app.use('/api/my-page', myPage);
 app.use('/api/profile', profile);
 app.use('/api/notification', notification);
 app.use('/api/s3', s3);
+app.use('/api/naver', naver);
 app.use('/api/emotion', emotion);
 
 module.exports = app;
