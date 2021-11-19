@@ -46,6 +46,10 @@ class Comment {
         commentInfo.boardNum
       );
 
+      if (!commentInfo.hiddenFlag) {
+        commentInfo.id = '익명';
+      }
+
       if (user.id !== writerId) {
         const { recipientName, title } =
           await BoardStorage.findRecipientNameAndTitleByBoardNum(
