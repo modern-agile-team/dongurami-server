@@ -4,6 +4,22 @@ const Letter = require('../../models/services/Letter/Letter');
 const logger = require('../../config/logger');
 
 const process = {
+  findLetterNotification: async (req, res) => {
+    const letter = new Letter(req);
+    const response = await letter.findLetterNotification();
+
+    if (response.success) {
+      logger.info(`GET /api/letter/entire 200: ${response.msg}`);
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      logger.error(`GET /api/letter/entire 500: \n${response.errMsg.stack}`);
+      return res.status(500).json({ success: false, msg: response.clientMsg });
+    }
+    logger.error(`GET /api/letter/entire 400: ${response.msg}`);
+    return res.status(400).json(response);
+  },
+
   findLetters: async (req, res) => {
     const letter = new Letter(req);
     const { id } = req.params;
@@ -78,6 +94,22 @@ const process = {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     logger.error(`POST /api/letter/${id}/${letterNo} 400: ${response.msg}`);
+    return res.status(400).json(response);
+  },
+
+  deleteLetterNotifications: async (req, res) => {
+    const letter = new Letter(req);
+    const response = await letter.deleteLetterNotifications();
+
+    if (response.success) {
+      logger.info(`DELETE /api/letter/entire 200: ${response.msg}`);
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      logger.error(`DELETE /api/letter/entire 500: \n${response.errMsg.stack}`);
+      return res.status(500).json({ success: false, msg: response.clientMsg });
+    }
+    logger.info(`DELETE /api/letter/entire 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 

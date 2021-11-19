@@ -6,6 +6,18 @@ const router = express.Router();
 const loginAuth = require('../../middlewares/login-auth');
 const letterCtrl = require('./letter.ctrl');
 
+router.get(
+  '/:entire',
+  loginAuth.loginCheck,
+  letterCtrl.process.findLetterNotification
+);
+
+router.put(
+  '/:entire',
+  loginAuth.loginCheck,
+  letterCtrl.process.deleteLetterNotifications
+);
+
 router.get('/:id', loginAuth.loginCheck, letterCtrl.process.findLetters);
 router.get(
   '/:id/:letterNo',

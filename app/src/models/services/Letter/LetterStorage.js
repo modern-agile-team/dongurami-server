@@ -3,6 +3,27 @@
 const mariadb = require('../../../config/mariadb');
 
 class LetterStorage {
+  static async findLetterNotification(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT l.no, s.name, l.description, l.writer_hidden_flag AS writerHiddenFlag FROM letters AS l
+      LEFT JOIN students as s ON sender_id = s.id
+      WHERE host_id = ? AND sender_id != ? AND reading_flag = 0
+      ORDER BY l.in_date DESC;`;
+
+      const letters = await conn.query(query, [id, id]);
+
+      return letters;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findLetters(id) {
     let conn;
 
@@ -135,7 +156,7 @@ class LetterStorage {
         'INSERT INTO letters (sender_id, recipient_id, host_id, description, board_flag, board_no, writer_hidden_flag) VALUES (?, ?, ?, ?, ?, ?, ?);';
 
       // 쪽지는 전송자와 수신자 모두 저장이 되어 있어야 각자 따로 메세지를 지울 수 있기 때문에 host_id COLUMN 값만 다르게 두번 저장
-      const addLetterBysender = await conn.query(query, [
+      const addLetterBySender = await conn.query(query, [
         sendInfo.senderId,
         sendInfo.recipientId,
         sendInfo.senderId,
@@ -155,7 +176,7 @@ class LetterStorage {
         sendInfo.writerHiddenFlag,
       ]);
 
-      return addLetterBysender.affectedRows + addLetterByRecipeint.affectedRows;
+      return addLetterBySender.affectedRows + addLetterByRecipeint.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -175,6 +196,46 @@ class LetterStorage {
       const letterInfo = await conn.query(query, letterNo);
 
       return letterInfo[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateReadingFlag(letterInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `UPDATE letters SET reading_flag = 1 WHERE host_id = ? AND board_no = ? AND board_flag = ? AND writer_hidden_flag = ?;`;
+
+      const letter = await conn.query(query, [
+        letterInfo.id,
+        letterInfo.boardNo,
+        letterInfo.boardFlag,
+        letterInfo.writerHiddenFlag,
+      ]);
+
+      return letter.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteLetterNotifications(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnetction();
+
+      const query = `UPDATE letters SET reading_flag = 1 WHERE host_id = ? AND reading_flag = 0;`;
+
+      const letter = await conn.query(query, id);
+      return letter.affectedRows;
     } catch (err) {
       throw err;
     } finally {

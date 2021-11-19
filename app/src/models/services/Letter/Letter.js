@@ -10,6 +10,25 @@ class Letter {
     this.auth = req.auth;
   }
 
+  async findLetterNotification() {
+    const { id } = this.auth;
+
+    try {
+      const letters = await LetterStorage.findLetterNotification(id);
+
+      letters.forEach((letter) => {
+        if (letter.writerHiddenFlag) {
+          letter.name = '익명';
+        }
+        letter.url = `message?id=${letter.no}`;
+      });
+
+      return { success: true, msg: '쪽지 알람 전체 조회 성공', letters };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
   async findLetters() {
     const { id } = this.auth;
 
@@ -58,19 +77,23 @@ class Letter {
           ? letterInfo.recipientId
           : letterInfo.senderId;
 
-      const letters = await LetterStorage.findLettersByGroup(letterInfo);
+      const reading = await LetterStorage.updateReadingFlag(letterInfo);
 
-      if (letters[0].writerHiddenFlag) {
-        letters.forEach((letter) => {
-          letter.name = '익명';
-          if (letter.senderId !== id) {
-            letter.senderId = '익명';
-          }
-        });
-      }
+      if (reading) {
+        const letters = await LetterStorage.findLettersByGroup(letterInfo);
 
-      if (letters) {
-        return { success: true, msg: '쪽지 대화 목록 조회 성공', letters };
+        if (letters[0].writerHiddenFlag) {
+          letters.forEach((letter) => {
+            letter.name = '익명';
+            if (letter.senderId !== id) {
+              letter.senderId = '익명';
+            }
+          });
+        }
+
+        if (letters) {
+          return { success: true, msg: '쪽지 대화 목록 조회 성공', letters };
+        }
       }
       return { success: false, msg: '쪽지 대화 목록 조회 실패' };
     } catch (err) {
@@ -140,6 +163,21 @@ class Letter {
 
       if (result === 2) return { success: true, msg: '쪽지가 전송되었습니다.' };
       return { success: false, msg: '쪽지가 전송되지 않았습니다.' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async deleteLetterNotifications() {
+    const { id } = this.auth;
+
+    try {
+      const response = await LetterStorage.deleteLetterNotifications(id);
+
+      if (response) {
+        return { success: true, msg: '쪽지 알림이 모두 삭제되었습니다.' };
+      }
+      return { success: false, msg: '쪽지 알림이 삭제되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
