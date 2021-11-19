@@ -10,11 +10,11 @@ class Letter {
     this.auth = req.auth;
   }
 
-  async findLetterNotification() {
+  async findLetterNotifications() {
     const { id } = this.auth;
 
     try {
-      const letters = await LetterStorage.findLetterNotification(id);
+      const letters = await LetterStorage.findLetterNotifications(id);
 
       letters.forEach((letter) => {
         if (letter.writerHiddenFlag) {

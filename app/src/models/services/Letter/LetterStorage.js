@@ -3,7 +3,7 @@
 const mariadb = require('../../../config/mariadb');
 
 class LetterStorage {
-  static async findLetterNotification(id) {
+  static async findLetterNotifications(id) {
     let conn;
 
     try {
@@ -235,6 +235,7 @@ class LetterStorage {
       const query = `UPDATE letters SET reading_flag = 1 WHERE host_id = ? AND reading_flag = 0;`;
 
       const letter = await conn.query(query, id);
+
       return letter.affectedRows;
     } catch (err) {
       throw err;

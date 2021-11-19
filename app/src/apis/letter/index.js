@@ -9,7 +9,7 @@ const letterCtrl = require('./letter.ctrl');
 router.get(
   '/:entire',
   loginAuth.loginCheck,
-  letterCtrl.process.findLetterNotification
+  letterCtrl.process.findLetterNotifications
 );
 
 router.put(
