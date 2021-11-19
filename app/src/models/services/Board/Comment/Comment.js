@@ -148,6 +148,7 @@ class Comment {
       const comments = await CommentStorage.findAllByBoardNum(boardInfo);
 
       for (const comment of comments) {
+        comment.isWriter = this.auth.id === comment.studentId ? 1 : 0;
         comment.likedFlag += comment.replyLikedFlag;
         delete comment.replyLikedFlag;
 
