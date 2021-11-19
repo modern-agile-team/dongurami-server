@@ -20,6 +20,10 @@ class Letter {
 
       const letters = await LetterStorage.findLetters(id);
 
+      letters.forEach((letter) => {
+        if (letter.writerHiddenFlag) letter.name = '익명';
+      });
+
       if (letters) {
         return { success: true, msg: '쪽지 전체 조회 성공', letters };
       }
