@@ -206,7 +206,7 @@ class Board {
         board.profileImageUrl = null;
       }
 
-      board.isWriter = user.id === board.studentId ? 1 : 0;
+      board.isWriter = boardInfo.studentId === board.studentId ? 1 : 0;
 
       let userInfo = '비로그인 회원입니다.';
 
