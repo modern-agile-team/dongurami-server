@@ -146,6 +146,7 @@ class Comment {
       }
 
       const comments = await CommentStorage.findAllByBoardNum(boardInfo);
+
       for (const comment of comments) {
         comment.likedFlag += comment.replyLikedFlag;
         delete comment.replyLikedFlag;
@@ -156,8 +157,8 @@ class Comment {
           );
 
           if (samePersonIdx > -1) {
-            comment.studentId = anonymous[comment.studentId];
             comment.studentName = anonymous[comment.studentId];
+            comment.studentId = anonymous[comment.studentId];
             comment.profileImageUrl = null;
           } else {
             const newPerson = `익명${Object.keys(anonymous).length + 1}`;
