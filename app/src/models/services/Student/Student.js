@@ -36,7 +36,6 @@ class Student {
         client.password,
         checkedId.password
       );
-
       if (comparePassword) {
         const clubNum = await StudentStorage.findOneByLoginedId(client.id);
         const jwt = await Auth.createJWT(checkedId, clubNum);
@@ -349,7 +348,11 @@ class Student {
         const clubNum = await StudentStorage.findOneByLoginedId(
           naverUserCheck.checkedId
         );
-        const jwt = await Auth.createJWT(naverUserCheck.checkedId, clubNum);
+        const userInfo = await StudentStorage.findOneById(
+          naverUserCheck.checkedId
+        );
+
+        const jwt = await Auth.createJWT(userInfo, clubNum);
 
         return { success: true, msg: '로그인에 성공하셨습니다.', jwt };
       }
