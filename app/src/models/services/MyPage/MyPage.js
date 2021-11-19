@@ -244,7 +244,7 @@ class MyPage {
           recipientName: leaderName,
           recipientId: leaderId,
           content: '동아리 탈퇴',
-          url: 'null',
+          url: '',
           notiCategoryNum: 8,
         };
 
