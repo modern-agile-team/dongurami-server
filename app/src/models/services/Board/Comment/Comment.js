@@ -46,7 +46,7 @@ class Comment {
         commentInfo.boardNum
       );
 
-      if (!commentInfo.hiddenFlag) {
+      if (commentInfo.hiddenFlag) {
         user.name = '익명';
       }
 
@@ -109,6 +109,10 @@ class Comment {
       );
 
       const senderId = replyCommentInfo.id;
+
+      if (replyCommentInfo.hiddenFlag) {
+        user.name = '익명';
+      }
 
       const { title } = await BoardStorage.findRecipientNameAndTitleByBoardNum(
         replyCommentInfo.boardNum

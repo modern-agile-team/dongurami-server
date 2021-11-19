@@ -7,12 +7,14 @@ const comment = {
   description: '댓글 테스트!! 이 댓글은 지우지 마세요. -김지수-',
   url: 'test/url',
   notiCategoryNum: 0,
+  hiddenFlag: 1,
 };
 
 const reply = {
   description: '답글 테스트!! 이 댓글은 지우지 마세요. -김지수-',
   url: 'test/url',
   notiCategoryNum: 1,
+  hiddenFlag: 1,
 };
 
 const application = {
