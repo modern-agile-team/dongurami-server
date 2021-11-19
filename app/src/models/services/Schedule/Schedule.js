@@ -89,7 +89,7 @@ class Schedule {
               content: scheduleInfo.startDate,
             };
 
-            await notification.createNotification(notificationInfo);
+            await notification.createCmtNotification(notificationInfo);
           }
         });
 
@@ -137,7 +137,7 @@ class Schedule {
               content: scheduleInfo.startDate,
             };
 
-            await notification.createNotification(notificationInfo);
+            await notification.createCmtNotification(notificationInfo);
           }
         });
 
