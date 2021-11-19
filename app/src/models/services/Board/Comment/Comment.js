@@ -47,7 +47,7 @@ class Comment {
       );
 
       if (!commentInfo.hiddenFlag) {
-        commentInfo.id = '익명';
+        user.name = '익명';
       }
 
       if (user.id !== writerId) {
