@@ -61,6 +61,8 @@ class CommentStorage {
       const query = `SELECT cmt.student_id AS studentId, st.name AS studentName, cmt.no, cmt.description, cmt.depth, cmt.group_no AS groupNo, cmt.reply_flag AS replyFlag, cmt.in_date AS inDate, cmt.modify_date AS modifyDate, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
       (SELECT COUNT(no) FROM comment_emotions
       WHERE comment_no = cmt.no) AS emotionCount,
+      (SELECT COUNT(no) FROM reply_comment_emotions
+      WHERE reply_comment_no = cmt.no) AS replyEmotionCount,
       (SELECT COUNT(no) FROM comment_emotions
       WHERE comment_no = cmt.no AND student_id = ? AND depth = 0) AS likedFlag,
       (SELECT COUNT(no) FROM reply_comment_emotions
