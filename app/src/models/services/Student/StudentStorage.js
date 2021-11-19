@@ -210,7 +210,7 @@ class StudentStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT student_id AS studentId, sns_id AS snsId FROM sns_info WHERE sns_id =?;`;
+      const query = `SELECT student_id AS studentId, sns_id AS snsId FROM sns_info WHERE sns_id = ?;`;
 
       const result = await conn.query(query, [snsId]);
 
