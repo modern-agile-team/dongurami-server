@@ -156,6 +156,7 @@ class Comment {
       for (const comment of comments) {
         comment.isWriter = boardInfo.studentId === comment.studentId ? 1 : 0;
         comment.likedFlag += comment.replyLikedFlag;
+        comment.emotionCount += comment.replyEmotionCount;
         delete comment.replyLikedFlag;
 
         if (comment.writerHiddenFlag) {
