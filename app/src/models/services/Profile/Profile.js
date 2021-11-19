@@ -39,6 +39,15 @@ class Profile {
           name: club.name,
         });
       }
+      console.log(user);
+
+      if (user) {
+        const snsId = await StudentStorage.findOneByStudentId(user.id);
+        console.log(snsId);
+
+        if (snsId.success) profile.isNaverUser = 1;
+        else profile.isNaverUser = 0;
+      } else profile.isNaverUser = 0;
 
       let userInfo = '비로그인 회원입니다.';
 

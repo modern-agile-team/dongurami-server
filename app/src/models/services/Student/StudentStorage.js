@@ -224,6 +224,27 @@ class StudentStorage {
       conn?.release();
     }
   }
+
+  static async findOneByStudentId(studentId) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT student_id AS studentId FROM sns_info WHERE student_id = ?;`;
+
+      const result = await conn.query(query, [studentId]);
+
+      if (result[0]) {
+        return { success: true, result: result[0] };
+      }
+      return { success: false };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = StudentStorage;
