@@ -223,6 +223,7 @@ class ApplicationStorage {
       const applicants = await conn.query(applicantQuery, clubNum);
 
       const questionsAnswers = [[]];
+
       for (let i = 0; i < applicants.length; i += 1) {
         const studentId = applicants[i].id;
 
