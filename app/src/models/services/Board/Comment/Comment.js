@@ -131,10 +131,12 @@ class Comment {
   }
 
   async findAllByBoardNum() {
+    const user = this.auth;
+
     try {
       const boardInfo = {
         boardNum: this.params.boardNum,
-        studentId: this.auth ? this.auth.id : 0,
+        studentId: user ? user.id : 0,
         category: boardCategory[this.params.category],
       };
       const anonymous = {};
@@ -148,7 +150,7 @@ class Comment {
       const comments = await CommentStorage.findAllByBoardNum(boardInfo);
 
       for (const comment of comments) {
-        comment.isWriter = this.auth.id === comment.studentId ? 1 : 0;
+        comment.isWriter = boardInfo.studentId === comment.studentId ? 1 : 0;
         comment.likedFlag += comment.replyLikedFlag;
         delete comment.replyLikedFlag;
 
