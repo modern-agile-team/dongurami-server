@@ -2,17 +2,20 @@
 
 const EmotionStorage = require('./EmotionStorage');
 const BoardStorage = require('../Board/BoardStorage');
+const CommentStorage = require('../Board/Comment/CommentStorage');
+const Notification = require('../Notification/Notification');
 const Error = require('../../utils/Error');
 
 class Emotion {
   constructor(req) {
     this.auth = req.auth;
     this.params = req.params;
+    this.req = req;
   }
 
   async likedByBoardNum() {
     const user = this.auth;
-
+    const notification = new Notification(this.req);
     try {
       const emotionInfo = {
         studentId: user.id,
@@ -44,6 +47,25 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByBoardNum(emotionInfo);
 
       if (isCreat) {
+        const writerId = await CommentStorage.findOneByBoardNum(
+          emotionInfo.boardNum
+        );
+
+        const { recipientName, title } =
+          await BoardStorage.findRecipientNameAndTitleByBoardNum(
+            emotionInfo.boardNum
+          );
+
+        const notificationInfo = {
+          title,
+          recipientName,
+          recipientId: writerId,
+          senderName: user.name,
+          content: '좋아요',
+        };
+
+        await notification.createCmtNotification(notificationInfo);
+
         return {
           success: true,
           msg: '해당 게시글에 좋아요를 했습니다.',
