@@ -209,15 +209,32 @@ class ApplicationStorage {
       const applicantInfoQuery = `SELECT app.in_date AS inDate, s.name, s.id, s.major, 
         s.grade, s.gender, s.phone_number AS phoneNum 
         FROM students AS s JOIN applicants AS app ON app.club_no = ?
-        AND app.student_id = s.id AND app.reading_flag = 0 ORDER BY app.in_date ASC, app.student_id;`;
-      const questionAnswerQuery = `SELECT app.student_id AS id, q.description AS question, 
-        a.description AS answer 
-        FROM answers AS a JOIN applicants AS app ON a.student_id = app.student_id 
-        AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q 
-        ON a.question_no = q.no AND app.club_no = q.club_no ORDER BY app.in_date ASC, app.student_id ASC;`;
+        AND app.student_id = s.id AND app.reading_flag = 0;`;
+
+      const questionAnswerQuery = `SELECT app.student_id AS id, q.description AS question, a.description AS answer
+      FROM applicants AS app JOIN answers AS a ON a.student_id = app.student_id
+      AND app.club_no = 2 AND app.reading_flag = 0 JOIN questions AS q
+      ON a.question_no = q.no AND app.club_no = q.club_no;`;
+
+      const applicantQuery = `SELECT student_id AS id FROM applicants WHERE reading_flag = 0 AND club_no = ?;`;
 
       const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
-      const questionsAnswers = await conn.query(questionAnswerQuery, clubNum);
+      const qAndA = await conn.query(questionAnswerQuery, clubNum);
+      const applicants = await conn.query(applicantQuery, clubNum);
+
+      const questionsAnswers = [[]];
+
+      for (let i = 0; i < applicants.length; i += 1) {
+        const studentId = applicants[i].id;
+
+        for (let j = 0; j < qAndA.length; j += 1) {
+          if (studentId === qAndA[j].id) {
+            questionsAnswers[i].push(qAndA[j]);
+          }
+        }
+        if (i === applicants.length - 1) break;
+        else questionsAnswers.push([]);
+      }
 
       return {
         success: true,

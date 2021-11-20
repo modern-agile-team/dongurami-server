@@ -29,6 +29,13 @@ class Profile {
         delete profile.gender;
       }
 
+      if (user) {
+        const snsId = await StudentStorage.findOneBySnsId(user.id);
+
+        if (snsId.success) profile.isNaverUser = 1;
+        else profile.isNaverUser = 0;
+      } else profile.isNaverUser = 0;
+
       const clubs = await ProfileStorage.findAllClubByStudentId(id);
 
       profile.clubs = [];

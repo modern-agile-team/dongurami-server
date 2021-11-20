@@ -13,7 +13,6 @@ router.get(
   identityCheck.identityCheck,
   ctrl.process.getUserInfoByJWT
 );
-router.get('/naver-login', ctrl.process.naverLogin);
 
 router.post('/login', ctrl.process.login);
 router.post('/sign-up', signUpAuth.signUpCheck, ctrl.process.signUp);

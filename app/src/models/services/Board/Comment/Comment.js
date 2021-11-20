@@ -5,6 +5,7 @@ const BoardStorage = require('../BoardStorage');
 const Notification = require('../../Notification/Notification');
 const Error = require('../../../utils/Error');
 const WriterCheck = require('../../../utils/WriterCheck');
+const boardCategory = require('../../Category/board');
 
 class Comment {
   constructor(req) {
@@ -24,6 +25,7 @@ class Comment {
         boardNum: this.params.boardNum,
         id: user.id,
         description: comment.description,
+        hiddenFlag: comment.hiddenFlag || 0,
       };
 
       if (!comment.description) {
@@ -43,6 +45,10 @@ class Comment {
       const writerId = await CommentStorage.findOneByBoardNum(
         commentInfo.boardNum
       );
+
+      if (!commentInfo.hiddenFlag) {
+        commentInfo.id = '익명';
+      }
 
       if (user.id !== writerId) {
         const { recipientName, title } =
@@ -79,6 +85,7 @@ class Comment {
         cmtNum: params.cmtNum,
         id: user.id,
         description: replyComment.description,
+        hiddenFlag: replyComment.hiddenFlag || 0,
       };
 
       if (!replyComment.description) {
@@ -128,10 +135,49 @@ class Comment {
   }
 
   async findAllByBoardNum() {
-    try {
-      const { boardNum } = this.params;
+    const user = this.auth;
 
-      const comments = await CommentStorage.findAllByBoardNum(boardNum);
+    try {
+      const boardInfo = {
+        boardNum: this.params.boardNum,
+        studentId: user ? user.id : 0,
+        category: boardCategory[this.params.category],
+      };
+      const anonymous = {};
+
+      const board = await BoardStorage.findOneByBoardNum(boardInfo);
+
+      if (board.writerHiddenFlag) {
+        anonymous[board.studentId] = '익명1';
+      }
+
+      const comments = await CommentStorage.findAllByBoardNum(boardInfo);
+
+      for (const comment of comments) {
+        comment.isWriter = boardInfo.studentId === comment.studentId ? 1 : 0;
+        comment.likedFlag += comment.replyLikedFlag;
+        comment.emotionCount += comment.replyEmotionCount;
+        delete comment.replyLikedFlag;
+
+        if (comment.writerHiddenFlag) {
+          const samePersonIdx = Object.keys(anonymous).indexOf(
+            comment.studentId
+          );
+
+          if (samePersonIdx > -1) {
+            comment.studentName = anonymous[comment.studentId];
+            comment.studentId = anonymous[comment.studentId];
+            comment.profileImageUrl = null;
+          } else {
+            const newPerson = `익명${Object.keys(anonymous).length + 1}`;
+
+            anonymous[comment.studentId] = newPerson;
+            comment.studentId = newPerson;
+            comment.studentName = newPerson;
+            comment.profileImageUrl = null;
+          }
+        }
+      }
 
       return comments;
     } catch (err) {
@@ -141,12 +187,14 @@ class Comment {
 
   async updateByCommentNum() {
     const { params } = this;
+    const comment = this.body;
 
     try {
       const cmtInfo = {
         boardNum: params.boardNum,
         cmtNum: params.cmtNum,
-        description: this.body.description,
+        description: comment.description,
+        hiddenFlag: comment.hiddenFlag || 0,
       };
 
       if (!cmtInfo.description) {
@@ -174,13 +222,15 @@ class Comment {
 
   async updateByReplyCommentNum() {
     const { params } = this;
+    const replyComment = this.body;
 
     try {
       const replyCmtInfo = {
         boardNum: params.boardNum,
         cmtNum: params.cmtNum,
         replyCmtNum: params.replyCmtNum,
-        description: this.body.description,
+        description: replyComment.description,
+        hiddenFlag: replyComment.hiddenFlag || 0,
       };
 
       if (!replyCmtInfo.description) {

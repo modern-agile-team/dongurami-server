@@ -1,11 +1,12 @@
 'use sctrict';
 
 const MyPageStorage = require('./MyPageStorage');
-const Error = require('../../utils/Error');
+const Auth = require('../Auth/Auth');
 const WriterCheck = require('../../utils/WriterCheck');
+const NotificationStorage = require('../Notification/NotificationStorage');
 const AdminOptionStorage = require('../AdminOption/AdminOptionStorage');
 const StudentStorage = require('../Student/StudentStorage');
-const Auth = require('../Auth/Auth');
+const Error = require('../../utils/Error');
 
 class MyPage {
   constructor(req) {
@@ -233,6 +234,21 @@ class MyPage {
         const checkedId = await StudentStorage.findOneById(user.id);
         const clubs = await StudentStorage.findOneByLoginedId(user.id);
         const jwt = await Auth.createJWT(checkedId, clubs);
+
+        const { clubName, leaderName, leaderId } =
+          await NotificationStorage.findClubInfoByClubNum(userInfo.clubNum);
+
+        const notificationInfo = {
+          title: clubName,
+          senderName: user.name,
+          recipientName: leaderName,
+          recipientId: leaderId,
+          content: '동아리 탈퇴',
+          url: '',
+          notiCategoryNum: 8,
+        };
+
+        await NotificationStorage.createNotification(notificationInfo);
 
         return { success: true, msg: '동아리 탈퇴에 성공하였습니다.', jwt };
       }
