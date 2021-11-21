@@ -7,13 +7,13 @@ const loginAuth = require('../../middlewares/login-auth');
 const letterCtrl = require('./letter.ctrl');
 
 router.get(
-  '/:entire',
+  '/entire',
   loginAuth.loginCheck,
   letterCtrl.process.findLetterNotifications
 );
 
 router.put(
-  '/:entire',
+  '/entire',
   loginAuth.loginCheck,
   letterCtrl.process.deleteLetterNotifications
 );
