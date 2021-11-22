@@ -98,14 +98,14 @@ const process = {
     const response = await letter.deleteLetterNotifications();
 
     if (response.success) {
-      logger.info(`DELETE /api/letter/entire 200: ${response.msg}`);
+      logger.info(`PUT /api/letter/entire 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.error(`DELETE /api/letter/entire 500: \n${response.errMsg.stack}`);
+      logger.error(`PUT /api/letter/entire 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
-    logger.info(`DELETE /api/letter/entire 400: ${response.msg}`);
+    logger.info(`PUT /api/letter/entire 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
@@ -116,16 +116,16 @@ const process = {
     const response = await letter.deleteLetters();
 
     if (response.success) {
-      logger.info(`DELETE /api/letter/${id}/${letterNo} 200: ${response.msg}`);
+      logger.info(`PUT /api/letter/${id}/${letterNo} 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `DELETE /api/letter/${id}/${letterNo} 500: \n${response.errMsg.stack}`
+        `PUT /api/letter/${id}/${letterNo} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`DELETE /api/letter/${id}/${letterNo} 400: ${response.msg}`);
+    logger.error(`PUT /api/letter/${id}/${letterNo} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 };
