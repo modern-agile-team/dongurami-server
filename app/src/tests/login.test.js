@@ -13,10 +13,14 @@ const unExistAccount = {
 };
 const wrongPwAccount = {
   id: '201416071',
-  password: '12341234',
+  password: 'xxxxxxxx',
+};
+const blanckIdAndPw = {
+  id: '',
+  password: '',
 };
 
-descriEqual('POST 로그인 테스트', () => {
+describe('POST 로그인 테스트', () => {
   it('POST SUCCESS  로그인 테스트 [200]', async () => {
     const res = await server
       .post('/api/login')
@@ -26,20 +30,29 @@ descriEqual('POST 로그인 테스트', () => {
     expect(res.statusCode).toStrictEqual(200);
   });
 
-  it('POST ID(X) / PW(?)  로그인 테스트 [400]', async () => {
+  it('POST ID(X) / PW(?)  로그인 테스트 [401]', async () => {
     const res = await server
       .post('/api/login')
       .set('Content-Type', 'application/json')
       .send(unExistAccount);
 
-    expect(res.statusCode).toStrictEqual(400);
+    expect(res.statusCode).toStrictEqual(401);
   });
 
-  it('POST ID(O) / PW(X)  로그인 테스트 [400]', async () => {
+  it('POST ID(O) / PW(X)  로그인 테스트 [401]', async () => {
     const res = await server
       .post('/api/login')
       .set('Content-Type', 'application/json')
       .send(wrongPwAccount);
+
+    expect(res.statusCode).toStrictEqual(401);
+  });
+
+  it('POST ID, PW 공백 로그인테스트[400]', async () => {
+    const res = await server
+      .post('/api/login')
+      .set('Content-Type', 'application/json')
+      .send(blanckIdAndPw);
 
     expect(res.statusCode).toStrictEqual(400);
   });
