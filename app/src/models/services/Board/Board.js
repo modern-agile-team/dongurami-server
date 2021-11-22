@@ -76,7 +76,7 @@ class Board {
               content: boardInfo.title,
             };
 
-            await notification.createCmtNotification(notificationInfo);
+            await notification.createNotification(notificationInfo);
           }
         });
       }

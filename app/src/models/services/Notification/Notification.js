@@ -35,7 +35,7 @@ class Notification {
     }
   }
 
-  async createCmtNotification(notification) {
+  async createNotification(notification) {
     const { body } = this;
     const title = notification.title
       ? notification.title

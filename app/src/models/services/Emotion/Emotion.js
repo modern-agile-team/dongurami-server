@@ -64,7 +64,7 @@ class Emotion {
           content: '좋아요',
         };
 
-        await notification.createCmtNotification(notificationInfo);
+        await notification.createNotification(notificationInfo);
 
         return {
           success: true,

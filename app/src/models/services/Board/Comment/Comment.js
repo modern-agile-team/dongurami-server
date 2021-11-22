@@ -64,7 +64,7 @@ class Comment {
           content: commentInfo.description,
         };
 
-        await notification.createCmtNotification(notificationInfo);
+        await notification.createNotification(notificationInfo);
       }
 
       return { success: true, msg: '댓글 생성 성공' };
@@ -128,7 +128,7 @@ class Comment {
             content: replyCommentInfo.description,
           };
 
-          await notification.createCmtNotification(notificationInfo);
+          await notification.createNotification(notificationInfo);
         }
       });
 

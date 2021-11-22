@@ -180,7 +180,7 @@ class Application {
           content: '동아리 가입 신청 완료',
         };
 
-        await notification.createCmtNotification(notificationInfo);
+        await notification.createNotification(notificationInfo);
 
         return { success: true, msg: '가입 신청이 완료 되었습니다.' };
       }
@@ -244,7 +244,7 @@ class Application {
             content: '동아리 가입 신청 결과',
           };
 
-          await notification.createCmtNotification(notificationInfo);
+          await notification.createNotification(notificationInfo);
 
           return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
         }
@@ -293,7 +293,7 @@ class Application {
           content: '동아리 가입 신청 결과',
         };
 
-        await notification.createCmtNotification(notificationInfo);
+        await notification.createNotification(notificationInfo);
 
         return { success: true, msg: '동아리 가입 신청을 거절하셨습니다.' };
       }
