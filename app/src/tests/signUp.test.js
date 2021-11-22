@@ -3,13 +3,6 @@ const app = require('../../app');
 
 const server = request(app);
 
-const normalSignUpCase = {
-  id: '203316088', // id : 9자리 숫자로 이루어진 학번 (중복 X)
-  password: 'ckdgns12!@', // password : 8자리 이상
-  name: '오창훈',
-  email: 'dhckdgns4@naver.com', // eamil : 이메일양식에 맞는 이메일 (중복 X)
-  major: '정보통신공학과', // 프론트 단 드롭다운박스 선택
-};
 const duplicateId = {
   id: '201416071',
   password: 'ckdgns12!@',
@@ -17,6 +10,7 @@ const duplicateId = {
   email: 'dhckdgns4@naver.com',
   major: '정보통신공학과',
 };
+
 const blankId = {
   id: '',
   password: 'ckdgns12!@',
@@ -24,6 +18,7 @@ const blankId = {
   email: 'dhckdgns4@naver.com',
   major: '정보통신공학과',
 };
+
 const abnormalId = {
   id: '123123',
   password: 'ckdgns12!@',
@@ -39,6 +34,7 @@ const blankPassword = {
   email: '',
   major: '정보통신공학과',
 };
+
 const abnormalPassword = {
   id: '201416074',
   password: '123123',
@@ -46,6 +42,7 @@ const abnormalPassword = {
   email: '123naver.com',
   major: '정보통신공학과',
 };
+
 const abnormalName = {
   id: '201416074',
   password: 'ckdgns12!@',
@@ -53,6 +50,7 @@ const abnormalName = {
   email: '123naver.com',
   major: '정보통신공학과',
 };
+
 const duplicateEmail = {
   id: '201416071',
   password: 'ckdgns12!@',
@@ -60,19 +58,21 @@ const duplicateEmail = {
   email: 'dhckdgns4@naver.com',
   major: '정보통신공학과',
 };
-// const blankEmail = {
-//   id: '201416074',
-//   password: 'ckdgns12!@',
-//   name: '오창훈',
-//   email: '',
-//   major: '정보통신공학과',
-// };
+
 const abnormalEmail = {
   id: '201416074',
   password: 'ckdgns12!@',
   name: '오창훈',
   email: '123naver.com',
   major: '정보통신공학과',
+};
+
+const normalSignUpCase = {
+  id: '203316088', // id : 9자리 숫자로 이루어진 학번 (중복 X)
+  password: 'ckdgns12!@', // password : 8자리 이상
+  name: '오창훈',
+  email: 'dhckdgns4@naver.com', // eamil : 이메일양식에 맞는 이메일 (중복 X)
+  major: '정보통신공학과', // 프론트 단 드롭다운박스 선택
 };
 
 describe('POST 회원가입 테스트', () => {
