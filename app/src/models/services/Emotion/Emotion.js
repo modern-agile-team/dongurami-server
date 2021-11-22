@@ -50,15 +50,17 @@ class Emotion {
         const { recipientId, recipientName, title } =
           await BoardStorage.findBoardInfoByBoardNum(emotionInfo.boardNum);
 
-        const notificationInfo = {
-          title,
-          recipientName,
-          recipientId,
-          senderName: user.name,
-          content: '게시글 좋아요',
-        };
+        if (user.id !== recipientId) {
+          const notificationInfo = {
+            title,
+            recipientName,
+            recipientId,
+            senderName: user.name,
+            content: '게시글 좋아요',
+          };
 
-        await notification.createNotification(notificationInfo);
+          await notification.createNotification(notificationInfo);
+        }
 
         return {
           success: true,
