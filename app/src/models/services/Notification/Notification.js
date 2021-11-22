@@ -68,36 +68,6 @@ class Notification {
     }
   }
 
-  // async createNotification(notification) {
-  //   const { body } = this;
-
-  //   try {
-  //     const notificationInfo = {
-  //       senderName: notification.senderName,
-  //       recipientName: notification.recipientName,
-  //       recipientId: notification.recipientId,
-  //       title: notification.clubName,
-  //       content: notification.content,
-  //       url: body.url,
-  //       notiCategoryNum: body.notiCategoryNum,
-  //     };
-
-  //     const success = await NotificationStorage.createNotification(
-  //       notificationInfo
-  //     );
-
-  //     if (success) {
-  //       return success;
-  //     }
-  //     return {
-  //       success: false,
-  //       msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-  //     };
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // }
-
   async updateOneByNotificationNum() {
     const notificationNum = Number(this.params.notificationNum);
     const user = this.auth;
