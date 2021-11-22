@@ -9,16 +9,20 @@ const process = {
     const student = new Student(req);
     const response = await student.login();
 
-    if (response.success) {
-      logger.info(`POST /api/login 200: ${response.msg}`);
-      return res.status(200).json(response);
+    if (!response.success) {
+      if (response.status) {
+        logger.error(`POST /api/login 401: ${response.msg}`);
+        return res.status(401).json(response);
+      }
+      logger.error(`POST /api/login 400: ${response.msg}`);
+      return res.status(400).json(response);
     }
     if (response.isError) {
       logger.error(`POST /api/login 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`POST /api/login 400: ${response.msg}`);
-    return res.status(400).json(response);
+    logger.info(`POST /api/login 200: ${response.msg}`);
+    return res.status(200).json(response);
   },
 
   signUp: async (req, res) => {

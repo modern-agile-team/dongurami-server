@@ -29,7 +29,11 @@ class Student {
       const checkedId = await StudentStorage.findOneById(client.id);
 
       if (!checkedId) {
-        return { success: false, msg: '가입된 아이디가 아닙니다.' };
+        return {
+          success: false,
+          msg: '가입된 아이디가 아닙니다.',
+          status: 401,
+        };
       }
 
       const comparePassword = bcrypt.compareSync(
@@ -45,6 +49,7 @@ class Student {
       return {
         success: false,
         msg: '잘못된 비밀번호입니다.',
+        status: 401,
       };
     } catch (err) {
       return Error.ctrl(
