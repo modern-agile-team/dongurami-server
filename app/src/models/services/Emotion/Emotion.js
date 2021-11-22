@@ -47,17 +47,13 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByBoardNum(emotionInfo);
 
       if (isCreat) {
-        const writerId = await CommentStorage.findOneByBoardNum(
-          emotionInfo.boardNum
-        );
-
-        const { recipientName, title } =
+        const { recipientId, recipientName, title } =
           await BoardStorage.findBoardInfoByBoardNum(emotionInfo.boardNum);
 
         const notificationInfo = {
           title,
           recipientName,
-          recipientId: writerId,
+          recipientId,
           senderName: user.name,
           content: '게시글 좋아요',
         };
