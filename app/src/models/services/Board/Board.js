@@ -200,13 +200,13 @@ class Board {
           msg: '해당 게시판에 존재하지 않는 글 입니다.',
         };
       }
+      board.isWriter = boardInfo.studentId === board.studentId ? 1 : 0;
+
       if (board.writerHiddenFlag === 1) {
         board.name = '익명1';
         board.studentId = '익명1';
         board.profileImageUrl = null;
       }
-
-      board.isWriter = boardInfo.studentId === board.studentId ? 1 : 0;
 
       let userInfo = '비로그인 회원입니다.';
 
