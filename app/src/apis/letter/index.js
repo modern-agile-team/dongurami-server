@@ -32,7 +32,7 @@ router.post(
   letterCtrl.process.createReplyLetter
 );
 
-router.delete(
+router.put(
   '/:id/:letterNo',
   loginAuth.loginCheck,
   letterCtrl.process.deleteLetters
