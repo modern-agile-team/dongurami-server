@@ -42,24 +42,18 @@ class Comment {
 
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
-      const writerId = await CommentStorage.findOneByBoardNum(
-        commentInfo.boardNum
-      );
-
       if (commentInfo.hiddenFlag) {
         user.name = '익명';
       }
 
-      if (user.id !== writerId) {
-        const { recipientName, title } =
-          await BoardStorage.findRecipientNameAndTitleByBoardNum(
-            commentInfo.boardNum
-          );
+      const { recipientId, recipientName, title } =
+        await BoardStorage.findBoardInfoByBoardNum(commentInfo.boardNum);
 
+      if (user.id !== recipientId) {
         const notificationInfo = {
           title,
           recipientName,
-          recipientId: writerId,
+          recipientId,
           senderName: user.name,
           content: commentInfo.description,
         };
@@ -103,10 +97,11 @@ class Comment {
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      const recipients = await CommentStorage.findStudentNamesByCmtAndBoardNum(
-        replyCommentInfo.cmtNum,
-        replyCommentInfo.boardNum
-      );
+      const recipients =
+        await CommentStorage.findRecipientNamesByCmtAndBoardNum(
+          replyCommentInfo.cmtNum,
+          replyCommentInfo.boardNum
+        );
 
       const senderId = replyCommentInfo.id;
 
@@ -114,7 +109,7 @@ class Comment {
         user.name = '익명';
       }
 
-      const { title } = await BoardStorage.findRecipientNameAndTitleByBoardNum(
+      const { title } = await BoardStorage.findBoardInfoByBoardNum(
         replyCommentInfo.boardNum
       );
 

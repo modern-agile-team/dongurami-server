@@ -52,16 +52,14 @@ class Emotion {
         );
 
         const { recipientName, title } =
-          await BoardStorage.findRecipientNameAndTitleByBoardNum(
-            emotionInfo.boardNum
-          );
+          await BoardStorage.findBoardInfoByBoardNum(emotionInfo.boardNum);
 
         const notificationInfo = {
           title,
           recipientName,
           recipientId: writerId,
           senderName: user.name,
-          content: '좋아요',
+          content: '게시글 좋아요',
         };
 
         await notification.createNotification(notificationInfo);
@@ -129,6 +127,7 @@ class Emotion {
 
   async likedByCmtNum() {
     const user = this.auth;
+    const notification = new Notification(this.req);
 
     try {
       const emotionInfo = {
@@ -161,6 +160,21 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByCmtNum(emotionInfo);
 
       if (isCreat) {
+        const writerId = await CommentStorage.findOneByBoardNum(emotionInfo);
+
+        const { recipientName, title } =
+          await BoardStorage.findBoardInfoByBoardNum(emotionInfo.cmtNum);
+
+        const notificationInfo = {
+          title,
+          recipientName,
+          recipientId: writerId,
+          senderName: user.name,
+          content: '댓글 좋아요',
+        };
+
+        await notification.createNotification(notificationInfo);
+
         return {
           success: true,
           msg: '해당 댓글에 좋아요를 했습니다.',
