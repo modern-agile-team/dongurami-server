@@ -92,6 +92,11 @@ const clubNotice = {
   notiCategoryNum: 6,
 };
 
+const emotion = {
+  url: 'emotion/notification/test',
+  notiCategoryNum: 9,
+};
+
 describe('알림 API 테스트', () => {
   it('POST 댓글알림 생성 시 201 반환', async () => {
     try {
@@ -240,6 +245,40 @@ describe('알림 API 테스트', () => {
         .send(clubNotice);
 
       expect(res.statusCode).toEqual(201);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it('PATCH 게시글에 좋아요 알림생성 시 200 반환', async () => {
+    try {
+      const res = await server
+        .patch('/api/emotion/liked/board/26')
+        .set(
+          'x-auth-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
+        )
+        .set('Content-Type', 'application/json')
+        .send(emotion);
+
+      expect(res.statusCode).toEqual(200);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it('PATCH 댓글에 좋아요 알림생성 시 200 반환', async () => {
+    try {
+      const res = await server
+        .patch('/api/emotion/liked/comment/278')
+        .set(
+          'x-auth-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
+        )
+        .set('Content-Type', 'application/json')
+        .send(emotion);
+
+      expect(res.statusCode).toEqual(200);
     } catch (err) {
       console.log(err);
     }
