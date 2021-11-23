@@ -9,9 +9,15 @@ const logger = require('./src/config/logger');
 const app = express();
 dotenv.config();
 
+const options = {
+  origin: ['http://dongurami-front.herokuapp.com', 'http://localhost:3000'],
+  credentials: true, // 응답 헤더에 Access-Control-Allow-Credentials 추가
+  optionsSuccessStatus: 200, // 응답 상태 200으로 설정
+};
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors(options));
 app.use(morgan(':method :status :response-time ms', { stream: logger.stream }));
 
 const board = require('./src/apis/boards');
