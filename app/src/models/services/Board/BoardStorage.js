@@ -318,19 +318,23 @@ class BoardStorage {
     }
   }
 
-  static async findRecipientNameAndTitleByBoardNum(boardNum) {
+  static async findBoardInfoByBoardNum(boardNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT s.name, b.title FROM boards AS b 
+      const query = `SELECT s.name, s.id, b.title FROM boards AS b 
         JOIN students AS s ON b.student_id = s.id 
         WHERE b.no = ?;`;
 
       const board = await conn.query(query, [boardNum]);
 
-      return { recipientName: board[0].name, title: board[0].title };
+      return {
+        recipientId: board[0].id,
+        recipientName: board[0].name,
+        title: board[0].title,
+      };
     } catch (err) {
       throw err;
     } finally {

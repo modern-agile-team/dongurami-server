@@ -2,17 +2,20 @@
 
 const EmotionStorage = require('./EmotionStorage');
 const BoardStorage = require('../Board/BoardStorage');
+const CommentStorage = require('../Board/Comment/CommentStorage');
+const Notification = require('../Notification/Notification');
 const Error = require('../../utils/Error');
 
 class Emotion {
   constructor(req) {
     this.auth = req.auth;
     this.params = req.params;
+    this.req = req;
   }
 
   async likedByBoardNum() {
     const user = this.auth;
-
+    const notification = new Notification(this.req);
     try {
       const emotionInfo = {
         studentId: user.id,
@@ -44,6 +47,21 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByBoardNum(emotionInfo);
 
       if (isCreat) {
+        const { recipientId, recipientName, title } =
+          await BoardStorage.findBoardInfoByBoardNum(emotionInfo.boardNum);
+
+        if (user.id !== recipientId) {
+          const notificationInfo = {
+            title,
+            recipientName,
+            recipientId,
+            senderName: user.name,
+            content: '게시글 좋아요',
+          };
+
+          await notification.createNotification(notificationInfo);
+        }
+
         return {
           success: true,
           msg: '해당 게시글에 좋아요를 했습니다.',
@@ -107,6 +125,7 @@ class Emotion {
 
   async likedByCmtNum() {
     const user = this.auth;
+    const notification = new Notification(this.req);
 
     try {
       const emotionInfo = {
@@ -139,6 +158,21 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByCmtNum(emotionInfo);
 
       if (isCreat) {
+        const { recipientId, recipientName, description } =
+          await CommentStorage.findAllByCmtNum(emotionInfo.cmtNum);
+
+        if (emotionInfo.studentId !== recipientId) {
+          const notificationInfo = {
+            title: description,
+            recipientName,
+            recipientId,
+            senderName: user.name,
+            content: '댓글 좋아요',
+          };
+
+          await notification.createNotification(notificationInfo);
+        }
+
         return {
           success: true,
           msg: '해당 댓글에 좋아요를 했습니다.',
@@ -203,6 +237,7 @@ class Emotion {
 
   async likedByReplyCmtNum() {
     const user = this.auth;
+    const notification = new Notification(this.req);
 
     try {
       const emotionInfo = {
@@ -235,6 +270,20 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByReplyCmtNum(emotionInfo);
 
       if (isCreat) {
+        const { recipientId, recipientName, description } =
+          await CommentStorage.findAllByCmtNum(emotionInfo.replyCmtNum);
+
+        if (emotionInfo.studentId !== recipientId) {
+          const notificationInfo = {
+            title: description,
+            recipientName,
+            recipientId,
+            senderName: user.name,
+            content: '답글 좋아요',
+          };
+
+          await notification.createNotification(notificationInfo);
+        }
         return {
           success: true,
           msg: '해당 답글에 좋아요를 했습니다.',
