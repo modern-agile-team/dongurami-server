@@ -7,27 +7,22 @@ const normalNameAndEmail = {
   name: '관리자_오창훈',
   email: 'dhckdgns3@naver.com',
 };
-
 const wrongEmail = {
   name: '관리자_오창훈',
   email: 'xxxxx@naver.com',
 };
-
 const wrongName = {
   name: 'xxx',
   email: 'dhckdgns3@naver.com',
 };
-
 const blankName = {
   name: '',
   email: 'dhckdgns3@naver.com',
 };
-
 const blankEamil = {
   name: '관리자_오창훈',
   email: '',
 };
-
 const blankNameOrEamil = {
   name: '',
   email: '',
