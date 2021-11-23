@@ -3,20 +3,6 @@ const app = require('../../app');
 
 const server = request(app);
 
-const comment = {
-  description: '댓글 테스트!! 이 댓글은 지우지 마세요. -김지수-',
-  url: 'test/url',
-  notiCategoryNum: 0,
-  hiddenFlag: 1,
-};
-
-const reply = {
-  description: '답글 테스트!! 이 댓글은 지우지 마세요. -김지수-',
-  url: 'test/url',
-  notiCategoryNum: 1,
-  hiddenFlag: 1,
-};
-
 const application = {
   basic: {
     grade: 1,
@@ -84,64 +70,7 @@ const modifySchedule = {
   notiCategoryNum: 5,
 };
 
-const clubNotice = {
-  title: '동아리 공지 알림 생성 테스트 !! 이 글은 지우지 마세요. -김지수-',
-  description: '동아리 공지 알림 생성 테스트',
-  images: [],
-  url: 'clubNotice/notification/test',
-  notiCategoryNum: 6,
-};
-
-const boardEmotion = {
-  url: 'emotion/notification/test',
-  notiCategoryNum: 9,
-};
-
-const cmtEmotion = {
-  url: 'emotion/notification/test',
-  notiCategoryNum: 10,
-};
-
-const replyEmotion = {
-  url: 'emotion/notification/test',
-  notiCategoryNum: 11,
-};
-
 describe('알림 API 테스트', () => {
-  it('POST 댓글알림 생성 시 201 반환', async () => {
-    try {
-      const res = await server
-        .post('/api/club/board/clubNotice/2/26')
-        .set(
-          'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
-        )
-        .set('Content-Type', 'application/json')
-        .send(comment);
-
-      expect(res.statusCode).toEqual(201);
-    } catch (err) {
-      console.log(err);
-    }
-  });
-
-  it('POST 답글알림 생성 시 201 반환', async () => {
-    try {
-      const res = await server
-        .post('/api/club/board/clubNotice/2/26/126')
-        .set(
-          'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
-        )
-        .set('Content-Type', 'application/json')
-        .send(reply);
-
-      expect(res.statusCode).toEqual(201);
-    } catch (err) {
-      console.log(err);
-    }
-  });
-
   it('POST 동아리 가입신청 알림생성 시 201 반환', async () => {
     try {
       const res = await server
@@ -238,23 +167,6 @@ describe('알림 API 테스트', () => {
         .send(createSchedule);
 
       expect(res.statusCode).toEqual(200);
-    } catch (err) {
-      console.log(err);
-    }
-  });
-
-  it('POST 동아리 공지 글 알림생성 시 201 반환', async () => {
-    try {
-      const res = await server
-        .post('/api/club/board/clubNotice/2')
-        .set(
-          'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
-        )
-        .set('Content-Type', 'application/json')
-        .send(clubNotice);
-
-      expect(res.statusCode).toEqual(201);
     } catch (err) {
       console.log(err);
     }
