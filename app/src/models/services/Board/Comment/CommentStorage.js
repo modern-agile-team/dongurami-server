@@ -255,7 +255,7 @@ class CommentStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT DISTINCT s.name, s.id FROM comments AS c 
+      const query = `SELECT DISTINCT s.name, s.id, c.description FROM comments AS c 
         JOIN students AS s ON c.student_id = s.id 
         WHERE c.board_no = ? AND c.group_no = ?;`;
 

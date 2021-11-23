@@ -297,7 +297,7 @@ describe('알림 API 테스트', () => {
   it('PATCH 답글에 좋아요 알림생성 시 200 반환', async () => {
     try {
       const res = await server
-        .patch('/api/emotion/liked/reply-comment/279')
+        .patch('/api/emotion/liked/reply-comment/281')
         .set(
           'x-auth-token',
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
