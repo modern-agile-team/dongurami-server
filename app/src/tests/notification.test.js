@@ -92,7 +92,17 @@ const clubNotice = {
   notiCategoryNum: 6,
 };
 
-const emotion = {
+const boardEmotion = {
+  url: 'emotion/notification/test',
+  notiCategoryNum: 9,
+};
+
+const cmtEmotion = {
+  url: 'emotion/notification/test',
+  notiCategoryNum: 9,
+};
+
+const replyEmotion = {
   url: 'emotion/notification/test',
   notiCategoryNum: 9,
 };
@@ -259,7 +269,7 @@ describe('알림 API 테스트', () => {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
         )
         .set('Content-Type', 'application/json')
-        .send(emotion);
+        .send(boardEmotion);
 
       expect(res.statusCode).toEqual(200);
     } catch (err) {
@@ -276,7 +286,24 @@ describe('알림 API 테스트', () => {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
         )
         .set('Content-Type', 'application/json')
-        .send(emotion);
+        .send(cmtEmotion);
+
+      expect(res.statusCode).toEqual(200);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  it('PATCH 답글에 좋아요 알림생성 시 200 반환', async () => {
+    try {
+      const res = await server
+        .patch('/api/emotion/liked/reply-comment/127')
+        .set(
+          'x-auth-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs'
+        )
+        .set('Content-Type', 'application/json')
+        .send(replyEmotion);
 
       expect(res.statusCode).toEqual(200);
     } catch (err) {

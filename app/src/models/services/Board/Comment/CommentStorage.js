@@ -266,6 +266,30 @@ class CommentStorage {
       conn?.release();
     }
   }
+
+  static async findAllByCmtNum(cmtNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT s.name, s.id, c.description FROM comments AS c
+      JOIN students AS s ON c.student_id = s.id 
+      WHERE c.no = ?;`;
+
+      const cmt = await conn.query(query, [cmtNum]);
+
+      return {
+        recipientId: cmt.id,
+        recipientName: cmt.name,
+        description: cmt.description,
+      };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = CommentStorage;
