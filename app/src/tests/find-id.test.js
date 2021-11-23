@@ -22,10 +22,12 @@ const blankName = {
   name: '',
   email: 'dhckdgns3@naver.com',
 };
+
 const blankEamil = {
   name: '관리자_오창훈',
   email: '',
 };
+
 const blankNameOrEamil = {
   name: '',
   email: '',
@@ -67,6 +69,7 @@ describe('POST 아이디찾기 테스트', () => {
 
     expect(res.statusCode).toStrictEqual(400);
   });
+
   it('POST NAME 공백 / EMAIL(O) 테스트 [400]', async () => {
     const res = await server
       .post('/api/find-id')
@@ -75,6 +78,7 @@ describe('POST 아이디찾기 테스트', () => {
 
     expect(res.statusCode).toStrictEqual(400);
   });
+
   it('POST NAME(O) / EMAIL 공백 테스트 [400]', async () => {
     const res = await server
       .post('/api/find-id')
