@@ -12,13 +12,8 @@ router.get(
   letterCtrl.process.findLetterNotifications
 );
 
-router.put(
-  '/entire',
-  loginAuth.loginCheck,
-  letterCtrl.process.deleteLetterNotifications
-);
-
 router.get('/:id', loginAuth.loginCheck, letterCtrl.process.findLetters);
+
 router.get(
   '/:id/:letterNo',
   loginAuth.loginCheck,
@@ -26,10 +21,17 @@ router.get(
 );
 
 router.post('/', loginAuth.loginCheck, letterCtrl.process.createLetter);
+
 router.post(
   '/:id/:letterNo',
   loginAuth.loginCheck,
   letterCtrl.process.createReplyLetter
+);
+
+router.put(
+  '/entire',
+  loginAuth.loginCheck,
+  letterCtrl.process.deleteLetterNotifications
 );
 
 router.put(

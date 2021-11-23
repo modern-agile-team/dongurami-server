@@ -53,8 +53,12 @@ const process = {
       logger.error(`GET /api/letter/${id}/${letterNo} 403: ${response.msg}`);
       return res.status(403).json(response);
     }
-    logger.error(`GET /api/letter/${id}/${letterNo} 404: ${response.msg}`);
-    return res.status(404).json(response);
+    if (response.status === 404) {
+      logger.error(`GET /api/letter/${id}/${letterNo} 404: ${response.msg}`);
+      return res.status(404).json(response);
+    }
+    logger.error(`GET /api/letter/${id}/${letterNo} 400: ${response.msg}`);
+    return res.status(400).json(response);
   },
 
   createLetter: async (req, res) => {
