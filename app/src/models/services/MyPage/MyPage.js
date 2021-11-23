@@ -248,7 +248,7 @@ class MyPage {
           notiCategoryNum: 8,
         };
 
-        await NotificationStorage.createCmtNotification(notificationInfo);
+        await NotificationStorage.createNotification(notificationInfo);
 
         return { success: true, msg: '동아리 탈퇴에 성공하였습니다.', jwt };
       }

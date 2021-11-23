@@ -66,7 +66,7 @@ class NotificationStorage {
     }
   }
 
-  static async createCmtNotification(notificationInfo) {
+  static async createNotification(notificationInfo) {
     let conn;
 
     try {
@@ -91,32 +91,6 @@ class NotificationStorage {
       conn?.release();
     }
   }
-
-  // static async createNotification(notificationInfo) {
-  //   let conn;
-
-  //   try {
-  //     conn = await mariadb.getConnection();
-
-  //     const query = `INSERT INTO notifications (sender, recipient, recipient_id, url, notification_category_no, title, content) VALUES (?, ?, ?, ?, ?, ?, ?);`;
-
-  //     await conn.query(query, [
-  //       notificationInfo.senderName,
-  //       notificationInfo.recipientName,
-  //       notificationInfo.recipientId,
-  //       notificationInfo.url,
-  //       notificationInfo.notiCategoryNum,
-  //       notificationInfo.title,
-  //       notificationInfo.content,
-  //     ]);
-
-  //     return true;
-  //   } catch (err) {
-  //     throw err;
-  //   } finally {
-  //     conn?.release();
-  //   }
-  // }
 
   static async updateOneByNotificationNum(notificationNum) {
     let conn;

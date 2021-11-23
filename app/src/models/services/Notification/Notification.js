@@ -52,7 +52,7 @@ class Notification {
         notiCategoryNum: body.notiCategoryNum,
       };
 
-      const success = await NotificationStorage.createCmtNotification(
+      const success = await NotificationStorage.createNotification(
         notificationInfo
       );
 
