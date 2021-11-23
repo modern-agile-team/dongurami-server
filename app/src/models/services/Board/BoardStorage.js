@@ -257,7 +257,7 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE REPLACE(${searchInfo.type}, ' ', '') LIKE ? AND board_category_no = ? AND club_no = ?
+      WHERE REPLACE(${searchInfo.type}, ' ', '') LIKE ? AND board_category_no = ? AND club_no = ? AND writer_hidden_flag = 0
       ORDER BY ${searchInfo.sort} ${searchInfo.order};`;
 
       const boards = await conn.query(query, [
