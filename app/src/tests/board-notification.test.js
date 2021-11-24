@@ -11,14 +11,14 @@ const clubNotice = {
   notiCategoryNum: 6,
 };
 
-const comment = {
+const cmt = {
   description: '댓글 테스트입니다.',
   url: 'cmt/test/url',
   notiCategoryNum: 0,
   hiddenFlag: 1,
 };
 
-const reply = {
+const replyCmt = {
   description: '답글 테스트입니다.',
   url: 'reply/test/url',
   notiCategoryNum: 1,
@@ -67,7 +67,7 @@ describe('게시판 관련 알림 API 테스트', () => {
         .post('/api/club/board/clubNotice/2/26')
         .set('x-auth-token', leaderToken)
         .set('Content-Type', 'application/json')
-        .send(comment);
+        .send(cmt);
 
       expect(res.statusCode).toEqual(201);
     } catch (err) {
@@ -81,7 +81,7 @@ describe('게시판 관련 알림 API 테스트', () => {
         .post('/api/club/board/clubNotice/2/26/126')
         .set('x-auth-token', memberToken)
         .set('Content-Type', 'application/json')
-        .send(reply);
+        .send(replyCmt);
 
       expect(res.statusCode).toEqual(201);
     } catch (err) {
