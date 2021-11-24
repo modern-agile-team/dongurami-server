@@ -30,7 +30,7 @@ class Profile {
       }
 
       if (user) {
-        const snsId = await StudentStorage.findOneBySnsId(user.id);
+        const snsId = await StudentStorage.findOneBySnsId(id);
 
         if (snsId.success) profile.isNaverUser = 1;
         else profile.isNaverUser = 0;

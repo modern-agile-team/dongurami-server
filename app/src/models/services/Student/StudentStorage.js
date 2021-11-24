@@ -210,13 +210,11 @@ class StudentStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT student_id AS studentId, sns_id AS snsId FROM sns_info WHERE sns_id = ?;`;
+      const query = `SELECT student_id AS studentId, sns_id AS snsId FROM sns_info WHERE student_id = ?;`;
 
       const result = await conn.query(query, [snsId]);
 
-      if (result[0]) {
-        return { success: true, result: result[0] };
-      }
+      if (result[0]) return { success: true, result: result[0] };
       return { success: false };
     } catch (err) {
       throw err;
