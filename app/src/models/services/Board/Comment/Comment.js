@@ -42,29 +42,23 @@ class Comment {
 
       await CommentStorage.updateOnlyGroupNum(commentNum);
 
-      const writerId = await CommentStorage.findOneByBoardNum(
-        commentInfo.boardNum
-      );
-
-      if (!commentInfo.hiddenFlag) {
-        commentInfo.id = '익명';
+      if (commentInfo.hiddenFlag) {
+        user.name = '익명';
       }
 
-      if (user.id !== writerId) {
-        const { recipientName, title } =
-          await BoardStorage.findRecipientNameAndTitleByBoardNum(
-            commentInfo.boardNum
-          );
+      const { recipientId, recipientName, title } =
+        await BoardStorage.findBoardInfoByBoardNum(commentInfo.boardNum);
 
+      if (user.id !== recipientId) {
         const notificationInfo = {
           title,
           recipientName,
-          recipientId: writerId,
+          recipientId,
           senderName: user.name,
           content: commentInfo.description,
         };
 
-        await notification.createCmtNotification(notificationInfo);
+        await notification.createNotification(notificationInfo);
       }
 
       return { success: true, msg: '댓글 생성 성공' };
@@ -103,14 +97,19 @@ class Comment {
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      const recipients = await CommentStorage.findStudentNamesByCmtAndBoardNum(
-        replyCommentInfo.cmtNum,
-        replyCommentInfo.boardNum
-      );
+      const recipients =
+        await CommentStorage.findRecipientNamesByCmtAndBoardNum(
+          replyCommentInfo.cmtNum,
+          replyCommentInfo.boardNum
+        );
 
       const senderId = replyCommentInfo.id;
 
-      const { title } = await BoardStorage.findRecipientNameAndTitleByBoardNum(
+      if (replyCommentInfo.hiddenFlag) {
+        user.name = '익명';
+      }
+
+      const { title } = await BoardStorage.findBoardInfoByBoardNum(
         replyCommentInfo.boardNum
       );
 
@@ -124,7 +123,7 @@ class Comment {
             content: replyCommentInfo.description,
           };
 
-          await notification.createCmtNotification(notificationInfo);
+          await notification.createNotification(notificationInfo);
         }
       });
 

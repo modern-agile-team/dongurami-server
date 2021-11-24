@@ -249,7 +249,7 @@ class CommentStorage {
     }
   }
 
-  static async findStudentNamesByCmtAndBoardNum(cmtNum, boardNum) {
+  static async findRecipientNamesByCmtAndBoardNum(cmtNum, boardNum) {
     let conn;
 
     try {
@@ -269,17 +269,23 @@ class CommentStorage {
     }
   }
 
-  static async findOneByBoardNum(boardNum) {
+  static async findAllByCmtNum(cmtNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT student_id AS studentId FROM boards WHERE no = ?;`;
+      const query = `SELECT s.name, s.id, c.description FROM comments AS c
+      JOIN students AS s ON c.student_id = s.id 
+      WHERE c.no = ?;`;
 
-      const writer = await conn.query(query, [boardNum]);
+      const cmt = await conn.query(query, [cmtNum]);
 
-      return writer[0].studentId;
+      return {
+        recipientId: cmt.id,
+        recipientName: cmt.name,
+        description: cmt.description,
+      };
     } catch (err) {
       throw err;
     } finally {
