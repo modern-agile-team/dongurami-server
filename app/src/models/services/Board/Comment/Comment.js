@@ -109,14 +109,10 @@ class Comment {
         user.name = '익명';
       }
 
-      const { title } = await BoardStorage.findBoardInfoByBoardNum(
-        replyCommentInfo.boardNum
-      );
-
       recipients.forEach(async (recipient) => {
         if (senderId !== recipient.id) {
           const notificationInfo = {
-            title,
+            title: recipient.description,
             senderName: user.name,
             recipientName: recipient.name,
             recipientId: recipient.id,
