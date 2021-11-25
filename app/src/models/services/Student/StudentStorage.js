@@ -153,15 +153,15 @@ class StudentStorage {
     }
   }
 
-  static async findOneByPhoneNum(phoneNum) {
+  static async findOneByPhoneNum(phoneNum, id) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no FROM students WHERE phone_number = ?;`;
+      const query = `SELECT id FROM students WHERE phone_number = ? AND id != ?;`;
 
-      const result = await conn.query(query, phoneNum);
+      const result = await conn.query(query, [phoneNum, id]);
 
       return result[0];
     } catch (err) {

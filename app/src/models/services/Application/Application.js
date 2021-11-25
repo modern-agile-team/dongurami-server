@@ -1,6 +1,7 @@
 'use strict';
 
 const ApplicationStorage = require('./ApplicationStorage');
+const StudentStorage = require('../Student/StudentStorage');
 const Notification = require('../Notification/Notification');
 const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
@@ -132,6 +133,15 @@ class Application {
         !answerInfo.phoneNum.match(phoneNumberRegExp)
       ) {
         return { success: false, msg: '전화번호 형식이 맞지 않습니다.' };
+      }
+
+      const isPhoneNum = await StudentStorage.findOneByPhoneNum(
+        answerInfo.phoneNum,
+        auth.id
+      );
+
+      if (isPhoneNum) {
+        return { success: false, msg: '다른 유저가 사용중인 번호입니다.' };
       }
 
       const isBasic = await ApplicationStorage.createBasicAnswer(answerInfo);
