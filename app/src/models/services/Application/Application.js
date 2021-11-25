@@ -139,6 +139,7 @@ class Application {
         answerInfo.phoneNum,
         auth.id
       );
+
       if (isPhoneNum) {
         return { success: false, msg: '다른 유저가 사용중인 번호입니다.' };
       }
