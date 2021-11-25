@@ -153,6 +153,24 @@ class StudentStorage {
     }
   }
 
+  static async findOneByPhoneNum(phoneNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no FROM students WHERE phone_number = ?;`;
+
+      const result = await conn.query(query, phoneNum);
+
+      return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async modifyPasswordSave(saveInfo) {
     let conn;
 
