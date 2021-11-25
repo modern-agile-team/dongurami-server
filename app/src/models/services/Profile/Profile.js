@@ -92,6 +92,15 @@ class Profile {
     if (msg) return { success: false, msg };
 
     try {
+      const isNaver = await StudentStorage.findOneBySnsId(user.id);
+
+      if (isNaver.success) {
+        return {
+          success: false,
+          msg: '네이버 이메일로 가입된 회원은 이메일 변경이 불가능합니다.',
+        };
+      }
+
       const isEmail = await StudentStorage.findOneByEmail(userInfo.email);
 
       if (isEmail) {
