@@ -92,6 +92,20 @@ class Profile {
     if (msg) return { success: false, msg };
 
     try {
+      const isEmail = await StudentStorage.findOneByEmail(userInfo.email);
+
+      if (isEmail) {
+        return { success: false, msg: '다른 유저가 사용중인 이메일입니다.' };
+      }
+
+      const isPhoneNum = await StudentStorage.findOneByPhoneNum(
+        userInfo.phoneNumber
+      );
+
+      if (isPhoneNum) {
+        return { success: false, msg: '다른 유저가 사용중인 번호입니다.' };
+      }
+
       const studentUpdateCnt = await ProfileStorage.updateStudentInfo(userInfo);
 
       if (studentUpdateCnt === 0) {
