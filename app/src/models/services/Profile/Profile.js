@@ -103,12 +103,13 @@ class Profile {
 
       const isEmail = await StudentStorage.findOneByEmail(userInfo.email);
 
-      if (isEmail) {
+      if (isEmail.id !== user.id) {
         return { success: false, msg: '다른 유저가 사용중인 이메일입니다.' };
       }
 
       const isPhoneNum = await StudentStorage.findOneByPhoneNum(
-        userInfo.phoneNumber
+        userInfo.phoneNumber,
+        user.id
       );
 
       if (isPhoneNum) {
