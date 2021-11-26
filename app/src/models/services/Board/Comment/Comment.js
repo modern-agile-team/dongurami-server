@@ -153,6 +153,7 @@ class Comment {
         comment.likedFlag += comment.replyLikedFlag;
         comment.emotionCount += comment.replyEmotionCount;
         delete comment.replyLikedFlag;
+        delete comment.replyEmotionCount;
 
         if (comment.writerHiddenFlag) {
           const samePersonIdx = Object.keys(anonymous).indexOf(
