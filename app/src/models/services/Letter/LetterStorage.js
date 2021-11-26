@@ -32,12 +32,12 @@ class LetterStorage {
 
       const query = `SELECT l.no, s.name, l.description, l.in_date AS inDate, l.writer_hidden_flag AS writerHiddenFlag 
       FROM letters AS l
-      LEFT JOIN students AS s on sender_id = s.id
+      LEFT JOIN students AS s ON IF (sender_id = ?, recipient_id = s.id, sender_id = s.id)
       WHERE no IN (SELECT MAX(no) FROM letters
       WHERE host_id = ? AND delete_flag = 0 
       GROUP BY board_no, board_flag, writer_hidden_flag);`;
 
-      const letters = await conn.query(query, id);
+      const letters = await conn.query(query, [id, id]);
 
       return letters;
     } catch (err) {
