@@ -74,7 +74,8 @@ class LetterStorage {
       const query = `SELECT s.name, l.sender_id AS senderId,  description, l.board_flag AS boardFlag, l.board_no AS boardNo, l.in_date AS inDate, l.writer_hidden_flag AS writerHiddenFlag
       FROM letters AS l
       JOIN students AS s ON s.id = l.sender_id OR s.id = l.recipient_id 
-      WHERE l.host_id = ? AND l.board_flag = ? AND l.board_no = ? AND s.id = ? AND l.writer_hidden_flag = ? AND delete_flag = 0 ;`;
+      WHERE l.host_id = ? AND l.board_flag = ? AND l.board_no = ? AND s.id = ? AND l.writer_hidden_flag = ? AND delete_flag = 0
+      ORDER BY l.in_date DESC;`;
 
       const letters = await conn.query(query, [
         letterInfo.id,
