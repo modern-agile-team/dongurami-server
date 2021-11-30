@@ -30,14 +30,14 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT l.no, s.name, l.description, l.in_date AS inDate, l.writer_hidden_flag AS writerHiddenFlag 
+      const query = `SELECT l.no, s.name, l.description, l.in_date AS inDate, IF (sender_id =?, l.recipient_hidden_flag, l.writer_hidden_flag) AS hiddenFlag 
       FROM letters AS l
       LEFT JOIN students AS s ON IF (sender_id = ?, recipient_id = s.id, sender_id = s.id)
       WHERE no IN (SELECT MAX(no) FROM letters
       WHERE host_id = ? AND delete_flag = 0 
-      GROUP BY board_no, board_flag, writer_hidden_flag);`;
+      GROUP BY board_no, board_flag, writer_hidden_flag, recipient_hidden_flag);`;
 
-      const letters = await conn.query(query, [id, id]);
+      const letters = await conn.query(query, [id, id, id]);
 
       return letters;
     } catch (err) {
@@ -71,10 +71,10 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT s.name, l.sender_id AS senderId, description, l.board_flag AS boardFlag, l.board_no AS boardNo, l.in_date AS inDate, l.writer_hidden_flag AS writerHiddenFlag
+      const query = `SELECT s.name, l.sender_id AS senderId, description, l.board_flag AS boardFlag, l.board_no AS boardNo, l.in_date AS inDate, l.writer_hidden_flag AS writerHiddenFlag, l.group_no AS groupNo
       FROM letters AS l
       JOIN students AS s ON s.id = l.sender_id OR s.id = l.recipient_id 
-      WHERE l.host_id = ? AND l.board_flag = ? AND l.board_no = ? AND s.id = ? AND l.writer_hidden_flag = ? AND delete_flag = 0
+      WHERE l.host_id = ? AND l.board_flag = ? AND l.board_no = ? AND s.id = ? AND l.writer_hidden_flag = ? AND l.recipient_hidden_flag = ? AND delete_flag = 0
       ORDER BY l.in_date DESC;`;
 
       const letters = await conn.query(query, [
@@ -83,6 +83,7 @@ class LetterStorage {
         letterInfo.boardNo,
         letterInfo.otherId,
         letterInfo.writerHiddenFlag,
+        letterInfo.recipientHiddenFlag,
       ]);
 
       return letters;
@@ -154,7 +155,7 @@ class LetterStorage {
       conn = await mariadb.getConnection();
 
       const query =
-        'INSERT INTO letters (sender_id, recipient_id, host_id, description, board_flag, board_no, writer_hidden_flag) VALUES (?, ?, ?, ?, ?, ?, ?);';
+        'INSERT INTO letters (sender_id, recipient_id, host_id, description, board_flag, board_no, writer_hidden_flag, recipient_hidden_flag) VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
 
       // 쪽지는 전송자와 수신자 모두 저장이 되어 있어야 각자 따로 메세지를 지울 수 있기 때문에 host_id COLUMN 값만 다르게 두번 저장
       const addLetterBySender = await conn.query(query, [
@@ -165,9 +166,10 @@ class LetterStorage {
         sendInfo.boardFlag,
         sendInfo.boardNo,
         sendInfo.writerHiddenFlag,
+        sendInfo.recipientHiddenFlag,
       ]);
 
-      const addLetterByRecipeint = await conn.query(query, [
+      const addLetterByRecipient = await conn.query(query, [
         sendInfo.senderId,
         sendInfo.recipientId,
         sendInfo.recipientId,
@@ -175,9 +177,32 @@ class LetterStorage {
         sendInfo.boardFlag,
         sendInfo.boardNo,
         sendInfo.writerHiddenFlag,
+        sendInfo.recipientHiddenFlag,
       ]);
 
-      return addLetterBySender.affectedRows + addLetterByRecipeint.affectedRows;
+      return {
+        sender: addLetterBySender.insertId,
+        recipient: addLetterByRecipient.insertId,
+      };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateGroupNo(sender, recipient, groupNo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'UPDATE letters SET group_no = ? WHERE no = ?;';
+
+      const resultSender = await conn.query(query, [groupNo, sender]);
+      const resultRecipient = await conn.query(query, [groupNo, recipient]);
+
+      return resultSender.affectedRows + resultRecipient.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -191,7 +216,7 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT sender_id AS senderId, recipient_id AS recipientId, board_flag AS boardFlag, board_no AS boardNo, writer_hidden_flag AS writerHiddenFlag
+      const query = `SELECT sender_id AS senderId, recipient_id AS recipientId, board_flag AS boardFlag, board_no AS boardNo, writer_hidden_flag AS writerHiddenFlag, recipient_hidden_flag AS recipientHiddenFlag
       FROM letters WHERE no = ?;`;
 
       const letterInfo = await conn.query(query, letterNo);

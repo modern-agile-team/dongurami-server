@@ -40,7 +40,7 @@ class Letter {
       const letters = await LetterStorage.findLetters(id);
 
       letters.forEach((letter) => {
-        if (letter.writerHiddenFlag) letter.name = '익명';
+        if (letter.hiddenFlag) letter.name = '익명';
       });
 
       if (letters) {
@@ -79,6 +79,7 @@ class Letter {
 
       const reading = await LetterStorage.updateReadingFlag(letterInfo);
 
+      console.log(letterInfo);
       if (reading) {
         const letters = await LetterStorage.findLettersByGroup(letterInfo);
 
@@ -105,17 +106,21 @@ class Letter {
     const data = this.body;
 
     try {
+      let recipientHiddenFlag = 0;
+
       // 수신자가 익명일 경우
       if (!data.recipientId.length) {
+        recipientHiddenFlag = 1;
         data.recipientId = data.boardFlag
-          ? await LetterStorage.findRecipientByBoard(data.boardNo) // 수신자 : 글 작성자
+          ? await LetterStorage.findRecipientByBoard(data.boardNo)
           : await LetterStorage.findRecipientByComment(
               data.boardNo,
               data.commentNo
-            ); // 수신자 : 댓글 작성자
+            );
       }
 
       const sendInfo = {
+        recipientHiddenFlag,
         senderId: this.auth.id,
         recipientId: data.recipientId,
         description: data.description,
@@ -124,7 +129,13 @@ class Letter {
         writerHiddenFlag: data.writerHiddenFlag,
       };
 
-      const result = await LetterStorage.createLetter(sendInfo);
+      const { sender, recipient } = await LetterStorage.createLetter(sendInfo);
+
+      const result = await LetterStorage.updateGroupNo(
+        sender,
+        recipient,
+        sender
+      );
 
       if (result === 2) return { success: true, msg: '쪽지가 전송되었습니다.' };
       return { success: false, msg: '쪽지가 전송되지 않았습니다.' };
@@ -138,8 +149,10 @@ class Letter {
     const { id } = this.auth;
 
     try {
+      let recipientHiddenFlag = 0;
       // 수신자가 익명일 경우 => 해당 쪽지의 수신자, 발신자의 학번과 auth.id를 비교하여 수신자 찾아주기
       if (!data.recipientId.length) {
+        recipientHiddenFlag = 1;
         const recipientInfo = await LetterStorage.findRecipientByLetter(
           this.params.letterNo
         );
@@ -151,6 +164,7 @@ class Letter {
       }
 
       const sendInfo = {
+        recipientHiddenFlag,
         senderId: id,
         recipientId: data.recipientId,
         description: data.description,
@@ -159,7 +173,13 @@ class Letter {
         writerHiddenFlag: data.writerHiddenFlag,
       };
 
-      const result = await LetterStorage.createLetter(sendInfo);
+      const { sender, recipient } = await LetterStorage.createLetter(sendInfo);
+
+      const result = await LetterStorage.updateGroupNo(
+        sender,
+        recipient,
+        data.groupNo
+      );
 
       if (result === 2) return { success: true, msg: '쪽지가 전송되었습니다.' };
       return { success: false, msg: '쪽지가 전송되지 않았습니다.' };
