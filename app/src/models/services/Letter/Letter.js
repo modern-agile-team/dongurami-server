@@ -136,7 +136,7 @@ class Letter {
         sender
       );
 
-      if (result === 2) return { success: true, msg: '쪽지가 전송되었습니다.' };
+      if (result) return { success: true, msg: '쪽지가 전송되었습니다.' };
       return { success: false, msg: '쪽지가 전송되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);

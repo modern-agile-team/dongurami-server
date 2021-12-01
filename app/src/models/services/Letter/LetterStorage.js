@@ -191,12 +191,15 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'UPDATE letters SET group_no = ? WHERE no = ?;';
+      const query = 'UPDATE letters SET group_no = ? WHERE no = ? OR no = ?;';
 
-      const resultSender = await conn.query(query, [groupNo, sender]);
-      const resultRecipient = await conn.query(query, [groupNo, recipient]);
+      const resultSender = await conn.query(query, [
+        groupNo,
+        sender,
+        recipient,
+      ]);
 
-      return resultSender.affectedRows + resultRecipient.affectedRows;
+      return resultSender.affectedRows;
     } catch (err) {
       throw err;
     } finally {
