@@ -57,7 +57,14 @@ class Board {
 
       if (category === 5 || category === 6) {
         if (!user.clubNum.includes(Number(clubNum))) {
-          return { success: false, msg: '동아리원만 작성할 수 있습니다.' };
+          return {
+            success: false,
+            msg: '동아리원만 작성할 수 있습니다.',
+            status: 403,
+          };
+        }
+        if (boardInfo.hiddenFlag) {
+          return { success: false, msg: '익명으로 작성할 수 없습니다.' };
         }
       }
 
