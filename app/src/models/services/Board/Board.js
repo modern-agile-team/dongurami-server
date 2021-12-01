@@ -57,7 +57,17 @@ class Board {
 
       if (category === 5 || category === 6) {
         if (!user.clubNum.includes(Number(clubNum))) {
-          return { success: false, msg: '동아리원만 작성할 수 있습니다.' };
+          return {
+            success: false,
+            msg: '동아리원만 작성할 수 있습니다.',
+            status: 403,
+          };
+        }
+        if (boardInfo.hiddenFlag) {
+          return {
+            success: false,
+            msg: '해당 게시판에서 익명 사용이 불가능합니다.',
+          };
         }
       }
 
@@ -119,8 +129,13 @@ class Board {
         if (!isClub) {
           return { success: false, msg: '존재하지 않는 동아리입니다.' };
         }
-        if (category === 5 && !user.clubNum.includes(Number(clubNum))) {
-          return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
+        if (category === 5 && !user.isAdmin) {
+          if (!user.clubNum.includes(Number(clubNum))) {
+            return {
+              success: false,
+              msg: '해당 동아리에 가입하지 않았습니다.',
+            };
+          }
         }
         criteriaRead.clubNum = clubNum;
       }
@@ -197,8 +212,13 @@ class Board {
         studentId: user ? user.id : 0,
       };
 
-      if (category === 5 && !user.clubNum.includes(Number(params.clubNum))) {
-        return { success: false, msg: '해당 동아리에 가입하지 않았습니다.' };
+      if (category === 5 && !user.isAdmin) {
+        if (!user.clubNum.includes(Number(clubNum))) {
+          return {
+            success: false,
+            msg: '해당 동아리에 가입하지 않았습니다.',
+          };
+        }
       }
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
