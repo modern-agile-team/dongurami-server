@@ -38,6 +38,12 @@ class Comment {
         return { success: false, msg: '해당 게시글이 존재하지 않습니다.' };
       }
 
+      if (boardCategory[this.params.category] === 5 && commentInfo.hiddenFlag) {
+        return {
+          success: false,
+          msg: '해당 게시판에서 익명 사용이 불가능합니다.',
+        };
+      }
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
 
       await CommentStorage.updateOnlyGroupNum(commentNum);
@@ -93,6 +99,16 @@ class Comment {
 
       if (exist === undefined) {
         return { success: false, msg: '해당 게시글이나 댓글이 없습니다.' };
+      }
+
+      if (
+        boardCategory[this.params.category] === 5 &&
+        replyCommentInfo.hiddenFlag
+      ) {
+        return {
+          success: false,
+          msg: '해당 게시판에서 익명 사용이 불가능합니다.',
+        };
       }
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);

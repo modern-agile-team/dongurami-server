@@ -64,7 +64,10 @@ class Board {
           };
         }
         if (boardInfo.hiddenFlag) {
-          return { success: false, msg: '익명으로 작성할 수 없습니다.' };
+          return {
+            success: false,
+            msg: '해당 게시판에서 익명 사용이 불가능합니다.',
+          };
         }
       }
 
