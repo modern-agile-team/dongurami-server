@@ -34,6 +34,14 @@ class Board {
         hiddenFlag: board.hiddenFlag || 0,
       };
 
+      if (category === 1 && user.isAdmin === 0) {
+        return {
+          success: false,
+          msg: '전체공지는 관리자만 작성 가능합니다.',
+          status: 403,
+        };
+      }
+
       if (!(board.title && board.description)) {
         return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
       }
