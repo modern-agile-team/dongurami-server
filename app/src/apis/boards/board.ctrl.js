@@ -32,6 +32,10 @@ const process = {
       );
       return res.status(500).json(response.clientMsg);
     }
+    if (response.status === 403) {
+      logger.error(`POST /api/board/${category} 403: ${response.msg}`);
+      return res.status(403).json(response);
+    }
     logger.error(`POST /api/board/${category} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
