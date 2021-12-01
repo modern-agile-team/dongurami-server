@@ -17,13 +17,16 @@ class Letter {
       const letters = await LetterStorage.findLetterNotifications(id);
 
       letters.forEach((letter) => {
-        if (letter.writerHiddenFlag) {
+        if (letter.hiddenFlag) {
           letter.name = '익명';
         }
         letter.url = `message?id=${letter.no}`;
       });
 
-      return { success: true, msg: '쪽지 알람 전체 조회 성공', letters };
+      if (letters[0]) {
+        return { success: true, msg: '쪽지 알람 전체 조회 성공', letters };
+      }
+      return { success: true, msg: '생성된 쪽지가 없습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -43,7 +46,7 @@ class Letter {
         if (letter.hiddenFlag) letter.name = '익명';
       });
 
-      if (letters) {
+      if (letters[0]) {
         return { success: true, msg: '쪽지 전체 조회 성공', letters };
       }
       return { success: true, msg: '쪽지가 존재하지 않습니다.' };
@@ -79,15 +82,16 @@ class Letter {
 
       const reading = await LetterStorage.updateReadingFlag(letterInfo);
 
-      console.log(letterInfo);
       if (reading) {
         const letters = await LetterStorage.findLettersByGroup(letterInfo);
 
-        if (letters[0].writerHiddenFlag) {
+        if (letters[0].hiddenFlag) {
           letters.forEach((letter) => {
             letter.name = '익명';
             if (letter.senderId !== id) {
               letter.senderId = '익명';
+            } else {
+              letter.recipientId = '익명';
             }
           });
         }
@@ -113,10 +117,7 @@ class Letter {
         recipientHiddenFlag = 1;
         data.recipientId = data.boardFlag
           ? await LetterStorage.findRecipientByBoard(data.boardNo)
-          : await LetterStorage.findRecipientByComment(
-              data.boardNo,
-              data.commentNo
-            );
+          : await LetterStorage.findRecipientByComment(data.commentNo);
       }
 
       const sendInfo = {
@@ -124,8 +125,6 @@ class Letter {
         senderId: this.auth.id,
         recipientId: data.recipientId,
         description: data.description,
-        boardFlag: data.boardFlag,
-        boardNo: data.boardNo,
         writerHiddenFlag: data.writerHiddenFlag,
       };
 
@@ -168,8 +167,6 @@ class Letter {
         senderId: id,
         recipientId: data.recipientId,
         description: data.description,
-        boardFlag: data.boardFlag,
-        boardNo: data.boardNo,
         writerHiddenFlag: data.writerHiddenFlag,
       };
 
@@ -205,17 +202,11 @@ class Letter {
 
   async deleteLetters() {
     const { id } = this.auth;
-    const { letterNo } = this.params;
 
     try {
-      const { boardFlag, boardNo } = await LetterStorage.findLetterInfo(
-        letterNo
-      );
-
       const letterInfo = {
         id,
-        boardFlag,
-        boardNo,
+        groupNo: this.body.groupNo,
       };
 
       const result = await LetterStorage.deleteLetters(letterInfo);
