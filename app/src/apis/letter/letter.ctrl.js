@@ -36,28 +36,28 @@ const process = {
   findLettersByGroup: async (req, res) => {
     const letter = new Letter(req);
     const { id } = req.params;
-    const { letterNo } = req.params;
+    const { groupNo } = req.params;
     const response = await letter.findLettersByGroup();
 
     if (response.success) {
-      logger.info(`GET /api/letter/${id}/${letterNo} 200: ${response.msg}`);
+      logger.info(`GET /api/letter/${id}/${groupNo} 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `GET /api/letter/${id}/${letterNo} 500: \n${response.errMsg.stack}`
+        `GET /api/letter/${id}/${groupNo} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
     if (response.status === 403) {
-      logger.error(`GET /api/letter/${id}/${letterNo} 403: ${response.msg}`);
+      logger.error(`GET /api/letter/${id}/${groupNo} 403: ${response.msg}`);
       return res.status(403).json(response);
     }
     if (response.status === 404) {
-      logger.error(`GET /api/letter/${id}/${letterNo} 404: ${response.msg}`);
+      logger.error(`GET /api/letter/${id}/${groupNo} 404: ${response.msg}`);
       return res.status(404).json(response);
     }
-    logger.error(`GET /api/letter/${id}/${letterNo} 400: ${response.msg}`);
+    logger.error(`GET /api/letter/${id}/${groupNo} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
@@ -80,20 +80,20 @@ const process = {
   createReplyLetter: async (req, res) => {
     const letter = new Letter(req);
     const { id } = req.params;
-    const { letterNo } = req.params;
+    const { groupNo } = req.params;
     const response = await letter.createReplyLetter();
 
     if (response.success) {
-      logger.info(`POST /api/letter/${id}/${letterNo} 200: ${response.msg}`);
+      logger.info(`POST /api/letter/${id}/${groupNo} 200: ${response.msg}`);
       return res.status(201).json(response);
     }
     if (response.isError) {
       logger.error(
-        `POST /api/letter/${id}/${letterNo} 500: \n${response.errMsg.stack}`
+        `POST /api/letter/${id}/${groupNo} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`POST /api/letter/${id}/${letterNo} 400: ${response.msg}`);
+    logger.error(`POST /api/letter/${id}/${groupNo} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
@@ -116,20 +116,20 @@ const process = {
   deleteLetters: async (req, res) => {
     const letter = new Letter(req);
     const { id } = req.params;
-    const { letterNo } = req.params;
+    const { groupNo } = req.params;
     const response = await letter.deleteLetters();
 
     if (response.success) {
-      logger.info(`PUT /api/letter/${id}/${letterNo} 200: ${response.msg}`);
+      logger.info(`PUT /api/letter/${id}/${groupNo} 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/letter/${id}/${letterNo} 500: \n${response.errMsg.stack}`
+        `PUT /api/letter/${id}/${groupNo} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`PUT /api/letter/${id}/${letterNo} 400: ${response.msg}`);
+    logger.error(`PUT /api/letter/${id}/${groupNo} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 };

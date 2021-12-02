@@ -57,12 +57,12 @@ class Letter {
 
   async findLettersByGroup() {
     const { id } = this.auth;
-    const { letterNo } = this.params;
+    const { groupNo } = this.params;
 
     try {
-      const isLetter = await LetterStorage.findLetterByNo(letterNo);
+      const isLetter = await LetterStorage.findLetterByGroupNo(groupNo);
 
-      if (!isLetter[0]) {
+      if (!isLetter) {
         return {
           success: false,
           msg: '존재하지 않는 쪽지입니다.',
@@ -72,7 +72,7 @@ class Letter {
       if (this.params.id !== id) {
         return { success: false, msg: '본인만 열람 가능합니다.', status: 403 };
       }
-      const letterInfo = await LetterStorage.findLetterInfo(letterNo);
+      const letterInfo = await LetterStorage.findLetterInfo(groupNo);
 
       letterInfo.id = id;
       letterInfo.otherId =
@@ -146,15 +146,14 @@ class Letter {
   async createReplyLetter() {
     const data = this.body;
     const { id } = this.auth;
+    const { groupNo } = this.params;
 
     try {
       let recipientHiddenFlag = 0;
       // 수신자가 익명일 경우 => 해당 쪽지의 수신자, 발신자의 학번과 auth.id를 비교하여 수신자 찾아주기
       if (!data.recipientId.length) {
         recipientHiddenFlag = 1;
-        const recipientInfo = await LetterStorage.findRecipientByLetter(
-          this.params.letterNo
-        );
+        const recipientInfo = await LetterStorage.findLetterByGroupNo(groupNo);
 
         data.recipientId =
           recipientInfo.senderId === id
@@ -175,7 +174,7 @@ class Letter {
       const result = await LetterStorage.updateGroupNo(
         sender,
         recipient,
-        data.groupNo
+        groupNo
       );
 
       if (result === 2) return { success: true, msg: '쪽지가 전송되었습니다.' };
@@ -206,7 +205,7 @@ class Letter {
     try {
       const letterInfo = {
         id,
-        groupNo: this.body.groupNo,
+        groupNo: this.params.groupNo,
       };
 
       const result = await LetterStorage.deleteLetters(letterInfo);

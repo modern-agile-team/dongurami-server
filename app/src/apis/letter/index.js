@@ -22,7 +22,7 @@ router.get(
 );
 
 router.get(
-  '/:id/:letterNo',
+  '/:id/:groupNo',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   letterCtrl.process.findLettersByGroup
@@ -36,7 +36,7 @@ router.post(
 );
 
 router.post(
-  '/:id/:letterNo',
+  '/:id/:groupNo',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   letterCtrl.process.createReplyLetter
@@ -50,7 +50,7 @@ router.put(
 );
 
 router.put(
-  '/:id/:letterNo',
+  '/:id/:groupNo',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   letterCtrl.process.deleteLetters
