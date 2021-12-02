@@ -20,7 +20,7 @@ class Letter {
         if (letter.hiddenFlag) {
           letter.name = '익명';
         }
-        letter.url = `message?id=${letter.no}`;
+        letter.url = `message?id=${letter.groupNo}`;
       });
 
       if (letters[0]) {
