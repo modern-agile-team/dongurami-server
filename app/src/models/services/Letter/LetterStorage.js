@@ -65,24 +65,6 @@ class LetterStorage {
     }
   }
 
-  // static async findRecipientByLetter(groupNo) {
-  //   let conn;
-
-  //   try {
-  //     conn = await mariadb.getConnection();
-
-  //     const query = `SELECT sender_id AS senderId, recipient_id AS recipientId FROM letters WHERE no = ?;`;
-
-  //     const recipientInfo = await conn.query(query, groupNo);
-
-  //     return recipientInfo[0];
-  //   } catch (err) {
-  //     throw err;
-  //   } finally {
-  //     conn?.release();
-  //   }
-  // }
-
   static async findLettersByGroup(letterInfo) {
     let conn;
 
