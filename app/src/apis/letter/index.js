@@ -50,7 +50,7 @@ router.put(
 );
 
 router.put(
-  '/:id/:groupNO',
+  '/:id/:groupNo',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   letterCtrl.process.deleteLetters
