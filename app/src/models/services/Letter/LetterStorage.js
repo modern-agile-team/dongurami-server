@@ -35,7 +35,8 @@ class LetterStorage {
       LEFT JOIN students AS s ON IF (sender_id = ?, recipient_id = s.id, sender_id = s.id)
       WHERE no IN (SELECT MAX(no) FROM letters
       WHERE host_id = ? AND delete_flag = 0 
-      GROUP BY group_no);`;
+      GROUP BY group_no)
+      ORDER BY l.in_date DESC;`;
 
       const letters = await conn.query(query, [id, id, id]);
 
