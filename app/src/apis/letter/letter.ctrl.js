@@ -66,14 +66,14 @@ const process = {
     const response = await letter.createLetter();
 
     if (response.success) {
-      logger.info(`POST /api/letter/send 200: ${response.msg}`);
+      logger.info(`POST /api/letter 200: ${response.msg}`);
       return res.status(201).json(response);
     }
     if (response.isError) {
-      logger.error(`POST /api/letter/send 500: \n${response.errMsg.stack}`);
+      logger.error(`POST /api/letter 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`POST /api/letter/send 400: ${response.msg}`);
+    logger.error(`POST /api/letter 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 
