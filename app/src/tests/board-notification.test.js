@@ -42,9 +42,9 @@ const replyEmotion = {
 
 const leaderToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q';
-
 const memberToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs';
+const { API_KEY } = process.env;
 
 describe('게시판 관련 알림 API 테스트', () => {
   it('POST 동아리 공지 글 알림생성 시 201 반환', async () => {
@@ -52,6 +52,7 @@ describe('게시판 관련 알림 API 테스트', () => {
       const res = await server
         .post('/api/club/board/clubNotice/2')
         .set('x-auth-token', memberToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(clubNotice);
 
@@ -66,6 +67,7 @@ describe('게시판 관련 알림 API 테스트', () => {
       const res = await server
         .post('/api/club/board/clubNotice/2/26')
         .set('x-auth-token', leaderToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(cmt);
 
@@ -80,6 +82,7 @@ describe('게시판 관련 알림 API 테스트', () => {
       const res = await server
         .post('/api/club/board/clubNotice/2/26/126')
         .set('x-auth-token', memberToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(replyCmt);
 
@@ -94,6 +97,7 @@ describe('게시판 관련 알림 API 테스트', () => {
       const res = await server
         .patch('/api/emotion/liked/board/26')
         .set('x-auth-token', leaderToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(boardEmotion);
 
@@ -108,6 +112,7 @@ describe('게시판 관련 알림 API 테스트', () => {
       const res = await server
         .patch('/api/emotion/liked/comment/278')
         .set('x-auth-token', memberToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(cmtEmotion);
 
@@ -122,6 +127,7 @@ describe('게시판 관련 알림 API 테스트', () => {
       const res = await server
         .patch('/api/emotion/liked/reply-comment/281')
         .set('x-auth-token', memberToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(replyEmotion);
 
