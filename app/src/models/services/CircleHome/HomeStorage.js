@@ -11,6 +11,8 @@ class HomeStorage {
       // 동아리 정보 조회
       const findClubInfo =
         'SELECT name, category, logo_url AS logoUrl, introduce FROM clubs WHERE no = ?;';
+      const leader = `SELECT s.id, s.name, s.profile_image_url AS profileImageUrl FROM students AS s 
+        LEFT JOIN clubs AS c ON c.leader = s.id WHERE c.no = ?;`;
       // 동아리 성별 수 조회
       const gender = `SELECT SUM(M) AS man, SUM(W) AS women FROM 
         (SELECT (CASE gender WHEN 1 THEN 1 ELSE 0 END) AS M, 
@@ -18,10 +20,9 @@ class HomeStorage {
         FROM (SELECT gender FROM students INNER JOIN members ON students.id = members.student_id WHERE club_no = ?) 
         AS collectMember) AS collectGender;`;
       // 동아리 존재 여부
-      const existLeader = 'SELECT leader FROM clubs WHERE no = ?;';
-      const leader = await conn.query(existLeader, clubInfo.clubNum);
+      const leaderInfo = await conn.query(leader, clubInfo.clubNum);
 
-      if (leader[0] === undefined) {
+      if (leaderInfo[0] === undefined) {
         // 동아리 존재 x
         return { success: false, result: '존재하지 않는 동아리입니다.' };
       }
@@ -42,7 +43,7 @@ class HomeStorage {
       clientInfo.leader = leader[0].leader === clubInfo.id ? 1 : 0;
       clientInfo.flag = flags;
 
-      return { success: true, clientInfo, result };
+      return { success: true, leaderInfo, clientInfo, result };
     } catch (err) {
       throw err;
     } finally {
