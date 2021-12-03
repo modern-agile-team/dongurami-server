@@ -92,10 +92,6 @@ class Application {
     const { params } = this;
 
     try {
-      const success = await ApplicationStorage.deleteQuestion(
-        params.questionNo
-      );
-
       const waitingApplicant = await ApplicationStorage.findWaitingApplicants(
         params.clubNum
       );
@@ -106,6 +102,10 @@ class Application {
           msg: '가입 신청 대기자가 있으므로 질문을 삭제하실 수 없습니다.',
         };
       }
+
+      const success = await ApplicationStorage.deleteQuestion(
+        params.questionNo
+      );
 
       if (success) return { success: true, msg: '질문 삭제에 성공하셨습니다.' };
       return { success: false, msg: '질문 삭제에 실패하셨습니다.' };
