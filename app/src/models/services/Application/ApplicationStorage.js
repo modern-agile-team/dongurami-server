@@ -93,6 +93,24 @@ class ApplicationStorage {
     }
   }
 
+  static async findWaitingApplicants(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no FROM applicants WHERE club_no = ? AND reading_flag = 0;`;
+
+      const applicants = await conn.query(query, clubNum);
+
+      return applicants;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findApplicant(applicantInfo) {
     let conn;
 
