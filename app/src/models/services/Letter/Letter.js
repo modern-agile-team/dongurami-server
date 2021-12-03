@@ -128,7 +128,7 @@ class Letter {
         writerHiddenFlag: data.writerHiddenFlag,
       };
 
-      const checkGroupNo = await LetterStorage.findGroupNo(sendInfo);
+      const checkGroupNo = await LetterStorage.findOneByGroupNo(sendInfo);
 
       const { sender, recipient } = await LetterStorage.createLetter(sendInfo);
 
