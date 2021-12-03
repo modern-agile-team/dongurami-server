@@ -248,8 +248,15 @@ class BoardStorage {
       conn = await mariadb.getConnection();
 
       const keyword = `%${searchInfo.keyword.replace(/(\s*)/g, '')}%`;
+      const hiddenFlag =
+        searchInfo.type === 'st.name' ? `AND writer_hidden_flag = 0` : ``;
+
       const query = `
-      SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit
+      SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, bo.club_no AS clubNo, clubs.name AS clubName, bo.board_category_no AS boardCategoryNo, bo.in_date AS inDate, bo.modify_date AS modifyDate, img.url, bo.hit, bo.writer_hidden_flag AS writerHiddenFlag,
+      (SELECT COUNT(no) FROM comments
+      WHERE board_no = bo.no) AS commentCount,
+      (SELECT COUNT(no) FROM board_emotions
+      WHERE board_no = bo.no) AS emotionCount
       FROM boards AS bo
       LEFT JOIN images AS img
       ON bo.no = img.board_no
@@ -257,7 +264,7 @@ class BoardStorage {
       ON bo.student_id = st.id
       JOIN clubs
       ON bo.club_no = clubs.no
-      WHERE REPLACE(${searchInfo.type}, ' ', '') LIKE ? AND board_category_no = ? AND club_no = ? AND writer_hidden_flag = 0
+      WHERE REPLACE(${searchInfo.type}, ' ', '') LIKE ? AND board_category_no = ? AND club_no = ? ${hiddenFlag}
       ORDER BY ${searchInfo.sort} ${searchInfo.order};`;
 
       const boards = await conn.query(query, [
