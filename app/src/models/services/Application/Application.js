@@ -64,7 +64,7 @@ class Application {
 
     try {
       const questionInfo = {
-        no: params.no,
+        no: params.questionNo,
         description: data.description,
       };
 
@@ -92,7 +92,9 @@ class Application {
     const { params } = this;
 
     try {
-      const success = await ApplicationStorage.deleteQuestion(params.no);
+      const success = await ApplicationStorage.deleteQuestion(
+        params.questionNo
+      );
 
       const waitingApplicant = await ApplicationStorage.findWaitingApplicants(
         params.clubNum
