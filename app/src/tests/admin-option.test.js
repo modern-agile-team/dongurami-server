@@ -29,15 +29,17 @@ const adminFunctions = {
   ],
 };
 
+const leaderToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q';
+const { API_KEY } = process.env;
+
 describe('동아리 관리 API 테스트', () => {
   it('GET 동아리원 조회 시 200 반환', async () => {
     try {
       const res = await server
         .get('/api/club/admin-option/2')
-        .set(
-          'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
-        )
+        .set('x-auth-token', leaderToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json');
 
       expect(res.statusCode).toEqual(200);
@@ -50,10 +52,8 @@ describe('동아리 관리 API 테스트', () => {
     try {
       const res = await server
         .post('/api/club/admin-option/2/applicant')
-        .set(
-          'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
-        )
+        .set('x-auth-token', leaderToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(apply);
 
@@ -67,10 +67,8 @@ describe('동아리 관리 API 테스트', () => {
     try {
       const res = await server
         .put('/api/club/admin-option/2/applicant')
-        .set(
-          'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
-        )
+        .set('x-auth-token', leaderToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(reject);
 
@@ -84,10 +82,8 @@ describe('동아리 관리 API 테스트', () => {
     try {
       const res = await server
         .put('/api/club/admin-option/2/leader')
-        .set(
-          'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
-        )
+        .set('x-auth-token', leaderToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(leader);
 
@@ -101,10 +97,8 @@ describe('동아리 관리 API 테스트', () => {
     try {
       const res = await server
         .put('/api/club/admin-option/2/admin-functions')
-        .set(
-          'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
-        )
+        .set('x-auth-token', leaderToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(adminFunctions);
 
@@ -118,10 +112,8 @@ describe('동아리 관리 API 테스트', () => {
     try {
       const res = await server
         .delete('/api/club/admin-option/2/200010255')
-        .set(
-          'x-auth-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q'
-        )
+        .set('x-auth-token', leaderToken)
+        .set('api-key', API_KEY)
         .set('Content-Type', 'application/json');
 
       expect(res.statusCode).toEqual(200);
