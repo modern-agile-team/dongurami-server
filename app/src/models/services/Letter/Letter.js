@@ -134,7 +134,7 @@ class Letter {
 
       let groupNo = sender;
 
-      if (checkGroupNo) groupNo = checkGroupNo.groupNo;
+      if (checkGroupNo[0]) groupNo = checkGroupNo[0].groupNo;
 
       const result = await LetterStorage.updateGroupNo(
         sender,
