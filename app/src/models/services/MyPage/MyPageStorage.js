@@ -83,7 +83,7 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const findScrap = `SELECT no, student_id AS studentId, st.name, title, scrap_description AS scrapDescription, board_description AS boardDescription, LEFT(s.in_date, 10) AS inDate, LEFT(s.modify_date, 10) AS modifyDate
+      const findScrap = `SELECT no, student_id AS studentId, st.name, st.profile_image_url AS profileImageUrl, title, scrap_description AS scrapDescription, board_description AS boardDescription, LEFT(s.in_date, 10) AS inDate, LEFT(s.modify_date, 10) AS modifyDate
       FROM scraps AS s
       INNER JOIN students AS st ON st.id = student_id
       WHERE student_id = ? AND no = ?;`;
