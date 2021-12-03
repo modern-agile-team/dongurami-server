@@ -129,6 +129,30 @@ class LetterStorage {
     }
   }
 
+  static async findGroupNo(sendInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT group_no AS groupNo FROM letters 
+      WHERE host_id = ? AND recipient_id = ? AND writer_hidden_flag = ? AND recipient_hidden_flag = ?;`;
+
+      const groupNo = await conn.query(query, [
+        sendInfo.senderId,
+        sendInfo.recipientId,
+        sendInfo.writerHiddenFlag,
+        sendInfo.recipientHiddenFlag,
+      ]);
+
+      return groupNo[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async createLetter(sendInfo) {
     let conn;
 

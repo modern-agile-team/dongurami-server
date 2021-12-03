@@ -128,12 +128,18 @@ class Letter {
         writerHiddenFlag: data.writerHiddenFlag,
       };
 
+      const checkGroupNo = await LetterStorage.findGroupNo(sendInfo);
+
       const { sender, recipient } = await LetterStorage.createLetter(sendInfo);
+
+      let groupNo = sender;
+
+      if (checkGroupNo) groupNo = checkGroupNo.groupNo;
 
       const result = await LetterStorage.updateGroupNo(
         sender,
         recipient,
-        sender
+        groupNo
       );
 
       if (result) return { success: true, msg: '쪽지가 전송되었습니다.' };
