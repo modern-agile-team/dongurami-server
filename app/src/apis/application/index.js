@@ -31,14 +31,14 @@ router.post(
 );
 
 router.put(
-  '/:clubNum/:no',
+  '/:clubNum/:questionNo',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.updateQuestion
 );
 
 router.delete(
-  '/:clubNum/:no',
+  '/:clubNum/:questionNo',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.deleteQuestion

@@ -60,13 +60,25 @@ class Application {
 
   async updateQuestion() {
     const data = this.body;
-    const { no } = this.params;
+    const { params } = this;
 
     try {
       const questionInfo = {
-        no,
+        no: params.questionNo,
         description: data.description,
       };
+
+      const waitingApplicant = await ApplicationStorage.findWaitingApplicants(
+        params.clubNum
+      );
+
+      if (waitingApplicant) {
+        return {
+          success: false,
+          msg: '가입 신청 대기자가 있으므로 질문을 변경하실 수 없습니다.',
+        };
+      }
+
       const success = await ApplicationStorage.updateQuestion(questionInfo);
 
       if (success) return { success: true, msg: '질문 수정에 성공하셨습니다.' };
@@ -77,10 +89,23 @@ class Application {
   }
 
   async deleteQuestion() {
-    const { no } = this.params;
+    const { params } = this;
 
     try {
-      const success = await ApplicationStorage.deleteQuestion(no);
+      const waitingApplicant = await ApplicationStorage.findWaitingApplicants(
+        params.clubNum
+      );
+
+      if (waitingApplicant) {
+        return {
+          success: false,
+          msg: '가입 신청 대기자가 있으므로 질문을 삭제하실 수 없습니다.',
+        };
+      }
+
+      const success = await ApplicationStorage.deleteQuestion(
+        params.questionNo
+      );
 
       if (success) return { success: true, msg: '질문 삭제에 성공하셨습니다.' };
       return { success: false, msg: '질문 삭제에 실패하셨습니다.' };
