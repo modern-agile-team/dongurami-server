@@ -394,6 +394,14 @@ class Board {
 
       const boards = await BoardStorage.findAllSearch(searchInfo);
 
+      boards.forEach((post) => {
+        if (post.writerHiddenFlag) {
+          post.studentId = '익명';
+          post.studentName = '익명';
+          post.url = null;
+        }
+      });
+
       return {
         success: true,
         msg: `${searchInfo.keyword}(을)를 검색한 결과입니다.`,
