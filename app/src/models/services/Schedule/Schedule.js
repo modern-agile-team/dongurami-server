@@ -134,7 +134,7 @@ class Schedule {
               senderName: userInfo.name,
               recipientName: recipient.name,
               recipientId: recipient.id,
-              content: scheduleInfo.startDate,
+              content: scheduleInfo.title,
             };
 
             await notification.createNotification(notificationInfo);
