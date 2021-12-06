@@ -109,19 +109,6 @@ const process = {
           return res.status(500).json(response.comments.clientMsg);
         }
       }
-      const updateBoardHit = await board.updateOnlyHitByNum();
-
-      if (updateBoardHit.isError) {
-        logger.error(
-          `GET /api/board/${category}/${boardNum} 500: \n${updateBoardHit.errMsg.stack}`
-        );
-        return res.status(500).json(updateBoardHit.clientMsg);
-      }
-
-      delete response.category;
-
-      response.board.hit += 1;
-
       logger.info(
         `GET /api/board/${category}/${boardNum} 200: ${response.msg}`
       );
