@@ -20,7 +20,12 @@ class Review {
         clubNum
       );
       if (success) {
-        return { success: true, reviewList, studentId: user.id };
+        return {
+          success: true,
+          msg: '동아리 후기 조회 성공',
+          reviewList,
+          studentId: user.id,
+        };
       }
       return {
         success: false,

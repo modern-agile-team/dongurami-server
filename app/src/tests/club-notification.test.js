@@ -82,7 +82,7 @@ const rejectToken =
 const leaderToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q';
 
-const { API_KEY } = process.env;
+const { API_KEY } = process.env.API_SECRET;
 
 describe('알림 API 테스트', () => {
   it('POST 동아리 가입신청 알림생성 시 201 반환', async () => {

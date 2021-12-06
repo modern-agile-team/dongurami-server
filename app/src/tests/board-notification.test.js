@@ -46,7 +46,7 @@ const leaderToken =
 const memberToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxOTE2MDIyIiwibmFtZSI6Iuq5gOyngOyImCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.4A9OfY-QLvOUvZQT-TtpJ-zD2ya7k3WDblVnZ4orqCs';
 
-const { API_KEY } = process.env;
+const { API_KEY } = process.env.API_SECRET;
 
 describe('게시판 관련 알림 API 테스트', () => {
   it('POST 동아리 공지 글 알림생성 시 201 반환', async () => {
