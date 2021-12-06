@@ -222,18 +222,21 @@ class BoardStorage {
     }
   }
 
-  static async updateOnlyHitByNum(boardNum) {
+  static async updateOnlyHitByNum(boardInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
       const query =
-        'UPDATE boards SET hit = hit + 1, modify_date = modify_date WHERE no = ?;';
+        'UPDATE boards SET hit = hit + 1, modify_date = modify_date WHERE board_category_no = ? AND no = ?;';
 
-      await conn.query(query, [boardNum]);
+      const updateCnt = await conn.query(query, [
+        boardInfo.category,
+        boardInfo.boardNum,
+      ]);
 
-      return;
+      return updateCnt.affectedRows;
     } catch (err) {
       throw err;
     } finally {

@@ -65,6 +65,12 @@ router.put(
   loginCheck.loginCheck,
   commentCtrl.process.updateByReplyCommentNum
 );
+router.patch(
+  '/:category/:boardNum',
+  apiAuth.apiAuth,
+  identityCheck.identityCheck,
+  boardCtrl.process.updateOnlyHitByNum
+);
 
 router.delete(
   '/:category/:boardNum',
