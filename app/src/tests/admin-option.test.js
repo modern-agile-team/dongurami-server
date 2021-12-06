@@ -32,7 +32,7 @@ const adminFunctions = {
 const leaderToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q';
 
-const { API_KEY } = process.env.API_SECRET;
+const API_KEY = '$2b$10$TMQRT/L15vXvGnGzzfRXn.oiWVw1BivOoAIjTHuOglY/pmN/GtMte';
 
 describe('동아리 관리 API 테스트', () => {
   it('GET 동아리원 조회 시 200 반환', async () => {

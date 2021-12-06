@@ -20,20 +20,12 @@ const application = {
       description: '테스트2',
     },
     {
-      no: 8,
+      no: 9,
       description: '테스트3',
     },
     {
-      no: 9,
+      no: 14,
       description: '테스트4',
-    },
-    {
-      no: 10,
-      description: '테스트5',
-    },
-    {
-      no: 11,
-      description: '테스트6',
     },
   ],
   notiCategoryNum: '7',
@@ -79,10 +71,7 @@ const memberToken =
 const rejectToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAwMDEwMjU1IiwibmFtZSI6IuyngOyImO2FjOyKpO2KuCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.gnPLoRHrkVCQnB3cKWJ6swDZM105GcNeCAS95tA5QOU';
 
-const leaderToken =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q';
-
-const { API_KEY } = process.env.API_SECRET;
+const API_KEY = '$2b$10$TMQRT/L15vXvGnGzzfRXn.oiWVw1BivOoAIjTHuOglY/pmN/GtMte';
 
 describe('알림 API 테스트', () => {
   it('POST 동아리 가입신청 알림생성 시 201 반환', async () => {
@@ -167,51 +156,6 @@ describe('알림 API 테스트', () => {
         .set('api-key', API_KEY)
         .set('Content-Type', 'application/json')
         .send(createSchedule);
-
-      expect(res.statusCode).toEqual(200);
-    } catch (err) {
-      console.log(err);
-    }
-  });
-
-  it('PATCH 게시글에 좋아요 알림생성 시 200 반환', async () => {
-    try {
-      const res = await server
-        .patch('/api/emotion/liked/board/26')
-        .set('x-auth-token', leaderToken)
-        .set('api-key', API_KEY)
-        .set('Content-Type', 'application/json')
-        .send(boardEmotion);
-
-      expect(res.statusCode).toEqual(200);
-    } catch (err) {
-      console.log(err);
-    }
-  });
-
-  it('PATCH 댓글에 좋아요 알림생성 시 200 반환', async () => {
-    try {
-      const res = await server
-        .patch('/api/emotion/liked/comment/278')
-        .set('x-auth-token', memberToken)
-        .set('api-key', API_KEY)
-        .set('Content-Type', 'application/json')
-        .send(cmtEmotion);
-
-      expect(res.statusCode).toEqual(200);
-    } catch (err) {
-      console.log(err);
-    }
-  });
-
-  it('PATCH 답글에 좋아요 알림생성 시 200 반환', async () => {
-    try {
-      const res = await server
-        .patch('/api/emotion/liked/reply-comment/281')
-        .set('x-auth-token', memberToken)
-        .set('api-key', API_KEY)
-        .set('Content-Type', 'application/json')
-        .send(replyEmotion);
 
       expect(res.statusCode).toEqual(200);
     } catch (err) {
