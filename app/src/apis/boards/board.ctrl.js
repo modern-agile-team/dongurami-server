@@ -180,12 +180,12 @@ const process = {
       return res.status(200).json(response);
     }
     if (response.isError) {
-      logger.info(
+      logger.error(
         `PATCH /api/board/${category}/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.info(
+    logger.error(
       `PATCH /api/board/${category}/${boardNum} 404: ${response.msg}`
     );
     return res.status(404).json(response);
