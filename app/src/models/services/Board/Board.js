@@ -356,10 +356,16 @@ class Board {
 
   async updateOnlyHitByNum() {
     try {
-      const { boardNum } = this.params;
+      const boardInfo = {
+        category: boardCategory[this.params.category],
+        boardNum: this.params.boardNum,
+      };
 
-      await BoardStorage.updateOnlyHitByNum(boardNum);
+      const updateBoardCnt = await BoardStorage.updateOnlyHitByNum(boardInfo);
 
+      if (updateBoardCnt === 0) {
+        return { success: false, msg: '해당 게시글이 없습니다.' };
+      }
       return { success: true, msg: '조회수 1 증가' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
