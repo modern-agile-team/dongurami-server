@@ -240,6 +240,24 @@ class StudentStorage {
       conn?.release();
     }
   }
+
+  static async findAllId() {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT id AS studentId, name AS studentName FROM students;`;
+
+      const result = await conn.query(query);
+
+      return result;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = StudentStorage;
