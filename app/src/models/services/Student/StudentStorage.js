@@ -241,13 +241,13 @@ class StudentStorage {
     }
   }
 
-  static async findAllId() {
+  static async findAllNameAndId() {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT id AS studentId, name AS studentName FROM students;`;
+      const query = `SELECT id, name FROM students;`;
 
       const result = await conn.query(query);
 

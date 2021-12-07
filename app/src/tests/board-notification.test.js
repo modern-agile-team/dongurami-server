@@ -25,21 +25,6 @@ const replyCmt = {
   hiddenFlag: 0,
 };
 
-const boardEmotion = {
-  url: 'emotion/notification/test',
-  notiCategoryNum: 9,
-};
-
-const cmtEmotion = {
-  url: 'emotion/notification/test',
-  notiCategoryNum: 10,
-};
-
-const replyEmotion = {
-  url: 'emotion/notification/test',
-  notiCategoryNum: 11,
-};
-
 const leaderToken =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbHViTnVtIjpbMl0sImlkIjoiMjAxNzA4MDUxIiwibmFtZSI6IuuvvOyInOq4sCIsInByb2ZpbGVQYXRoIjoic2tkZmgiLCJpc0FkbWluIjoiMSIsImFsZ29yaXRobSI6IkhTMjU2IiwiaXNzdWVyIjoid29vYWhhbiBhZ2lsZSJ9.7_ZLVQVSiSEBFaZ2uKmcDMlXb22Qvi13--H3lSVio9Q';
 
