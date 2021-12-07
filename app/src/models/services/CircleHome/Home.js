@@ -16,11 +16,17 @@ class Home {
         clubNum: this.params.clubNum,
         id: this.auth.id,
       };
-      const { success, clientInfo, result } =
+      const { success, leaderInfo, clientInfo, result } =
         await HomeStorage.findOneByClubNum(clubInfo);
 
       if (success) {
-        return { success: true, msg: '동아리홈 조회 성공', clientInfo, result };
+        return {
+          success: true,
+          msg: '동아리홈 조회 성공',
+          leaderInfo,
+          clientInfo,
+          result,
+        };
       }
       return { success: false, msg: result };
     } catch (err) {
