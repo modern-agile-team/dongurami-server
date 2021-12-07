@@ -33,7 +33,7 @@ class CommentStorage {
       conn = await mariadb.getConnection();
 
       const query = `INSERT INTO comments (board_no, student_id, description, group_no, depth, writer_hidden_flag) VALUES (?, ?, ?, ?, 1, ?);
-      UPDATE comments SET reply_flag = 1, modify_date = modify_date WHERE no = ?;`;
+      UPDATE comments SET reply_flag = 1 WHERE no = ?;`;
 
       await conn.query(query, [
         replyCommentInfo.boardNum,
@@ -58,7 +58,7 @@ class CommentStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT cmt.student_id AS studentId, st.name AS studentName, cmt.no, cmt.description, cmt.depth, cmt.group_no AS groupNo, cmt.reply_flag AS replyFlag, cmt.in_date AS inDate, cmt.modify_date AS modifyDate, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
+      const query = `SELECT cmt.student_id AS studentId, st.name AS studentName, cmt.no, cmt.description, cmt.depth, cmt.group_no AS groupNo, cmt.reply_flag AS replyFlag, cmt.in_date AS inDate, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
       (SELECT COUNT(no) FROM comment_emotions
       WHERE comment_no = cmt.no) AS emotionCount,
       (SELECT COUNT(no) FROM reply_comment_emotions
@@ -198,7 +198,7 @@ class CommentStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE comments SET reply_flag = 0, modify_date = modify_date WHERE no = ?;`;
+      const query = `UPDATE comments SET reply_flag = 0 WHERE no = ?;`;
 
       const replycmt = conn.query(query, [cmtNum]);
 
