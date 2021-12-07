@@ -4,6 +4,7 @@ const BoardStorage = require('./BoardStorage');
 const Notification = require('../Notification/Notification');
 const NotificationStorage = require('../Notification/NotificationStorage');
 const AdminoOptionStorage = require('../AdminOption/AdminOptionStorage');
+const StudentStorage = require('../Student/StudentStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
@@ -72,6 +73,26 @@ class Board {
       }
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
+
+      if (category === 1) {
+        const senderId = boardInfo.id;
+
+        const recipients = await StudentStorage.findAllNameAndId();
+
+        recipients.forEach(async (recipient) => {
+          if (senderId !== recipient.id) {
+            const notificationInfo = {
+              title: '공지 게시판',
+              senderName: user.name,
+              recipientName: recipient.name,
+              recipientId: recipient.id,
+              content: boardInfo.title,
+            };
+
+            await notification.createNotification(notificationInfo);
+          }
+        });
+      }
 
       if (category === 5) {
         const senderId = boardInfo.id;
