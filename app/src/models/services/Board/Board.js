@@ -385,16 +385,22 @@ class Board {
       };
       const userId = this.auth && this.auth.id;
 
-      const updateBoardCnt = await BoardStorage.updateOnlyHitByNum(
-        boardInfo,
-        userId
+      const writerCheck = await WriterCheck.ctrl(
+        userId,
+        boardInfo.boardNum,
+        'boards'
       );
 
-      if (updateBoardCnt === 0) {
+      if (writerCheck.success)
         return {
-          success: false,
+          success: true,
           msg: '본인의 글은 조회수가 증가하지 않습니다.',
         };
+
+      const updateBoardCnt = await BoardStorage.updateOnlyHitByNum(boardInfo);
+
+      if (updateBoardCnt === 0) {
+        return { success: false, msg: '해당 게시글이 없습니다.' };
       }
       return { success: true, msg: '조회수 1 증가' };
     } catch (err) {
