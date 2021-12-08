@@ -40,7 +40,7 @@ class HomeStorage {
       const flags = await conn.query(findFlag, clubInfo.id);
       const clientInfo = {};
 
-      clientInfo.leader = leader[0].leader === clubInfo.id ? 1 : 0;
+      clientInfo.leader = leaderInfo[0].id === clubInfo.id ? 1 : 0;
       clientInfo.flag = flags;
 
       return { success: true, leaderInfo, clientInfo, result };
