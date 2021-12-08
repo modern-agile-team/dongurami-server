@@ -381,11 +381,18 @@ class Board {
         category: boardCategory[this.params.category],
         boardNum: this.params.boardNum,
       };
+      const userId = this.auth && this.auth.id;
 
-      const updateBoardCnt = await BoardStorage.updateOnlyHitByNum(boardInfo);
+      const updateBoardCnt = await BoardStorage.updateOnlyHitByNum(
+        boardInfo,
+        userId
+      );
 
       if (updateBoardCnt === 0) {
-        return { success: false, msg: '해당 게시글이 없습니다.' };
+        return {
+          success: false,
+          msg: '본인의 글은 조회수가 증가하지 않습니다.',
+        };
       }
       return { success: true, msg: '조회수 1 증가' };
     } catch (err) {
