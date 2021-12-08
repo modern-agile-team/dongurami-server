@@ -186,9 +186,9 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.error(
-      `PATCH /api/board/${category}/${boardNum} 403: ${response.msg}`
+      `PATCH /api/board/${category}/${boardNum} 404: ${response.msg}`
     );
-    return res.status(403).json(response);
+    return res.status(404).json(response);
   },
 
   deleteOneByBoardNum: async (req, res) => {
