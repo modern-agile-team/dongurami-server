@@ -113,6 +113,7 @@ class Board {
               recipientName: recipient.name,
               recipientId: recipient.id,
               content: boardInfo.title,
+              url: `clubhome/${clubNum}/notice/${boardNum}`,
             };
 
             await notification.createNotification(notificationInfo);
