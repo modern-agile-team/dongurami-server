@@ -68,6 +68,7 @@ router.put(
 router.patch(
   '/:category/:boardNum',
   apiAuth.apiAuth,
+  identityCheck.identityCheck,
   boardCtrl.process.updateOnlyHitByNum
 );
 

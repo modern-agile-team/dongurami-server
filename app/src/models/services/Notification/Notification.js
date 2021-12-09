@@ -48,7 +48,7 @@ class Notification {
         recipientName: notification.recipientName,
         recipientId: notification.recipientId,
         content: notification.content,
-        url: body.url,
+        url: body.url || notification.url,
         notiCategoryNum: body.notiCategoryNum,
       };
 
