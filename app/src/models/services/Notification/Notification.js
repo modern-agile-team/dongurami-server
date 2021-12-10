@@ -37,13 +37,10 @@ class Notification {
 
   async createNotification(notification) {
     const { body } = this;
-    const title = notification.title
-      ? notification.title
-      : notification.clubName;
 
     try {
       const notificationInfo = {
-        title,
+        title: notification.title || notification.clubName,
         senderName: notification.senderName,
         recipientName: notification.recipientName,
         recipientId: notification.recipientId,
