@@ -73,7 +73,9 @@ class Schedule {
       if (success) {
         const recipients = await NotificationStorage.findAllByClubNum(clubNum);
 
-        const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+          clubNum
+        );
 
         const senderId = scheduleInfo.studentId;
 
@@ -84,7 +86,7 @@ class Schedule {
               senderName: user.name,
               recipientName: recipient.name,
               recipientId: recipient.id,
-              content: scheduleInfo.startDate,
+              content: scheduleInfo.title,
             };
 
             await notification.createNotification(notificationInfo);
@@ -119,7 +121,9 @@ class Schedule {
       if (success) {
         const recipients = await NotificationStorage.findAllByClubNum(clubNum);
 
-        const clubName = await NotificationStorage.findOneByClubNum(clubNum);
+        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+          clubNum
+        );
 
         const senderId = userInfo.id;
 
@@ -130,7 +134,7 @@ class Schedule {
               senderName: userInfo.name,
               recipientName: recipient.name,
               recipientId: recipient.id,
-              content: scheduleInfo.startDate,
+              content: scheduleInfo.title,
             };
 
             await notification.createNotification(notificationInfo);

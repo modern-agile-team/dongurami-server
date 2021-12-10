@@ -9,7 +9,7 @@ class NotificationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no, no.sender, no.url, no.notification_category_no AS notiCategoryNum, 
+      const query = `SELECT no, no.sender, no.content, no.title, no.url, no.notification_category_no AS notiCategoryNum, 
         no.in_date AS inDate FROM notifications AS no 
         WHERE no.recipient = (SELECT name FROM students WHERE id = ?) AND no.reading_flag = 0
         ORDER BY inDate DESC;`;
@@ -43,25 +43,22 @@ class NotificationStorage {
     }
   }
 
-  static async createCmtNotification(notificationInfo) {
+  static async findClubInfoByClubNum(clubNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO notifications (sender, recipient, recipient_id, url, notification_category_no, title, content) VALUES (?, ?, ?, ?, ?, ?, ?);`;
+      const query =
+        'SELECT s.name, s.id, c.name AS clubName FROM clubs AS c JOIN students AS s ON c.leader = s.id WHERE c.no = ?;';
 
-      await conn.query(query, [
-        notificationInfo.senderName,
-        notificationInfo.recipientName,
-        notificationInfo.recipientId,
-        notificationInfo.url,
-        notificationInfo.notiCategoryNum,
-        notificationInfo.title,
-        notificationInfo.content,
-      ]);
+      const club = await conn.query(query, clubNum);
 
-      return true;
+      return {
+        clubName: club[0].clubName,
+        leaderName: club[0].name,
+        leaderId: club[0].id,
+      };
     } catch (err) {
       throw err;
     } finally {
@@ -127,24 +124,6 @@ class NotificationStorage {
 
       if (notification.affectedRows) return true;
       return false;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findOneByClubNum(clubNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = 'SELECT name FROM clubs WHERE no = ?;';
-
-      const club = await conn.query(query, clubNum);
-
-      return club[0].name;
     } catch (err) {
       throw err;
     } finally {

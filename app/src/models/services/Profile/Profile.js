@@ -29,6 +29,14 @@ class Profile {
         delete profile.gender;
       }
 
+      if (user) {
+        const studentInfo = await StudentStorage.findOneSnsUserById(id);
+
+        if (studentInfo && studentInfo.studentId === id) {
+          profile.isNaverUser = 1;
+        } else profile.isNaverUser = 0;
+      } else profile.isNaverUser = 0;
+
       const clubs = await ProfileStorage.findAllClubByStudentId(id);
 
       profile.clubs = [];
@@ -74,6 +82,8 @@ class Profile {
       msg = '로그인된 사람의 프로필이 아닙니다.';
     } else if (userInfo.email && userInfo.email.match(emailRegExp) === null) {
       msg = '이메일 형식이 맞지 않습니다.';
+    } else if (userInfo.email.length === 0) {
+      msg = '이메일 형식이 맞지 안습니다.';
     } else if (
       userInfo.phoneNumber &&
       (userInfo.phoneNumber.length !== 11 ||
@@ -81,10 +91,36 @@ class Profile {
         !(userInfo.phoneNumber.match(phoneNumberRegExp) === null))
     ) {
       msg = '전화번호 형식이 맞지 않습니다.';
+    } else if (userInfo.phoneNumber === 0) {
+      msg = '이메일 형식이 맞지 않습니다.';
     }
     if (msg) return { success: false, msg };
 
     try {
+      const snsUserInfo = await StudentStorage.findOneIdAndEmailById(user.id);
+
+      if (snsUserInfo.id === user.id && snsUserInfo.email !== userInfo.email) {
+        return {
+          success: false,
+          msg: '네이버 이메일로 가입된 회원은 이메일 변경이 불가능합니다.',
+        };
+      }
+
+      const isEmail = await StudentStorage.findOneByEmail(userInfo.email);
+
+      if (isEmail && isEmail.id !== user.id) {
+        return { success: false, msg: '다른 유저가 사용중인 이메일입니다.' };
+      }
+
+      const isPhoneNum = await StudentStorage.findOneByPhoneNum(
+        userInfo.phoneNumber,
+        user.id
+      );
+
+      if (isPhoneNum) {
+        return { success: false, msg: '다른 유저가 사용중인 번호입니다.' };
+      }
+
       const studentUpdateCnt = await ProfileStorage.updateStudentInfo(userInfo);
 
       if (studentUpdateCnt === 0) {

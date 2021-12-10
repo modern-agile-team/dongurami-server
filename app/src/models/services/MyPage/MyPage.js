@@ -1,11 +1,12 @@
 'use sctrict';
 
 const MyPageStorage = require('./MyPageStorage');
-const Error = require('../../utils/Error');
+const Auth = require('../Auth/Auth');
 const WriterCheck = require('../../utils/WriterCheck');
+const NotificationStorage = require('../Notification/NotificationStorage');
 const AdminOptionStorage = require('../AdminOption/AdminOptionStorage');
 const StudentStorage = require('../Student/StudentStorage');
-const Auth = require('../Auth/Auth');
+const Error = require('../../utils/Error');
 
 class MyPage {
   constructor(req) {
@@ -41,6 +42,32 @@ class MyPage {
         return { success: true, msg: '전체 글 조회 성공', scraps, boards };
       }
       return { success: true, msg: '글 내역이 존재하지 않습니다.' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async findAllBoardsAndComments() {
+    const { id } = this.params;
+
+    try {
+      if (id !== this.auth.id) {
+        return { success: false, msg: '본인만 열람 가능합니다.' };
+      }
+
+      const { boards, comments } = await MyPageStorage.findAllBoardsAndComments(
+        id
+      );
+
+      if (boards.length || comments.length) {
+        return {
+          success: true,
+          msg: '작성글 및 댓글 내역 조회 성공',
+          boards,
+          comments,
+        };
+      }
+      return { success: true, msg: '작성글 및 댓글 내역이 존재하지 않습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -207,6 +234,21 @@ class MyPage {
         const checkedId = await StudentStorage.findOneById(user.id);
         const clubs = await StudentStorage.findOneByLoginedId(user.id);
         const jwt = await Auth.createJWT(checkedId, clubs);
+
+        const { clubName, leaderName, leaderId } =
+          await NotificationStorage.findClubInfoByClubNum(userInfo.clubNum);
+
+        const notificationInfo = {
+          title: clubName,
+          senderName: user.name,
+          recipientName: leaderName,
+          recipientId: leaderId,
+          content: '동아리 탈퇴',
+          url: '',
+          notiCategoryNum: 8,
+        };
+
+        await NotificationStorage.createNotification(notificationInfo);
 
         return { success: true, msg: '동아리 탈퇴에 성공하였습니다.', jwt };
       }

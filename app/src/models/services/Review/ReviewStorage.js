@@ -57,7 +57,7 @@ class ReviewStorage {
       conn = await mariadb.getConnection();
 
       const query =
-        'SELECT no, student_id AS studentId, description, score, in_date AS inDate FROM reviews WHERE club_no = ?;';
+        'SELECT no, student_id AS studentId, description, score, in_date AS inDate FROM reviews WHERE club_no = ? ORDER BY in_date DESC;';
 
       const reviewList = await conn.query(query, [clubNum]);
 

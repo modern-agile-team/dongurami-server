@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon ./bin/www.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -35,8 +35,10 @@
     "eslint-plugin-import": "^2.24.0",
     "eslint-plugin-prettier": "^3.4.1",
     "husky": "^4.3.8",
+    "jest": "^27.3.1",
     "lint-staged": "^11.1.2",
-    "prettier": "2.3.2"
+    "prettier": "2.3.2",
+    "superjest": "^0.1.0"
   },
   "dependencies": {
     "aws-sdk": "^2.1007.0",
@@ -56,6 +58,7 @@
     "nodemon": "^2.0.12",
     "redis": "^3.1.2",
     "request": "^2.88.2",
+    "supertest": "^6.1.6",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5"
   }

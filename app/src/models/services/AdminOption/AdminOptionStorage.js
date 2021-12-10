@@ -48,9 +48,11 @@ class AdminoOptionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const memberAndAuthQuery = `SELECT s.name, s.id, m.join_admin_flag AS joinAdminFlag, 
-        m.board_admin_flag AS boardAdminFlag FROM members AS m JOIN students AS s 
+      const memberAndAuthQuery = `SELECT s.name, s.id, s.grade, s.major, s.gender, s.phone_number AS phoneNum,  
+        m.join_admin_flag AS joinAdminFlag, m.board_admin_flag AS boardAdminFlag 
+        FROM members AS m JOIN students AS s 
         ON s.id = m.student_id AND m.club_no = ?;`;
+
       const leaderAndClubNameQuery = `SELECT s.name AS leader , c.name FROM students AS s 
         JOIN clubs AS c ON c.leader = s.id AND c.no = ?;`;
 
