@@ -2,7 +2,6 @@
 
 const Student = require('../../models/services/Student/Student');
 const Email = require('../../models/services/Email/Email');
-const Oauth = require('../../models/services/Oauth/Oauth');
 const logger = require('../../config/logger');
 
 const process = {
@@ -10,16 +9,20 @@ const process = {
     const student = new Student(req);
     const response = await student.login();
 
-    if (response.success) {
-      logger.info(`POST /api/login 200: ${response.msg}`);
-      return res.status(200).json(response);
+    if (!response.success) {
+      if (response.status) {
+        logger.error(`POST /api/login 401: ${response.msg}`);
+        return res.status(401).json(response);
+      }
+      logger.error(`POST /api/login 400: ${response.msg}`);
+      return res.status(400).json(response);
     }
     if (response.isError) {
       logger.error(`POST /api/login 500: \n${response.errMsg.stack}`);
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`POST /api/login 400: ${response.msg}`);
-    return res.status(400).json(response);
+    logger.info(`POST /api/login 200: ${response.msg}`);
+    return res.status(200).json(response);
   },
 
   signUp: async (req, res) => {
@@ -109,22 +112,6 @@ const process = {
     }
     logger.info(`PATCH /api/find-password/token 200: ${response.msg}`);
     return res.status(200).json(response);
-  },
-
-  // naver OAuth 본인인증 (id, email 받기)
-  naverLogin: async (req, res) => {
-    const oauth = new Oauth(req);
-    try {
-      const response = await oauth.naverLogin();
-
-      logger.info(
-        `GET /api/naver-login 200: Authentication succeed (인증 성공하였습니다.)`
-      );
-      return res.status(200).json(response);
-    } catch (err) {
-      logger.error(`GET /api/naver-login 401: ${err.message}`);
-      return res.status(401).json(err);
-    }
   },
 
   getUserInfoByJWT: async (req, res) => {

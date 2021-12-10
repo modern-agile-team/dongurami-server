@@ -11,6 +11,7 @@ const ProfileStorage = require('../Profile/ProfileStorage');
 
 class Student {
   constructor(req) {
+    this.req = req;
     this.body = req.body;
     this.auth = req.auth;
     this.params = req.params;
@@ -28,14 +29,17 @@ class Student {
       const checkedId = await StudentStorage.findOneById(client.id);
 
       if (!checkedId) {
-        return { success: false, msg: '가입된 아이디가 아닙니다.' };
+        return {
+          success: false,
+          msg: '가입된 아이디가 아닙니다.',
+          status: 401,
+        };
       }
 
       const comparePassword = bcrypt.compareSync(
         client.password,
         checkedId.password
       );
-
       if (comparePassword) {
         const clubNum = await StudentStorage.findOneByLoginedId(client.id);
         const jwt = await Auth.createJWT(checkedId, clubNum);
@@ -45,6 +49,7 @@ class Student {
       return {
         success: false,
         msg: '잘못된 비밀번호입니다.',
+        status: 401,
       };
     } catch (err) {
       return Error.ctrl(
@@ -152,7 +157,7 @@ class Student {
       if (student.id === client.id) {
         return {
           saveable: false,
-          msg: '이미 가입된 아이디입니다.',
+          msg: '이미 가입된 학번입니다.',
         };
       }
       if (student.email === client.email) {
@@ -320,6 +325,76 @@ class Student {
       return { success: false, msg: '유저 정보 조회 실패' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async naverUserCheck() {
+    const oAuthUserInfo = this.body;
+
+    try {
+      const user = await StudentStorage.findOneBySnsId(oAuthUserInfo.snsId);
+
+      if (user.success) {
+        return { success: true, checkedId: user.result.studentId };
+      }
+      return { success: false, msg: '비회원(회원가입이 필요합니다.)' };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async naverLogin() {
+    const oAuthUserInfo = this.body;
+
+    try {
+      const naverUserCheck = await this.naverUserCheck();
+
+      if (naverUserCheck.success) {
+        const clubNum = await StudentStorage.findOneByLoginedId(
+          naverUserCheck.checkedId
+        );
+        const userInfo = await StudentStorage.findOneById(
+          naverUserCheck.checkedId
+        );
+
+        const jwt = await Auth.createJWT(userInfo, clubNum);
+
+        return { success: true, msg: '로그인에 성공하셨습니다.', jwt };
+      }
+      return {
+        success: false,
+        msg: '비회원(회원가입이 필요합니다.)',
+        name: oAuthUserInfo.name,
+        email: oAuthUserInfo.email,
+        snsId: oAuthUserInfo.snsId,
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    }
+  }
+
+  async naverSignUp() {
+    const saveInfo = this.body;
+
+    try {
+      const checkedIdAndEmail = await this.checkIdAndEmail();
+      if (checkedIdAndEmail.saveable) {
+        saveInfo.hash = '';
+        saveInfo.passwordSalt = '';
+
+        const response = await StudentStorage.snsSave(saveInfo);
+
+        if (response) {
+          return { success: true, msg: '회원가입에 성공하셨습니다.', saveInfo };
+        }
+        return { success: false, msg: '회원가입에 실패하셨습니다.' };
+      }
+      return checkedIdAndEmail;
+    } catch (err) {
+      return Error.ctrl(
+        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
+        err
+      );
     }
   }
 }

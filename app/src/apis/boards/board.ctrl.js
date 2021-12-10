@@ -32,6 +32,10 @@ const process = {
       );
       return res.status(500).json(response.clientMsg);
     }
+    if (response.status === 403) {
+      logger.error(`POST /api/board/${category} 403: ${response.msg}`);
+      return res.status(403).json(response);
+    }
     logger.error(`POST /api/board/${category} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
@@ -105,19 +109,6 @@ const process = {
           return res.status(500).json(response.comments.clientMsg);
         }
       }
-      const updateBoardHit = await board.updateOnlyHitByNum();
-
-      if (updateBoardHit.isError) {
-        logger.error(
-          `GET /api/board/${category}/${boardNum} 500: \n${updateBoardHit.errMsg.stack}`
-        );
-        return res.status(500).json(updateBoardHit.clientMsg);
-      }
-
-      delete response.category;
-
-      response.board.hit += 1;
-
       logger.info(
         `GET /api/board/${category}/${boardNum} 200: ${response.msg}`
       );
@@ -173,6 +164,30 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.error(`PUT /api/board/${category}/${boardNum} 404: ${response.msg}`);
+    return res.status(404).json(response);
+  },
+
+  updateOnlyHitByNum: async (req, res) => {
+    const board = new Board(req);
+    const response = await board.updateOnlyHitByNum();
+    const { category } = req.params;
+    const { boardNum } = req.params;
+
+    if (response.success) {
+      logger.info(
+        `PATCH /api/board/${category}/${boardNum} 200: ${response.msg}`
+      );
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      logger.error(
+        `PATCH /api/board/${category}/${boardNum} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.error(
+      `PATCH /api/board/${category}/${boardNum} 404: ${response.msg}`
+    );
     return res.status(404).json(response);
   },
 

@@ -35,47 +35,17 @@ class Notification {
     }
   }
 
-  async createCmtNotification(notification) {
-    const { body } = this;
-
-    try {
-      const notificationInfo = {
-        senderName: notification.senderName,
-        recipientName: notification.recipientName,
-        recipientId: notification.recipientId,
-        title: notification.title,
-        content: notification.content,
-        url: body.url,
-        notiCategoryNum: body.notiCategoryNum,
-      };
-
-      const success = await NotificationStorage.createCmtNotification(
-        notificationInfo
-      );
-
-      if (success) {
-        return success;
-      }
-      return {
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
-    }
-  }
-
   async createNotification(notification) {
     const { body } = this;
 
     try {
       const notificationInfo = {
+        title: notification.title || notification.clubName,
         senderName: notification.senderName,
         recipientName: notification.recipientName,
         recipientId: notification.recipientId,
-        title: notification.clubName,
         content: notification.content,
-        url: body.url,
+        url: body.url || notification.url,
         notiCategoryNum: body.notiCategoryNum,
       };
 
