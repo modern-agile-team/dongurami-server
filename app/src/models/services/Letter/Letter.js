@@ -108,11 +108,11 @@ class Letter {
 
   async createLetter() {
     const data = this.body;
+    const { id } = this.auth;
 
     try {
       let recipientHiddenFlag = 0;
 
-      // 수신자가 익명일 경우
       if (!data.recipientId.length) {
         recipientHiddenFlag = 1;
         data.recipientId = data.boardFlag
@@ -120,9 +120,13 @@ class Letter {
           : await LetterStorage.findRecipientByComment(data.commentNo);
       }
 
+      if (id === data.recipientId) {
+        return { success: false, msg: '본인에게 쪽지를 보낼 수 없습니다.' };
+      }
+
       const sendInfo = {
         recipientHiddenFlag,
-        senderId: this.auth.id,
+        senderId: id,
         recipientId: data.recipientId,
         description: data.description,
         writerHiddenFlag: data.writerHiddenFlag,

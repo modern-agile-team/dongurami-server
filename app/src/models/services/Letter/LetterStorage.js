@@ -72,13 +72,14 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT s.name, l.sender_id AS senderId, l.recipient_id AS recipientId, description, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS hiddenFlag
+      const query = `SELECT s.name, l.sender_id AS senderId, l.recipient_id AS recipientId, description, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS otherHiddenFlag, IF (sender_id = ?, l.writer_hidden_flag, l.recipient_hidden_flag) AS myHiddenFlag
       FROM letters AS l
       JOIN students AS s ON s.id = l.sender_id OR s.id = l.recipient_id 
       WHERE l.host_id = ? AND s.id = ? AND group_no = ? AND delete_flag = 0
       ORDER BY l.in_date DESC;`;
 
       const letters = await conn.query(query, [
+        letterInfo.id,
         letterInfo.id,
         letterInfo.id,
         letterInfo.otherId,
