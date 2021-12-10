@@ -97,9 +97,17 @@ class Profile {
     if (msg) return { success: false, msg };
 
     try {
-      const snsUserInfo = await StudentStorage.findOneIdAndEmailById(user.id);
+      const snsUserInfo = await StudentStorage.findOneSnsUserById(user.id);
 
-      if (snsUserInfo.id === user.id && snsUserInfo.email !== userInfo.email) {
+      console.log(snsUserInfo);
+      console.log(userInfo);
+      console.log(String(user.id));
+
+      if (
+        snsUserInfo &&
+        snsUserInfo.studentId === user.id &&
+        snsUserInfo.email !== userInfo.email
+      ) {
         return {
           success: false,
           msg: '네이버 이메일로 가입된 회원은 이메일 변경이 불가능합니다.',
