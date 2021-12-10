@@ -81,6 +81,8 @@ class Profile {
       msg = '로그인된 사람의 프로필이 아닙니다.';
     } else if (userInfo.email && userInfo.email.match(emailRegExp) === null) {
       msg = '이메일 형식이 맞지 않습니다.';
+    } else if (userInfo.email.length === 0) {
+      msg = '이메일 형식이 맞지 안습니다.';
     } else if (
       userInfo.phoneNumber &&
       (userInfo.phoneNumber.length !== 11 ||
@@ -88,6 +90,8 @@ class Profile {
         !(userInfo.phoneNumber.match(phoneNumberRegExp) === null))
     ) {
       msg = '전화번호 형식이 맞지 않습니다.';
+    } else if (userInfo.phoneNumber === 0) {
+      msg = '이메일 형식이 맞지 않습니다.';
     }
     if (msg) return { success: false, msg };
 
