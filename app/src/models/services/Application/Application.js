@@ -302,33 +302,34 @@ class Application {
   }
 
   async updateApplicantById() {
-    const { clubNum } = this.params;
-    const { body } = this;
     const notification = new Notification(this.req);
 
     try {
-      const senderName = this.auth.name;
-      const userInfo = {
-        clubNum,
-        applicant: body.applicant,
+      const applicantInfo = {
+        clubNum: this.params.clubNum,
+        applicant: this.body.applicant,
       };
       const isUpdate = await ApplicationStorage.updateRejectedApplicantById(
-        userInfo
+        applicantInfo
       );
 
       if (isUpdate) {
+        const senderName = this.auth.name;
+
         const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-          userInfo.clubNum
+          applicantInfo.clubNum
         );
 
         const applicantName =
-          await ApplicationStorage.findOneByApplicantIdAndClubNum(userInfo);
+          await ApplicationStorage.findOneByApplicantIdAndClubNum(
+            applicantInfo
+          );
 
         const notificationInfo = {
           clubName,
           senderName,
           recipientName: applicantName,
-          recipientId: userInfo.applicant,
+          recipientId: applicantInfo.applicant,
           content: '동아리 가입 신청 결과',
         };
 
