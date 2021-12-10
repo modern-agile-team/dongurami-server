@@ -32,8 +32,9 @@ class Profile {
       if (user) {
         const studentInfo = await StudentStorage.findOneSnsUserById(id);
 
-        if (studentInfo && studentInfo.id === user.id) profile.isNaverUser = 1;
-        else profile.isNaverUser = 0;
+        if (studentInfo && studentInfo.studentId === id) {
+          profile.isNaverUser = 1;
+        } else profile.isNaverUser = 0;
       } else profile.isNaverUser = 0;
 
       const clubs = await ProfileStorage.findAllClubByStudentId(id);
@@ -96,7 +97,7 @@ class Profile {
     if (msg) return { success: false, msg };
 
     try {
-      const snsUserInfo = await StudentStorage.findOneSnsUserById(user.id);
+      const snsUserInfo = await StudentStorage.findOneIdAndEmailById(user.id);
 
       if (snsUserInfo.id === user.id && snsUserInfo.email !== userInfo.email) {
         return {
