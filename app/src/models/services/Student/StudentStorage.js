@@ -241,6 +241,24 @@ class StudentStorage {
     }
   }
 
+  static async findOneSnsUserById(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT id, email FROM students WHERE id = ?;`;
+
+      const result = await conn.query(query, [id]);
+
+      return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findAllNameAndId() {
     let conn;
 
