@@ -236,7 +236,7 @@ class Board {
       };
 
       if (category === 5 && !user.isAdmin) {
-        if (!user.clubNum.includes(Number(clubNum))) {
+        if (!user.clubNum.includes(Number(params.clubNum))) {
           return {
             success: false,
             msg: '해당 동아리에 가입하지 않았습니다.',
