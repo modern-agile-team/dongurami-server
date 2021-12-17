@@ -99,11 +99,11 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no FROM applicants WHERE club_no = ? AND reading_flag = 0;`;
+      const query = `SELECT no FROM applicants WHERE club_no = ? AND reading_flag = 0 LIMIT 1;`;
 
       const applicants = await conn.query(query, clubNum);
 
-      return applicants;
+      return applicants[0];
     } catch (err) {
       throw err;
     } finally {
