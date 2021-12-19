@@ -30,8 +30,8 @@ router.post(
 
 router.get(
   '/:category',
-  apiAuth.apiAuth,
-  identityCheck.identityCheck,
+  // apiAuth.apiAuth,
+  // identityCheck.identityCheck,
   boardCtrl.process.findAllByCategoryNum
 );
 router.get(
