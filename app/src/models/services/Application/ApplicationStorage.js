@@ -231,7 +231,7 @@ class ApplicationStorage {
 
       const questionAnswerQuery = `SELECT app.student_id AS id, q.description AS question, a.description AS answer
       FROM applicants AS app JOIN answers AS a ON a.student_id = app.student_id
-      AND app.club_no = 2 AND app.reading_flag = 0 JOIN questions AS q
+      AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q
       ON a.question_no = q.no AND app.club_no = q.club_no;`;
 
       const applicantQuery = `SELECT student_id AS id FROM applicants WHERE reading_flag = 0 AND club_no = ?;`;
