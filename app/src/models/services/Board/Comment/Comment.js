@@ -15,10 +15,30 @@ class Comment {
     this.auth = req.auth;
   }
 
+  async xxNewSendNotification() {
+    const user = this.auth;
+    const notification = new Notification(this.req);
+
+    const { recipientId, recipientName, title } =
+      await BoardStorage.findBoardInfoByBoardNum(this.params.boardNum);
+
+    if (user.id !== recipientId) {
+      const notificationInfo = {
+        title,
+        recipientName,
+        recipientId,
+        senderName: user.name,
+        content: this.body.description,
+      };
+
+      await notification.createNotification(notificationInfo);
+    }
+  }
+
   async createCommentNum() {
     const comment = this.body;
     const user = this.auth;
-    const notification = new Notification(this.req);
+    // const notification = new Notification(this.req);
 
     try {
       const commentInfo = {
@@ -52,20 +72,22 @@ class Comment {
         user.name = '익명';
       }
 
-      const { recipientId, recipientName, title } =
-        await BoardStorage.findBoardInfoByBoardNum(commentInfo.boardNum);
+      await xxNewSendNotification();
 
-      if (user.id !== recipientId) {
-        const notificationInfo = {
-          title,
-          recipientName,
-          recipientId,
-          senderName: user.name,
-          content: commentInfo.description,
-        };
+      // const { recipientId, recipientName, title } =
+      //   await BoardStorage.findBoardInfoByBoardNum(commentInfo.boardNum);
 
-        await notification.createNotification(notificationInfo);
-      }
+      // if (user.id !== recipientId) {
+      //   const notificationInfo = {
+      //     title,
+      //     recipientName,
+      //     recipientId,
+      //     senderName: user.name,
+      //     content: commentInfo.description,
+      //   };
+
+      //   await notification.createNotification(notificationInfo);
+      // }
 
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {

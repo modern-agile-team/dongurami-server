@@ -18,7 +18,7 @@ class Board {
     this.query = req.query;
   }
 
-  async GetNotificationInfo(boardNum) {
+  async getNotificationInfo(boardNum) {
     const { clubNum } = this.params;
     const category = boardCategory[this.params.category];
     const notificationInfo = {
@@ -46,7 +46,7 @@ class Board {
     return { notificationInfo, recipients };
   }
 
-  async SendNotification(notificationInfo, recipients) {
+  async sendNotification(notificationInfo, recipients) {
     const notification = new Notification(this.req);
     const senderId = this.auth.id;
 
@@ -115,11 +115,11 @@ class Board {
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
-      const { notificationInfo, recipients } = await this.GetNotificationInfo(
+      const { notificationInfo, recipients } = await this.getNotificationInfo(
         boardNum
       );
 
-      await this.SendNotification(notificationInfo, recipients);
+      await this.sendNotification(notificationInfo, recipients);
 
       return { success: true, msg: '게시글 생성 성공', boardNum };
     } catch (err) {
