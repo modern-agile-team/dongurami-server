@@ -15,58 +15,6 @@ class Comment {
     this.auth = req.auth;
   }
 
-  async sendNotification() {
-    if (!this.params.cmtNum) {
-      const recipient = await BoardStorage.xxfindBoardInfoByBoardNum(
-        this.params.boardNum
-      );
-
-      const notificationInfo = this.xxGetNotificationinfo(recipient);
-
-      return this.xxNewSendCmtNotification(notificationInfo);
-    }
-    const recipients = await CommentStorage.findRecipientNamesByCmtAndBoardNum(
-      this.params.cmtNum,
-      this.params.boardNum
-    );
-
-    return this.xxNewSendReplyCmtNotification(recipients);
-  }
-
-  xxGetNotificationinfo(recipient) {
-    return {
-      senderName: this.auth.name,
-      content: this.body.description,
-      title: recipient.title || recipient.description,
-      recipientName: recipient.name,
-      recipientId: recipient.id,
-    };
-  }
-
-  async xxNewSendCmtNotification(notificationInfo) {
-    const senderId = this.auth.id;
-
-    if (senderId !== notificationInfo.recipientId) {
-      await this.xxNewSendNotification(notificationInfo);
-    }
-  }
-
-  async xxNewSendReplyCmtNotification(recipients) {
-    const senderId = this.auth.id;
-
-    recipients.forEach(async (recipient) => {
-      if (senderId !== recipient.id) {
-        const notificationInfo = this.xxGetNotificationinfo(recipient);
-
-        await this.xxNewSendNotification(notificationInfo);
-      }
-    });
-  }
-
-  xxNewSendNotification(notificationInfo) {
-    return new Notification(this.req).createNotification(notificationInfo);
-  }
-
   async createCommentNum() {
     const comment = this.body;
     const user = this.auth;
@@ -115,7 +63,6 @@ class Comment {
     const replyComment = this.body;
     const user = this.auth;
     const { params } = this;
-    // const notification = new Notification(this.req);
 
     try {
       const replyCommentInfo = {
@@ -153,36 +100,49 @@ class Comment {
 
       await this.sendNotification();
 
-      // const recipients =
-      //   await CommentStorage.findRecipientNamesByCmtAndBoardNum(
-      //     replyCommentInfo.cmtNum,
-      //     replyCommentInfo.boardNum
-      //   );
-
-      // const senderId = replyCommentInfo.id;
-
       if (replyCommentInfo.hiddenFlag) {
         user.name = '익명';
       }
-
-      // recipients.forEach(async (recipient) => {
-      //   if (senderId !== recipient.id) {
-      //     const notificationInfo = {
-      //       title: recipient.description,
-      //       senderName: user.name,
-      //       recipientName: recipient.name,
-      //       recipientId: recipient.id,
-      //       content: replyCommentInfo.description,
-      //     };
-
-      //     await notification.createNotification(notificationInfo);
-      //   }
-      // });
 
       return { success: true, msg: '답글 생성 성공' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
+  }
+
+  getNotificationInfo(recipient) {
+    return {
+      senderName: this.auth.name,
+      content: this.body.description,
+      title: recipient.title || recipient.description,
+      recipientName: recipient.name,
+      recipientId: recipient.id,
+    };
+  }
+
+  async sendCmtNotification(notificationInfo) {
+    const senderId = this.auth.id;
+    const { recipientId } = notificationInfo;
+
+    if (senderId !== recipientId) {
+      await this.createNotification(notificationInfo);
+    }
+  }
+
+  async sendReplyCmtNotification(recipients) {
+    const senderId = this.auth.id;
+
+    recipients.forEach(async (recipient) => {
+      if (senderId !== recipient.id) {
+        const notificationInfo = this.xxGetNotificationinfo(recipient);
+
+        await this.createNotification(notificationInfo);
+      }
+    });
+  }
+
+  createNotification(notificationInfo) {
+    return new Notification(this.req).createNotification(notificationInfo);
   }
 
   async findAllByBoardNum() {
