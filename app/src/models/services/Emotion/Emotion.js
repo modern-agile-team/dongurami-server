@@ -65,11 +65,13 @@ class Emotion {
         return {
           success: true,
           msg: '해당 게시글에 좋아요를 했습니다.',
+          status: 200,
         };
       }
       return {
         success: false,
         msg: '해당 게시글에 좋아요를 실패했습니다.',
+        status: 400,
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
@@ -112,11 +114,13 @@ class Emotion {
         return {
           success: true,
           msg: '해당 게시글의 좋아요가 취소 되었습니다.',
+          status: 200,
         };
       }
       return {
         success: false,
         msg: '해당 게시글의 좋아요가 취소되지 않았습니다.',
+        status: 400,
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
@@ -176,11 +180,13 @@ class Emotion {
         return {
           success: true,
           msg: '해당 댓글에 좋아요를 했습니다.',
+          status: 200,
         };
       }
       return {
         success: false,
         msg: '해당 댓글에 좋아요를 실패했습니다.',
+        status: 400,
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
@@ -224,11 +230,13 @@ class Emotion {
         return {
           success: true,
           msg: '해당 댓글의 좋아요가 취소 되었습니다.',
+          status: 200,
         };
       }
       return {
         success: false,
         msg: '해당 댓글의 좋아요가 취소되지 않았습니다.',
+        status: 400,
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
@@ -287,11 +295,13 @@ class Emotion {
         return {
           success: true,
           msg: '해당 답글에 좋아요를 했습니다.',
+          status: 200,
         };
       }
       return {
         success: false,
         msg: '해당 답글에 좋아요를 실패했습니다.',
+        status: 400,
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
@@ -335,11 +345,13 @@ class Emotion {
         return {
           success: true,
           msg: '해당 답글의 좋아요가 취소 되었습니다.',
+          status: 200,
         };
       }
       return {
         success: false,
         msg: '해당 답글의 좋아요가 취소되지 않았습니다.',
+        status: 400,
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
