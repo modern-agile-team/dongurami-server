@@ -1,6 +1,6 @@
 'use strict';
 
-const Home = require('../../models/services/CircleHome/Home');
+const Home = require('../../models/services/Home/Home');
 const logger = require('../../config/logger');
 
 const process = {
