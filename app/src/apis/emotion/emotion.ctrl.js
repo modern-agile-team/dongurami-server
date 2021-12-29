@@ -6,9 +6,10 @@ const logger = require('../../config/logger');
 function processCtrl(res, apiInfo) {
   function createLogger() {
     function createLoggerMsg() {
-      return apiInfo.response.status === 500
-        ? `${apiInfo.method} /api/${apiInfo.url}/${apiInfo.params} ${apiInfo.response.status}: \n${apiInfo.response.errMsg.stack}`
-        : `${apiInfo.method} /api/${apiInfo.url}/${apiInfo.params} ${apiInfo.response.status}: ${apiInfo.response.msg}`;
+      if (apiInfo.response.status === 500) {
+        return `${apiInfo.method} /api/${apiInfo.url}/${apiInfo.params} ${apiInfo.response.status}: \n${apiInfo.response.errMsg.stack}`;
+      }
+      return `${apiInfo.method} /api/${apiInfo.url}/${apiInfo.params} ${apiInfo.response.status}: ${apiInfo.response.msg}`;
     }
 
     if (apiInfo.response.status === 200) {
