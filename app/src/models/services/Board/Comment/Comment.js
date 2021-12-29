@@ -15,24 +15,56 @@ class Comment {
     this.auth = req.auth;
   }
 
-  async SendNotification() {
-    const user = this.auth;
-    const notification = new Notification(this.req);
+  async sendNotification() {
+    if (!this.params.cmtNum) {
+      const recipient = await BoardStorage.xxfindBoardInfoByBoardNum(
+        this.params.boardNum
+      );
 
-    const { recipientId, recipientName, title } =
-      await BoardStorage.findBoardInfoByBoardNum(this.params.boardNum);
+      const notificationInfo = this.xxGetNotificationinfo(recipient);
 
-    if (user.id !== recipientId) {
-      const notificationInfo = {
-        title,
-        recipientName,
-        recipientId,
-        senderName: user.name,
-        content: this.body.description,
-      };
-
-      await notification.createNotification(notificationInfo);
+      return this.xxNewSendCmtNotification(notificationInfo);
     }
+    const recipients = await CommentStorage.findRecipientNamesByCmtAndBoardNum(
+      this.params.cmtNum,
+      this.params.boardNum
+    );
+
+    return this.xxNewSendReplyCmtNotification(recipients);
+  }
+
+  xxGetNotificationinfo(recipient) {
+    return {
+      senderName: this.auth.name,
+      content: this.body.description,
+      title: recipient.title || recipient.description,
+      recipientName: recipient.name,
+      recipientId: recipient.id,
+    };
+  }
+
+  async xxNewSendCmtNotification(notificationInfo) {
+    const senderId = this.auth.id;
+
+    if (senderId !== notificationInfo.recipientId) {
+      await this.xxNewSendNotification(notificationInfo);
+    }
+  }
+
+  async xxNewSendReplyCmtNotification(recipients) {
+    const senderId = this.auth.id;
+
+    recipients.forEach(async (recipient) => {
+      if (senderId !== recipient.id) {
+        const notificationInfo = this.xxGetNotificationinfo(recipient);
+
+        await this.xxNewSendNotification(notificationInfo);
+      }
+    });
+  }
+
+  xxNewSendNotification(notificationInfo) {
+    return new Notification(this.req).createNotification(notificationInfo);
   }
 
   async createCommentNum() {
@@ -71,7 +103,7 @@ class Comment {
         user.name = '익명';
       }
 
-      await this.SendNotification();
+      await this.sendNotification();
 
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {
@@ -83,7 +115,7 @@ class Comment {
     const replyComment = this.body;
     const user = this.auth;
     const { params } = this;
-    const notification = new Notification(this.req);
+    // const notification = new Notification(this.req);
 
     try {
       const replyCommentInfo = {
@@ -119,31 +151,33 @@ class Comment {
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      const recipients =
-        await CommentStorage.findRecipientNamesByCmtAndBoardNum(
-          replyCommentInfo.cmtNum,
-          replyCommentInfo.boardNum
-        );
+      await this.sendNotification();
 
-      const senderId = replyCommentInfo.id;
+      // const recipients =
+      //   await CommentStorage.findRecipientNamesByCmtAndBoardNum(
+      //     replyCommentInfo.cmtNum,
+      //     replyCommentInfo.boardNum
+      //   );
+
+      // const senderId = replyCommentInfo.id;
 
       if (replyCommentInfo.hiddenFlag) {
         user.name = '익명';
       }
 
-      recipients.forEach(async (recipient) => {
-        if (senderId !== recipient.id) {
-          const notificationInfo = {
-            title: recipient.description,
-            senderName: user.name,
-            recipientName: recipient.name,
-            recipientId: recipient.id,
-            content: replyCommentInfo.description,
-          };
+      // recipients.forEach(async (recipient) => {
+      //   if (senderId !== recipient.id) {
+      //     const notificationInfo = {
+      //       title: recipient.description,
+      //       senderName: user.name,
+      //       recipientName: recipient.name,
+      //       recipientId: recipient.id,
+      //       content: replyCommentInfo.description,
+      //     };
 
-          await notification.createNotification(notificationInfo);
-        }
-      });
+      //     await notification.createNotification(notificationInfo);
+      //   }
+      // });
 
       return { success: true, msg: '답글 생성 성공' };
     } catch (err) {
