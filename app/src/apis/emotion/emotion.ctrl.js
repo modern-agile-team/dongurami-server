@@ -6,8 +6,8 @@ const logger = require('../../config/logger');
 function processCtrl(res, apiInfo) {
   function createLogger() {
     function createLoggerMsg() {
-      if (apiInfo.response.status === 500) {
-        return `${apiInfo.method} /api/${apiInfo.url}/${apiInfo.params} ${apiInfo.response.status}: \n${apiInfo.response.errMsg.stack}`;
+      if (apiInfo.response.status === undefined) {
+        return `${apiInfo.method} /api/${apiInfo.url}/${apiInfo.params} 500: \n${apiInfo.response.errMsg.stack}`;
       }
       return `${apiInfo.method} /api/${apiInfo.url}/${apiInfo.params} ${apiInfo.response.status}: ${apiInfo.response.msg}`;
     }
@@ -19,10 +19,8 @@ function processCtrl(res, apiInfo) {
   }
 
   function responseToClientByRequest() {
-    if (apiInfo.response.status === 500) {
-      return res
-        .status(apiInfo.response.status)
-        .json(apiInfo.response.clientMsg);
+    if (apiInfo.response.status === undefined) {
+      return res.status(500).json(apiInfo.response.clientMsg);
     }
     return res.status(apiInfo.response.status).json(apiInfo.response);
   }

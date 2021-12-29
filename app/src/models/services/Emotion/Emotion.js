@@ -11,6 +11,7 @@ class Emotion {
     this.auth = req.auth;
     this.params = req.params;
     this.req = req;
+    this.ERRMSG = '서버 에러입니다. 서버 개발자에게 얘기해주세요.';
   }
 
   async likedByBoardNum() {
@@ -74,7 +75,7 @@ class Emotion {
         status: 400,
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl(this.ERRMSG, err);
     }
   }
 
