@@ -1,14 +1,15 @@
 'use strict';
 
-const Board = require('../../models/services/Board/Board');
+// const Board = require('../../models/services/Board/Board');
+const Search = require('../../models/services/Search/Search');
 const Club = require('../../models/services/Club/Club');
 const logger = require('../../config/logger');
 
 const process = {
   search: async (req, res) => {
-    const board = new Board(req);
+    const search = new Search(req);
     const { category } = req.params;
-    const response = await board.search();
+    const response = await search.search();
 
     if (response.success) {
       logger.info(`GET /api/search/${category} 200: ${response.msg}`);
@@ -25,8 +26,8 @@ const process = {
   },
 
   promotionSearch: async (req, res) => {
-    const board = new Board(req);
-    const response = await board.promotionSearch();
+    const search = new Search(req);
+    const response = await search.promotionSearch();
 
     if (response.success) {
       logger.info(`GET /api/search/promotion/category 200: ${response.msg}`);
