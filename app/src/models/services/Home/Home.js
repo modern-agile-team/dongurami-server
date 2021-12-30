@@ -11,84 +11,75 @@ class Home {
   }
 
   async findOneLeader() {
-    try {
-      const { clubNum } = this.params;
-      const leaderInfo = await HomeStorage.findOneLeader(clubNum);
+    const { clubNum } = this.params;
+    const leaderInfo = await HomeStorage.findOneLeader(clubNum);
 
-      return leaderInfo;
-    } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
-    }
+    return leaderInfo;
   }
 
   async findOneClient(leaderId) {
-    try {
-      const ids = {
-        leaderId,
-        clientId: this.auth.id,
-      };
-      const clientInfo = await HomeStorage.findOneClient(ids);
+    const ids = {
+      leaderId,
+      clientId: this.auth.id,
+    };
+    const clientInfo = await HomeStorage.findOneClient(ids);
 
-      return clientInfo;
-    } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
-    }
+    return clientInfo;
+  }
+
+  async findOneClubInfo() {
+    const { clubNum } = this.params;
+    const clubInfo = await HomeStorage.findOneClubInfo(clubNum);
+
+    return clubInfo;
   }
 
   async findOneByClubNum() {
     try {
-      const clubInfo = {
-        clubNum: this.params.clubNum,
-      };
-
       const leaderInfo = await this.findOneLeader();
 
       if (!leaderInfo) {
-        return { success: false, result: '존재하지 않는 동아리입니다.' };
+        return { success: false, msg: '존재하지 않는 동아리입니다.' };
       }
 
       const clientInfo = await this.findOneClient(leaderInfo.id);
+      const clubInfo = await this.findOneClubInfo();
 
-      const { success, result } = await HomeStorage.findOneByClubNum(clubInfo);
-
-      if (success) {
-        return {
-          success: true,
-          msg: '동아리홈 조회 성공',
-          leaderInfo,
-          clientInfo,
-          result,
-        };
-      }
-      return { success: false, msg: result };
-    } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요', err);
-    }
-  }
-
-  async xxfindOneByClubNum() {
-    try {
-      const clubInfo = {
-        clubNum: this.params.clubNum,
-        id: this.auth.id,
+      return {
+        success: true,
+        msg: '동아리홈 조회 성공',
+        leaderInfo,
+        clientInfo,
+        clubInfo,
       };
-      const { success, leaderInfo, clientInfo, result } =
-        await HomeStorage.xxfindOneByClubNum(clubInfo);
-
-      if (success) {
-        return {
-          success: true,
-          msg: '동아리홈 조회 성공',
-          leaderInfo,
-          clientInfo,
-          result,
-        };
-      }
-      return { success: false, msg: result };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요', err);
     }
   }
+
+  // async xxfindOneByClubNum() {
+  //   try {
+  //     const clubInfo = {
+  //       clubNum: this.params.clubNum,
+  //       id: this.auth.id,
+  //     };
+  //     const { success, leaderInfo, clientInfo, result } =
+  //       await HomeStorage.xxfindOneByClubNum(clubInfo);
+
+  //     if (success) {
+  //       return {
+  //         success: true,
+  //         msg: '동아리홈 조회 성공',
+  //         leaderInfo,
+  //         clientInfo,
+  //         result,
+  //       };
+  //     }
+  //     return { success: false, msg: result };
+  //   } catch (err) {
+  //     return Error.ctrl('개발자에게 문의해주세요', err);
+  //   }
+  // }
 
   async updateClubInfo() {
     const data = this.body;
