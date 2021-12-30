@@ -10,7 +10,50 @@ class Home {
     this.auth = req.auth;
   }
 
+  async findOneLeader() {
+    try {
+      const { clubNum } = this.params;
+      const leaderInfo = await HomeStorage.findOneLeader(clubNum);
+
+      return leaderInfo;
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
   async findOneByClubNum() {
+    try {
+      const clubInfo = {
+        clubNum: this.params.clubNum,
+        id: this.auth.id,
+      };
+
+      const leaderInfo = await this.findOneLeader();
+      console.log(leaderInfo);
+
+      if (!leaderInfo) {
+        return { success: false, result: '존재하지 않는 동아리입니다.' };
+      }
+
+      const { success, clientInfo, result } =
+        await HomeStorage.findOneByClubNum(clubInfo);
+
+      if (success) {
+        return {
+          success: true,
+          msg: '동아리홈 조회 성공',
+          leaderInfo,
+          clientInfo,
+          result,
+        };
+      }
+      return { success: false, msg: result };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요', err);
+    }
+  }
+
+  async xxfindOneByClubNum() {
     try {
       const clubInfo = {
         clubNum: this.params.clubNum,

@@ -3,7 +3,64 @@
 const mariadb = require('../../../config/mariadb');
 
 class HomeStorage {
+  static async findOneLeader(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT s.id, s.name, s.profile_image_url AS profileImageUrl FROM students AS s
+        LEFT JOIN clubs AS c ON c.leader = s.id WHERE c.no = ?;`;
+
+      const leader = await conn.query(query, clubNum);
+
+      return leader[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findOneByClubNum(clubInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+      // 동아리 정보 조회
+      const findClubInfo =
+        'SELECT name, category, logo_url AS logoUrl, introduce FROM clubs WHERE no = ?;';
+      // 동아리 성별 수 조회
+      const gender = `SELECT SUM(M) AS man, SUM(W) AS women FROM 
+        (SELECT (CASE gender WHEN 1 THEN 1 ELSE 0 END) AS M, 
+        (CASE gender WHEN 2 THEN 1 ELSE 0 END) AS W 
+        FROM (SELECT gender FROM students INNER JOIN members ON students.id = members.student_id WHERE club_no = ?) 
+        AS collectMember) AS collectGender;`;
+
+      // 동아리가 존재한다면 clubInfo 조회
+      const result = await conn.query(findClubInfo, clubInfo.clubNum);
+      const cntGender = await conn.query(gender, clubInfo.clubNum);
+
+      result[0].genderMan = cntGender[0].man;
+      result[0].genderWomen = cntGender[0].women;
+
+      // 사용자가 리더인지, 동아리원이라면 권한 정보 포함
+      const findFlag =
+        'SELECT join_admin_flag AS joinAdminFlag, board_admin_flag AS boardAdminFlag FROM members WHERE student_id = ?;';
+      const flags = await conn.query(findFlag, clubInfo.id);
+      const clientInfo = {};
+
+      clientInfo.flag = flags;
+
+      return { success: true, clientInfo, result };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async xxfindOneByClubNum(clubInfo) {
     let conn;
 
     try {
