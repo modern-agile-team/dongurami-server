@@ -55,7 +55,7 @@ class EmotionStorage {
 
       const isCreate = await conn.query(query, [
         emotionInfo.studentId,
-        emotionInfo.cmtNum,
+        emotionInfo.cmtInfo.cmtNum,
       ]);
 
       return isCreate.affectedRows;
@@ -76,7 +76,7 @@ class EmotionStorage {
 
       const isDelete = await conn.query(query, [
         emotionInfo.studentId,
-        emotionInfo.cmtNum,
+        emotionInfo.cmtInfo.cmtNum,
       ]);
 
       return isDelete.affectedRows;
@@ -97,7 +97,7 @@ class EmotionStorage {
 
       const isCreate = await conn.query(query, [
         emotionInfo.studentId,
-        emotionInfo.replyCmtNum,
+        emotionInfo.cmtInfo.replyCmtNum,
       ]);
 
       return isCreate.affectedRows;
@@ -118,7 +118,7 @@ class EmotionStorage {
 
       const isDelete = await conn.query(query, [
         emotionInfo.studentId,
-        emotionInfo.replyCmtNum,
+        emotionInfo.cmtInfo.replyCmtNum,
       ]);
 
       return isDelete.affectedRows;
@@ -140,10 +140,10 @@ class EmotionStorage {
       if (emotionInfo.boardNum) {
         table = 'board_emotions';
         column = 'board_no';
-      } else if (emotionInfo.cmtNum) {
+      } else if (emotionInfo.cmtInfo.cmtNum) {
         table = 'comment_emotions';
         column = 'comment_no';
-      } else if (emotionInfo.replyCmtNum) {
+      } else if (emotionInfo.cmtInfo.replyCmtNum) {
         table = 'reply_comment_emotions';
         column = 'reply_comment_no';
       }
@@ -152,7 +152,9 @@ class EmotionStorage {
 
       const isExist = await conn.query(query, [
         emotionInfo.studentId,
-        emotionInfo.boardNum || emotionInfo.cmtNum || emotionInfo.replyCmtNum,
+        emotionInfo.boardNum ||
+          emotionInfo.cmtInfo.cmtNum ||
+          emotionInfo.cmtInfo.replyCmtNum,
       ]);
 
       return isExist[0];
