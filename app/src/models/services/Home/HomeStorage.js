@@ -22,12 +22,35 @@ class HomeStorage {
     }
   }
 
+  static async findOneClient(ids) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const findFlag =
+        'SELECT join_admin_flag AS joinAdminFlag, board_admin_flag AS boardAdminFlag FROM members WHERE student_id = ?;';
+
+      const flags = await conn.query(findFlag, ids.clientId);
+      const clientInfo = {};
+
+      clientInfo.leader = ids.leaderId === ids.clientId ? 1 : 0;
+
+      clientInfo.flag = flags[0] || {};
+
+      return clientInfo;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findOneByClubNum(clubInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
-      // 동아리 정보 조회
       const findClubInfo =
         'SELECT name, category, logo_url AS logoUrl, introduce FROM clubs WHERE no = ?;';
       // 동아리 성별 수 조회
@@ -44,15 +67,7 @@ class HomeStorage {
       result[0].genderMan = cntGender[0].man;
       result[0].genderWomen = cntGender[0].women;
 
-      // 사용자가 리더인지, 동아리원이라면 권한 정보 포함
-      const findFlag =
-        'SELECT join_admin_flag AS joinAdminFlag, board_admin_flag AS boardAdminFlag FROM members WHERE student_id = ?;';
-      const flags = await conn.query(findFlag, clubInfo.id);
-      const clientInfo = {};
-
-      clientInfo.flag = flags;
-
-      return { success: true, clientInfo, result };
+      return { success: true, result };
     } catch (err) {
       throw err;
     } finally {

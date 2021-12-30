@@ -21,22 +21,35 @@ class Home {
     }
   }
 
+  async findOneClient(leaderId) {
+    try {
+      const ids = {
+        leaderId,
+        clientId: this.auth.id,
+      };
+      const clientInfo = await HomeStorage.findOneClient(ids);
+
+      return clientInfo;
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
   async findOneByClubNum() {
     try {
       const clubInfo = {
         clubNum: this.params.clubNum,
-        id: this.auth.id,
       };
 
       const leaderInfo = await this.findOneLeader();
-      console.log(leaderInfo);
 
       if (!leaderInfo) {
         return { success: false, result: '존재하지 않는 동아리입니다.' };
       }
 
-      const { success, clientInfo, result } =
-        await HomeStorage.findOneByClubNum(clubInfo);
+      const clientInfo = await this.findOneClient(leaderInfo.id);
+
+      const { success, result } = await HomeStorage.findOneByClubNum(clubInfo);
 
       if (success) {
         return {
@@ -60,7 +73,7 @@ class Home {
         id: this.auth.id,
       };
       const { success, leaderInfo, clientInfo, result } =
-        await HomeStorage.findOneByClubNum(clubInfo);
+        await HomeStorage.xxfindOneByClubNum(clubInfo);
 
       if (success) {
         return {
