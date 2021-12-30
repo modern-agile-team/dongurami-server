@@ -10,9 +10,7 @@ const Error = require('../../utils/Error');
 class Emotion {
   constructor(req) {
     this.auth = req.auth;
-    this.params = req.params;
     this.req = req;
-    this.ERRMSG = '서버 에러입니다. 서버 개발자에게 얘기해주세요.';
   }
 
   async likedByBoardNum() {
@@ -55,7 +53,7 @@ class Emotion {
       }
       return EmotionUtil.makeResponseByStatusCode(this.req, 400);
     } catch (err) {
-      return Error.ctrl(this.ERRMSG, err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -82,7 +80,7 @@ class Emotion {
       if (isDelete) return EmotionUtil.makeResponseByStatusCode(this.req, 200);
       return EmotionUtil.makeResponseByStatusCode(this.req, 400);
     } catch (err) {
-      return Error.ctrl(this.ERRMSG, err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -127,7 +125,7 @@ class Emotion {
       }
       return EmotionUtil.makeResponseByStatusCode(this.req, 400);
     } catch (err) {
-      return Error.ctrl(this.ERRMSG, err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -154,7 +152,7 @@ class Emotion {
       if (isDelete) return EmotionUtil.makeResponseByStatusCode(this.req, 200);
       return EmotionUtil.makeResponseByStatusCode(this.req, 400);
     } catch (err) {
-      return Error.ctrl(this.ERRMSG, err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -198,7 +196,7 @@ class Emotion {
       }
       return EmotionUtil.makeResponseByStatusCode(this.req, 400);
     } catch (err) {
-      return Error.ctrl(this.ERRMSG, err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -225,7 +223,7 @@ class Emotion {
       if (isDelete) return EmotionUtil.makeResponseByStatusCode(this.req, 200);
       return EmotionUtil.makeResponseByStatusCode(this.req, 400);
     } catch (err) {
-      return Error.ctrl(this.ERRMSG, err);
+      return Error.ctrl('', err);
     }
   }
 }
