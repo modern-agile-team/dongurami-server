@@ -16,6 +16,7 @@ class Emotion {
   async likedByBoardNum() {
     const user = this.auth;
     const notification = new Notification(this.req);
+
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
