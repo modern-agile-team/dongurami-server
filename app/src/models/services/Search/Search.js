@@ -3,6 +3,7 @@
 const BoardStorage = require('../Board/BoardStorage');
 const boardCategory = require('../Category/board');
 const Error = require('../../utils/Error');
+const ClubStorage = require('../Club/ClubStorage');
 
 class Search {
   constructor(req) {
@@ -10,7 +11,15 @@ class Search {
     this.query = req.query;
   }
 
-  async search() {
+  static message(keyword, result) {
+    return {
+      success: true,
+      msg: `${keyword}(을)를 검색한 결과입니다.`,
+      result,
+    };
+  }
+
+  async findAllSearch() {
     const searchInfo = this.query;
 
     try {
@@ -33,16 +42,9 @@ class Search {
         }
       });
 
-      return {
-        success: true,
-        msg: `${searchInfo.keyword}(을)를 검색한 결과입니다.`,
-        result,
-      };
+      return Search.message(searchInfo.keyword, result);
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -83,7 +85,7 @@ class Search {
     return searchInfo;
   }
 
-  async promotionSearch() {
+  async findAllPromotionSearch() {
     const { query } = this;
 
     try {
@@ -100,16 +102,21 @@ class Search {
 
       const boards = await BoardStorage.findAllPromotionSearch(searchInfo);
 
-      return {
-        success: true,
-        msg: `${searchInfo.keyword}(을)를 검색한 결과입니다.`,
-        boards,
-      };
+      return Search.message(searchInfo.keyword, boards);
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
+    }
+  }
+
+  async findAllClubList() {
+    const { name } = this.query;
+
+    try {
+      const clubs = await ClubStorage.findAllClubList(name);
+
+      return Search.message(name, clubs);
+    } catch (err) {
+      return Error.ctrl('', err);
     }
   }
 }
