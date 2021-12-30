@@ -163,35 +163,17 @@ class EmotionStorage {
     }
   }
 
-  static async existOnlyCmtNum(cmtNum) {
+  static async existenceByCmtNumAndDepth(cmtInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no FROM comments WHERE no = ? AND depth = 0;`;
+      const query = `SELECT no FROM comments WHERE no = ? AND depth = ?;`;
 
-      const cmt = await conn.query(query, [cmtNum]);
+      const cmt = await conn.query(query, [cmtInfo.cmtNum, cmtInfo.depth]);
 
       return cmt[0];
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async existOnlyReplyCmtNum(replyCmtNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT no FROM comments WHERE no = ? AND depth = 1;`;
-
-      const replyCmt = await conn.query(query, [replyCmtNum]);
-
-      return replyCmt[0];
     } catch (err) {
       throw err;
     } finally {

@@ -135,11 +135,14 @@ class Emotion {
     try {
       const emotionInfo = {
         studentId: user.id,
-        cmtNum: this.params.cmtNum,
+        cmtInfo: {
+          cmtNum: this.params.cmtNum,
+          depth: 0,
+        },
       };
 
-      const isCmtExist = await EmotionStorage.existOnlyCmtNum(
-        emotionInfo.cmtNum
+      const isCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
+        emotionInfo.cmtInfo
       );
 
       if (!isCmtExist) {
@@ -200,11 +203,14 @@ class Emotion {
     try {
       const emotionInfo = {
         studentId: user.id,
-        cmtNum: this.params.cmtNum,
+        cmtInfo: {
+          cmtNum: this.params.cmtNum,
+          depth: 0,
+        },
       };
 
-      const isCmtExist = await EmotionStorage.existOnlyCmtNum(
-        emotionInfo.cmtNum
+      const isCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
+        emotionInfo.cmtInfo
       );
 
       if (!isCmtExist) {
@@ -251,11 +257,14 @@ class Emotion {
     try {
       const emotionInfo = {
         studentId: user.id,
-        replyCmtNum: this.params.replyCmtNum,
+        cmtInfo: {
+          cmtNum: this.params.replyCmtNum,
+          depth: 1,
+        },
       };
 
-      const isReplyCmtExist = await EmotionStorage.existOnlyReplyCmtNum(
-        emotionInfo.replyCmtNum
+      const isReplyCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
+        emotionInfo.cmtInfo
       );
 
       if (!isReplyCmtExist) {
@@ -315,11 +324,14 @@ class Emotion {
     try {
       const emotionInfo = {
         studentId: user.id,
-        replyCmtNum: this.params.replyCmtNum,
+        cmtInfo: {
+          cmtNum: this.params.replyCmtNum,
+          depth: 1,
+        },
       };
 
-      const isReplyCmtExist = await EmotionStorage.existOnlyReplyCmtNum(
-        emotionInfo.replyCmtNum
+      const isReplyCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
+        emotionInfo.cmtInfo
       );
 
       if (!isReplyCmtExist) {
