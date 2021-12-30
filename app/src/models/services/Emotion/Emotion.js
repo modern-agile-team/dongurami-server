@@ -1,6 +1,7 @@
 'use strict';
 
 const EmotionStorage = require('./EmotionStorage');
+const EmotionUtil = require('./utils');
 const BoardStorage = require('../Board/BoardStorage');
 const CommentStorage = require('../Board/Comment/CommentStorage');
 const Notification = require('../Notification/Notification');
@@ -18,10 +19,7 @@ class Emotion {
     const user = this.auth;
     const notification = new Notification(this.req);
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        boardNum: this.params.boardNum,
-      };
+      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
       const isBoardExist = await BoardStorage.existOnlyBoardNum(
         emotionInfo.boardNum
@@ -80,13 +78,8 @@ class Emotion {
   }
 
   async unLikedByBoardNum() {
-    const user = this.auth;
-
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        boardNum: this.params.boardNum,
-      };
+      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
       const isBoardExist = await BoardStorage.existOnlyBoardNum(
         emotionInfo.boardNum
@@ -133,13 +126,7 @@ class Emotion {
     const notification = new Notification(this.req);
 
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        cmtInfo: {
-          cmtNum: this.params.cmtNum,
-          depth: 0,
-        },
-      };
+      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
       const isCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
         emotionInfo.cmtInfo
@@ -198,16 +185,8 @@ class Emotion {
   }
 
   async unLikedByCmtNum() {
-    const user = this.auth;
-
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        cmtInfo: {
-          cmtNum: this.params.cmtNum,
-          depth: 0,
-        },
-      };
+      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
       const isCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
         emotionInfo.cmtInfo
@@ -255,13 +234,7 @@ class Emotion {
     const notification = new Notification(this.req);
 
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        cmtInfo: {
-          cmtNum: this.params.replyCmtNum,
-          depth: 1,
-        },
-      };
+      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
       const isReplyCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
         emotionInfo.cmtInfo
@@ -319,16 +292,8 @@ class Emotion {
   }
 
   async unLikedByReplyCmtNum() {
-    const user = this.auth;
-
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        cmtInfo: {
-          cmtNum: this.params.replyCmtNum,
-          depth: 1,
-        },
-      };
+      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
       const isReplyCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
         emotionInfo.cmtInfo

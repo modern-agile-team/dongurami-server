@@ -171,7 +171,10 @@ class EmotionStorage {
 
       const query = `SELECT no FROM comments WHERE no = ? AND depth = ?;`;
 
-      const cmt = await conn.query(query, [cmtInfo.cmtNum, cmtInfo.depth]);
+      const cmt = await conn.query(query, [
+        cmtInfo.cmtNum || cmtInfo.replyCmtNum,
+        cmtInfo.depth,
+      ]);
 
       return cmt[0];
     } catch (err) {
