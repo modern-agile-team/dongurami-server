@@ -84,16 +84,13 @@ class Home {
   }
 
   async updateClubLogo() {
-    const data = this.body;
-
     try {
-      const { leader } = data;
       const logoInfo = {
         clubNum: this.params.clubNum,
-        logoUrl: data.logoUrl,
+        logoUrl: this.body.logoUrl,
       };
 
-      if (leader) {
+      if ((await this.isLeader()).leader === this.auth.id) {
         await HomeStorage.updateClubLogo(logoInfo);
 
         return { success: true, msg: '로고가 수정되었습니다.' };
@@ -103,6 +100,27 @@ class Home {
       return Error.ctrl('개발자에게 문의해주세요', err);
     }
   }
+
+  // async xxupdateClubLogo() {
+  //   const data = this.body;
+
+  //   try {
+  //     const { leader } = data;
+  //     const logoInfo = {
+  //       clubNum: this.params.clubNum,
+  //       logoUrl: data.logoUrl,
+  //     };
+
+  //     if (leader) {
+  //       await HomeStorage.updateClubLogo(logoInfo);
+
+  //       return { success: true, msg: '로고가 수정되었습니다.' };
+  //     }
+  //     return { success: false, msg: '로고 수정 권한이 없습니다.' };
+  //   } catch (err) {
+  //     return Error.ctrl('개발자에게 문의해주세요', err);
+  //   }
+  // }
 }
 
 module.exports = Home;
