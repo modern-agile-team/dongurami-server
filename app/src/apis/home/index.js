@@ -18,7 +18,7 @@ router.patch(
   '/:clubNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
-  ctrl.process.updateClubInfo
+  ctrl.process.updateClubIntroduce
 );
 
 router.put(
