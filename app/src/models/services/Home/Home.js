@@ -53,7 +53,7 @@ class Home {
         clubInfo,
       };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -79,7 +79,7 @@ class Home {
       }
       return { success: false, msg: '소개 수정 권한이 없습니다.' };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -97,7 +97,7 @@ class Home {
       }
       return { success: false, msg: '로고 수정 권한이 없습니다.' };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 }
