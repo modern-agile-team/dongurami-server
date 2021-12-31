@@ -23,10 +23,10 @@ const process = {
     return res.status(404).json(response); // 존재하는 동아리가 없을 시 -> 파라미터를 건들여 접속한 경우
   },
 
-  updateClubInfo: async (req, res) => {
+  updateClubIntroduce: async (req, res) => {
     const home = new Home(req);
     const { clubNum } = req.params;
-    const response = await home.updateClubInfo();
+    const response = await home.updateClubIntroduce();
 
     if (response.success) {
       logger.info(`PATCH /api/club/home/${clubNum} 200: ${response.msg}`);

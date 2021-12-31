@@ -57,42 +57,23 @@ class Home {
     }
   }
 
-  // async xxfindOneByClubNum() {
-  //   try {
-  //     const clubInfo = {
-  //       clubNum: this.params.clubNum,
-  //       id: this.auth.id,
-  //     };
-  //     const { success, leaderInfo, clientInfo, result } =
-  //       await HomeStorage.xxfindOneByClubNum(clubInfo);
+  async isLeader() {
+    const { clubNum } = this.params;
 
-  //     if (success) {
-  //       return {
-  //         success: true,
-  //         msg: '동아리홈 조회 성공',
-  //         leaderInfo,
-  //         clientInfo,
-  //         result,
-  //       };
-  //     }
-  //     return { success: false, msg: result };
-  //   } catch (err) {
-  //     return Error.ctrl('개발자에게 문의해주세요', err);
-  //   }
-  // }
+    const leader = await HomeStorage.isLeader(clubNum);
 
-  async updateClubInfo() {
-    const data = this.body;
+    return leader;
+  }
 
+  async updateClubIntroduce() {
     try {
-      const { leader } = data;
       const clubInfo = {
         clubNum: this.params.clubNum,
-        introduce: data.introduce,
+        introduce: this.body.introduce,
       };
 
-      if (leader) {
-        await HomeStorage.updateClubInfo(clubInfo);
+      if ((await this.isLeader()).leader === this.auth.id) {
+        await HomeStorage.updateClubIntroduce(clubInfo);
 
         return { success: true, msg: '동아리 소개가 수정되었습니다.' };
       }
@@ -125,3 +106,48 @@ class Home {
 }
 
 module.exports = Home;
+
+// async xxfindOneByClubNum() {
+//   try {
+//     const clubInfo = {
+//       clubNum: this.params.clubNum,
+//       id: this.auth.id,
+//     };
+//     const { success, leaderInfo, clientInfo, result } =
+//       await HomeStorage.xxfindOneByClubNum(clubInfo);
+
+//     if (success) {
+//       return {
+//         success: true,
+//         msg: '동아리홈 조회 성공',
+//         leaderInfo,
+//         clientInfo,
+//         result,
+//       };
+//     }
+//     return { success: false, msg: result };
+//   } catch (err) {
+//     return Error.ctrl('개발자에게 문의해주세요', err);
+//   }
+// }
+
+// async updateClubInfo() {
+//   const data = this.body;
+
+//   try {
+//     const { leader } = data;
+//     const clubInfo = {
+//       clubNum: this.params.clubNum,
+//       introduce: data.introduce,
+//     };
+
+//     if (leader) {
+//       await HomeStorage.updateClubInfo(clubInfo);
+
+//       return { success: true, msg: '동아리 소개가 수정되었습니다.' };
+//     }
+//     return { success: false, msg: '소개 수정 권한이 없습니다.' };
+//   } catch (err) {
+//     return Error.ctrl('개발자에게 문의해주세요', err);
+//   }
+// }
