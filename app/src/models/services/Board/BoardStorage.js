@@ -369,7 +369,7 @@ class BoardStorage {
       return {
         recipientId: board[0].id,
         recipientName: board[0].name,
-        title: board[0].title,
+        description: board[0].title,
       };
     } catch (err) {
       throw err;

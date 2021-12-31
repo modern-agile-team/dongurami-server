@@ -13,9 +13,67 @@ class Emotion {
     this.req = req;
   }
 
+  async xxNewSendBoardNotification() {
+    const notification = new Notification(this.req);
+    const { recipientId, recipientName, description } =
+      await BoardStorage.findBoardInfoByBoardNum(emotionInfo.boardNum);
+
+    if (this.auth.id !== recipientId) {
+      const notificationInfo = {
+        title: description,
+        recipientName,
+        recipientId,
+        senderName: user.name,
+        content: '게시글 좋아요',
+      };
+
+      await notification.createNotification(notificationInfo);
+    }
+  }
+
+  async xxNewSendCmtNotification() {
+    const notification = new Notification(this.req);
+    const { recipientId, recipientName, description } =
+      await CommentStorage.findAllByCmtNum(emotionInfo.cmtNum);
+
+    if (this.auth.id !== recipientId) {
+      const notificationInfo = {
+        title: description,
+        recipientName,
+        recipientId,
+        senderName: user.name,
+        content: '댓글 좋아요',
+      };
+
+      await notification.createNotification(notificationInfo);
+    }
+  }
+
+  async xxNewSendReplyCmtNotification() {
+    const notification = new Notification(this.req);
+    const { recipientId, recipientName, description } =
+      await CommentStorage.findAllByCmtNum(emotionInfo.replyCmtNum);
+
+    if (this.auth.id !== recipientId) {
+      const notificationInfo = {
+        title: description,
+        recipientName,
+        recipientId,
+        senderName: user.name,
+        content: '답글 좋아요',
+      };
+
+      await notification.createNotification(notificationInfo);
+    }
+  }
+
+  // xxNewCreateNotification(notificationInfo) {
+  //   return new Notification(this.req).createNotification(notificationInfo);
+  // }
+
   async likedByBoardNum() {
     const user = this.auth;
-    const notification = new Notification(this.req);
+    // const notification = new Notification(this.req);
     try {
       const emotionInfo = {
         studentId: user.id,
@@ -47,20 +105,21 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByBoardNum(emotionInfo);
 
       if (isCreat) {
-        const { recipientId, recipientName, title } =
-          await BoardStorage.findBoardInfoByBoardNum(emotionInfo.boardNum);
+        await xxNewSendNotification();
+        // const { recipientId, recipientName, title } =
+        //   await BoardStorage.findBoardInfoByBoardNum(emotionInfo.boardNum);
 
-        if (user.id !== recipientId) {
-          const notificationInfo = {
-            title,
-            recipientName,
-            recipientId,
-            senderName: user.name,
-            content: '게시글 좋아요',
-          };
+        // if (user.id !== recipientId) {
+        //   const notificationInfo = {
+        //     title,
+        //     recipientName,
+        //     recipientId,
+        //     senderName: user.name,
+        //     content: '게시글 좋아요',
+        //   };
 
-          await notification.createNotification(notificationInfo);
-        }
+        //   await notification.createNotification(notificationInfo);
+        // }
 
         return {
           success: true,
@@ -125,7 +184,7 @@ class Emotion {
 
   async likedByCmtNum() {
     const user = this.auth;
-    const notification = new Notification(this.req);
+    // const notification = new Notification(this.req);
 
     try {
       const emotionInfo = {
@@ -158,20 +217,21 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByCmtNum(emotionInfo);
 
       if (isCreat) {
-        const { recipientId, recipientName, description } =
-          await CommentStorage.findAllByCmtNum(emotionInfo.cmtNum);
+        xxNewSendCmtNotification();
+        // const { recipientId, recipientName, description } =
+        //   await CommentStorage.findAllByCmtNum(emotionInfo.cmtNum);
 
-        if (emotionInfo.studentId !== recipientId) {
-          const notificationInfo = {
-            title: description,
-            recipientName,
-            recipientId,
-            senderName: user.name,
-            content: '댓글 좋아요',
-          };
+        // if (emotionInfo.studentId !== recipientId) {
+        //   const notificationInfo = {
+        //     title: description,
+        //     recipientName,
+        //     recipientId,
+        //     senderName: user.name,
+        //     content: '댓글 좋아요',
+        //   };
 
-          await notification.createNotification(notificationInfo);
-        }
+        //   await notification.createNotification(notificationInfo);
+        // }
 
         return {
           success: true,
@@ -237,7 +297,7 @@ class Emotion {
 
   async likedByReplyCmtNum() {
     const user = this.auth;
-    const notification = new Notification(this.req);
+    // const notification = new Notification(this.req);
 
     try {
       const emotionInfo = {
@@ -270,20 +330,21 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByReplyCmtNum(emotionInfo);
 
       if (isCreat) {
-        const { recipientId, recipientName, description } =
-          await CommentStorage.findAllByCmtNum(emotionInfo.replyCmtNum);
+        xxNewSendReplyCmtNotification();
+        // const { recipientId, recipientName, description } =
+        //   await CommentStorage.findAllByCmtNum(emotionInfo.replyCmtNum);
 
-        if (emotionInfo.studentId !== recipientId) {
-          const notificationInfo = {
-            title: description,
-            recipientName,
-            recipientId,
-            senderName: user.name,
-            content: '답글 좋아요',
-          };
+        // if (emotionInfo.studentId !== recipientId) {
+        //   const notificationInfo = {
+        //     title: description,
+        //     recipientName,
+        //     recipientId,
+        //     senderName: user.name,
+        //     content: '답글 좋아요',
+        //   };
 
-          await notification.createNotification(notificationInfo);
-        }
+        //   await notification.createNotification(notificationInfo);
+        // }
         return {
           success: true,
           msg: '해당 답글에 좋아요를 했습니다.',
