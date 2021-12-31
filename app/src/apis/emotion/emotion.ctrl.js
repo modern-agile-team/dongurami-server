@@ -4,41 +4,44 @@ const Emotion = require('../../models/services/Emotion/Emotion');
 const logger = require('../../config/logger');
 
 function processCtrl(res, apiInfo) {
-  function createLogger() {
-    function createLoggerMsg() {
-      if (apiInfo.response.status === undefined) {
-        return `${apiInfo.method} /api/${apiInfo.url}/${apiInfo.params} 500: \n${apiInfo.response.errMsg.stack}`;
-      }
-      return `${apiInfo.method} /api/${apiInfo.url}/${apiInfo.params} ${apiInfo.response.status}: ${apiInfo.response.msg}`;
+  function createLoggerMsg() {
+    if (apiInfo.response.status === undefined) {
+      return `${apiInfo.method} ${apiInfo.path} 500: \n${apiInfo.response.errMsg.stack}`;
     }
+    return `${apiInfo.method} ${apiInfo.path} ${apiInfo.response.status}: ${apiInfo.response.msg}`;
+  }
 
-    if (apiInfo.response.status === 200) {
+  function createLogger() {
+    if (apiInfo.response.status < 400) {
       return logger.info(createLoggerMsg());
     }
     return logger.error(createLoggerMsg());
   }
 
-  function responseToClientByRequest() {
-    if (apiInfo.response.status === undefined) {
-      return res.status(500).json(apiInfo.response.clientMsg);
+  function responseToClientByRequest(response) {
+    if (response.status === undefined) {
+      return res.status(500).json(response.clientMsg);
     }
-    return res.status(apiInfo.response.status).json(apiInfo.response);
+    return res.status(response.status).json(response);
   }
 
   createLogger();
-  return responseToClientByRequest();
+  return responseToClientByRequest(apiInfo.response);
+}
+
+function getApiInfo(method, response, req) {
+  return {
+    method,
+    response,
+    path: req.originalUrl,
+  };
 }
 
 const process = {
   likedByBoardNum: async (req, res) => {
     const emotion = new Emotion(req);
     const response = await emotion.likedByBoardNum();
-    const apiInfo = {
-      response,
-      params: req.params.boardNum,
-      method: 'PATCH',
-      path: 'emotion/liked/board',
-    };
+    const apiInfo = getApiInfo('PUT', response, req);
 
     return processCtrl(res, apiInfo);
   },
