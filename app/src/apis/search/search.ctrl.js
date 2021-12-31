@@ -1,15 +1,13 @@
 'use strict';
 
-// const Board = require('../../models/services/Board/Board');
 const Search = require('../../models/services/Search/Search');
-const Club = require('../../models/services/Club/Club');
 const logger = require('../../config/logger');
 
 const process = {
-  search: async (req, res) => {
+  findAllSearch: async (req, res) => {
     const search = new Search(req);
     const { category } = req.params;
-    const response = await search.search();
+    const response = await search.findAllSearch();
 
     if (response.success) {
       logger.info(`GET /api/search/${category} 200: ${response.msg}`);
@@ -25,9 +23,9 @@ const process = {
     return res.status(400).json(response);
   },
 
-  promotionSearch: async (req, res) => {
+  findAllPromotionSearch: async (req, res) => {
     const search = new Search(req);
-    const response = await search.promotionSearch();
+    const response = await search.findAllPromotionSearch();
 
     if (response.success) {
       logger.info(`GET /api/search/promotion/category 200: ${response.msg}`);
@@ -43,9 +41,9 @@ const process = {
     return res.status(400).json(response);
   },
 
-  clubListSearch: async (req, res) => {
-    const club = new Club(req);
-    const response = await club.clubListSearch();
+  findAllClubList: async (req, res) => {
+    const search = new Search(req);
+    const response = await search.findAllClubList();
 
     if (response.success) {
       logger.info(`GET /api/search/club-list/category 200: ${response.msg}`);
