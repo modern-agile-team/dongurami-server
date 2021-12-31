@@ -28,7 +28,7 @@ app.use(morgan(':method :status :response-time ms', { stream: logger.stream }));
 const board = require('./src/apis/boards');
 const root = require('./src/apis/root');
 const review = require('./src/apis/review');
-const home = require('./src/apis/circle-home');
+const home = require('./src/apis/home');
 const schedule = require('./src/apis/schedule');
 const clubList = require('./src/apis/club');
 const application = require('./src/apis/application');
