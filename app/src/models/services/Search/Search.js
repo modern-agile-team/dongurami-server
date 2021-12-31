@@ -11,12 +11,29 @@ class Search {
     this.query = req.query;
   }
 
-  static message(keyword, result) {
+  static successMessage(keyword, result) {
     return {
       success: true,
       msg: `${keyword}(을)를 검색한 결과입니다.`,
       result,
     };
+  }
+
+  static failMessage(msg) {
+    return {
+      success: false,
+      msg,
+    };
+  }
+
+  static anonymousUserFilter(result) {
+    result.forEach((post) => {
+      if (post.writerHiddenFlag) {
+        post.studentId = '익명';
+        post.studentName = '익명';
+        post.url = null;
+      }
+    });
   }
 
   async findAllSearch() {
@@ -34,15 +51,9 @@ class Search {
 
       const result = await BoardStorage.findAllSearch(searchInfo);
 
-      result.forEach((post) => {
-        if (post.writerHiddenFlag) {
-          post.studentId = '익명';
-          post.studentName = '익명';
-          post.url = null;
-        }
-      });
+      Search.anonymousUserFilter(result);
 
-      return Search.message(searchInfo.keyword, result);
+      return Search.successMessage(searchInfo.keyword, result);
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -53,7 +64,7 @@ class Search {
     searchInfo.category = boardCategory[this.params.category];
 
     return !searchInfo.category
-      ? { success: false, msg: '존재하지 않는 게시판입니다.' }
+      ? Search.failMessage('존재하지 않는 게시판입니다.')
       : searchInfo;
   }
 
@@ -62,7 +73,7 @@ class Search {
     const searchType = ['title', 'name', 'clubName'];
 
     if (!searchType.includes(searchInfo.type)) {
-      return { success: false, msg: '검색 타입을 확인해주세요' };
+      return Search.failMessage('검색 타입을 확인해주세요');
     }
     if (searchInfo.type === 'name') searchInfo.type = 'st.name';
     if (searchInfo.type === 'clubName') searchInfo.type = 'clubs.name';
@@ -75,10 +86,7 @@ class Search {
 
     if (searchInfo.category === 5) {
       if (searchInfo.clubno === '1' || !searchInfo.clubno) {
-        return {
-          success: false,
-          msg: '동아리 고유번호를 확인해주세요.',
-        };
+        return Search.failMessage('동아리 고유번호를 확인해주세요.');
       }
     }
     searchInfo.clubno = 1;
@@ -102,7 +110,7 @@ class Search {
 
       const boards = await BoardStorage.findAllPromotionSearch(searchInfo);
 
-      return Search.message(searchInfo.keyword, boards);
+      return Search.successMessage(searchInfo.keyword, boards);
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -114,7 +122,7 @@ class Search {
     try {
       const clubs = await ClubStorage.findAllClubList(name);
 
-      return Search.message(name, clubs);
+      return Search.successMessage(name, clubs);
     } catch (err) {
       return Error.ctrl('', err);
     }
