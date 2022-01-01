@@ -52,10 +52,7 @@ class Student {
         status: 401,
       };
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -80,10 +77,7 @@ class Student {
       }
       return checkedIdAndEmail;
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -105,10 +99,7 @@ class Student {
       }
       return { success: false, msg: '해당하는 아이디가 없습니다.' };
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -134,10 +125,7 @@ class Student {
       }
       return checkedPassword;
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -171,10 +159,7 @@ class Student {
         msg: '서버 에러입니다. 서버개발자에게 문의하세요.',
       };
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -207,10 +192,7 @@ class Student {
       }
       return { success: false, msg: '기존 비밀번호가 틀렸습니다.' };
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -283,10 +265,7 @@ class Student {
       }
       return { success: true, msg: '비밀번호가 변경되었습니다.' };
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -391,10 +370,7 @@ class Student {
       }
       return checkedIdAndEmail;
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 }
