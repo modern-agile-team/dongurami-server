@@ -328,7 +328,7 @@ class BoardStorage {
     }
   }
 
-  static async xxfindBoardInfoByBoardNum(boardNum) {
+  static async findBoardInfoByBoardNum(boardNum) {
     let conn;
 
     try {
@@ -343,34 +343,10 @@ class BoardStorage {
       const recipient = {
         id: board[0].id,
         name: board[0].name,
-        title: board[0].title,
+        description: board[0].title,
       };
 
       return recipient;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findBoardInfoByBoardNum(boardNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT s.name, s.id, b.title FROM boards AS b 
-        JOIN students AS s ON b.student_id = s.id 
-        WHERE b.no = ?;`;
-
-      const board = await conn.query(query, [boardNum]);
-
-      return {
-        recipientId: board[0].id,
-        recipientName: board[0].name,
-        description: board[0].title,
-      };
     } catch (err) {
       throw err;
     } finally {

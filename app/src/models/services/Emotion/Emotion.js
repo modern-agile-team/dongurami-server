@@ -13,63 +13,50 @@ class Emotion {
     this.req = req;
   }
 
-  async xxNewSendBoardNotification() {
-    const notification = new Notification(this.req);
-    const { recipientId, recipientName, description } =
-      await BoardStorage.findBoardInfoByBoardNum(emotionInfo.boardNum);
+  async xxNewGetNotificationInfo() {
+    const { params } = this;
+    let recipientInfo;
 
-    if (this.auth.id !== recipientId) {
-      const notificationInfo = {
-        title: description,
-        recipientName,
-        recipientId,
-        senderName: user.name,
-        content: '게시글 좋아요',
-      };
+    if (params.boardNum) {
+      recipientInfo = await BoardStorage.findBoardInfoByBoardNum(
+        params.boardNum
+      );
 
-      await notification.createNotification(notificationInfo);
+      recipientInfo.content = '게시물 좋아요';
+    }
+    if (params.cmtNum) {
+      recipientInfo = await CommentStorage.findAllByCmtNum(params.cmtNum);
+
+      recipientInfo.content = '댓글 좋아요';
+    }
+    if (params.replyCmtNum) {
+      recipientInfo = await CommentStorage.findAllByCmtNum(params.replyCmtNum);
+
+      recipientInfo.content = '답글 좋아요';
+    }
+
+    const notificationInfo = {
+      title: recipientInfo.description,
+      recipientName: recipientInfo.name,
+      recipientId: recipientInfo.id,
+      content: recipientInfo.content,
+      senderName: this.auth.name,
+    };
+
+    return notificationInfo;
+  }
+
+  async xxNewSendNotification() {
+    const notificationInfo = this.xxNewGetNotificationInfo();
+
+    if (notificationInfo.senderId !== notificationInfo.recipientId) {
+      this.xxNewCreateNotification(notificationInfo);
     }
   }
 
-  async xxNewSendCmtNotification() {
-    const notification = new Notification(this.req);
-    const { recipientId, recipientName, description } =
-      await CommentStorage.findAllByCmtNum(emotionInfo.cmtNum);
-
-    if (this.auth.id !== recipientId) {
-      const notificationInfo = {
-        title: description,
-        recipientName,
-        recipientId,
-        senderName: user.name,
-        content: '댓글 좋아요',
-      };
-
-      await notification.createNotification(notificationInfo);
-    }
+  xxNewCreateNotification(notificationInfo) {
+    return new Notification(this.req).createNotification(notificationInfo);
   }
-
-  async xxNewSendReplyCmtNotification() {
-    const notification = new Notification(this.req);
-    const { recipientId, recipientName, description } =
-      await CommentStorage.findAllByCmtNum(emotionInfo.replyCmtNum);
-
-    if (this.auth.id !== recipientId) {
-      const notificationInfo = {
-        title: description,
-        recipientName,
-        recipientId,
-        senderName: user.name,
-        content: '답글 좋아요',
-      };
-
-      await notification.createNotification(notificationInfo);
-    }
-  }
-
-  // xxNewCreateNotification(notificationInfo) {
-  //   return new Notification(this.req).createNotification(notificationInfo);
-  // }
 
   async likedByBoardNum() {
     const user = this.auth;

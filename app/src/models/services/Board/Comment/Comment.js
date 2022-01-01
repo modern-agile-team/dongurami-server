@@ -110,6 +110,26 @@ class Comment {
     }
   }
 
+  async sendNotification() {
+    const { params } = this;
+
+    if (!params.cmtNum) {
+      const recipient = await BoardStorage.findBoardInfoByBoardNum(
+        params.boardNum
+      );
+
+      const notificationInfo = this.getNotificationInfo(recipient);
+
+      return this.sendCmtNotification(notificationInfo);
+    }
+    const recipients = await CommentStorage.findRecipientNamesByCmtAndBoardNum(
+      params.cmtNum,
+      params.boardNum
+    );
+
+    return this.sendReplyCmtNotification(recipients);
+  }
+
   getNotificationInfo(recipient) {
     return {
       senderName: this.auth.name,
@@ -134,7 +154,7 @@ class Comment {
 
     recipients.forEach(async (recipient) => {
       if (senderId !== recipient.id) {
-        const notificationInfo = this.xxGetNotificationinfo(recipient);
+        const notificationInfo = this.getNotificationInfo(recipient);
 
         await this.createNotification(notificationInfo);
       }

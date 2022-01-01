@@ -281,11 +281,13 @@ class CommentStorage {
 
       const cmt = await conn.query(query, [cmtNum]);
 
-      return {
-        recipientId: cmt.id,
-        recipientName: cmt.name,
+      const recipient = {
+        id: cmt.id,
+        name: cmt.name,
         description: cmt.description,
       };
+
+      return recipient;
     } catch (err) {
       throw err;
     } finally {
