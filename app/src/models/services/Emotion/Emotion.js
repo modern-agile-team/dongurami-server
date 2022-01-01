@@ -13,7 +13,7 @@ class Emotion {
     this.req = req;
   }
 
-  async xxNewGetRecipientInfo() {
+  async getRecipientInfo() {
     const { params } = this;
     let recipientInfo;
 
@@ -39,27 +39,6 @@ class Emotion {
   }
 
   async getNotificationInfo(recipientInfo) {
-    // const { params } = this;
-    // let recipientInfo;
-
-    // if (params.boardNum) {
-    //   recipientInfo = await BoardStorage.findBoardInfoByBoardNum(
-    //     params.boardNum
-    //   );
-
-    //   recipientInfo.content = '게시물 좋아요';
-    // }
-    // if (params.cmtNum) {
-    //   recipientInfo = await CommentStorage.findAllByCmtNum(params.cmtNum);
-
-    //   recipientInfo.content = '댓글 좋아요';
-    // }
-    // if (params.replyCmtNum) {
-    //   recipientInfo = await CommentStorage.findAllByCmtNum(params.replyCmtNum);
-
-    //   recipientInfo.content = '답글 좋아요';
-    // }
-
     return {
       title: recipientInfo.description,
       recipientName: recipientInfo.name,
@@ -70,8 +49,7 @@ class Emotion {
   }
 
   async sendNotification() {
-    // const notificationInfo = this.getNotificationInfo();
-    const recipientInfo = this.xxNewGetRecipientInfo();
+    const recipientInfo = this.getRecipientInfo();
     const notificationInfo = this.getNotificationInfo(recipientInfo);
 
     if (notificationInfo.senderId !== notificationInfo.recipientId) {
