@@ -13,54 +13,6 @@ class Emotion {
     this.req = req;
   }
 
-  async getRecipientInfo() {
-    const { params } = this;
-    let recipientInfo;
-
-    if (params.boardNum) {
-      recipientInfo = await BoardStorage.findBoardInfoByBoardNum(
-        params.boardNum
-      );
-
-      recipientInfo.content = '게시물 좋아요';
-    }
-    if (params.cmtNum) {
-      recipientInfo = await CommentStorage.findAllByCmtNum(params.cmtNum);
-
-      recipientInfo.content = '댓글 좋아요';
-    }
-    if (params.replyCmtNum) {
-      recipientInfo = await CommentStorage.findAllByCmtNum(params.replyCmtNum);
-
-      recipientInfo.content = '답글 좋아요';
-    }
-
-    return recipientInfo;
-  }
-
-  async getNotificationInfo(recipientInfo) {
-    return {
-      title: recipientInfo.description,
-      recipientName: recipientInfo.name,
-      recipientId: recipientInfo.id,
-      content: recipientInfo.content,
-      senderName: this.auth.name,
-    };
-  }
-
-  async sendNotification() {
-    const recipientInfo = this.getRecipientInfo();
-    const notificationInfo = this.getNotificationInfo(recipientInfo);
-
-    if (notificationInfo.senderId !== notificationInfo.recipientId) {
-      this.createNotification(notificationInfo);
-    }
-  }
-
-  createNotification(notificationInfo) {
-    return new Notification(this.req).createNotification(notificationInfo);
-  }
-
   async likedByBoardNum() {
     const user = this.auth;
 
@@ -352,6 +304,54 @@ class Emotion {
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
+  }
+
+  async getRecipientInfo() {
+    const { params } = this;
+    let recipientInfo;
+
+    if (params.boardNum) {
+      recipientInfo = await BoardStorage.findBoardInfoByBoardNum(
+        params.boardNum
+      );
+
+      recipientInfo.content = '게시물 좋아요';
+    }
+    if (params.cmtNum) {
+      recipientInfo = await CommentStorage.findAllByCmtNum(params.cmtNum);
+
+      recipientInfo.content = '댓글 좋아요';
+    }
+    if (params.replyCmtNum) {
+      recipientInfo = await CommentStorage.findAllByCmtNum(params.replyCmtNum);
+
+      recipientInfo.content = '답글 좋아요';
+    }
+
+    return recipientInfo;
+  }
+
+  async getNotificationInfo(recipientInfo) {
+    return {
+      title: recipientInfo.description,
+      recipientName: recipientInfo.name,
+      recipientId: recipientInfo.id,
+      content: recipientInfo.content,
+      senderName: this.auth.name,
+    };
+  }
+
+  async sendNotification() {
+    const recipientInfo = this.getRecipientInfo();
+    const notificationInfo = this.getNotificationInfo(recipientInfo);
+
+    if (notificationInfo.senderId !== notificationInfo.recipientId) {
+      this.createNotification(notificationInfo);
+    }
+  }
+
+  createNotification(notificationInfo) {
+    return new Notification(this.req).createNotification(notificationInfo);
   }
 }
 
