@@ -13,7 +13,7 @@ class Emotion {
     this.req = req;
   }
 
-  async xxNewGetNotificationInfo() {
+  async getNotificationInfo() {
     const { params } = this;
     let recipientInfo;
 
@@ -46,15 +46,15 @@ class Emotion {
     return notificationInfo;
   }
 
-  async xxNewSendNotification() {
-    const notificationInfo = this.xxNewGetNotificationInfo();
+  async sendNotification() {
+    const notificationInfo = this.getNotificationInfo();
 
     if (notificationInfo.senderId !== notificationInfo.recipientId) {
-      this.xxNewCreateNotification(notificationInfo);
+      this.createNotification(notificationInfo);
     }
   }
 
-  xxNewCreateNotification(notificationInfo) {
+  createNotification(notificationInfo) {
     return new Notification(this.req).createNotification(notificationInfo);
   }
 
@@ -92,7 +92,7 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByBoardNum(emotionInfo);
 
       if (isCreat) {
-        await this.xxNewSendNotification();
+        await this.sendNotification();
 
         return {
           success: true,
@@ -189,7 +189,7 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByCmtNum(emotionInfo);
 
       if (isCreat) {
-        this.xxNewSendNotification();
+        this.sendNotification();
 
         return {
           success: true,
@@ -287,7 +287,7 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByReplyCmtNum(emotionInfo);
 
       if (isCreat) {
-        await this.xxNewSendNotification();
+        await this.sendNotification();
 
         return {
           success: true,
