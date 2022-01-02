@@ -36,7 +36,7 @@ class Emotion {
         return EmotionUtil.makeResponseByStatusCode(this.req, 409);
       }
 
-      const isCreat = await EmotionStorage.likedByBoardNum(emotionInfo);
+      const isCreat = await EmotionStorage.likedByTarget(emotionInfo);
 
       if (isCreat) {
         const { recipientId, recipientName, title } =
@@ -82,7 +82,7 @@ class Emotion {
         return EmotionUtil.makeResponseByStatusCode(this.req, 409);
       }
 
-      const isDelete = await EmotionStorage.unLikedByBoardNum(emotionInfo);
+      const isDelete = await EmotionStorage.unlikedByTarget(emotionInfo);
 
       if (isDelete) return EmotionUtil.makeResponseByStatusCode(this.req, 200);
       return EmotionUtil.makeResponseByStatusCode(this.req, 400);
@@ -98,7 +98,7 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
-      const cmtExistence = await EmotionStorage.existenceByCmtNumAndDepth(
+      const cmtExistence = await EmotionStorage.existOnlyCmtByCmtNumAndDepth(
         emotionInfo.cmtInfo
       );
 
@@ -114,7 +114,7 @@ class Emotion {
         return EmotionUtil.makeResponseByStatusCode(this.req, 409);
       }
 
-      const isCreat = await EmotionStorage.likedByCmtNum(emotionInfo);
+      const isCreat = await EmotionStorage.likedByTarget(emotionInfo);
 
       if (isCreat) {
         const { recipientId, recipientName, description } =
@@ -144,7 +144,7 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
-      const cmtExistence = await EmotionStorage.existenceByCmtNumAndDepth(
+      const cmtExistence = await EmotionStorage.existOnlyCmtByCmtNumAndDepth(
         emotionInfo.cmtInfo
       );
 
@@ -160,7 +160,7 @@ class Emotion {
         return EmotionUtil.makeResponseByStatusCode(this.req, 409);
       }
 
-      const isDelete = await EmotionStorage.unLikedByCmtNum(emotionInfo);
+      const isDelete = await EmotionStorage.unlikedByTarget(emotionInfo);
 
       if (isDelete) return EmotionUtil.makeResponseByStatusCode(this.req, 200);
       return EmotionUtil.makeResponseByStatusCode(this.req, 400);
@@ -176,9 +176,8 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
-      const replyCmtExistence = await EmotionStorage.existenceByCmtNumAndDepth(
-        emotionInfo.cmtInfo
-      );
+      const replyCmtExistence =
+        await EmotionStorage.existOnlyCmtByCmtNumAndDepth(emotionInfo.cmtInfo);
 
       if (!replyCmtExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 404);
@@ -192,7 +191,7 @@ class Emotion {
         return EmotionUtil.makeResponseByStatusCode(this.req, 409);
       }
 
-      const isCreat = await EmotionStorage.likedByReplyCmtNum(emotionInfo);
+      const isCreat = await EmotionStorage.likedByTarget(emotionInfo);
 
       if (isCreat) {
         const { recipientId, recipientName, description } =
@@ -221,9 +220,8 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
-      const replyCmtExistence = await EmotionStorage.existenceByCmtNumAndDepth(
-        emotionInfo.cmtInfo
-      );
+      const replyCmtExistence =
+        await EmotionStorage.existOnlyCmtByCmtNumAndDepth(emotionInfo.cmtInfo);
 
       if (!replyCmtExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 404);
@@ -237,7 +235,7 @@ class Emotion {
         return EmotionUtil.makeResponseByStatusCode(this.req, 409);
       }
 
-      const isDelete = await EmotionStorage.unLikedByReplyCmtNum(emotionInfo);
+      const isDelete = await EmotionStorage.unlikedByTarget(emotionInfo);
 
       if (isDelete) return EmotionUtil.makeResponseByStatusCode(this.req, 200);
       return EmotionUtil.makeResponseByStatusCode(this.req, 400);

@@ -14,14 +14,14 @@ class EmotionStorage {
       const { table, column } =
         EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
 
-      const query = `INSERT INTO ${table} (studentId, ${column}) VALUES (?, ?);`;
+      const query = `INSERT INTO ${table} (student_id, ${column}) VALUES (?, ?);`;
 
       const isCreat = await conn.query(query, [
         emotionInfo.studentId,
         cloumnValue,
       ]);
 
-      return isCreat;
+      return isCreat.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -46,7 +46,7 @@ class EmotionStorage {
         cloumnValue,
       ]);
 
-      return isDelete;
+      return isDelete.affectedRows;
     } catch (err) {
       throw err;
     } finally {
