@@ -18,22 +18,34 @@ class Student {
     this.SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
   }
 
+  static successMessage(msg, jwt) {
+    return {
+      success: true,
+      msg,
+      jwt,
+    };
+  }
+
+  static failMessage(msg, status) {
+    return {
+      success: false,
+      msg,
+      status,
+    };
+  }
+
   async login() {
     const client = this.body;
 
     if (!(client.id && client.password)) {
-      return { success: false, msg: '아이디 또는 비밀번호를 확인해주세요.' };
+      return Student.failMessage('아이디 또는 비밀번호를 확인해주세요.');
     }
 
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
 
       if (!checkedId) {
-        return {
-          success: false,
-          msg: '가입된 아이디가 아닙니다.',
-          status: 401,
-        };
+        return Student.failMessage('가입된 아이디가 아닙니다.', 401);
       }
 
       const comparePassword = bcrypt.compareSync(
@@ -44,13 +56,10 @@ class Student {
         const clubNum = await StudentStorage.findOneByLoginedId(client.id);
         const jwt = await Auth.createJWT(checkedId, clubNum);
 
-        return { success: true, msg: '로그인에 성공하셨습니다.', jwt };
+        return Student.successMessage('로그인에 성공하셨습니다.', jwt);
       }
-      return {
-        success: false,
-        msg: '잘못된 비밀번호입니다.',
-        status: 401,
-      };
+
+      return Student.failMessage('잘못된 비밀번호입니다.', 401);
     } catch (err) {
       return Error.ctrl('', err);
     }
