@@ -20,17 +20,21 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
-      const isBoardExist = await BoardStorage.existOnlyBoardNum(
+      const boardExistence = await BoardStorage.existOnlyBoardNum(
         emotionInfo.boardNum
       );
 
-      if (!isBoardExist) {
+      if (!boardExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 404);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
+      );
 
-      if (isEmotion) return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+      if (emotionExistence) {
+        return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+      }
 
       const isCreat = await EmotionStorage.likedByBoardNum(emotionInfo);
 
@@ -62,17 +66,19 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
-      const isBoardExist = await BoardStorage.existOnlyBoardNum(
+      const boardExistence = await BoardStorage.existOnlyBoardNum(
         emotionInfo.boardNum
       );
 
-      if (!isBoardExist) {
+      if (!boardExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 404);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
+      );
 
-      if (!isEmotion) {
+      if (!emotionExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 409);
       }
 
@@ -92,17 +98,21 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
-      const isCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
+      const cmtExistence = await EmotionStorage.existenceByCmtNumAndDepth(
         emotionInfo.cmtInfo
       );
 
-      if (!isCmtExist) {
+      if (!cmtExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 404);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
+      );
 
-      if (isEmotion) return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+      if (emotionExistence) {
+        return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+      }
 
       const isCreat = await EmotionStorage.likedByCmtNum(emotionInfo);
 
@@ -134,17 +144,19 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
-      const isCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
+      const cmtExistence = await EmotionStorage.existenceByCmtNumAndDepth(
         emotionInfo.cmtInfo
       );
 
-      if (!isCmtExist) {
+      if (!cmtExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 404);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
+      );
 
-      if (!isEmotion) {
+      if (!emotionExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 409);
       }
 
@@ -164,17 +176,21 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
-      const isReplyCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
+      const replyCmtExistence = await EmotionStorage.existenceByCmtNumAndDepth(
         emotionInfo.cmtInfo
       );
 
-      if (!isReplyCmtExist) {
+      if (!replyCmtExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 404);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
+      );
 
-      if (isEmotion) return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+      if (emotionExistence) {
+        return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+      }
 
       const isCreat = await EmotionStorage.likedByReplyCmtNum(emotionInfo);
 
@@ -205,17 +221,19 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
 
-      const isReplyCmtExist = await EmotionStorage.existenceByCmtNumAndDepth(
+      const replyCmtExistence = await EmotionStorage.existenceByCmtNumAndDepth(
         emotionInfo.cmtInfo
       );
 
-      if (!isReplyCmtExist) {
+      if (!replyCmtExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 404);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
+      );
 
-      if (!isEmotion) {
+      if (!emotionExistence) {
         return EmotionUtil.makeResponseByStatusCode(this.req, 409);
       }
 

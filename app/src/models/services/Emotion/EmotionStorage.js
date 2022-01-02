@@ -130,7 +130,7 @@ class EmotionStorage {
     }
   }
 
-  static async isEmotion(emotionInfo) {
+  static async existOnlyEmotion(emotionInfo) {
     let conn;
 
     try {
@@ -141,14 +141,14 @@ class EmotionStorage {
 
       const query = `SELECT no FROM ${table} WHERE student_id = ? AND ${column} = ?;`;
 
-      const isExist = await conn.query(query, [
+      const existence = await conn.query(query, [
         emotionInfo.studentId,
         emotionInfo.boardNum ||
           emotionInfo.cmtInfo.cmtNum ||
           emotionInfo.cmtInfo.replyCmtNum,
       ]);
 
-      return isExist[0];
+      return existence[0];
     } catch (err) {
       throw err;
     } finally {
