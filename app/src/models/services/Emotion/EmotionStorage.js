@@ -156,7 +156,7 @@ class EmotionStorage {
     }
   }
 
-  static async existenceByCmtNumAndDepth(cmtInfo) {
+  static async existOnlyCmtByCmtNumAndDepth(cmtInfo) {
     let conn;
 
     try {
@@ -164,12 +164,12 @@ class EmotionStorage {
 
       const query = `SELECT no FROM comments WHERE no = ? AND depth = ?;`;
 
-      const cmt = await conn.query(query, [
+      const existence = await conn.query(query, [
         cmtInfo.cmtNum || cmtInfo.replyCmtNum,
         cmtInfo.depth,
       ]);
 
-      return cmt[0];
+      return existence[0];
     } catch (err) {
       throw err;
     } finally {
