@@ -54,7 +54,7 @@ class Notification {
       );
 
       if (success) {
-        return success;
+        return { success: true };
       }
       return {
         success: false,
