@@ -15,17 +15,18 @@ class Emotion {
 
   async likedByBoardNum() {
     const user = this.auth;
-    const notification = new Notification(this.req);
+    const request = this.req;
+    const notification = new Notification(request);
 
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
+      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
       const boardExistence = await BoardStorage.existOnlyBoardNum(
         emotionInfo.boardNum
       );
 
       if (!boardExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 404);
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
       }
 
       const emotionExistence = await EmotionStorage.existOnlyEmotion(
@@ -33,7 +34,7 @@ class Emotion {
       );
 
       if (emotionExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
       const isCreat = await EmotionStorage.likedByTarget(emotionInfo);
@@ -54,24 +55,26 @@ class Emotion {
           await notification.createNotification(notificationInfo);
         }
 
-        return EmotionUtil.makeResponseByStatusCode(this.req, 200);
+        return EmotionUtil.makeResponseByStatusCode(request, 200);
       }
-      return EmotionUtil.makeResponseByStatusCode(this.req, 400);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
       return Error.ctrl('', err);
     }
   }
 
   async unLikedByBoardNum() {
+    const request = this.req;
+
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
+      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
       const boardExistence = await BoardStorage.existOnlyBoardNum(
         emotionInfo.boardNum
       );
 
       if (!boardExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 404);
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
       }
 
       const emotionExistence = await EmotionStorage.existOnlyEmotion(
@@ -79,13 +82,13 @@ class Emotion {
       );
 
       if (!emotionExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
       const isDelete = await EmotionStorage.unlikedByTarget(emotionInfo);
 
-      if (isDelete) return EmotionUtil.makeResponseByStatusCode(this.req, 200);
-      return EmotionUtil.makeResponseByStatusCode(this.req, 400);
+      if (isDelete) return EmotionUtil.makeResponseByStatusCode(request, 200);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -93,17 +96,18 @@ class Emotion {
 
   async likedByCmtNum() {
     const user = this.auth;
-    const notification = new Notification(this.req);
+    const request = this.req;
+    const notification = new Notification(request);
 
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
+      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
       const cmtExistence = await EmotionStorage.existOnlyCmtByCmtNumAndDepth(
         emotionInfo.cmtInfo
       );
 
       if (!cmtExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 404);
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
       }
 
       const emotionExistence = await EmotionStorage.existOnlyEmotion(
@@ -111,7 +115,7 @@ class Emotion {
       );
 
       if (emotionExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
       const isCreat = await EmotionStorage.likedByTarget(emotionInfo);
@@ -132,24 +136,26 @@ class Emotion {
           await notification.createNotification(notificationInfo);
         }
 
-        return EmotionUtil.makeResponseByStatusCode(this.req, 200);
+        return EmotionUtil.makeResponseByStatusCode(request, 200);
       }
-      return EmotionUtil.makeResponseByStatusCode(this.req, 400);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
       return Error.ctrl('', err);
     }
   }
 
   async unLikedByCmtNum() {
+    const request = this.req;
+
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
+      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
       const cmtExistence = await EmotionStorage.existOnlyCmtByCmtNumAndDepth(
         emotionInfo.cmtInfo
       );
 
       if (!cmtExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 404);
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
       }
 
       const emotionExistence = await EmotionStorage.existOnlyEmotion(
@@ -157,13 +163,13 @@ class Emotion {
       );
 
       if (!emotionExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
       const isDelete = await EmotionStorage.unlikedByTarget(emotionInfo);
 
-      if (isDelete) return EmotionUtil.makeResponseByStatusCode(this.req, 200);
-      return EmotionUtil.makeResponseByStatusCode(this.req, 400);
+      if (isDelete) return EmotionUtil.makeResponseByStatusCode(request, 200);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -171,16 +177,17 @@ class Emotion {
 
   async likedByReplyCmtNum() {
     const user = this.auth;
+    const request = this.req;
     const notification = new Notification(this.req);
 
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
+      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
       const replyCmtExistence =
         await EmotionStorage.existOnlyCmtByCmtNumAndDepth(emotionInfo.cmtInfo);
 
       if (!replyCmtExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 404);
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
       }
 
       const emotionExistence = await EmotionStorage.existOnlyEmotion(
@@ -188,7 +195,7 @@ class Emotion {
       );
 
       if (emotionExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
       const isCreat = await EmotionStorage.likedByTarget(emotionInfo);
@@ -208,23 +215,25 @@ class Emotion {
 
           await notification.createNotification(notificationInfo);
         }
-        return EmotionUtil.makeResponseByStatusCode(this.req, 200);
+        return EmotionUtil.makeResponseByStatusCode(request, 200);
       }
-      return EmotionUtil.makeResponseByStatusCode(this.req, 400);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
       return Error.ctrl('', err);
     }
   }
 
   async unLikedByReplyCmtNum() {
+    const request = this.req;
+
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(this.req);
+      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
       const replyCmtExistence =
         await EmotionStorage.existOnlyCmtByCmtNumAndDepth(emotionInfo.cmtInfo);
 
       if (!replyCmtExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 404);
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
       }
 
       const emotionExistence = await EmotionStorage.existOnlyEmotion(
@@ -232,13 +241,13 @@ class Emotion {
       );
 
       if (!emotionExistence) {
-        return EmotionUtil.makeResponseByStatusCode(this.req, 409);
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
       const isDelete = await EmotionStorage.unlikedByTarget(emotionInfo);
 
-      if (isDelete) return EmotionUtil.makeResponseByStatusCode(this.req, 200);
-      return EmotionUtil.makeResponseByStatusCode(this.req, 400);
+      if (isDelete) return EmotionUtil.makeResponseByStatusCode(request, 200);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
       return Error.ctrl('', err);
     }
