@@ -4,6 +4,56 @@ const mariadb = require('../../../config/mariadb');
 const EmotionUtil = require('./utils');
 
 class EmotionStorage {
+  static async likedByTarget(emotionInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const cloumnValue = EmotionUtil.getTargetValueByEmotionInfo(emotionInfo);
+      const { table, column } =
+        EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
+
+      const query = `INSERT INTO ${table} (studentId, ${column}) VALUES (?, ?);`;
+
+      const isCreat = await conn.query(query, [
+        emotionInfo.studentId,
+        cloumnValue,
+      ]);
+
+      return isCreat;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async unlikedByTarget(emotionInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const cloumnValue = EmotionUtil.getTargetValueByEmotionInfo(emotionInfo);
+      const { table, column } =
+        EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
+
+      const query = `DELETE FROM ${table} WHERE student_id = ? AND ${column} = ?;`;
+
+      const isDelete = await conn.query(query, [
+        emotionInfo.studentId,
+        cloumnValue,
+      ]);
+
+      return isDelete;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async likedByBoardNum(emotionInfo) {
     let conn;
 
@@ -138,14 +188,13 @@ class EmotionStorage {
 
       const { table, column } =
         EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
+      const cloumnValue = EmotionUtil.getTargetValueByEmotionInfo(emotionInfo);
 
       const query = `SELECT no FROM ${table} WHERE student_id = ? AND ${column} = ?;`;
 
       const existence = await conn.query(query, [
         emotionInfo.studentId,
-        emotionInfo.boardNum ||
-          emotionInfo.cmtInfo.cmtNum ||
-          emotionInfo.cmtInfo.replyCmtNum,
+        cloumnValue,
       ]);
 
       return existence[0];

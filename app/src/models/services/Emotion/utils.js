@@ -11,6 +11,14 @@ class EmotionUtil {
     return { table: 'reply_comment_emotions', column: 'reply_comment_no' };
   }
 
+  static getTargetValueByEmotionInfo(emotionInfo) {
+    return (
+      emotionInfo.boardNum ||
+      emotionInfo.cmtInfo.cmtNum ||
+      emotionInfo.cmtInfo.replyCmtNum
+    );
+  }
+
   static makeEmotionInfo(req) {
     const user = req.auth;
     const { params } = req;
