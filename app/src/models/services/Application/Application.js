@@ -302,8 +302,6 @@ class Application {
   }
 
   async xxNewSendApproveNotification() {
-    const notification = new Notification(this.req);
-
     const { clubName } = await NotificationStorage.findClubInfoByClubNum(
       applicantInfo.clubNum
     );
@@ -328,14 +326,12 @@ class Application {
         if (recipient.id === applicantInfo.applicant) {
           notificationInfo.content = '동아리 가입을 축하합니다.🎊';
         }
-        await notification.createNotification(notificationInfo);
+        await this.createNotification(notificationInfo);
       }
     });
   }
 
   async xxNewSendRejectNotification() {
-    const notification = new Notification(this.req);
-
     const senderName = this.auth.name;
 
     const { clubName } = await NotificationStorage.findClubInfoByClubNum(
@@ -353,7 +349,11 @@ class Application {
       content: '동아리 가입 신청 결과',
     };
 
-    await notification.createNotification(notificationInfo);
+    await this.createNotification(notificationInfo);
+  }
+
+  createNotification(notificationInfo) {
+    return new Notification(this.req).createNotification(notificationInfo);
   }
 
   async updateApplicantById() {
