@@ -20,7 +20,7 @@ class ClubStorage {
     }
   }
 
-  static async clubListSearch(name) {
+  static async findAllClubList(name) {
     const conn = await mariadb.getConnection();
 
     const keyword = `%${name.replace(/(\s*)/g, '')}%`;
