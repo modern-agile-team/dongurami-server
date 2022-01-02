@@ -1,41 +1,8 @@
 'use strict';
 
 const Emotion = require('../../models/services/Emotion/Emotion');
-const logger = require('../../config/logger');
-
-function processCtrl(res, apiInfo) {
-  function createLoggerMsg() {
-    if (apiInfo.response.status === undefined) {
-      return `${apiInfo.method} ${apiInfo.path} 500: \n${apiInfo.response.errMsg.stack}`;
-    }
-    return `${apiInfo.method} ${apiInfo.path} ${apiInfo.response.status}: ${apiInfo.response.msg}`;
-  }
-
-  function createLogger() {
-    if (apiInfo.response.status < 400) {
-      return logger.info(createLoggerMsg());
-    }
-    return logger.error(createLoggerMsg());
-  }
-
-  function responseToClientByRequest(response) {
-    if (response.status === undefined) {
-      return res.status(500).json(response.clientMsg);
-    }
-    return res.status(response.status).json(response);
-  }
-
-  createLogger();
-  return responseToClientByRequest(apiInfo.response);
-}
-
-function getApiInfo(method, response, req) {
-  return {
-    method,
-    response,
-    path: req.originalUrl,
-  };
-}
+const processCtrl = require('../../models/utils/processCtrl');
+const getApiInfo = require('../../models/utils/getApiInfo');
 
 const process = {
   likedByBoardNum: async (req, res) => {
@@ -49,12 +16,7 @@ const process = {
   unLikedByBoardNum: async (req, res) => {
     const emotion = new Emotion(req);
     const response = await emotion.unLikedByBoardNum();
-    const apiInfo = {
-      response,
-      params: req.params.boardNum,
-      method: 'PATCH',
-      path: 'emotion/unliked/board',
-    };
+    const apiInfo = getApiInfo('PUT', response, req);
 
     return processCtrl(res, apiInfo);
   },
@@ -62,12 +24,7 @@ const process = {
   likedByCmtNum: async (req, res) => {
     const emotion = new Emotion(req);
     const response = await emotion.likedByCmtNum();
-    const apiInfo = {
-      response,
-      params: req.params.cmtNum,
-      method: 'PATCH',
-      path: 'emotion/liked/comment',
-    };
+    const apiInfo = getApiInfo('PUT', response, req);
 
     return processCtrl(res, apiInfo);
   },
@@ -75,12 +32,7 @@ const process = {
   unLikedByCmtNum: async (req, res) => {
     const emotion = new Emotion(req);
     const response = await emotion.unLikedByCmtNum();
-    const apiInfo = {
-      response,
-      params: req.params.cmtNum,
-      method: 'PATCH',
-      path: 'emotion/unliked/comment',
-    };
+    const apiInfo = getApiInfo('PUT', response, req);
 
     return processCtrl(res, apiInfo);
   },
@@ -88,12 +40,7 @@ const process = {
   likedByReplyCmtNum: async (req, res) => {
     const emotion = new Emotion(req);
     const response = await emotion.likedByReplyCmtNum();
-    const apiInfo = {
-      response,
-      params: req.params.replyCmtNum,
-      method: 'PATCH',
-      path: 'emotion/liked/reply-comment',
-    };
+    const apiInfo = getApiInfo('PUT', response, req);
 
     return processCtrl(res, apiInfo);
   },
@@ -101,12 +48,7 @@ const process = {
   unLikedByReplyCmtNum: async (req, res) => {
     const emotion = new Emotion(req);
     const response = await emotion.unLikedByReplyCmtNum();
-    const apiInfo = {
-      response,
-      params: req.params.replyCmtNum,
-      method: 'PATCH',
-      path: 'emotion/unliked/reply-comment',
-    };
+    const apiInfo = getApiInfo('PUT', response, req);
 
     return processCtrl(res, apiInfo);
   },
