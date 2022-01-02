@@ -2,25 +2,28 @@
 
 class EmotionUtil {
   static makeEmotionInfo(req) {
-    if (req.params.boardNum) {
+    const user = req.auth;
+    const { params } = req;
+
+    if (params.boardNum) {
       return {
-        studentId: req.auth.id,
-        boardNum: req.params.boardNum,
+        studentId: user.id,
+        boardNum: params.boardNum,
       };
     }
-    if (req.params.cmtNum) {
+    if (params.cmtNum) {
       return {
-        studentId: req.auth.id,
+        studentId: user.id,
         cmtInfo: {
-          cmtNum: req.params.cmtNum,
+          cmtNum: params.cmtNum,
           depth: 0,
         },
       };
     }
     return {
-      studentId: req.auth.id,
+      studentId: user.id,
       cmtInfo: {
-        replyCmtNum: req.params.replyCmtNum,
+        replyCmtNum: params.replyCmtNum,
         depth: 1,
       },
     };
