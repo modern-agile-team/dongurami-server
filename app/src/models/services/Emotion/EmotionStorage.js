@@ -1,6 +1,7 @@
 'use strict';
 
 const mariadb = require('../../../config/mariadb');
+const EmotionUtil = require('./utils');
 
 class EmotionStorage {
   static async likedByBoardNum(emotionInfo) {
@@ -131,22 +132,12 @@ class EmotionStorage {
 
   static async isEmotion(emotionInfo) {
     let conn;
-    let table;
-    let column;
 
     try {
       conn = await mariadb.getConnection();
 
-      if (emotionInfo.boardNum) {
-        table = 'board_emotions';
-        column = 'board_no';
-      } else if (emotionInfo.cmtInfo.cmtNum) {
-        table = 'comment_emotions';
-        column = 'comment_no';
-      } else if (emotionInfo.cmtInfo.replyCmtNum) {
-        table = 'reply_comment_emotions';
-        column = 'reply_comment_no';
-      }
+      const { table, column } =
+        EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
 
       const query = `SELECT no FROM ${table} WHERE student_id = ? AND ${column} = ?;`;
 

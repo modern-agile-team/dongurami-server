@@ -1,6 +1,16 @@
 'use strict';
 
 class EmotionUtil {
+  static getTableAndcolumnByEmotionInfo(emotionInfo) {
+    if (emotionInfo.boardNum) {
+      return { table: 'board_emotions', column: 'board_no' };
+    }
+    if (emotionInfo.cmtInfo.cmtNum) {
+      return { table: 'comment_emotions', column: 'comment_no' };
+    }
+    return { table: 'reply_comment_emotions', column: 'reply_comment_no' };
+  }
+
   static makeEmotionInfo(req) {
     const user = req.auth;
     const { params } = req;
