@@ -20,7 +20,11 @@ class Profile {
       const profile = await ProfileStorage.findInfoByStudentId(id);
 
       if (profile === undefined) {
-        return { success: false, msg: '존재하지 않는 회원입니다.' };
+        return {
+          success: false,
+          msg: '존재하지 않는 회원입니다.',
+          status: 404,
+        };
       }
       if (!user || profile.id !== user.id) {
         delete profile.email;
@@ -57,7 +61,13 @@ class Profile {
         };
       }
 
-      return { success: true, msg: '프로필 조회 성공', userInfo, profile };
+      return {
+        success: true,
+        msg: '프로필 조회 성공',
+        status: 200,
+        userInfo,
+        profile,
+      };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
     }
