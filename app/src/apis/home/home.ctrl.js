@@ -20,7 +20,7 @@ const process = {
       return res.status(500).json({ success: false, msg: response.clientMsg });
     }
     logger.error(`GET /api/club/home/${clubNum} 404: ${response.msg}`);
-    return res.status(404).json(response); // 존재하는 동아리가 없을 시 -> 파라미터를 건들여 접속한 경우
+    return res.status(404).json(response);
   },
 
   updateClubIntroduce: async (req, res) => {
