@@ -11,18 +11,14 @@ class Search {
     this.query = req.query;
   }
 
-  static successMessage(keyword, result) {
+  static makeResponseMsg(status, target, result) {
     return {
-      success: true,
-      msg: `${keyword}(을)를 검색한 결과입니다.`,
+      success: status === 200,
+      msg:
+        status === 200
+          ? `${target}(을)를 검색한 결과입니다.`
+          : `${target}을(를) 확인해주세요`,
       result,
-    };
-  }
-
-  static failMessage(msg) {
-    return {
-      success: false,
-      msg,
     };
   }
 
@@ -53,7 +49,7 @@ class Search {
 
       Search.anonymousUserFilter(result);
 
-      return Search.successMessage(searchInfo.keyword, result);
+      return Search.makeResponseMsg(200, searchInfo.keyword, result);
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -64,7 +60,7 @@ class Search {
     searchInfo.category = boardCategory[this.params.category];
 
     return !searchInfo.category
-      ? Search.failMessage('존재하지 않는 게시판입니다.')
+      ? Search.makeResponseMsg(400, '게시판')
       : searchInfo;
   }
 
@@ -73,12 +69,17 @@ class Search {
     const searchType = ['title', 'name', 'clubName'];
 
     if (!searchType.includes(searchInfo.type)) {
-      return Search.failMessage('검색 타입을 확인해주세요');
+      return Search.makeResponseMsg(400, '검색 타입');
     }
-    if (searchInfo.type === 'name') searchInfo.type = 'st.name';
-    if (searchInfo.type === 'clubName') searchInfo.type = 'clubs.name';
+
+    Search.searchTypeChange(searchInfo);
 
     return searchInfo;
+  }
+
+  static searchTypeChange(searchInfo) {
+    if (searchInfo.type === 'name') searchInfo.type = 'st.name';
+    if (searchInfo.type === 'clubName') searchInfo.type = 'clubs.name';
   }
 
   searchClubNoCheck() {
@@ -86,10 +87,11 @@ class Search {
 
     if (searchInfo.category === 5) {
       if (searchInfo.clubno === '1' || !searchInfo.clubno) {
-        return Search.failMessage('동아리 고유번호를 확인해주세요.');
+        return Search.makeResponseMsg(400, '동아리 고유번호');
       }
     }
     searchInfo.clubno = 1;
+
     return searchInfo;
   }
 
@@ -103,14 +105,14 @@ class Search {
       const searchInfo = {
         type: query.type,
         keyword: query.keyword,
+        lastNum: query.lastNum,
         sort: query.sort || 'inDate',
         order: query.order || 'desc',
-        lastNum: query.lastNum,
       };
 
       const boards = await BoardStorage.findAllPromotionSearch(searchInfo);
 
-      return Search.successMessage(searchInfo.keyword, boards);
+      return Search.makeResponseMsg(200, searchInfo.keyword, boards);
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -122,7 +124,7 @@ class Search {
     try {
       const clubs = await ClubStorage.findAllClubList(name);
 
-      return Search.successMessage(name, clubs);
+      return Search.makeResponseMsg(200, name, clubs);
     } catch (err) {
       return Error.ctrl('', err);
     }
