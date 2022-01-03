@@ -10,7 +10,7 @@ class EmotionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const cloumnValue = EmotionUtil.getTargetValueByEmotionInfo(emotionInfo);
+      const columnValue = EmotionUtil.getTargetValueByEmotionInfo(emotionInfo);
       const { table, column } =
         EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
 
@@ -18,7 +18,7 @@ class EmotionStorage {
 
       const isCreate = await conn.query(query, [
         emotionInfo.studentId,
-        cloumnValue,
+        columnValue,
       ]);
 
       return isCreate.affectedRows;
@@ -35,7 +35,7 @@ class EmotionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const cloumnValue = EmotionUtil.getTargetValueByEmotionInfo(emotionInfo);
+      const columnValue = EmotionUtil.getTargetValueByEmotionInfo(emotionInfo);
       const { table, column } =
         EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
 
@@ -43,7 +43,7 @@ class EmotionStorage {
 
       const isDelete = await conn.query(query, [
         emotionInfo.studentId,
-        cloumnValue,
+        columnValue,
       ]);
 
       return isDelete.affectedRows;
@@ -62,13 +62,13 @@ class EmotionStorage {
 
       const { table, column } =
         EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
-      const cloumnValue = EmotionUtil.getTargetValueByEmotionInfo(emotionInfo);
+      const columnValue = EmotionUtil.getTargetValueByEmotionInfo(emotionInfo);
 
       const query = `SELECT no FROM ${table} WHERE student_id = ? AND ${column} = ?;`;
 
       const existence = await conn.query(query, [
         emotionInfo.studentId,
-        cloumnValue,
+        columnValue,
       ]);
 
       return existence[0];
