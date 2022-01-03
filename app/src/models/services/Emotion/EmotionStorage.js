@@ -16,12 +16,12 @@ class EmotionStorage {
 
       const query = `INSERT INTO ${table} (student_id, ${column}) VALUES (?, ?);`;
 
-      const isCreat = await conn.query(query, [
+      const isCreate = await conn.query(query, [
         emotionInfo.studentId,
         cloumnValue,
       ]);
 
-      return isCreat.affectedRows;
+      return isCreate.affectedRows;
     } catch (err) {
       throw err;
     } finally {

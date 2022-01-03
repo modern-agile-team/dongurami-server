@@ -37,9 +37,9 @@ class Emotion {
         return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
-      const isCreat = await EmotionStorage.likedByTarget(emotionInfo);
+      const isCreate = await EmotionStorage.likedByTarget(emotionInfo);
 
-      if (isCreat) {
+      if (isCreate) {
         const { recipientId, recipientName, title } =
           await BoardStorage.findBoardInfoByBoardNum(emotionInfo.boardNum);
 
@@ -118,9 +118,9 @@ class Emotion {
         return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
-      const isCreat = await EmotionStorage.likedByTarget(emotionInfo);
+      const isCreate = await EmotionStorage.likedByTarget(emotionInfo);
 
-      if (isCreat) {
+      if (isCreate) {
         const { recipientId, recipientName, description } =
           await CommentStorage.findAllByCmtNum(emotionInfo.cmtInfo.cmtNum);
 
@@ -198,9 +198,9 @@ class Emotion {
         return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
-      const isCreat = await EmotionStorage.likedByTarget(emotionInfo);
+      const isCreate = await EmotionStorage.likedByTarget(emotionInfo);
 
-      if (isCreat) {
+      if (isCreate) {
         const { recipientId, recipientName, description } =
           await CommentStorage.findAllByCmtNum(emotionInfo.cmtInfo.replyCmtNum);
 
