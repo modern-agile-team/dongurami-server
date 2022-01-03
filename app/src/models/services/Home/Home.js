@@ -10,6 +10,21 @@ class Home {
     this.auth = req.auth;
   }
 
+  static successMsg(msg, result) {
+    return {
+      success: true,
+      msg,
+      result,
+    };
+  }
+
+  static falseMsg(msg) {
+    return {
+      success: false,
+      msg,
+    };
+  }
+
   async findOneLeader() {
     const { clubNum } = this.params;
     const leaderInfo = await HomeStorage.findOneLeader(clubNum);
@@ -46,20 +61,18 @@ class Home {
       const leaderInfo = await this.findOneLeader();
 
       if (!leaderInfo) {
-        return { success: false, msg: '존재하지 않는 동아리입니다.' };
+        return Home.falseMsg('존재하지 않는 동아리입니다.');
       }
 
       const clientInfo = await this.findOneClient(leaderInfo.id);
       const clubInfo = await this.findOneClubInfo();
       clubInfo.gender = await this.checkClubGender();
 
-      return {
-        success: true,
-        msg: '동아리홈 조회 성공',
+      return Home.successMsg('동아리홈 조회 성공', {
         leaderInfo,
         clientInfo,
         clubInfo,
-      };
+      });
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -83,9 +96,9 @@ class Home {
       if ((await this.isLeader()).leader === this.auth.id) {
         await HomeStorage.updateClubIntroduce(clubInfo);
 
-        return { success: true, msg: '동아리 소개가 수정되었습니다.' };
+        return Home.successMsg('동아리 소개가 수정되었습니다.');
       }
-      return { success: false, msg: '소개 수정 권한이 없습니다.' };
+      return Home.falseMsg('소개 수정 권한이 없습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -101,9 +114,9 @@ class Home {
       if ((await this.isLeader()).leader === this.auth.id) {
         await HomeStorage.updateClubLogo(logoInfo);
 
-        return { success: true, msg: '로고가 수정되었습니다.' };
+        return Home.successMsg('로고가 수정되었습니다.');
       }
-      return { success: false, msg: '로고 수정 권한이 없습니다.' };
+      return Home.falseMsg('로고 수정 권한이 없습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
