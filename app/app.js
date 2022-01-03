@@ -41,7 +41,7 @@ const notification = require('./src/apis/notification');
 const s3 = require('./src/apis/s3');
 const letter = require('./src/apis/letter');
 const naver = require('./src/apis/naver');
-const emotion = require('./src/apis/emotions');
+const emotion = require('./src/apis/emotion');
 
 app.use('/api/board', board);
 app.use('/api', root);
