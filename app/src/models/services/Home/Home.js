@@ -11,18 +11,15 @@ class Home {
   }
 
   static makeMsg(status, msg, result) {
-    const success = status < 400;
-
     return {
-      success,
       msg,
       result,
+      success: status < 400,
     };
   }
 
   async findOneLeader() {
-    const { clubNum } = this.params;
-    const leaderInfo = await HomeStorage.findOneLeader(clubNum);
+    const leaderInfo = await HomeStorage.findOneLeader(this.params.clubNum);
 
     return leaderInfo;
   }
@@ -38,15 +35,13 @@ class Home {
   }
 
   async findOneClubInfo() {
-    const { clubNum } = this.params;
-    const clubInfo = await HomeStorage.findOneClubInfo(clubNum);
+    const clubInfo = await HomeStorage.findOneClubInfo(this.params.clubNum);
 
     return clubInfo;
   }
 
   async checkClubGender() {
-    const { clubNum } = this.params;
-    const gender = await HomeStorage.checkClubGender(clubNum);
+    const gender = await HomeStorage.checkClubGender(this.params.clubNum);
 
     return gender;
   }
@@ -74,9 +69,7 @@ class Home {
   }
 
   async isLeader() {
-    const { clubNum } = this.params;
-
-    const leader = await HomeStorage.isLeader(clubNum);
+    const leader = await HomeStorage.isLeader(this.params.clubNum);
 
     return leader;
   }
