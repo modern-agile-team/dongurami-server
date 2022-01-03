@@ -34,6 +34,13 @@ class Home {
     return clubInfo;
   }
 
+  async checkClubGender() {
+    const { clubNum } = this.params;
+    const gender = await HomeStorage.checkClubGender(clubNum);
+
+    return gender;
+  }
+
   async findOneByClubNum() {
     try {
       const leaderInfo = await this.findOneLeader();
@@ -44,6 +51,7 @@ class Home {
 
       const clientInfo = await this.findOneClient(leaderInfo.id);
       const clubInfo = await this.findOneClubInfo();
+      clubInfo.gender = await this.checkClubGender();
 
       return {
         success: true,

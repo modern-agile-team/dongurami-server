@@ -54,19 +54,32 @@ class HomeStorage {
 
       const findClubInfo =
         'SELECT name, category, logo_url AS logoUrl, introduce FROM clubs WHERE no = ?;';
-      const gender = `SELECT SUM(M) AS man, SUM(W) AS women FROM
+
+      const clubInfo = await conn.query(findClubInfo, clubNum);
+
+      return clubInfo[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async checkClubGender(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT SUM(M) AS man, SUM(W) AS women FROM
         (SELECT (CASE gender WHEN 1 THEN 1 ELSE 0 END) AS M, 
         (CASE gender WHEN 2 THEN 1 ELSE 0 END) AS W 
         FROM (SELECT gender FROM students INNER JOIN members ON students.id = members.student_id WHERE club_no = ?) 
         AS collectMember) AS collectGender;`;
 
-      const clubInfo = await conn.query(findClubInfo, clubNum);
-      const cntGender = await conn.query(gender, clubNum);
+      const cntGender = await conn.query(query, clubNum);
 
-      clubInfo[0].genderMan = cntGender[0].man;
-      clubInfo[0].genderWomen = cntGender[0].women;
-
-      return clubInfo[0];
+      return cntGender[0];
     } catch (err) {
       throw err;
     } finally {
