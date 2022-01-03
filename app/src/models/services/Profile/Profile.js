@@ -13,10 +13,10 @@ class Profile {
   }
 
   async findOneByStudentId() {
-    try {
-      const id = this.params.studentId;
-      const user = this.auth;
+    const id = this.params.studentId;
+    const user = this.auth;
 
+    try {
       const profile = await ProfileStorage.findInfoByStudentId(id);
 
       if (profile === undefined) {
