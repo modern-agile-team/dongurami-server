@@ -13,11 +13,11 @@ class Profile {
   }
 
   async findOneByStudentId() {
-    const id = this.params.studentId;
+    const { studentId } = this.params;
     const user = this.auth;
 
     try {
-      const profile = await ProfileStorage.findInfoByStudentId(id);
+      const profile = await ProfileStorage.findInfoByStudentId(studentId);
 
       if (profile === undefined) {
         return {
@@ -34,14 +34,14 @@ class Profile {
       }
 
       if (user) {
-        const studentInfo = await StudentStorage.findOneSnsUserById(id);
+        const studentInfo = await StudentStorage.findOneSnsUserById(studentId);
 
-        if (studentInfo && studentInfo.studentId === id) {
+        if (studentInfo && studentInfo.studentId === studentId) {
           profile.isNaverUser = 1;
         } else profile.isNaverUser = 0;
       } else profile.isNaverUser = 0;
 
-      const clubs = await ProfileStorage.findAllClubByStudentId(id);
+      const clubs = await ProfileStorage.findAllClubByStudentId(studentId);
 
       profile.clubs = [];
 
