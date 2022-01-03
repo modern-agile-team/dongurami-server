@@ -5,9 +5,11 @@ const Error = require('../../utils/Error');
 
 class ClubStorage {
   static async readClubList() {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     try {
+      conn = await mariadb.getConnection();
+
       const query =
         'SELECT no, name, category, logo_url AS logoUrl FROM clubs WHERE no > 1;';
       const result = await conn.query(query);
@@ -21,11 +23,13 @@ class ClubStorage {
   }
 
   static async findAllClubList(name) {
-    const conn = await mariadb.getConnection();
+    let conn;
 
     const keyword = `%${name.replace(/(\s*)/g, '')}%`;
 
     try {
+      conn = await mariadb.getConnection();
+
       const query = `SELECT no, name, category, logo_url AS logoUrl FROM clubs WHERE REPLACE(name, ' ', '') like ?;`;
       const result = await conn.query(query, [keyword]);
 
