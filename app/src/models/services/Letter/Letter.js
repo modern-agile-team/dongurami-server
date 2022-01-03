@@ -85,13 +85,22 @@ class Letter {
       if (reading) {
         const letters = await LetterStorage.findLettersByGroup(letterInfo);
 
-        if (letters[0].hiddenFlag) {
+        if (letters[0].otherHiddenFlag || letters[0].myHiddenFlag) {
           letters.forEach((letter) => {
-            letter.name = '익명';
-            if (letter.senderId !== id) {
-              letter.senderId = '익명';
-            } else {
-              letter.recipientId = '익명';
+            if (letter.otherHiddenFlag) {
+              letter.name = '익명';
+              if (letter.senderId !== id) {
+                letter.senderId = '익명';
+              } else {
+                letter.recipientId = '익명';
+              }
+            }
+            if (letter.myHiddenFlag) {
+              if (letter.senderId !== id) {
+                letter.recipient = '익명';
+              } else {
+                letter.senderId = '익명';
+              }
             }
           });
         }
