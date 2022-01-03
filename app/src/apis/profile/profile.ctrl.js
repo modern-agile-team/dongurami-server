@@ -16,20 +16,9 @@ const process = {
   updateStudentInfo: async (req, res) => {
     const profile = new Profile(req);
     const response = await profile.updateStudentInfo();
-    const { studentId } = req.params;
+    const apiInfo = getApiInfo('PUT', response, req);
 
-    if (response.success) {
-      logger.info(`PUT /api/profile/${studentId} 200: ${response.msg}`);
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `PUT /api/profile/${studentId} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(`PUT /api/profile/${studentId} 400: ${response.msg}`);
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 };
 
