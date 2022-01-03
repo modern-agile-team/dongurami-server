@@ -245,13 +245,11 @@ class Application {
   }
 
   async createMemberById() {
-    // const user = this.auth;
-    // const notification = new Notification(this.req);
-
     try {
       const applicantInfo = {
         clubNum: this.params.clubNum,
         applicant: this.body.applicant,
+        type: '승인',
       };
 
       const isUpdate = await ApplicationStorage.updateAcceptedApplicantById(
@@ -261,35 +259,8 @@ class Application {
       const isCreate = await ApplicationStorage.createMemberById(applicantInfo);
 
       if (isUpdate && isCreate) {
-        // const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-        //   applicantInfo.clubNum
-        // );
+        await this.sendNotification(applicantInfo.type);
 
-        // const recipients = await NotificationStorage.findAllByClubNum(
-        //   applicantInfo.clubNum
-        // );
-
-        // const recipientName =
-        //   await ApplicationStorage.findOneByApplicantIdAndClubNum(
-        //     applicantInfo
-        //   );
-
-        // recipients.forEach(async (recipient) => {
-        //   if (user.id !== recipient.id) {
-        //     const notificationInfo = {
-        //       clubName,
-        //       senderName: user.name,
-        //       recipientName: recipient.name,
-        //       recipientId: recipient.id,
-        //       content: `${recipientName}님 가입`,
-        //     };
-
-        //     if (recipient.id === applicantInfo.applicant) {
-        //       notificationInfo.content = '동아리 가입을 축하합니다.🎊';
-        //     }
-        //     await notification.createNotification(notificationInfo);
-        //   }
-        // });
         return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
       }
       return {
@@ -301,38 +272,21 @@ class Application {
     }
   }
 
-  async xxNewSendApproveNotification() {
-    const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-      applicantInfo.clubNum
-    );
+  async sendNotification(resultType) {
+    const notificationInfo = await this.getNotificationInfo(resultType);
 
-    const recipients = await NotificationStorage.findAllByClubNum(
-      applicantInfo.clubNum
-    );
+    if (resultType === '승인') {
+      await this.sendApproveNotification(notificationInfo);
+    }
 
-    const recipientName =
-      await ApplicationStorage.findOneByApplicantIdAndClubNum(applicantInfo);
-
-    recipients.forEach(async (recipient) => {
-      if (user.id !== recipient.id) {
-        const notificationInfo = {
-          clubName,
-          senderName: user.name,
-          recipientName: recipient.name,
-          recipientId: recipient.id,
-          content: `${recipientName}님 가입`,
-        };
-
-        if (recipient.id === applicantInfo.applicant) {
-          notificationInfo.content = '동아리 가입을 축하합니다.🎊';
-        }
-        await this.createNotification(notificationInfo);
-      }
-    });
+    if (resultType === '거절') await this.createNotification(notificationInfo);
   }
 
-  async xxNewSendRejectNotification() {
-    const senderName = this.auth.name;
+  async getNotificationInfo(resultType) {
+    const applicantInfo = {
+      clubNum: this.params.clubNum,
+      applicantId: this.body.applicant,
+    };
 
     const { clubName } = await NotificationStorage.findClubInfoByClubNum(
       applicantInfo.clubNum
@@ -342,14 +296,40 @@ class Application {
       await ApplicationStorage.findOneByApplicantIdAndClubNum(applicantInfo);
 
     const notificationInfo = {
-      clubName,
-      senderName,
-      recipientName: applicantName,
-      recipientId: applicantInfo.applicant,
-      content: '동아리 가입 신청 결과',
+      title: clubName,
+      senderName: this.auth.name,
     };
 
-    await this.createNotification(notificationInfo);
+    if (resultType === '거절') {
+      notificationInfo.recipientName = applicantName;
+      notificationInfo.recipientId = applicantInfo.applicantId;
+      notificationInfo.content = '동아리 가입 신청 결과';
+    }
+
+    if (resultType === '승인') {
+      const recipients = await NotificationStorage.findAllByClubNum(
+        applicantInfo.clubNum
+      );
+
+      notificationInfo.content = `${applicantName}님 가입`;
+      notificationInfo.recipients = recipients;
+    }
+
+    return notificationInfo;
+  }
+
+  async sendApproveNotification(notificationInfo) {
+    notificationInfo.recipients.forEach(async (recipient) => {
+      if (this.auth.id !== recipient.id) {
+        notificationInfo.recipientName = recipient.name;
+        notificationInfo.recipientId = recipient.id;
+
+        if (recipient.id === this.body.applicant) {
+          notificationInfo.content = '동아리 가입을 축하합니다.🎊';
+        }
+        await this.createNotification(notificationInfo);
+      }
+    });
   }
 
   createNotification(notificationInfo) {
@@ -357,38 +337,18 @@ class Application {
   }
 
   async updateApplicantById() {
-    // const notification = new Notification(this.req);
-
     try {
       const applicantInfo = {
         clubNum: this.params.clubNum,
-        applicant: this.body.applicant,
+        applicantId: this.body.applicant,
+        type: '거절',
       };
       const isUpdate = await ApplicationStorage.updateRejectedApplicantById(
         applicantInfo
       );
 
       if (isUpdate) {
-        // const senderName = this.auth.name;
-
-        // const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-        //   applicantInfo.clubNum
-        // );
-
-        // const applicantName =
-        //   await ApplicationStorage.findOneByApplicantIdAndClubNum(
-        //     applicantInfo
-        //   );
-
-        // const notificationInfo = {
-        //   clubName,
-        //   senderName,
-        //   recipientName: applicantName,
-        //   recipientId: applicantInfo.applicant,
-        //   content: '동아리 가입 신청 결과',
-        // };
-
-        // await notification.createNotification(notificationInfo);
+        await this.sendNotification(applicantInfo.type);
 
         return { success: true, msg: '동아리 가입 신청을 거절하셨습니다.' };
       }
