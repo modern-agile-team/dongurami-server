@@ -76,12 +76,12 @@ class NotificationStorage {
 
       await conn.query(query, [
         notificationInfo.senderName,
+        notificationInfo.title,
+        notificationInfo.content,
         notificationInfo.recipientName,
         notificationInfo.recipientId,
         notificationInfo.url,
         notificationInfo.notiCategoryNum,
-        notificationInfo.title,
-        notificationInfo.content,
       ]);
 
       return true;

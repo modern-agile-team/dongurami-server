@@ -29,10 +29,17 @@ router.put(
 );
 
 router.post(
-  '/board/:category',
-  api.Auth.apiAuth,
+  '/:category/:boardNum',
+  apiAuth.apiAuth,
   loginAuth.loginCheck,
-  ctrl.process.createBoardNotification
+  ctrl.process.createNoticeBoardNotification
+);
+
+router.post(
+  '/:category/:clubNum/:boardNum',
+  apiAuth.apiAuth,
+  loginAuth.loginCheck,
+  ctrl.process.createClubBoardNotification
 );
 
 module.exports = router;

@@ -1,14 +1,102 @@
 'use strict';
 
 const NotificationStorage = require('./NotificationStorage');
+const StudentStorage = require('../Student/StudentStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
+const boardCategory = require('../Category/board');
 
 class Notification {
   constructor(req) {
     this.body = req.body;
     this.params = req.params;
     this.auth = req.auth;
+  }
+
+  async createBoardNotification() {
+    try {
+      const { notificationInfo, recipients } =
+        await this.xxNewGetNotificationInfoByBoardCategory();
+
+      await this.xxNewSendNotification(notificationInfo, recipients);
+
+      return { success: true, msg: '알림이 생성되었습니다.' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async xxNewGetNotificationInfoByBoardCategory() {
+    const { clubNum } = this.params;
+    const category = boardCategory[this.params.category];
+
+    let notificationInfo;
+    let recipients;
+
+    if (category === 1) {
+      notificationInfo = await this.xxNewGetBoardNotificationInfo();
+
+      recipients = await StudentStorage.findAllNameAndId();
+
+      return { notificationInfo, recipients };
+    }
+    if (category === 5) {
+      notificationInfo = await this.xxNewGetClubBoardNotificationInfo();
+
+      recipients = await NotificationStorage.findAllByClubNum(clubNum);
+    }
+
+    return { notificationInfo, recipients };
+  }
+
+  async xxNewGetBoardNotificationInfo() {
+    const board = {
+      no: this.params.boardNum,
+      title: this.body.title,
+      notiCategoryNum: this.body.notiCategoryNum,
+    };
+
+    return {
+      senderName: this.auth.name,
+      title: '공지 게시판',
+      content: board.title,
+      url: `notice/${board.no}`,
+      notiCategoryNum: board.notiCategoryNum,
+    };
+  }
+
+  async xxNewGetClubBoardNotificationInfo() {
+    const { clubNum } = this.params;
+    const board = {
+      no: this.params.boardNum,
+      title: this.body.title,
+      notiCategoryNum: this.body.notiCategoryNum,
+    };
+
+    const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+      clubNum
+    );
+
+    return {
+      senderName: this.auth.name,
+      title: clubName,
+      content: board.title,
+      url: `clubhome/${clubNum}/notice/${board.no}`,
+      notiCategoryNum: board.notiCategoryNum,
+    };
+  }
+
+  async xxNewSendNotification(notificationInfo, recipients) {
+    const senderId = this.auth.id;
+
+    recipients.forEach(async (recipient) => {
+      if (senderId !== recipient.id) {
+        notificationInfo.recipientName = recipient.name;
+        notificationInfo.recipientId = recipient.id;
+
+        await NotificationStorage.createNotification(notificationInfo);
+      }
+    });
   }
 
   async findAllById() {
