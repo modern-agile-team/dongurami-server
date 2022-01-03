@@ -28,4 +28,11 @@ router.put(
   ctrl.process.updateAllById
 );
 
+router.post(
+  '/board/:category',
+  api.Auth.apiAuth,
+  loginAuth.loginCheck,
+  ctrl.process.createBoardNotification
+);
+
 module.exports = router;

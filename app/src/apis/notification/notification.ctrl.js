@@ -4,6 +4,25 @@ const Notification = require('../../models/services/Notification/Notification');
 const logger = require('../../config/logger');
 
 const process = {
+  createBoardNotification: async (req, res) => {
+    const notification = new Notification(req);
+    const response = await notification.createBoardNotification();
+
+    // 에러 방지 임시 응답 코드.
+    if (response.success) {
+      logger.info(`GET /api/notification/entire 200: ${response.msg}`);
+      return res.status(200).json(response);
+    }
+    if (response.isError) {
+      logger.error(
+        `GET /api/notification/entire 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.error(`GET /api/notification/entire 400: ${response.msg}`);
+    return res.status(400).json(response);
+  },
+
   findAllById: async (req, res) => {
     const notification = new Notification(req);
     const response = await notification.findAllById();

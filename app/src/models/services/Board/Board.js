@@ -1,10 +1,10 @@
 'use strict';
 
 const BoardStorage = require('./BoardStorage');
-const Notification = require('../Notification/Notification');
-const NotificationStorage = require('../Notification/NotificationStorage');
+// const Notification = require('../Notification/Notification');
+// const NotificationStorage = require('../Notification/NotificationStorage');
 const AdminoOptionStorage = require('../AdminOption/AdminOptionStorage');
-const StudentStorage = require('../Student/StudentStorage');
+// const StudentStorage = require('../Student/StudentStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
@@ -18,47 +18,47 @@ class Board {
     this.query = req.query;
   }
 
-  async getNotificationInfo(boardNum) {
-    const { clubNum } = this.params;
-    const category = boardCategory[this.params.category];
-    const notificationInfo = {
-      senderName: this.auth.name,
-      content: this.body.title,
-    };
-    let recipients;
+  // async getNotificationInfo(boardNum) {
+  //   const { clubNum } = this.params;
+  //   const category = boardCategory[this.params.category];
+  //   const notificationInfo = {
+  //     senderName: this.auth.name,
+  //     content: this.body.title,
+  //   };
+  //   let recipients;
 
-    if (category === 1) {
-      notificationInfo.title = '공지 게시판';
-      notificationInfo.url = `notice/${boardNum}`;
+  //   if (category === 1) {
+  //     notificationInfo.title = '공지 게시판';
+  //     notificationInfo.url = `notice/${boardNum}`;
 
-      recipients = await StudentStorage.findAllNameAndId();
-    }
-    if (category === 5) {
-      const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-        clubNum
-      );
+  //     recipients = await StudentStorage.findAllNameAndId();
+  //   }
+  //   if (category === 5) {
+  //     const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+  //       clubNum
+  //     );
 
-      notificationInfo.title = clubName;
-      notificationInfo.url = `clubhome/${clubNum}/notice/${boardNum}`;
+  //     notificationInfo.title = clubName;
+  //     notificationInfo.url = `clubhome/${clubNum}/notice/${boardNum}`;
 
-      recipients = await NotificationStorage.findAllByClubNum(clubNum);
-    }
-    return { notificationInfo, recipients };
-  }
+  //     recipients = await NotificationStorage.findAllByClubNum(clubNum);
+  //   }
+  //   return { notificationInfo, recipients };
+  // }
 
-  async sendNotification(notificationInfo, recipients) {
-    const notification = new Notification(this.req);
-    const senderId = this.auth.id;
+  // async sendNotification(notificationInfo, recipients) {
+  //   const notification = new Notification(this.req);
+  //   const senderId = this.auth.id;
 
-    recipients.forEach(async (recipient) => {
-      if (senderId !== recipient.id) {
-        notificationInfo.recipientName = recipient.name;
-        notificationInfo.recipientId = recipient.id;
+  //   recipients.forEach(async (recipient) => {
+  //     if (senderId !== recipient.id) {
+  //       notificationInfo.recipientName = recipient.name;
+  //       notificationInfo.recipientId = recipient.id;
 
-        await notification.createNotification(notificationInfo);
-      }
-    });
-  }
+  //       await notification.createNotification(notificationInfo);
+  //     }
+  //   });
+  // }
 
   async createBoardNum() {
     const user = this.auth;
@@ -115,11 +115,11 @@ class Board {
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
-      const { notificationInfo, recipients } = await this.getNotificationInfo(
-        boardNum
-      );
+      // const { notificationInfo, recipients } = await this.getNotificationInfo(
+      //   boardNum
+      // );
 
-      await this.sendNotification(notificationInfo, recipients);
+      // await this.sendNotification(notificationInfo, recipients);
 
       return { success: true, msg: '게시글 생성 성공', boardNum };
     } catch (err) {
