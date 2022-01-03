@@ -235,20 +235,7 @@ class MyPage {
         const clubs = await StudentStorage.findOneByLoginedId(user.id);
         const jwt = await Auth.createJWT(checkedId, clubs);
 
-        const { clubName, leaderName, leaderId } =
-          await NotificationStorage.findClubInfoByClubNum(userInfo.clubNum);
-
-        const notificationInfo = {
-          title: clubName,
-          senderName: user.name,
-          recipientName: leaderName,
-          recipientId: leaderId,
-          content: '동아리 탈퇴',
-          url: '',
-          notiCategoryNum: 8,
-        };
-
-        await NotificationStorage.createNotification(notificationInfo);
+        await this.sendNotification();
 
         return { success: true, msg: '동아리 탈퇴에 성공하였습니다.', jwt };
       }
@@ -259,6 +246,23 @@ class MyPage {
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
+  }
+
+  async sendNotification() {
+    const { clubName, leaderName, leaderId } =
+      await NotificationStorage.findClubInfoByClubNum(this.params.clubNum);
+
+    const notificationInfo = {
+      title: clubName,
+      senderName: this.auth.name,
+      recipientName: leaderName,
+      recipientId: leaderId,
+      content: '동아리 탈퇴',
+      url: '',
+      notiCategoryNum: 8,
+    };
+
+    await NotificationStorage.createNotification(notificationInfo);
   }
 }
 
