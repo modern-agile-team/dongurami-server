@@ -56,7 +56,6 @@ class Schedule {
     const data = this.body;
     const { clubNum } = this.params;
     const user = this.auth;
-    // const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
@@ -72,27 +71,6 @@ class Schedule {
 
       if (success) {
         await this.sendNotification();
-        // const recipients = await NotificationStorage.findAllByClubNum(clubNum);
-
-        // const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-        //   clubNum
-        // );
-
-        // const senderId = scheduleInfo.studentId;
-
-        // recipients.forEach(async (recipient) => {
-        //   if (senderId !== recipient.id) {
-        //     const notificationInfo = {
-        //       clubName,
-        //       senderName: user.name,
-        //       recipientName: recipient.name,
-        //       recipientId: recipient.id,
-        //       content: scheduleInfo.title,
-        //     };
-
-        //     await notification.createNotification(notificationInfo);
-        //   }
-        // });
 
         return { success: true, msg: '일정이 등록되었습니다.' };
       }
@@ -102,40 +80,9 @@ class Schedule {
     }
   }
 
-  async sendNotification() {
-    const notification = new Notification(this.req);
-
-    const recipients = await NotificationStorage.findAllByClubNum(
-      this.params.clubNum
-    );
-
-    const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-      this.params.clubNum
-    );
-
-    const senderId = this.auth.id;
-
-    recipients.forEach(async (recipient) => {
-      if (senderId !== recipient.id) {
-        const notificationInfo = {
-          clubName,
-          senderName: this.auth.name,
-          recipientName: recipient.name,
-          recipientId: recipient.id,
-          content: this.body.title,
-        };
-
-        await notification.createNotification(notificationInfo);
-      }
-    });
-  }
-
   async updateSchedule() {
     const data = this.body;
     const { no } = this.params;
-    // const { clubNum } = this.params;
-    // const userInfo = this.auth;
-    // const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
@@ -149,27 +96,6 @@ class Schedule {
 
       if (success) {
         await this.sendNotification();
-        // const recipients = await NotificationStorage.findAllByClubNum(clubNum);
-
-        // const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-        //   clubNum
-        // );
-
-        // const senderId = userInfo.id;
-
-        // recipients.forEach(async (recipient) => {
-        //   if (senderId !== recipient.id) {
-        //     const notificationInfo = {
-        //       clubName,
-        //       senderName: userInfo.name,
-        //       recipientName: recipient.name,
-        //       recipientId: recipient.id,
-        //       content: scheduleInfo.title,
-        //     };
-
-        //     await notification.createNotification(notificationInfo);
-        //   }
-        // });
 
         return { success: true, msg: '일정이 수정되었습니다.' };
       }
@@ -177,6 +103,32 @@ class Schedule {
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
+  }
+
+  async sendNotification() {
+    const notification = new Notification(this.req);
+    const { clubNum } = this.params;
+    const sender = this.auth;
+
+    const recipients = await NotificationStorage.findAllByClubNum(clubNum);
+
+    const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+      clubNum
+    );
+
+    recipients.forEach(async (recipient) => {
+      if (sender.id !== recipient.id) {
+        const notificationInfo = {
+          clubName,
+          senderName: sender.name,
+          recipientName: recipient.name,
+          recipientId: recipient.id,
+          content: this.body.title,
+        };
+
+        await notification.createNotification(notificationInfo);
+      }
+    });
   }
 
   async updateOnlyImportant() {
