@@ -288,13 +288,13 @@ class Notification {
       if (notiCategoryNum === 2) {
         const recipients = await NotificationStorage.findAllByClubNum(clubNum);
 
-        await this.xxNewSendJoinApproveNotification(recipients);
+        await this.sendJoinApproveNotification(recipients);
 
         return { success: true, msg: '동아리가입 승인알림이 생성되었습니다.' };
       }
 
       if (notiCategoryNum === 3) {
-        const notification = await this.xxNewGetJoinRejectNotificationInfo();
+        const notification = await this.getJoinRejectNotificationInfo();
 
         await NotificationStorage.createNotification(notification);
 
@@ -306,13 +306,13 @@ class Notification {
     }
   }
 
-  async xxNewSendJoinApproveNotification(recipients) {
+  async sendJoinApproveNotification(recipients) {
     const senderId = this.auth.id;
     const { applicant } = this.body;
 
     recipients.forEach(async (recipient) => {
       if (senderId !== recipient.id) {
-        const notification = await this.xxNewGetJoinApproveNotificationInfo(
+        const notification = await this.getJoinApproveNotificationInfo(
           recipient
         );
 
@@ -324,7 +324,7 @@ class Notification {
     });
   }
 
-  async xxNewGetJoinApproveNotificationInfo(recipient) {
+  async getJoinApproveNotificationInfo(recipient) {
     const applicantInfo = {
       clubNum: this.params.clubNum,
       id: this.body.applicant,
@@ -349,7 +349,7 @@ class Notification {
     };
   }
 
-  async xxNewGetJoinRejectNotificationInfo() {
+  async getJoinRejectNotificationInfo() {
     const applicantInfo = {
       clubNum: this.params.clubNum,
       id: this.body.applicant,
