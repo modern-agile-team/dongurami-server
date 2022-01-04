@@ -109,10 +109,6 @@ class Profile {
     try {
       const snsUserInfo = await StudentStorage.findOneSnsUserById(user.id);
 
-      console.log(snsUserInfo);
-      console.log(userInfo);
-      console.log(String(user.id));
-
       if (
         snsUserInfo &&
         snsUserInfo.studentId === user.id &&
