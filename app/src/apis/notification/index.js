@@ -29,28 +29,28 @@ router.put(
 );
 
 router.post(
-  '/:category/:boardNum',
+  '/board/:boardNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createNoticeBoardNotification
 );
 
 router.post(
-  '/:category/:clubNum/:boardNum',
+  '/board/:clubNum/:boardNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createClubBoardNotification
 );
 
 router.post(
-  '/cmt/:category/:boardNum',
+  '/cmt/:boardNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createCmtNotification
 );
 
 router.post(
-  '/reply-cmt/:category/:boardNum/:cmtNum',
+  '/reply-cmt/:boardNum/:cmtNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createReplyCmtNotification

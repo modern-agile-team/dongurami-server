@@ -2,7 +2,7 @@
 
 const CommentStorage = require('./CommentStorage');
 const BoardStorage = require('../BoardStorage');
-const Notification = require('../../Notification/Notification');
+// const Notification = require('../../Notification/Notification');
 const Error = require('../../../utils/Error');
 const WriterCheck = require('../../../utils/WriterCheck');
 const boardCategory = require('../../Category/board');
@@ -98,7 +98,7 @@ class Comment {
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      await this.sendNotification();
+      // await this.sendNotification();
 
       if (replyCommentInfo.hiddenFlag) {
         user.name = '익명';
@@ -110,60 +110,60 @@ class Comment {
     }
   }
 
-  async sendNotification() {
-    const { params } = this;
+  // async sendNotification() {
+  //   const { params } = this;
 
-    if (!params.cmtNum) {
-      const recipient = await BoardStorage.findBoardInfoByBoardNum(
-        params.boardNum
-      );
+  //   if (!params.cmtNum) {
+  //     const recipient = await BoardStorage.findBoardInfoByBoardNum(
+  //       params.boardNum
+  //     );
 
-      const notificationInfo = this.getNotificationInfo(recipient);
+  //     const notificationInfo = this.getNotificationInfo(recipient);
 
-      return this.sendCmtNotification(notificationInfo);
-    }
-    const recipients = await CommentStorage.findRecipientNamesByCmtAndBoardNum(
-      params.cmtNum,
-      params.boardNum
-    );
+  //     return this.sendCmtNotification(notificationInfo);
+  //   }
+  //   const recipients = await CommentStorage.findRecipientNamesByCmtAndBoardNum(
+  //     params.cmtNum,
+  //     params.boardNum
+  //   );
 
-    return this.sendReplyCmtNotification(recipients);
-  }
+  //   return this.sendReplyCmtNotification(recipients);
+  // }
 
-  getNotificationInfo(recipient) {
-    return {
-      senderName: this.auth.name,
-      content: this.body.description,
-      title: recipient.title || recipient.description,
-      recipientName: recipient.name,
-      recipientId: recipient.id,
-    };
-  }
+  // getNotificationInfo(recipient) {
+  //   return {
+  //     senderName: this.auth.name,
+  //     content: this.body.description,
+  //     title: recipient.title || recipient.description,
+  //     recipientName: recipient.name,
+  //     recipientId: recipient.id,
+  //   };
+  // }
 
-  async sendCmtNotification(notificationInfo) {
-    const senderId = this.auth.id;
-    const { recipientId } = notificationInfo;
+  // async sendCmtNotification(notificationInfo) {
+  //   const senderId = this.auth.id;
+  //   const { recipientId } = notificationInfo;
 
-    if (senderId !== recipientId) {
-      await this.createNotification(notificationInfo);
-    }
-  }
+  //   if (senderId !== recipientId) {
+  //     await this.createNotification(notificationInfo);
+  //   }
+  // }
 
-  async sendReplyCmtNotification(recipients) {
-    const senderId = this.auth.id;
+  // async sendReplyCmtNotification(recipients) {
+  //   const senderId = this.auth.id;
 
-    recipients.forEach(async (recipient) => {
-      if (senderId !== recipient.id) {
-        const notificationInfo = this.getNotificationInfo(recipient);
+  //   recipients.forEach(async (recipient) => {
+  //     if (senderId !== recipient.id) {
+  //       const notificationInfo = this.getNotificationInfo(recipient);
 
-        await this.createNotification(notificationInfo);
-      }
-    });
-  }
+  //       await this.createNotification(notificationInfo);
+  //     }
+  //   });
+  // }
 
-  createNotification(notificationInfo) {
-    return new Notification(this.req).createNotification(notificationInfo);
-  }
+  // createNotification(notificationInfo) {
+  //   return new Notification(this.req).createNotification(notificationInfo);
+  // }
 
   async findAllByBoardNum() {
     const user = this.auth;

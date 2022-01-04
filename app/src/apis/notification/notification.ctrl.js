@@ -5,62 +5,54 @@ const logger = require('../../config/logger');
 
 const process = {
   createNoticeBoardNotification: async (req, res) => {
-    const { category } = req.params;
     const { boardNum } = req.params;
     const notification = new Notification(req);
-    const response = await notification.createBoardNotification();
+    const response = await notification.createNoticeBoardNotification();
 
     if (response.isError) {
       logger.error(
-        `POST /api/notification/${category}/${boardNum} 500: \n${response.errMsg.stack}`
+        `POST /api/notification/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.info(
-      `POST /api/notification/${category}/${boardNum} 200: ${response.msg}`
-    );
+    logger.info(`POST /api/notification/${boardNum} 200: ${response.msg}`);
     return res.status(200).json(response);
   },
 
   createClubBoardNotification: async (req, res) => {
-    const { category } = req.params;
     const { boardNum } = req.params;
     const { clubNum } = req.params;
     const notification = new Notification(req);
-    const response = await notification.createBoardNotification();
+    const response = await notification.createClubBoardNotification();
 
     if (response.isError) {
       logger.error(
-        `POST /api/notification/${category}/${clubNum}/${boardNum} 500: \n${response.errMsg.stack}`
+        `POST /api/notification/${clubNum}/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/${category}/${clubNum}/${boardNum} 200: ${response.msg}`
+      `POST /api/notification/${clubNum}/${boardNum} 200: ${response.msg}`
     );
     return res.status(200).json(response);
   },
 
   createCmtNotification: async (req, res) => {
-    const { category } = req.params;
     const { boardNum } = req.params;
     const notification = new Notification(req);
     const response = await notification.createCmtNotification();
 
     if (response.isError) {
       logger.error(
-        `POST /api/notification/cmt/${category}/${boardNum} 500: \n${response.errMsg.stack}`
+        `POST /api/notification/cmt/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.info(
-      `POST /api/notification/cmt/${category}/${boardNum} 200: ${response.msg}`
-    );
+    logger.info(`POST /api/notification/cmt/${boardNum} 200: ${response.msg}`);
     return res.status(200).json(response);
   },
 
   createReplyCmtNotification: async (req, res) => {
-    const { category } = req.params;
     const { boardNum } = req.params;
     const { cmtNum } = req.params;
     const notification = new Notification(req);
@@ -68,12 +60,12 @@ const process = {
 
     if (response.isError) {
       logger.error(
-        `POST /api/notification/${category}/cmt/${boardNum}/${cmtNum} 500: \n${response.errMsg.stack}`
+        `POST /api/notification/cmt/${boardNum}/${cmtNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/${category}/reply-cmt/${boardNum}/${cmtNum} 200: ${response.msg}`
+      `POST /api/notification/reply-cmt/${boardNum}/${cmtNum} 200: ${response.msg}`
     );
     return res.status(200).json(response);
   },
