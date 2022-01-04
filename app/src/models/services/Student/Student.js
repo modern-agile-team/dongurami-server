@@ -21,57 +21,70 @@ class Student {
   static makeResponseMsg(status, msg, jwt) {
     return {
       success: status < 400,
-      msg: status === 401 ? `${msg}가 아닙니다.` : `${msg}을(를) 확인해주세요.`,
-      // msg: status < 400 ? msg : `${msg}을(를) 확인해주세요.`,
       status,
-      jwt,
-    };
-  }
-
-  static successMessage(msg, jwt) {
-    return {
-      success: true,
       msg,
       jwt,
     };
   }
 
-  static failMessage(msg, status) {
-    return {
-      success: false,
-      msg,
-      status,
-    };
+  // static successMessage(msg, jwt) {
+  //   return {
+  //     success: true,
+  //     msg,
+  //     jwt,
+  //   };
+  // }
+
+  // static failMessage(msg, status) {
+  //   return {
+  //     success: false,
+  //     msg,
+  //     status,
+  //   };
+  // }
+
+  blankInputCheck() {
+    const client = this.body;
+
+    if (!(client.id && client.password)) {
+      return Student.makeResponseMsg(
+        400,
+        '아이디 또는 비밀번호를 확인해주세요.'
+      );
+    }
+    return { success: true };
+  }
+
+  static comparePassword(input, stored) {
+    const inputPassword = input.password;
+    const storedPassword = stored.password;
+
+    return bcrypt.compareSync(inputPassword, storedPassword);
   }
 
   async login() {
     const client = this.body;
 
-    if (!(client.id && client.password)) {
-      return Student.makeResponseMsg(400, '아이디 또는 비밀번호');
-      // return Student.failMessage('아이디 또는 비밀번호를 확인해주세요.');
-    }
+    const blankInputCheck = this.blankInputCheck();
+    if (blankInputCheck.msg) return blankInputCheck;
 
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
 
       if (!checkedId) {
         return Student.makeResponseMsg(401, '가입된 아이디가 아닙니다.');
-        // return Student.failMessage('가입된 아이디가 아닙니다.', 401);
       }
 
-      const comparePassword = bcrypt.compareSync(
-        client.password,
-        checkedId.password
-      );
+      const comparePassword = Student.comparePassword(client, checkedId);
+
       if (comparePassword) {
         const clubNum = await StudentStorage.findOneByLoginedId(client.id);
         const jwt = await Auth.createJWT(checkedId, clubNum);
 
-        return Student.successMessage('로그인에 성공하셨습니다.', jwt);
+        return Student.makeResponseMsg(200, '로그인에 성공하셨습니다.', jwt);
       }
 
-      return Student.failMessage('잘못된 비밀번호입니다.', 401);
+      return Student.makeResponseMsg(401, '잘못된 비밀번호입니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
