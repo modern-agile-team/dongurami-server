@@ -57,14 +57,14 @@ class Profile {
       profileImageUrl: request.profileImageUrl,
       userId: user.id,
     };
-    const EMAILREGEXP =
+    const EMAIL_REG_EXP =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
-    const PHONENUMREGEXP = /[eE]/;
+    const PHONE_NUMBER_REG_EXP = /[eE]/;
     let msg = '';
 
     if (this.params.studentId !== userInfo.userId) {
       msg = '로그인된 사람의 프로필이 아닙니다.';
-    } else if (userInfo.email && userInfo.email.match(EMAILREGEXP) === null) {
+    } else if (userInfo.email && userInfo.email.match(EMAIL_REG_EXP) === null) {
       msg = '이메일 형식이 맞지 않습니다.';
     } else if (userInfo.email.length === 0) {
       msg = '이메일 형식이 맞지 안습니다.';
@@ -72,7 +72,7 @@ class Profile {
       userInfo.phoneNumber &&
       (userInfo.phoneNumber.length !== 11 ||
         Number.isNaN(Number(userInfo.phoneNumber)) ||
-        !(userInfo.phoneNumber.match(PHONENUMREGEXP) === null))
+        !(userInfo.phoneNumber.match(PHONE_NUMBER_REG_EXP) === null))
     ) {
       msg = '전화번호 형식이 맞지 않습니다.';
     } else if (userInfo.phoneNumber === 0) {
