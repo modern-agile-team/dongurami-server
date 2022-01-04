@@ -10,14 +10,14 @@ class ProfileUtil {
     delete profile.gender;
   }
 
-  static async updateNaverUserFlag(user, profile) {
+  static async getNaverUserFlag(user) {
     if (user) {
       const studentInfo = await StudentStorage.findOneSnsUserById(studentId);
 
-      if (studentInfo && studentInfo.studentId === studentId) {
-        profile.isNaverUser = 1;
-      } else profile.isNaverUser = 0;
-    } else profile.isNaverUser = 0;
+      if (studentInfo && studentInfo.studentId === studentId) return true;
+      return false;
+    }
+    return false;
   }
 
   static formattingClubs(clubs) {

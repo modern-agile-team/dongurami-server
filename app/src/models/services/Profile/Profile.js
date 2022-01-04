@@ -31,11 +31,10 @@ class Profile {
         ProfileUtil.deleteSomeProfileInfo(profile);
       }
 
-      await ProfileUtil.updateNaverUserFlag(user, profile);
-
       const clubs = await ProfileStorage.findAllClubByStudentId(studentId);
 
       profile.clubs = ProfileUtil.formattingClubs(clubs);
+      profile.naverUserFlag = await ProfileUtil.getNaverUserFlag(user);
 
       return {
         success: true,
