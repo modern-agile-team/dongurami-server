@@ -227,9 +227,9 @@ class Notification {
 
   async createLikeNotification() {
     try {
-      const recipientInfo = await this.xxNewGetRecipientInfo();
+      const recipientInfo = await this.getRecipientInfo();
 
-      const notification = await this.xxNewGetNotificationInfo(recipientInfo);
+      const notification = await this.getNotificationInfo(recipientInfo);
 
       await this.sendLikeAndCmtNotification(notification);
 
@@ -239,7 +239,7 @@ class Notification {
     }
   }
 
-  async xxNewGetRecipientInfo() {
+  async getRecipientInfo() {
     const { params } = this;
     let recipientInfo;
 
@@ -258,7 +258,7 @@ class Notification {
     return recipientInfo;
   }
 
-  async xxNewGetNotificationInfo(recipientInfo) {
+  async getNotificationInfo(recipientInfo) {
     const { params } = this;
     const category = boardCategory[params.category];
 
