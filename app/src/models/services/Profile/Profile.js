@@ -60,17 +60,24 @@ class Profile {
     const EMAIL_REG_EXP =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     const PHONE_NUMBER_REG_EXP = /[^0-9]/g;
-    let msg = '';
 
     if (!EMAIL_REG_EXP.test(userInfo.email)) {
-      msg = '이메일 형식이 맞지 않습니다.';
-    } else if (
+      return {
+        success: false,
+        msg: '이메일 형식이 맞지 않습니다.',
+        status: 400,
+      };
+    }
+    if (
       userInfo.phoneNumber.length !== 11 ||
       PHONE_NUMBER_REG_EXP.test(userInfo.phoneNumber)
     ) {
-      msg = '전화번호 형식이 맞지 않습니다.';
+      return {
+        success: false,
+        msg: '전화번호 형식이 맞지 않습니다.',
+        status: 400,
+      };
     }
-    if (msg) return { success: false, msg, status: 400 };
 
     try {
       const snsUserInfo = await StudentStorage.findOneSnsUserById(user.id);
