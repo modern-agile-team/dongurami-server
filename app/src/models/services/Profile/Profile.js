@@ -78,6 +78,13 @@ class Profile {
         status: 400,
       };
     }
+    if (this.params.studentId !== userInfo.userId) {
+      return {
+        success: false,
+        msg: '로그인된 사람의 프로필이 아닙니다.',
+        status: 403,
+      };
+    }
 
     try {
       const snsUserInfo = await StudentStorage.findOneSnsUserById(user.id);
@@ -90,13 +97,6 @@ class Profile {
         return {
           success: false,
           msg: '네이버 이메일로 가입된 회원은 이메일 변경이 불가능합니다.',
-          status: 403,
-        };
-      }
-      if (this.params.studentId !== userInfo.userId) {
-        return {
-          success: false,
-          msg: '로그인된 사람의 프로필이 아닙니다.',
           status: 403,
         };
       }
