@@ -259,9 +259,9 @@ class CommentStorage {
         JOIN students AS s ON c.student_id = s.id 
         WHERE c.board_no = ? AND c.group_no = ?;`;
 
-      const students = await conn.query(query, [boardNum, cmtNum]);
+      const recipients = await conn.query(query, [boardNum, cmtNum]);
 
-      return students;
+      return recipients;
     } catch (err) {
       throw err;
     } finally {

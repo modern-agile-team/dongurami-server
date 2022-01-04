@@ -51,7 +51,7 @@ class Comment {
         user.name = '익명';
       }
 
-      await this.sendNotification();
+      // await this.sendNotification();
 
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {
