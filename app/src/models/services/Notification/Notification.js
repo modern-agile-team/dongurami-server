@@ -37,8 +37,6 @@ class Notification {
       notificationInfo = await this.xxNewGetBoardNotificationInfo();
 
       recipients = await StudentStorage.findAllNameAndId();
-
-      return { notificationInfo, recipients };
     }
     if (category === 5) {
       notificationInfo = await this.xxNewGetClubBoardNotificationInfo();
@@ -52,7 +50,7 @@ class Notification {
   async xxNewGetBoardNotificationInfo() {
     const board = {
       no: this.params.boardNum,
-      title: this.body.title,
+      title: this.body.boardTitle,
       notiCategoryNum: this.body.notiCategoryNum,
     };
 
@@ -69,7 +67,7 @@ class Notification {
     const { clubNum } = this.params;
     const board = {
       no: this.params.boardNum,
-      title: this.body.title,
+      title: this.body.boardTitle,
       notiCategoryNum: this.body.notiCategoryNum,
     };
 
@@ -91,10 +89,17 @@ class Notification {
 
     recipients.forEach(async (recipient) => {
       if (senderId !== recipient.id) {
-        notificationInfo.recipientName = recipient.name;
-        notificationInfo.recipientId = recipient.id;
+        const notification = {
+          senderName: notificationInfo.senderName,
+          recipientName: recipient.name,
+          recipientId: recipient.id,
+          title: notificationInfo.title,
+          content: notificationInfo.content,
+          url: notificationInfo.url,
+          notiCategoryNum: notificationInfo.notiCategoryNum,
+        };
 
-        await NotificationStorage.createNotification(notificationInfo);
+        await NotificationStorage.createNotification(notification);
       }
     });
   }

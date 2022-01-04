@@ -115,11 +115,11 @@ class Board {
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
-      // const { notificationInfo, recipients } = await this.getNotificationInfo(
-      //   boardNum
-      // );
+      const { notificationInfo, recipients } = await this.getNotificationInfo(
+        boardNum
+      );
 
-      // await this.sendNotification(notificationInfo, recipients);
+      await this.sendNotification(notificationInfo, recipients);
 
       return { success: true, msg: '게시글 생성 성공', boardNum };
     } catch (err) {
