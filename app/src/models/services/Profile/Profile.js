@@ -52,20 +52,10 @@ class Profile {
         });
       }
 
-      let userInfo = '비로그인 회원입니다.';
-
-      if (user) {
-        userInfo = {
-          id: user.id,
-          isAdmin: user.isAdmin,
-        };
-      }
-
       return {
         success: true,
         msg: '프로필 조회 성공',
         status: 200,
-        userInfo,
         profile,
       };
     } catch (err) {
