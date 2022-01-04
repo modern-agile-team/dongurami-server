@@ -57,19 +57,19 @@ router.post(
 );
 
 router.post(
-  '/liked/board/:category/:boardNum',
+  '/like/board/:category/:boardNum',
   loginAuth.loginCheck,
   ctrl.process.createLikeNotificationByBoardNum
 );
 
 router.post(
-  '/liked/comment/:category/:cmtNum',
+  '/like/comment/:category/:cmtNum',
   loginAuth.loginCheck,
   ctrl.process.createLikeNotificationByCmtNum
 );
 
 router.post(
-  '/liked/reply-comment/:category/:replyCmtNum',
+  '/like/reply-comment/:category/:replyCmtNum',
   loginAuth.loginCheck,
   ctrl.process.createLikeNotificationByReplyCmtNum
 );
@@ -85,4 +85,11 @@ router.post(
   loginAuth.loginCheck,
   ctrl.process.createScheduleNotification
 );
+
+router.post(
+  '/resign-club/:clubNum',
+  loginAuth.loginCheck,
+  ctrl.process.createClubResignNotification
+);
+
 module.exports = router;

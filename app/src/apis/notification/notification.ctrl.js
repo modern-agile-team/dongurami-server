@@ -163,6 +163,23 @@ const process = {
     return res.status(200).json(response);
   },
 
+  createClubResignNotification: async (req, res) => {
+    const { clubNum } = req.params;
+    const notification = new Notification(req);
+    const response = await notification.createClubResignNotification();
+
+    if (response.isError) {
+      logger.error(
+        `POST /api/notification/club-resign/${clubNum} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.info(
+      `POST /api/notification/club-resign/${clubNum} 200: ${response.msg}`
+    );
+    return res.status(200).json(response);
+  },
+
   findAllById: async (req, res) => {
     const notification = new Notification(req);
     const response = await notification.findAllById();

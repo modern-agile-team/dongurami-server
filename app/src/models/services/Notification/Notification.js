@@ -423,6 +423,43 @@ class Notification {
     };
   }
 
+  async createClubResignNotification() {
+    try {
+      const notification = await this.getClubResignNotificationInfo();
+
+      const isCreate = await NotificationStorage.createNotification(
+        notification
+      );
+
+      if (isCreate) {
+        return { success: true, msg: '동아리탈퇴 알림이 생성되었습니다.' };
+      }
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async getClubResignNotificationInfo() {
+    const { notiCategoryNum } = this.body;
+
+    const { clubName, leaderName, leaderId } =
+      await NotificationStorage.findClubInfoByClubNum(this.params.clubNum);
+
+    return {
+      notiCategoryNum,
+      title: clubName,
+      senderName: this.auth.name,
+      recipientName: leaderName,
+      recipientId: leaderId,
+      content: '동아리 탈퇴',
+      url: '',
+    };
+  }
+
   async findAllById() {
     const studentId = this.auth.id;
 
