@@ -2,8 +2,6 @@
 
 const EmotionStorage = require('./EmotionStorage');
 const BoardStorage = require('../Board/BoardStorage');
-const CommentStorage = require('../Board/Comment/CommentStorage');
-// const Notification = require('../Notification/Notification');
 const Error = require('../../utils/Error');
 
 class Emotion {
@@ -47,8 +45,6 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByBoardNum(emotionInfo);
 
       if (isCreat) {
-        await this.sendNotification();
-
         return {
           success: true,
           msg: '해당 게시글에 좋아요를 했습니다.',
@@ -144,8 +140,6 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByCmtNum(emotionInfo);
 
       if (isCreat) {
-        this.sendNotification();
-
         return {
           success: true,
           msg: '해당 댓글에 좋아요를 했습니다.',
@@ -242,8 +236,6 @@ class Emotion {
       const isCreat = await EmotionStorage.likedByReplyCmtNum(emotionInfo);
 
       if (isCreat) {
-        await this.sendNotification();
-
         return {
           success: true,
           msg: '해당 답글에 좋아요를 했습니다.',
@@ -304,54 +296,6 @@ class Emotion {
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
-  }
-
-  async getRecipientInfo() {
-    const { params } = this;
-    let recipientInfo;
-
-    if (params.boardNum) {
-      recipientInfo = await BoardStorage.findBoardInfoByBoardNum(
-        params.boardNum
-      );
-
-      recipientInfo.content = '게시물 좋아요';
-    }
-    if (params.cmtNum) {
-      recipientInfo = await CommentStorage.findAllByCmtNum(params.cmtNum);
-
-      recipientInfo.content = '댓글 좋아요';
-    }
-    if (params.replyCmtNum) {
-      recipientInfo = await CommentStorage.findAllByCmtNum(params.replyCmtNum);
-
-      recipientInfo.content = '답글 좋아요';
-    }
-
-    return recipientInfo;
-  }
-
-  async getNotificationInfo(recipientInfo) {
-    return {
-      title: recipientInfo.description,
-      recipientName: recipientInfo.name,
-      recipientId: recipientInfo.id,
-      content: recipientInfo.content,
-      senderName: this.auth.name,
-    };
-  }
-
-  async sendNotification() {
-    const recipientInfo = this.getRecipientInfo();
-    const notificationInfo = this.getNotificationInfo(recipientInfo);
-
-    if (notificationInfo.senderId !== notificationInfo.recipientId) {
-      this.createNotification(notificationInfo);
-    }
-  }
-
-  createNotification(notificationInfo) {
-    return new Notification(this.req).createNotification(notificationInfo);
   }
 }
 
