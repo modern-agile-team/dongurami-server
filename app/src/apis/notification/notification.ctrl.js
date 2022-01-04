@@ -128,6 +128,24 @@ const process = {
     return res.status(200).json(response);
   },
 
+  createJoinNotification: async (req, res) => {
+    const { clubNum } = req.params;
+    const { applicant } = req.params;
+    const notification = new Notification(req);
+    const response = await notification.createJoinNotification();
+
+    if (response.isError) {
+      logger.error(
+        `POST /api/notification/join-club/${clubNum}/${applicant} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.info(
+      `POST api/notification/join-club/${clubNum}/${applicant} 200: ${response.msg}`
+    );
+    return res.status(200).json(response);
+  },
+
   findAllById: async (req, res) => {
     const notification = new Notification(req);
     const response = await notification.findAllById();

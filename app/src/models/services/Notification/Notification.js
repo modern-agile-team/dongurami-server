@@ -3,6 +3,7 @@
 const NotificationStorage = require('./NotificationStorage');
 const StudentStorage = require('../Student/StudentStorage');
 const CommentStorage = require('../Board/Comment/CommentStorage');
+const ApplicationStorage = require('../Application/ApplicationStorage');
 const BoardStorage = require('../Board/BoardStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
@@ -229,7 +230,7 @@ class Notification {
     try {
       const recipientInfo = await this.getRecipientInfo();
 
-      const notification = await this.getNotificationInfo(recipientInfo);
+      const notification = await this.getLikeNotificationInfo(recipientInfo);
 
       await this.sendLikeAndCmtNotification(notification);
 
@@ -258,7 +259,7 @@ class Notification {
     return recipientInfo;
   }
 
-  async getNotificationInfo(recipientInfo) {
+  async getLikeNotificationInfo(recipientInfo) {
     const { params } = this;
     const category = boardCategory[params.category];
 
@@ -277,6 +278,100 @@ class Notification {
     }
 
     return notification;
+  }
+
+  async createJoinNotification() {
+    const { notiCategoryNum } = this.body;
+    const { clubNum } = this.params;
+
+    try {
+      if (notiCategoryNum === 2) {
+        const recipients = await NotificationStorage.findAllByClubNum(clubNum);
+
+        await this.xxNewSendJoinApproveNotification(recipients);
+
+        return { success: true, msg: '동아리가입 승인알림이 생성되었습니다.' };
+      }
+
+      if (notiCategoryNum === 3) {
+        const notification = await this.xxNewGetJoinRejectNotificationInfo();
+
+        await NotificationStorage.createNotification(notification);
+
+        return { success: true, msg: '동아리가입 거절알림이 생성되었습니다.' };
+      }
+      return { success: false, msg: '동아리가입에 대한 알림이 아닙니다.' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async xxNewSendJoinApproveNotification(recipients) {
+    const senderId = this.auth.id;
+    const { applicant } = this.body;
+
+    recipients.forEach(async (recipient) => {
+      if (senderId !== recipient.id) {
+        const notification = await this.xxNewGetJoinApproveNotificationInfo(
+          recipient
+        );
+
+        if (recipient.id === applicant) {
+          notification.content = '동아리 가입을 축하합니다.🎊';
+        }
+        await NotificationStorage.createNotification(notification);
+      }
+    });
+  }
+
+  async xxNewGetJoinApproveNotificationInfo(recipient) {
+    const applicantInfo = {
+      clubNum: this.params.clubNum,
+      id: this.body.applicant,
+    };
+    const { notiCategoryNum } = this.body;
+
+    const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+      applicantInfo.clubNum
+    );
+
+    const applicantName =
+      await ApplicationStorage.findOneByApplicantIdAndClubNum(applicantInfo);
+
+    return {
+      notiCategoryNum,
+      senderName: this.auth.name,
+      recipientId: recipient.id,
+      recipientName: recipient.name,
+      title: clubName,
+      content: `${applicantName}님 가입`,
+      url: `clubhome/${applicantInfo.clubNum}`,
+    };
+  }
+
+  async xxNewGetJoinRejectNotificationInfo() {
+    const applicantInfo = {
+      clubNum: this.params.clubNum,
+      id: this.body.applicant,
+    };
+    const { notiCategoryNum } = this.body;
+
+    const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+      applicantInfo.clubNum
+    );
+
+    const applicantName =
+      await ApplicationStorage.findOneByApplicantIdAndClubNum(applicantInfo);
+
+    return {
+      notiCategoryNum,
+      senderName: this.auth.name,
+      recipientId: applicantInfo.id,
+      recipientName: applicantName,
+      title: clubName,
+      content: '동아리가입 신청결과',
+      url: '',
+    };
   }
 
   async findAllById() {

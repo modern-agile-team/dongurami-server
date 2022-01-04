@@ -73,4 +73,10 @@ router.post(
   loginAuth.loginCheck,
   ctrl.process.createLikeNotificationByReplyCmtNum
 );
+
+router.post(
+  '/join-club/:clubNum',
+  loginAuth.loginCheck,
+  ctrl.process.createJoinNotification
+);
 module.exports = router;
