@@ -16,13 +16,6 @@ router.post(
 );
 
 router.get(
-  '/:clubNum',
-  apiAuth.apiAuth,
-  loginAuth.loginCheck,
-  clubAuth.clubJoinCheck,
-  ctrl.process.findAllByClubNum
-);
-router.get(
   '/:clubNum/:date',
   apiAuth.apiAuth,
   loginAuth.loginCheck,

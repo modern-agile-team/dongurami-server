@@ -4,25 +4,6 @@ const Schedule = require('../../models/services/Schedule/Schedule');
 const logger = require('../../config/logger');
 
 const process = {
-  findAllByClubNum: async (req, res) => {
-    const schedule = new Schedule(req);
-    const { clubNum } = req.params;
-    const response = await schedule.findAllByClubNum();
-
-    if (response.success) {
-      logger.info(`GET /api/club/schedule/${clubNum} 200: ${response.msg}`);
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `GET /api/club/schedule/${clubNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.error(`GET /api/club/schedule/${clubNum} 404: ${response.msg}`);
-    return res.status(404).json(response); // 존재하지 않는 동아리에 접근 시
-  },
-
   findAllByDate: async (req, res) => {
     const schedule = new Schedule(req);
     const { clubNum } = req.params;

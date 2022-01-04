@@ -13,21 +13,10 @@ class Schedule {
     this.auth = req.auth;
   }
 
-  async findAllByClubNum() {
-    const { clubNum } = this.params;
+  async existClub() {
+    const club = await ScheduleStorage.existClub(this.params.clubNum);
 
-    try {
-      const success = await ScheduleStorage.existClub(clubNum);
-
-      if (success) {
-        const result = await ScheduleStorage.findAllByClubNum(clubNum);
-
-        return { success: true, msg: '일정 조회 성공', result };
-      }
-      return { success: false, msg: '존재하지 않는 동아리입니다.' };
-    } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
-    }
+    return club;
   }
 
   async findAllByDate() {
