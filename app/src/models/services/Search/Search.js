@@ -60,9 +60,9 @@ class Search {
     const searchInfo = this.query;
     searchInfo.category = boardCategory[this.params.category];
 
-    return !searchInfo.category
-      ? Search.makeResponseMsg(400, '게시판')
-      : searchInfo;
+    return searchInfo.category
+      ? searchInfo
+      : Search.makeResponseMsg(400, '게시판');
   }
 
   searchTypeCheck() {
