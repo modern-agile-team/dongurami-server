@@ -225,48 +225,6 @@ class Notification {
     return false;
   }
 
-  // async xxNewSendCmtAndReplyNotification() {
-  //   const { params } = this;
-
-  //   if (!params.cmtNum) {
-  //     const recipient = await BoardStorage.findBoardInfoByBoardNum(
-  //       params.boardNum
-  //     );
-
-  //     const notificationInfo = this.xxNewGetNotificationInfo(recipient);
-
-  //     return this.sendCmtNotification(notificationInfo);
-  //   }
-  //   const recipients = await CommentStorage.findRecipientNamesByCmtAndBoardNum(
-  //     params.cmtNum,
-  //     params.boardNum
-  //   );
-
-  //   return this.xxNewSendReplyCmtNotification(recipients);
-  // }
-
-  // xxNewGetNotificationInfo(recipient) {
-  //   return {
-  //     senderName: this.auth.name,
-  //     content: this.body.description,
-  //     title: recipient.title || recipient.description,
-  //     recipientName: recipient.name,
-  //     recipientId: recipient.id,
-  //   };
-  // }
-
-  // async xxNewSendReplyCmtNotification(recipients) {
-  //   const senderId = this.auth.id;
-
-  //   recipients.forEach(async (recipient) => {
-  //     if (senderId !== recipient.id) {
-  //       const notificationInfo = this.getNotificationInfo(recipient);
-
-  //       await this.createNotification(notificationInfo);
-  //     }
-  //   });
-  // }
-
   async findAllById() {
     const studentId = this.auth.id;
 
