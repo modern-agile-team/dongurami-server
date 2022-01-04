@@ -382,7 +382,7 @@ class Notification {
       if (notiCategoryNum === 4 || notiCategoryNum === 5) {
         const recipients = await NotificationStorage.findAllByClubNum(clubNum);
 
-        await this.xxNewSendSchedulenotification(recipients);
+        await this.sendSchedulenotification(recipients);
 
         return { success: true, msg: '일정에 대한 알림이 생성되었습니다.' };
       }
@@ -392,19 +392,19 @@ class Notification {
     }
   }
 
-  async xxNewSendSchedulenotification(recipients) {
+  async sendSchedulenotification(recipients) {
     const senderId = this.auth.id;
 
     recipients.forEach(async (recipient) => {
       if (senderId !== recipient.id) {
-        const notification = await this.xxNewGetScheduleNotification(recipient);
+        const notification = await this.getScheduleNotification(recipient);
 
         await NotificationStorage.createNotification(notification);
       }
     });
   }
 
-  async xxNewGetScheduleNotification(recipient) {
+  async getScheduleNotification(recipient) {
     const { clubNum } = this.params;
     const schedule = this.body;
 
