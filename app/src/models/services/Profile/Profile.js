@@ -90,6 +90,16 @@ class Profile {
     }
 
     try {
+      const studentUpdateCnt = await ProfileStorage.updateStudentInfo(userInfo);
+
+      if (studentUpdateCnt === 0) {
+        return {
+          success: false,
+          msg: '존재하지 않는 회원입니다.',
+          status: 404,
+        };
+      }
+
       const snsUserInfo = await StudentStorage.findOneSnsUserById(user.id);
 
       if (
@@ -127,15 +137,6 @@ class Profile {
         };
       }
 
-      const studentUpdateCnt = await ProfileStorage.updateStudentInfo(userInfo);
-
-      if (studentUpdateCnt === 0) {
-        return {
-          success: false,
-          msg: '존재하지 않는 회원입니다.',
-          status: 404,
-        };
-      }
       if (userInfo.profileImageUrl !== user.profilePath) {
         const checkedId = await StudentStorage.findOneById(user.id);
         const clubs = await StudentStorage.findOneByLoginedId(user.id);
