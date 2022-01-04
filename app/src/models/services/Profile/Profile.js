@@ -59,7 +59,7 @@ class Profile {
     };
     const EMAIL_REG_EXP =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
-    const PHONE_NUMBER_REG_EXP = /[^0-9]/g;
+    const PHONE_NUMBER_REG_EXP = /[^0-9]/;
 
     if (!EMAIL_REG_EXP.test(userInfo.email)) {
       return {
