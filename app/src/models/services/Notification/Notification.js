@@ -16,7 +16,7 @@ class Notification {
   async createBoardNotification() {
     try {
       const { notificationInfo, recipients } =
-        await this.getNotificationInfoByBoardCategory();
+        await this.getNotificationInfoByBoardCategoryNum();
 
       await this.sendNotification(notificationInfo, recipients);
 
@@ -26,7 +26,7 @@ class Notification {
     }
   }
 
-  async getNotificationInfoByBoardCategory() {
+  async getNotificationInfoByBoardCategoryNum() {
     const { clubNum } = this.params;
     const category = boardCategory[this.params.category];
 
@@ -128,6 +128,7 @@ class Notification {
     }
   }
 
+  // 없어질 함수.
   async createNotification(notification) {
     const { body } = this;
 
