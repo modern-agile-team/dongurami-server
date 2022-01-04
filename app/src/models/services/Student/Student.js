@@ -18,6 +18,16 @@ class Student {
     this.SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
   }
 
+  static makeResponseMsg(status, msg, jwt) {
+    return {
+      success: status < 400,
+      msg: status === 401 ? `${msg}가 아닙니다.` : `${msg}을(를) 확인해주세요.`,
+      // msg: status < 400 ? msg : `${msg}을(를) 확인해주세요.`,
+      status,
+      jwt,
+    };
+  }
+
   static successMessage(msg, jwt) {
     return {
       success: true,
@@ -38,14 +48,16 @@ class Student {
     const client = this.body;
 
     if (!(client.id && client.password)) {
-      return Student.failMessage('아이디 또는 비밀번호를 확인해주세요.');
+      return Student.makeResponseMsg(400, '아이디 또는 비밀번호');
+      // return Student.failMessage('아이디 또는 비밀번호를 확인해주세요.');
     }
 
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
 
       if (!checkedId) {
-        return Student.failMessage('가입된 아이디가 아닙니다.', 401);
+        return Student.makeResponseMsg(401, '가입된 아이디가 아닙니다.');
+        // return Student.failMessage('가입된 아이디가 아닙니다.', 401);
       }
 
       const comparePassword = bcrypt.compareSync(
