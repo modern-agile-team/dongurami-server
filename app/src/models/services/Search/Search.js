@@ -17,7 +17,7 @@ class Search {
       msg:
         status === 200
           ? `${target}(을)를 검색한 결과입니다.`
-          : `${target}을(를) 확인해주세요`,
+          : `${target}을(를) 확인해주세요.`,
       status,
       result,
     };
