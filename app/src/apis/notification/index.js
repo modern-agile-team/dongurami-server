@@ -79,4 +79,10 @@ router.post(
   loginAuth.loginCheck,
   ctrl.process.createJoinNotification
 );
+
+router.post(
+  '/schedule/:clubNum',
+  loginAuth.loginCheck,
+  ctrl.process.createScheduleNotification
+);
 module.exports = router;

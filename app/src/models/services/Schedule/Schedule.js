@@ -1,8 +1,8 @@
 'use strict';
 
 const ScheduleStorage = require('./ScheduleStorage');
-const Notification = require('../Notification/Notification');
-const NotificationStorage = require('../Notification/NotificationStorage');
+// const Notification = require('../Notification/Notification');
+// const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Schedule {
@@ -70,7 +70,7 @@ class Schedule {
       const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
       if (success) {
-        await this.sendNotification();
+        // await this.sendNotification();
 
         return { success: true, msg: '일정이 등록되었습니다.' };
       }
@@ -95,7 +95,7 @@ class Schedule {
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
       if (success) {
-        await this.sendNotification();
+        // await this.sendNotification();
 
         return { success: true, msg: '일정이 수정되었습니다.' };
       }

@@ -300,7 +300,7 @@ class Notification {
 
         return { success: true, msg: '동아리가입 거절알림이 생성되었습니다.' };
       }
-      return { success: false, msg: '동아리가입에 대한 알림이 아닙니다.' };
+      return { success: false, msg: '동아리가입 알림에 대한 요청이 아닙니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -371,6 +371,55 @@ class Notification {
       title: clubName,
       content: '동아리가입 신청결과',
       url: '',
+    };
+  }
+
+  async createScheduleNotification() {
+    const { clubNum } = this.params;
+    const { notiCategoryNum } = this.body;
+
+    try {
+      if (notiCategoryNum === 4 || notiCategoryNum === 5) {
+        const recipients = await NotificationStorage.findAllByClubNum(clubNum);
+
+        await this.xxNewSendSchedulenotification(recipients);
+
+        return { success: true, msg: '일정에 대한 알림이 생성되었습니다.' };
+      }
+      return { success: false, msg: '일정알림에 대한 요청이 아닙니다.' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async xxNewSendSchedulenotification(recipients) {
+    const senderId = this.auth.id;
+
+    recipients.forEach(async (recipient) => {
+      if (senderId !== recipient.id) {
+        const notification = await this.xxNewGetScheduleNotification(recipient);
+
+        await NotificationStorage.createNotification(notification);
+      }
+    });
+  }
+
+  async xxNewGetScheduleNotification(recipient) {
+    const { clubNum } = this.params;
+    const schedule = this.body;
+
+    const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+      clubNum
+    );
+
+    return {
+      senderName: this.auth.name,
+      recipientId: recipient.id,
+      recipientName: recipient.name,
+      title: clubName,
+      content: schedule.title,
+      url: `clubhome/${clubNum}`,
+      notiCategoryNum: schedule.notiCategoryNum,
     };
   }
 
