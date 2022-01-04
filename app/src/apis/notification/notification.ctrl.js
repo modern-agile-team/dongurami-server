@@ -74,6 +74,60 @@ const process = {
     return res.status(200).json(response);
   },
 
+  createLikeNotificationByBoardNum: async (req, res) => {
+    const { boardNum } = req.params;
+    const { category } = req.params;
+    const notification = new Notification(req);
+    const response = await notification.createLikeNotification();
+
+    if (response.isError) {
+      logger.error(
+        `POST /api/notification/like/board/${category}/${boardNum} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.info(
+      `POST /api/notification/like/board/${category}/${boardNum} 200: ${response.msg}`
+    );
+    return res.status(200).json(response);
+  },
+
+  createLikeNotificationByCmtNum: async (req, res) => {
+    const { cmtNum } = req.params;
+    const { category } = req.params;
+    const notification = new Notification(req);
+    const response = await notification.createLikeNotification();
+
+    if (response.isError) {
+      logger.error(
+        `POST /api/notification/like/comemnt/${category}/${cmtNum} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.info(
+      `POST /api/notification/like/comment/${category}/${cmtNum} 200: ${response.msg}`
+    );
+    return res.status(200).json(response);
+  },
+
+  createLikeNotificationByReplyCmtNum: async (req, res) => {
+    const { ReplyCmtNum } = req.params;
+    const { category } = req.params;
+    const notification = new Notification(req);
+    const response = await notification.createLikeNotification();
+
+    if (response.isError) {
+      logger.error(
+        `POST /api/notification/like/reply-comment/${category}/${ReplyCmtNum} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.info(
+      `POST /api/notification/like/reply-comment/${category}/${ReplyCmtmtNum} 200: ${response.msg}`
+    );
+    return res.status(200).json(response);
+  },
+
   findAllById: async (req, res) => {
     const notification = new Notification(req);
     const response = await notification.findAllById();

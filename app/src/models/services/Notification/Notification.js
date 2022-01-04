@@ -108,9 +108,9 @@ class Notification {
 
   async createCmtNotification() {
     try {
-      const notificationInfo = await this.xxNewGetCmtNotificationInfo();
+      const notification = await this.getCmtNotificationInfo();
 
-      const isCreate = await this.xxNewSendCmtNotification(notificationInfo);
+      const isCreate = await this.sendLikeAndCmtNotification(notification);
 
       if (isCreate) {
         return { success: true, msg: '댓글 알림이 생성되었습니다.' };
@@ -119,24 +119,65 @@ class Notification {
         success: false,
         msg: '작성자와 수신자가 같거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
-    } catch {
+    } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
+  }
+
+  async getCmtNotificationInfo() {
+    const { params } = this;
+    const category = boardCategory[params.category];
+    const comment = {
+      description: this.body.description,
+      notiCategoryNum: this.body.notiCategoryNum,
+    };
+    const recipientInfo = await BoardStorage.findBoardInfoByBoardNum(
+      params.boardNum
+    );
+
+    const notification = {
+      senderName: this.auth.name,
+      recipientName: recipientInfo.name,
+      recipientId: recipientInfo.id,
+      title: recipientInfo.title,
+      content: comment.description,
+      url: `${params.category}/${params.boardNum}`,
+      notiCategoryNum: comment.notiCategoryNum,
+    };
+
+    if (category === 4) {
+      notification.url = `${params.category}?id=${params.boardNum}`;
+    }
+
+    return notification;
+  }
+
+  async sendLikeAndCmtNotification(notification) {
+    const senderId = this.auth.id;
+
+    if (senderId !== notification.recipientId) {
+      const isCreate = await NotificationStorage.createNotification(
+        notification
+      );
+      return isCreate;
+    }
+
+    return false;
   }
 
   async createReplyCmtNotification() {
     try {
-      const recipients = await this.xxNewGetRecipientsInfoByCmtNum();
+      const recipients = await this.getRecipientsInfoByCmtNum();
 
-      await this.xxNewSendReplyCmtNotification(recipients);
+      await this.sendReplyCmtNotification(recipients);
 
       return { success: true, msg: '답글 알림이 생성되었습니다.' };
-    } catch {
+    } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
 
-  async xxNewGetRecipientsInfoByCmtNum() {
+  async getRecipientsInfoByCmtNum() {
     const { params } = this;
 
     const recipients = await CommentStorage.findRecipientNamesByCmtAndBoardNum(
@@ -147,7 +188,7 @@ class Notification {
     return recipients;
   }
 
-  async xxNewSendReplyCmtNotification(recipients) {
+  async sendReplyCmtNotification(recipients) {
     const senderId = this.auth.id;
 
     recipients.forEach(async (recipient) => {
@@ -169,10 +210,10 @@ class Notification {
 
     const notification = {
       senderName: this.auth.name,
-      content: replyCmt.description,
-      title: recipient.description,
       recipientName: recipient.name,
       recipientId: recipient.id,
+      title: recipient.description,
+      content: replyCmt.description,
       url: `${params.category}/${params.boardNum}`,
       notiCategoryNum: replyCmt.notiCategoryNum,
     };
@@ -184,45 +225,58 @@ class Notification {
     return notification;
   }
 
-  async xxNewGetCmtNotificationInfo() {
+  async createLikeNotification() {
+    try {
+      const recipientInfo = await this.xxNewGetRecipientInfo();
+
+      const notification = await this.xxNewGetNotificationInfo(recipientInfo);
+
+      await this.sendLikeAndCmtNotification(notification);
+
+      return { success: true, msg: '좋아요 알림이 생성되었습니다.' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async xxNewGetRecipientInfo() {
+    const { params } = this;
+    let recipientInfo;
+
+    if (params.boardNum) {
+      recipientInfo = await BoardStorage.findBoardInfoByBoardNum(
+        params.boardNum
+      );
+    }
+    if (params.cmtNum) {
+      recipientInfo = await CommentStorage.findAllByCmtNum(params.cmtNum);
+    }
+    if (params.replyCmtNum) {
+      recipientInfo = await CommentStorage.findAllByCmtNum(params.replyCmtNum);
+    }
+
+    return recipientInfo;
+  }
+
+  async xxNewGetNotificationInfo(recipientInfo) {
     const { params } = this;
     const category = boardCategory[params.category];
-    const comment = {
-      description: this.body.description,
-      notiCategoryNum: this.body.notiCategoryNum,
-    };
-    const boardInfo = await BoardStorage.findBoardInfoByBoardNum(
-      params.boardNum
-    );
 
-    const notificationInfo = {
+    const notification = {
       senderName: this.auth.name,
-      content: this.body.description,
-      title: boardInfo.title,
-      recipientName: boardInfo.writerName,
-      recipientId: boardInfo.writerId,
-      url: `${params.category}/${params.boardNum}`,
-      notiCategoryNum: comment.notiCategoryNum,
+      recipientName: recipientInfo.name,
+      recipientId: recipientInfo.id,
+      title: recipientInfo.description || recipientInfo.title,
+      content: '좋아요❤️',
+      url: `${params.category}/${recipientInfo.boardNum}`,
+      notiCategoryNum: this.body.notiCategoryNum,
     };
 
     if (category === 4) {
-      notificationInfo.url = `${params.category}?id=${params.boardNum}`;
+      notification.url = `${params.category}?id=${recipientInfo.boardNum}`;
     }
 
-    return notificationInfo;
-  }
-
-  async xxNewSendCmtNotification(notificationInfo) {
-    const senderId = this.auth.id;
-
-    if (senderId !== notificationInfo.recipientId) {
-      const isCreate = await NotificationStorage.createNotification(
-        notificationInfo
-      );
-      return isCreate;
-    }
-
-    return false;
+    return notification;
   }
 
   async findAllById() {

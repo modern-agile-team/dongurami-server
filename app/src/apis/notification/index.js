@@ -50,10 +50,27 @@ router.post(
 );
 
 router.post(
-  '/reply-cmt/:category/:boardNum/:cmtNum',
+  '/reply-comment/:category/:boardNum/:cmtNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createReplyCmtNotification
 );
 
+router.post(
+  '/liked/board/:category/:boardNum',
+  loginAuth.loginCheck,
+  ctrl.process.createLikeNotificationByBoardNum
+);
+
+router.post(
+  '/liked/comment/:category/:cmtNum',
+  loginAuth.loginCheck,
+  ctrl.process.createLikeNotificationByCmtNum
+);
+
+router.post(
+  '/liked/reply-comment/:category/:replyCmtNum',
+  loginAuth.loginCheck,
+  ctrl.process.createLikeNotificationByReplyCmtNum
+);
 module.exports = router;

@@ -3,7 +3,7 @@
 const EmotionStorage = require('./EmotionStorage');
 const BoardStorage = require('../Board/BoardStorage');
 const CommentStorage = require('../Board/Comment/CommentStorage');
-const Notification = require('../Notification/Notification');
+// const Notification = require('../Notification/Notification');
 const Error = require('../../utils/Error');
 
 class Emotion {

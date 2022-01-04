@@ -340,14 +340,13 @@ class BoardStorage {
 
       const board = await conn.query(query, [boardNum]);
 
-      // 좋아요도 변경되어야 함.
-      const boardInfo = {
-        writerId: board[0].id,
-        writerName: board[0].name,
+      const recipientInfo = {
+        id: board[0].id,
+        name: board[0].name,
         title: board[0].title,
       };
 
-      return boardInfo;
+      return recipientInfo;
     } catch (err) {
       throw err;
     } finally {
