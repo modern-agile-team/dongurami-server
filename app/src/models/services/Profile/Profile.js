@@ -64,10 +64,8 @@ class Profile {
 
     if (this.params.studentId !== userInfo.userId) {
       msg = '로그인된 사람의 프로필이 아닙니다.';
-    } else if (userInfo.email && userInfo.email.match(EMAIL_REG_EXP) === null) {
+    } else if (!EMAIL_REG_EXP.test(userInfo.email)) {
       msg = '이메일 형식이 맞지 않습니다.';
-    } else if (userInfo.email.length === 0) {
-      msg = '이메일 형식이 맞지 안습니다.';
     } else if (
       userInfo.phoneNumber &&
       (userInfo.phoneNumber.length !== 11 ||
