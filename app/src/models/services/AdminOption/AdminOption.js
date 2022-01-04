@@ -2,8 +2,6 @@
 
 const AdminOptionStorage = require('./AdminOptionStorage');
 const ApplicationStorage = require('../Application/ApplicationStorage');
-// const Notification = require('../Notification/Notification');
-// const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class AdminOption {
@@ -142,7 +140,6 @@ class AdminOption {
       const applicantInfo = {
         clubNum: this.params.clubNum,
         applicant: this.body.applicant,
-        // type: '승인',
       };
 
       const isUpdate = await ApplicationStorage.updateAcceptedApplicantById(
@@ -152,8 +149,6 @@ class AdminOption {
       const isCreate = await ApplicationStorage.createMemberById(applicantInfo);
 
       if (isUpdate && isCreate) {
-        // await this.sendNotification(applicantInfo.type);
-
         return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
       }
       return {
@@ -165,84 +160,17 @@ class AdminOption {
     }
   }
 
-  // async sendNotification(resultType) {
-  //   const notificationInfo = await this.getNotificationInfo(resultType);
-
-  //   if (resultType === '승인') {
-  //     await this.sendApproveNotification(notificationInfo);
-  //   }
-
-  //   if (resultType === '거절') await this.createNotification(notificationInfo);
-  // }
-
-  // async getNotificationInfo(resultType) {
-  //   const applicantInfo = {
-  //     clubNum: this.params.clubNum,
-  //     applicantId: this.body.applicant,
-  //   };
-
-  //   const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-  //     applicantInfo.clubNum
-  //   );
-
-  //   const applicantName =
-  //     await ApplicationStorage.findOneByApplicantIdAndClubNum(applicantInfo);
-
-  //   const notificationInfo = {
-  //     title: clubName,
-  //     senderName: this.auth.name,
-  //   };
-
-  //   if (resultType === '거절') {
-  //     notificationInfo.recipientName = applicantName;
-  //     notificationInfo.recipientId = applicantInfo.applicantId;
-  //     notificationInfo.content = '동아리 가입 신청 결과';
-  //   }
-
-  //   if (resultType === '승인') {
-  //     const recipients = await NotificationStorage.findAllByClubNum(
-  //       applicantInfo.clubNum
-  //     );
-
-  //     notificationInfo.content = `${applicantName}님 가입`;
-  //     notificationInfo.recipients = recipients;
-  //   }
-
-  //   return notificationInfo;
-  // }
-
-  // async sendApproveNotification(notificationInfo) {
-  //   notificationInfo.recipients.forEach(async (recipient) => {
-  //     if (this.auth.id !== recipient.id) {
-  //       notificationInfo.recipientName = recipient.name;
-  //       notificationInfo.recipientId = recipient.id;
-
-  //       if (recipient.id === this.body.applicant) {
-  //         notificationInfo.content = '동아리 가입을 축하합니다.🎊';
-  //       }
-  //       await this.createNotification(notificationInfo);
-  //     }
-  //   });
-  // }
-
-  // createNotification(notificationInfo) {
-  //   return new Notification(this.req).createNotification(notificationInfo);
-  // }
-
   async updateApplicantById() {
     try {
       const applicantInfo = {
         clubNum: this.params.clubNum,
         applicantId: this.body.applicant,
-        // type: '거절',
       };
       const isUpdate = await ApplicationStorage.updateRejectedApplicantById(
         applicantInfo
       );
 
       if (isUpdate) {
-        // await this.sendNotification(applicantInfo.type);
-
         return { success: true, msg: '동아리 가입 신청을 거절하셨습니다.' };
       }
       return {
