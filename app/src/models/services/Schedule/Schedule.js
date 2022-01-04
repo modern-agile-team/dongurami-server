@@ -1,8 +1,6 @@
 'use strict';
 
 const ScheduleStorage = require('./ScheduleStorage');
-// const Notification = require('../Notification/Notification');
-// const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Schedule {
@@ -70,8 +68,6 @@ class Schedule {
       const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
       if (success) {
-        // await this.sendNotification();
-
         return { success: true, msg: '일정이 등록되었습니다.' };
       }
       return { success: false, msg: '일정 등록에 실패하였습니다.' };
@@ -95,40 +91,12 @@ class Schedule {
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
       if (success) {
-        // await this.sendNotification();
-
         return { success: true, msg: '일정이 수정되었습니다.' };
       }
       return { success: false, msg: '일정 수정에 실패하였습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
-  }
-
-  async sendNotification() {
-    const notification = new Notification(this.req);
-    const { clubNum } = this.params;
-    const sender = this.auth;
-
-    const recipients = await NotificationStorage.findAllByClubNum(clubNum);
-
-    const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-      clubNum
-    );
-
-    recipients.forEach(async (recipient) => {
-      if (sender.id !== recipient.id) {
-        const notificationInfo = {
-          clubName,
-          senderName: sender.name,
-          recipientName: recipient.name,
-          recipientId: recipient.id,
-          content: this.body.title,
-        };
-
-        await notification.createNotification(notificationInfo);
-      }
-    });
   }
 
   async updateOnlyImportant() {
