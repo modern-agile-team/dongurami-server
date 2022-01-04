@@ -41,6 +41,43 @@ const process = {
     return res.status(200).json(response);
   },
 
+  createCmtNotification: async (req, res) => {
+    const { category } = req.params;
+    const { boardNum } = req.params;
+    const notification = new Notification(req);
+    const response = await notification.createCmtNotification();
+
+    if (response.isError) {
+      logger.error(
+        `POST /api/notification/cmt/${category}/${boardNum} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.info(
+      `POST /api/notification/cmt/${category}/${boardNum} 200: ${response.msg}`
+    );
+    return res.status(200).json(response);
+  },
+
+  createReplyCmtNotification: async (req, res) => {
+    const { category } = req.params;
+    const { boardNum } = req.params;
+    const { cmtNum } = req.params;
+    const notification = new Notification(req);
+    const response = await notification.createReplyCmtNotification();
+
+    if (response.isError) {
+      logger.error(
+        `POST /api/notification/${category}/cmt/${boardNum}/${cmtNum} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.info(
+      `POST /api/notification/${category}/reply-cmt/${boardNum}/${cmtNum} 200: ${response.msg}`
+    );
+    return res.status(200).json(response);
+  },
+
   findAllById: async (req, res) => {
     const notification = new Notification(req);
     const response = await notification.findAllById();

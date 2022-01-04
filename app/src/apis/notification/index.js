@@ -42,4 +42,18 @@ router.post(
   ctrl.process.createClubBoardNotification
 );
 
+router.post(
+  '/cmt/:category/:boardNum',
+  apiAuth.apiAuth,
+  loginAuth.loginCheck,
+  ctrl.process.createCmtNotification
+);
+
+router.post(
+  '/reply-cmt/:category/:boardNum/:cmtNum',
+  apiAuth.apiAuth,
+  loginAuth.loginCheck,
+  ctrl.process.createReplyCmtNotification
+);
+
 module.exports = router;

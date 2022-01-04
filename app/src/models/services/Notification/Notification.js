@@ -104,6 +104,16 @@ class Notification {
     });
   }
 
+  async createCmtNotification() {
+    const cmt = this.body;
+    console.log(cmt);
+  }
+
+  async createReplyCmtNotification() {
+    const replyCmt = this.body;
+    console.log(replyCmt);
+  }
+
   async findAllById() {
     const studentId = this.auth.id;
 
