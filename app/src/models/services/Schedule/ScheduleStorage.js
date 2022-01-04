@@ -10,6 +10,7 @@ class ScheduleStorage {
       conn = await mariadb.getConnection();
 
       const query = 'SELECT no FROM clubs WHERE no = ?;';
+
       const club = await conn.query(query, clubNum);
 
       return club[0];
@@ -20,7 +21,7 @@ class ScheduleStorage {
     }
   }
 
-  static async findAllByDate(scheduleInfo) {
+  static async findAllScheduleByDate(scheduleInfo) {
     let conn;
 
     try {
@@ -30,50 +31,7 @@ class ScheduleStorage {
       FROM schedules 
       WHERE ? BETWEEN LEFT(start_date, 7) AND LEFT(end_date, 7) AND club_no = ?
       ORDER BY start_date;`;
-      const result = await conn.query(query, [
-        scheduleInfo.date,
-        scheduleInfo.clubNum,
-      ]);
 
-      return result;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findAllByClubNum(clubNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT no, color_code AS colorCode, title, start_date AS startDate, end_date AS endDate, important 
-      FROM schedules
-      WHERE LEFT(NOW(), 7) BETWEEN LEFT(start_date, 7) AND LEFT(end_date, 7) AND club_no = ?
-      ORDER BY start_date;`;
-
-      const result = await conn.query(query, clubNum);
-
-      return result;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async xxfindAllByDate(scheduleInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT no, color_code AS colorCode, title, start_date AS startDate, end_date AS endDate, important 
-      FROM schedules 
-      WHERE ? BETWEEN LEFT(start_date, 7) AND LEFT(end_date, 7) AND club_no = ?
-      ORDER BY start_date;`;
       const result = await conn.query(query, [
         scheduleInfo.date,
         scheduleInfo.clubNum,

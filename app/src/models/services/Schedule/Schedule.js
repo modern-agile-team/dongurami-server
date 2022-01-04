@@ -19,19 +19,19 @@ class Schedule {
     return club;
   }
 
-  async findAllByDate() {
-    const { clubNum } = this.params;
-    const { date } = this.params;
+  async findAllScheduleByDate() {
     const ScheduleInfo = {
-      clubNum,
-      date,
+      clubNum: this.params.clubNum,
+      date: this.params.date,
     };
 
     try {
-      const success = await ScheduleStorage.existClub(clubNum);
+      const club = this.existClub();
 
-      if (success) {
-        const result = await ScheduleStorage.findAllByDate(ScheduleInfo);
+      if (club) {
+        const result = await ScheduleStorage.findAllScheduleByDate(
+          ScheduleInfo
+        );
 
         return { success: true, msg: '일정 조회 성공', result };
       }
