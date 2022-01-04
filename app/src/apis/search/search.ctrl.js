@@ -24,7 +24,6 @@ const process = {
   findAllClubList: async (req, res) => {
     const search = new Search(req);
     const response = await search.findAllClubList();
-
     const apiInfo = getApiInfo('GET', response, req);
 
     return processCtrl(res, apiInfo);
