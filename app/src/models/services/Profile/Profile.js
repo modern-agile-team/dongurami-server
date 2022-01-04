@@ -27,14 +27,17 @@ class Profile {
           status: 404,
         };
       }
-      if (!user || profile.id !== user.id) {
-        ProfileUtil.deleteSomeProfileInfo(profile);
-      }
 
       const clubs = await ProfileStorage.findAllClubByStudentId(studentId);
 
       profile.clubs = ProfileUtil.formattingClubs(clubs);
-      profile.naverUserFlag = await ProfileUtil.getNaverUserFlag(user);
+      profile.naverUserFlag = await ProfileUtil.getNaverUserFlag(
+        user,
+        studentId
+      );
+      if (!user || profile.id !== user.id) {
+        ProfileUtil.deleteSomeProfileInfo(profile);
+      }
 
       return {
         success: true,

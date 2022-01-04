@@ -8,9 +8,10 @@ class ProfileUtil {
     delete profile.phoneNumber;
     delete profile.grade;
     delete profile.gender;
+    delete profile.naverUserFlag;
   }
 
-  static async getNaverUserFlag(user) {
+  static async getNaverUserFlag(user, studentId) {
     if (user) {
       const studentInfo = await StudentStorage.findOneSnsUserById(studentId);
 
