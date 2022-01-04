@@ -1,59 +1,32 @@
 'use strict';
 
-const Board = require('../../models/services/Board/Board');
-const Club = require('../../models/services/Club/Club');
-const logger = require('../../config/logger');
+const Search = require('../../models/services/Search/Search');
+const processCtrl = require('../../models/utils/processCtrl');
+const getApiInfo = require('../../models/utils/getApiInfo');
 
 const process = {
-  search: async (req, res) => {
-    const board = new Board(req);
-    const { category } = req.params;
-    const response = await board.search();
+  findAllSearch: async (req, res) => {
+    const search = new Search(req);
+    const response = await search.findAllSearch();
+    const apiInfo = getApiInfo('GET', response, req);
 
-    if (response.success) {
-      logger.info(`GET /api/search/${category} 200: ${response.msg}`);
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `GET /api/search/${category} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(`GET /api/search/${category} 400: ${response.msg}`);
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
-  promotionSearch: async (req, res) => {
-    const board = new Board(req);
-    const response = await board.promotionSearch();
+  findAllPromotionSearch: async (req, res) => {
+    const search = new Search(req);
+    const response = await search.findAllPromotionSearch();
+    const apiInfo = getApiInfo('GET', response, req);
 
-    if (response.success) {
-      logger.info(`GET /api/search/promotion/category 200: ${response.msg}`);
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `GET /api/search/promotion/category 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(`GET /api/search/promotion/category 400: ${response.msg}`);
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
-  clubListSearch: async (req, res) => {
-    const club = new Club(req);
-    const response = await club.clubListSearch();
+  findAllClubList: async (req, res) => {
+    const search = new Search(req);
+    const response = await search.findAllClubList();
+    const apiInfo = getApiInfo('GET', response, req);
 
-    if (response.success) {
-      logger.info(`GET /api/search/club-list/category 200: ${response.msg}`);
-      return res.status(200).json(response);
-    }
-    logger.error(
-      `GET /api/search/club-list/category 500: \n${response.errMsg.stack}`
-    );
-    return res.status(500).json(response.clientMsg);
+    return processCtrl(res, apiInfo);
   },
 };
 

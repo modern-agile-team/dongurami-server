@@ -6,12 +6,16 @@ const router = express.Router();
 const ctrl = require('./search.ctrl');
 const apiAuth = require('../../middlewares/api-auth');
 
-router.get('/:category', apiAuth.apiAuth, ctrl.process.search);
+router.get('/:category', apiAuth.apiAuth, ctrl.process.findAllSearch);
 router.get(
   '/promotion/category',
   apiAuth.apiAuth,
-  ctrl.process.promotionSearch
+  ctrl.process.findAllPromotionSearch
 );
-router.get('/club-list/category', apiAuth.apiAuth, ctrl.process.clubListSearch);
+router.get(
+  '/club-list/:keyword',
+  apiAuth.apiAuth,
+  ctrl.process.findAllClubList
+);
 
 module.exports = router;
