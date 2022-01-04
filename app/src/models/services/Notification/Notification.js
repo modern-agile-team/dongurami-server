@@ -16,9 +16,9 @@ class Notification {
   async createBoardNotification() {
     try {
       const { notificationInfo, recipients } =
-        await this.xxNewGetNotificationInfoByBoardCategory();
+        await this.getNotificationInfoByBoardCategory();
 
-      await this.xxNewSendNotification(notificationInfo, recipients);
+      await this.sendNotification(notificationInfo, recipients);
 
       return { success: true, msg: '알림이 생성되었습니다.' };
     } catch (err) {
@@ -26,7 +26,7 @@ class Notification {
     }
   }
 
-  async xxNewGetNotificationInfoByBoardCategory() {
+  async getNotificationInfoByBoardCategory() {
     const { clubNum } = this.params;
     const category = boardCategory[this.params.category];
 
@@ -34,12 +34,12 @@ class Notification {
     let recipients;
 
     if (category === 1) {
-      notificationInfo = await this.xxNewGetBoardNotificationInfo();
+      notificationInfo = await this.getBoardNotificationInfo();
 
       recipients = await StudentStorage.findAllNameAndId();
     }
     if (category === 5) {
-      notificationInfo = await this.xxNewGetClubBoardNotificationInfo();
+      notificationInfo = await this.getClubBoardNotificationInfo();
 
       recipients = await NotificationStorage.findAllByClubNum(clubNum);
     }
@@ -47,7 +47,7 @@ class Notification {
     return { notificationInfo, recipients };
   }
 
-  async xxNewGetBoardNotificationInfo() {
+  async getBoardNotificationInfo() {
     const board = {
       no: this.params.boardNum,
       title: this.body.boardTitle,
@@ -63,7 +63,7 @@ class Notification {
     };
   }
 
-  async xxNewGetClubBoardNotificationInfo() {
+  async getClubBoardNotificationInfo() {
     const { clubNum } = this.params;
     const board = {
       no: this.params.boardNum,
@@ -84,7 +84,7 @@ class Notification {
     };
   }
 
-  async xxNewSendNotification(notificationInfo, recipients) {
+  async sendNotification(notificationInfo, recipients) {
     const senderId = this.auth.id;
 
     recipients.forEach(async (recipient) => {
