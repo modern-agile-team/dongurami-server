@@ -90,7 +90,7 @@ class Profile {
         return {
           success: false,
           msg: '로그인된 사람의 프로필이 아닙니다.',
-          status: 409,
+          status: 403,
         };
       }
 
