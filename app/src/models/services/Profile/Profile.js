@@ -59,22 +59,16 @@ class Profile {
     };
     const EMAIL_REG_EXP =
       /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
-    const PHONE_NUMBER_REG_EXP = /[eE]/;
+    const PHONE_NUMBER_REG_EXP = /[^0-9]/g;
     let msg = '';
 
-    if (this.params.studentId !== userInfo.userId) {
-      msg = '로그인된 사람의 프로필이 아닙니다.';
-    } else if (!EMAIL_REG_EXP.test(userInfo.email)) {
+    if (!EMAIL_REG_EXP.test(userInfo.email)) {
       msg = '이메일 형식이 맞지 않습니다.';
     } else if (
-      userInfo.phoneNumber &&
-      (userInfo.phoneNumber.length !== 11 ||
-        Number.isNaN(Number(userInfo.phoneNumber)) ||
-        !(userInfo.phoneNumber.match(PHONE_NUMBER_REG_EXP) === null))
+      userInfo.phoneNumber.length !== 11 ||
+      PHONE_NUMBER_REG_EXP.test(userInfo.phoneNumber)
     ) {
       msg = '전화번호 형식이 맞지 않습니다.';
-    } else if (userInfo.phoneNumber === 0) {
-      msg = '이메일 형식이 맞지 않습니다.';
     }
     if (msg) return { success: false, msg, status: 400 };
 
@@ -90,6 +84,13 @@ class Profile {
           success: false,
           msg: '네이버 이메일로 가입된 회원은 이메일 변경이 불가능합니다.',
           status: 403,
+        };
+      }
+      if (this.params.studentId !== userInfo.userId) {
+        return {
+          success: false,
+          msg: '로그인된 사람의 프로필이 아닙니다.',
+          status: 409,
         };
       }
 
