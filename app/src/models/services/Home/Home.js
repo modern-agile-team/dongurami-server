@@ -12,6 +12,7 @@ class Home {
 
   static makeMsg(status, msg, result) {
     return {
+      status,
       msg,
       result,
       success: status < 400,
