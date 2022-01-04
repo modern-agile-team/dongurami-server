@@ -1,8 +1,9 @@
 'use strict';
 
-const ProfileStorage = require('./ProfileStorage');
-const Error = require('../../utils/Error');
 const StudentStorage = require('../Student/StudentStorage');
+const ProfileStorage = require('./ProfileStorage');
+const ProfileUtil = require('./utils');
+const Error = require('../../utils/Error');
 const Auth = require('../Auth/Auth');
 
 class Profile {
@@ -27,10 +28,7 @@ class Profile {
         };
       }
       if (!user || profile.id !== user.id) {
-        delete profile.email;
-        delete profile.phoneNumber;
-        delete profile.grade;
-        delete profile.gender;
+        ProfileUtil.deleteSomeProfileInfo(profile);
       }
 
       if (user) {
