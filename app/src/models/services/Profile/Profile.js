@@ -31,24 +31,11 @@ class Profile {
         ProfileUtil.deleteSomeProfileInfo(profile);
       }
 
-      if (user) {
-        const studentInfo = await StudentStorage.findOneSnsUserById(studentId);
-
-        if (studentInfo && studentInfo.studentId === studentId) {
-          profile.isNaverUser = 1;
-        } else profile.isNaverUser = 0;
-      } else profile.isNaverUser = 0;
+      await ProfileUtil.updateNaverUserFlag(user, profile);
 
       const clubs = await ProfileStorage.findAllClubByStudentId(studentId);
 
-      profile.clubs = [];
-
-      for (const club of clubs) {
-        profile.clubs.push({
-          no: club.no,
-          name: club.name,
-        });
-      }
+      profile.clubs = ProfileUtil.formattingClubs(clubs);
 
       return {
         success: true,
