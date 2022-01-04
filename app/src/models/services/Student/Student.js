@@ -43,16 +43,11 @@ class Student {
   //   };
   // }
 
-  blankInputCheck() {
+  inputNullCheck() {
     const client = this.body;
 
-    if (!(client.id && client.password)) {
-      return Student.makeResponseMsg(
-        400,
-        '아이디 또는 비밀번호를 확인해주세요.'
-      );
-    }
-    return { success: true };
+    if (client.id && client.password) return { success: true };
+    return Student.makeResponseMsg(400, '아이디 또는 비밀번호를 확인해주세요.');
   }
 
   static comparePassword(input, stored) {
@@ -65,8 +60,8 @@ class Student {
   async login() {
     const client = this.body;
 
-    const blankInputCheck = this.blankInputCheck();
-    if (blankInputCheck.msg) return blankInputCheck;
+    const inputNullCheck = this.inputNullCheck();
+    if (!inputNullCheck.success) return inputNullCheck;
 
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
