@@ -12,10 +12,9 @@ class Emotion {
 
   async likedByBoardNum() {
     const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
-
       const boardExistence = await EmotionStorage.existOnlyBoardNum(
         emotionInfo.boardNum
       );
@@ -43,10 +42,9 @@ class Emotion {
 
   async unLikedByBoardNum() {
     const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
-
       const boardExistence = await EmotionStorage.existOnlyBoardNum(
         emotionInfo.boardNum
       );
@@ -74,10 +72,9 @@ class Emotion {
 
   async likedByCmtNum() {
     const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
-
       const cmtExistence = await EmotionStorage.existOnlyCmtByCmtNumAndDepth(
         emotionInfo.cmtInfo
       );
@@ -105,10 +102,9 @@ class Emotion {
 
   async unLikedByCmtNum() {
     const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
-
       const cmtExistence = await EmotionStorage.existOnlyCmtByCmtNumAndDepth(
         emotionInfo.cmtInfo
       );
@@ -136,10 +132,9 @@ class Emotion {
 
   async likedByReplyCmtNum() {
     const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
-
       const replyCmtExistence =
         await EmotionStorage.existOnlyCmtByCmtNumAndDepth(emotionInfo.cmtInfo);
 
@@ -166,10 +161,9 @@ class Emotion {
 
   async unLikedByReplyCmtNum() {
     const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = EmotionUtil.makeEmotionInfo(request);
-
       const replyCmtExistence =
         await EmotionStorage.existOnlyCmtByCmtNumAndDepth(emotionInfo.cmtInfo);
 
