@@ -110,7 +110,7 @@ class Schedule {
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
-        endDate: data.endDate,
+        endDate: data.endDate, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
       };
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
