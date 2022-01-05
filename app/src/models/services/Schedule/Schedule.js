@@ -158,15 +158,13 @@ class Schedule {
   }
 
   async deleteSchedule() {
-    const { no } = this.params;
-
     try {
-      const success = await ScheduleStorage.deleteSchedule(no);
+      const success = await ScheduleStorage.deleteSchedule(this.params.no);
 
       if (success) {
-        return { success: true, msg: '일정이 삭제되었습니다.' };
+        return Schedule.makeMsg(200, '일정이 삭제되었습니다.');
       }
-      return { success: false, msg: '일정이 삭제되지 않았습니다.' };
+      return Schedule.makeMsg(400, '일정이 삭제되지 않았습니다.');
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
