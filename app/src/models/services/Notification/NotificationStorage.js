@@ -24,7 +24,6 @@ class NotificationStorage {
     }
   }
 
-  // 동아리 공지 수신자.
   static async findAllMemberInfoByClubNum(clubNum) {
     let conn;
 
@@ -48,7 +47,6 @@ class NotificationStorage {
     }
   }
 
-  // 동아리 정보.
   static async findClubInfoByClubNum(clubNum) {
     let conn;
 
@@ -141,7 +139,6 @@ class NotificationStorage {
     }
   }
 
-  // 전체 공지 수신자
   static async findAllStudentNameAndId() {
     let conn;
 
