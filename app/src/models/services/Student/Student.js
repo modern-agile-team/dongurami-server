@@ -18,44 +18,70 @@ class Student {
     this.SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
   }
 
+  static makeResponseMsg(status, msg, jwt) {
+    return {
+      success: status < 400,
+      status,
+      msg,
+      jwt,
+    };
+  }
+
+  // static successMessage(msg, jwt) {
+  //   return {
+  //     success: true,
+  //     msg,
+  //     jwt,
+  //   };
+  // }
+
+  // static failMessage(msg, status) {
+  //   return {
+  //     success: false,
+  //     msg,
+  //     status,
+  //   };
+  // }
+
+  inputNullCheck() {
+    const client = this.body;
+
+    if (client.id && client.password) return { success: true };
+    return Student.makeResponseMsg(400, '아이디 또는 비밀번호를 확인해주세요.');
+  }
+
+  static comparePassword(input, stored) {
+    const inputPassword = input.password;
+    const storedPassword = stored.password;
+
+    return bcrypt.compareSync(inputPassword, storedPassword);
+  }
+
   async login() {
     const client = this.body;
 
-    if (!(client.id && client.password)) {
-      return { success: false, msg: '아이디 또는 비밀번호를 확인해주세요.' };
-    }
+    const inputNullCheck = this.inputNullCheck();
+    if (!inputNullCheck.success) return inputNullCheck;
 
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
 
       if (!checkedId) {
-        return {
-          success: false,
-          msg: '가입된 아이디가 아닙니다.',
-          status: 401,
-        };
+        return Student.makeResponseMsg(401, '가입된 아이디가 아닙니다.');
       }
 
-      const comparePassword = bcrypt.compareSync(
-        client.password,
-        checkedId.password
-      );
+      const comparePassword = Student.comparePassword(client, checkedId);
+
       if (comparePassword) {
         const clubNum = await StudentStorage.findOneByLoginedId(client.id);
         const jwt = await Auth.createJWT(checkedId, clubNum);
 
-        return { success: true, msg: '로그인에 성공하셨습니다.', jwt };
+        return Student.makeResponseMsg(200, '로그인에 성공하셨습니다.', jwt);
       }
-      return {
-        success: false,
-        msg: '잘못된 비밀번호입니다.',
-        status: 401,
-      };
+
+      return Student.makeResponseMsg(401, '잘못된 비밀번호입니다.');
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -80,10 +106,7 @@ class Student {
       }
       return checkedIdAndEmail;
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -105,10 +128,7 @@ class Student {
       }
       return { success: false, msg: '해당하는 아이디가 없습니다.' };
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -134,10 +154,7 @@ class Student {
       }
       return checkedPassword;
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -171,10 +188,7 @@ class Student {
         msg: '서버 에러입니다. 서버개발자에게 문의하세요.',
       };
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -207,10 +221,7 @@ class Student {
       }
       return { success: false, msg: '기존 비밀번호가 틀렸습니다.' };
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -283,10 +294,7 @@ class Student {
       }
       return { success: true, msg: '비밀번호가 변경되었습니다.' };
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 
@@ -391,10 +399,7 @@ class Student {
       }
       return checkedIdAndEmail;
     } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
+      return Error.ctrl('', err);
     }
   }
 }
