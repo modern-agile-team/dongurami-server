@@ -12,34 +12,30 @@ router.post(
   '/:clubNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  clubAuth.clubJoinCheck,
   ctrl.process.createSchedule
 );
 
-router.get(
-  '/:clubNum',
-  apiAuth.apiAuth,
-  loginAuth.loginCheck,
-  clubAuth.clubJoinCheck,
-  ctrl.process.findAllByClubNum
-);
 router.get(
   '/:clubNum/:date',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   clubAuth.clubJoinCheck,
-  ctrl.process.findAllByDate
+  ctrl.process.findAllScheduleByDate
 );
 
 router.put(
   '/:clubNum/:no',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  clubAuth.clubJoinCheck,
   ctrl.process.updateSchedule
 );
 router.patch(
   '/:clubNum/:no',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  clubAuth.clubJoinCheck,
   ctrl.process.updateOnlyImportant
 );
 
@@ -47,6 +43,7 @@ router.delete(
   '/:clubNum/:no',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  clubAuth.clubJoinCheck,
   ctrl.process.deleteSchedule
 );
 
