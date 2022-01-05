@@ -13,6 +13,15 @@ class Schedule {
     this.auth = req.auth;
   }
 
+  static makeMsg(status, msg, result) {
+    return {
+      status,
+      success: status < 400,
+      msg,
+      result,
+    };
+  }
+
   async existClub() {
     const club = await ScheduleStorage.existClub(this.params.clubNum);
 
@@ -20,28 +29,81 @@ class Schedule {
   }
 
   async findAllScheduleByDate() {
-    const ScheduleInfo = {
+    const scheduleInfo = {
       clubNum: this.params.clubNum,
       date: this.params.date,
     };
 
+    const schedule = await ScheduleStorage.findAllScheduleByDate(scheduleInfo);
+
+    return schedule;
+  }
+
+  async findAllSchedule() {
     try {
-      const club = this.existClub();
+      const club = await this.existClub();
 
       if (club) {
-        const result = await ScheduleStorage.findAllScheduleByDate(
-          ScheduleInfo
+        const result = await this.findAllScheduleByDate();
+
+        return Schedule.makeMsg(200, '일정 조회 성공', result);
+      }
+      return Schedule.makeMsg(404, '존재하지 않는 동아리입니다.');
+    } catch (err) {
+      return Error.ctrl('', err);
+    }
+  }
+
+  async createSchedule() {
+    const data = this.body;
+    const { clubNum } = this.params;
+    const user = this.auth;
+    const notification = new Notification(this.req);
+
+    try {
+      const scheduleInfo = {
+        clubNum,
+        studentId: user.id,
+        colorCode: data.colorCode,
+        title: data.title,
+        startDate: data.startDate,
+        endDate: data.endDate,
+      };
+
+      const success = await ScheduleStorage.createSchedule(scheduleInfo);
+
+      if (success) {
+        const recipients = await NotificationStorage.findAllByClubNum(clubNum);
+
+        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+          clubNum
         );
 
-        return { success: true, msg: '일정 조회 성공', result };
+        const senderId = scheduleInfo.studentId;
+
+        recipients.forEach(async (recipient) => {
+          if (senderId !== recipient.id) {
+            const notificationInfo = {
+              clubName,
+              senderName: user.name,
+              recipientName: recipient.name,
+              recipientId: recipient.id,
+              content: scheduleInfo.title,
+            };
+
+            await notification.createNotification(notificationInfo);
+          }
+        });
+
+        return { success: true, msg: '일정이 등록되었습니다.' };
       }
-      return { success: false, msg: '존재하지 않는 동아리입니다.' };
+      return { success: false, msg: '일정 등록에 실패하였습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
 
-  async createSchedule() {
+  async xxcreateSchedule() {
     const data = this.body;
     const { clubNum } = this.params;
     const user = this.auth;

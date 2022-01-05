@@ -20,7 +20,7 @@ router.get(
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   clubAuth.clubJoinCheck,
-  ctrl.process.findAllScheduleByDate
+  ctrl.process.findAllSchedule
 );
 
 router.put(
