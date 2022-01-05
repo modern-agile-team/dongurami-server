@@ -45,6 +45,24 @@ class ProfileStorage {
     }
   }
 
+  static async findOneOtherEmail(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = 'SELECT id FROM students WHERE email = ? AND id != ?;';
+
+      const studentId = await conn.query(query, [userInfo.email, userInfo.id]);
+
+      return studentId[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findAllClubByStudentId(id) {
     let conn;
 

@@ -93,9 +93,9 @@ class Profile {
         };
       }
 
-      const isEmail = await StudentStorage.findOneByEmail(userInfo.email);
+      const isEmail = await ProfileStorage.findOneOtherEmail(userInfo);
 
-      if (isEmail && isEmail.id !== userInfo.id) {
+      if (isEmail) {
         return {
           success: false,
           msg: '다른 유저가 사용중인 이메일입니다.',
