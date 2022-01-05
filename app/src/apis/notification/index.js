@@ -43,7 +43,7 @@ router.post(
 );
 
 router.post(
-  '/cmt/:category/:boardNum',
+  '/comment/:category/:boardNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createCmtNotification

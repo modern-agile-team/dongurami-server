@@ -16,7 +16,7 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/board/notice/${boardNum} 200: ${response.msg}`
+      `POST /api/notification/board/notice/${boardNum} 201: ${response.msg}`
     );
     return res.status(200).json(response);
   },
@@ -34,7 +34,7 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/board/club-notice/${clubNum}/${boardNum} 200: ${response.msg}`
+      `POST /api/notification/board/club-notice/${clubNum}/${boardNum} 201: ${response.msg}`
     );
     return res.status(200).json(response);
   },
@@ -47,12 +47,12 @@ const process = {
 
     if (response.isError) {
       logger.error(
-        `POST /api/notification/cmt/${category}/${boardNum} 500: \n${response.errMsg.stack}`
+        `POST /api/notification/comment/${category}/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/cmt/${category}/${boardNum} 200: ${response.msg}`
+      `POST /api/notification/comment/${category}/${boardNum} 201: ${response.msg}`
     );
     return res.status(200).json(response);
   },
@@ -66,12 +66,12 @@ const process = {
 
     if (response.isError) {
       logger.error(
-        `POST /api/notification/reply-cmt/${category}/${boardNum}/${cmtNum} 500: \n${response.errMsg.stack}`
+        `POST /api/notification/reply-comment/${category}/${boardNum}/${cmtNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/reply-cmt/${category}/${boardNum}/${cmtNum} 200: ${response.msg}`
+      `POST /api/notification/reply-comment/${category}/${boardNum}/${cmtNum} 201: ${response.msg}`
     );
     return res.status(200).json(response);
   },
@@ -89,7 +89,7 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/like/board/${category}/${boardNum} 200: ${response.msg}`
+      `POST /api/notification/like/board/${category}/${boardNum} 201: ${response.msg}`
     );
     return res.status(200).json(response);
   },
@@ -107,7 +107,7 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/like/comment/${category}/${cmtNum} 200: ${response.msg}`
+      `POST /api/notification/like/comment/${category}/${cmtNum} 201: ${response.msg}`
     );
     return res.status(200).json(response);
   },
@@ -125,7 +125,7 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/like/reply-comment/${category}/${ReplyCmtmtNum} 200: ${response.msg}`
+      `POST /api/notification/like/reply-comment/${category}/${ReplyCmtNum} 201: ${response.msg}`
     );
     return res.status(200).json(response);
   },
@@ -143,7 +143,7 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST api/notification/join-club/result/${clubNum}/${applicant} 200: ${response.msg}`
+      `POST api/notification/join-club/result/${clubNum}/${applicant} 201: ${response.msg}`
     );
     return res.status(200).json(response);
   },
@@ -160,7 +160,7 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/schedule/${clubNum} 200: ${response.msg}`
+      `POST /api/notification/schedule/${clubNum} 201: ${response.msg}`
     );
     return res.status(200).json(response);
   },
@@ -177,7 +177,7 @@ const process = {
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/club-resign/${clubNum} 200: ${response.msg}`
+      `POST /api/notification/club-resign/${clubNum} 201: ${response.msg}`
     );
     return res.status(200).json(response);
   },

@@ -12,19 +12,6 @@ class Notification {
     this.auth = req.auth;
   }
 
-  // async createNoticeBoardNotification() {
-  //   try {
-  //     const { notificationInfo, recipients } =
-  //       await this.getBoardNotificationInfo();
-
-  //     await this.sendBoardNotification(notificationInfo, recipients);
-
-  //     return { success: true, msg: '전체공지 알림이 생성되었습니다.' };
-  //   } catch (err) {
-  //     return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
-  //   }
-  // }
-
   async createNoticeBoardNotification() {
     try {
       const recipients = await NotificationStorage.findAllStudentNameAndId();
@@ -94,98 +81,13 @@ class Notification {
     return notification;
   }
 
-  // async createClubBoardNotification() {
-  //   try {
-  //     const { notificationInfo, recipients } =
-  //       await this.getClubBoardNotificationInfo();
-
-  //     await this.sendBoardNotification(notificationInfo, recipients);
-
-  //     return { success: true, msg: '동아리공지 알림이 생성되었습니다.' };
-  //   } catch (err) {
-  //     return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
-  //   }
-  // }
-
-  // async getBoardNotificationInfo() {
-  //   const board = {
-  //     no: this.params.boardNum,
-  //     title: this.body.boardTitle,
-  //     notiCategoryNum: this.body.notiCategoryNum,
-  //   };
-
-  //   const recipients = await NotificationStorage.findAllStudentNameAndId();
-
-  //   const notificationInfo = {
-  //     senderName: this.auth.name,
-  //     title: '공지 게시판',
-  //     content: board.title,
-  //     url: `notice/${board.no}`,
-  //     notiCategoryNum: board.notiCategoryNum,
-  //   };
-
-  //   return { recipients, notificationInfo };
-  // }
-
-  // async getClubBoardNotificationInfo() {
-  //   const { clubNum } = this.params;
-  //   const board = {
-  //     no: this.params.boardNum,
-  //     title: this.body.boardTitle,
-  //     notiCategoryNum: this.body.notiCategoryNum,
-  //   };
-
-  //   const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-  //     clubNum
-  //   );
-
-  //   const recipients = await NotificationStorage.findAllMemberInfoByClubNum(
-  //     clubNum
-  //   );
-  //   const notificationInfo = {
-  //     senderName: this.auth.name,
-  //     title: clubName,
-  //     content: board.title,
-  //     url: `clubhome/${clubNum}/notice/${board.no}`,
-  //     notiCategoryNum: board.notiCategoryNum,
-  //   };
-
-  //   return { recipients, notificationInfo };
-  // }
-
-  // async sendBoardNotification(notificationInfo, recipients) {
-  //   const senderId = this.auth.id;
-
-  //   recipients.forEach(async (recipient) => {
-  //     if (senderId !== recipient.id) {
-  //       const notification = {
-  //         senderName: notificationInfo.senderName,
-  //         recipientName: recipient.name,
-  //         recipientId: recipient.id,
-  //         title: notificationInfo.title,
-  //         content: notificationInfo.content,
-  //         url: notificationInfo.url,
-  //         notiCategoryNum: notificationInfo.notiCategoryNum,
-  //       };
-
-  //       await NotificationStorage.createNotification(notification);
-  //     }
-  //   });
-  // }
-
   async createCmtNotification() {
     try {
       const notification = await this.getCmtNotificationInfo();
 
-      const isCreate = await this.sendLikeAndCmtNotification(notification);
+      await this.sendLikeAndCmtNotification(notification);
 
-      if (isCreate) {
-        return { success: true, msg: '댓글 알림이 생성되었습니다.' };
-      }
-      return {
-        success: false,
-        msg: '작성자와 수신자가 같거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      return { success: true, msg: '댓글 알림이 생성되었습니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -195,7 +97,7 @@ class Notification {
     const { params } = this;
     const category = boardCategory[params.category];
     const comment = {
-      description: this.body.description,
+      description: this.body.cmtDescription,
       notiCategoryNum: this.body.notiCategoryNum,
     };
     const recipient = await NotificationStorage.findBoardInfoByBoardNum(
@@ -206,7 +108,7 @@ class Notification {
       senderName: this.auth.name,
       recipientName: recipient.name,
       recipientId: recipient.id,
-      title: recipientInfo.title,
+      title: recipient.title,
       content: comment.description,
       url: `${params.category}/${params.boardNum}`,
       notiCategoryNum: comment.notiCategoryNum,
@@ -223,13 +125,8 @@ class Notification {
     const senderId = this.auth.id;
 
     if (senderId !== notification.recipientId) {
-      const isCreate = await NotificationStorage.createNotification(
-        notification
-      );
-      return isCreate;
+      await NotificationStorage.createNotification(notification);
     }
-
-    return false;
   }
 
   async createReplyCmtNotification() {
@@ -248,7 +145,7 @@ class Notification {
     const { params } = this;
 
     const recipients =
-      await NotificationStorage.findRecipientNamesByCmtAndBoardNum(
+      await NotificationStorage.findRecipientNameByCmtAndBoardNum(
         params.cmtNum,
         params.boardNum
       );
@@ -259,20 +156,20 @@ class Notification {
   async sendReplyCmtNotification(recipients) {
     const senderId = this.auth.id;
 
-    recipients.forEach(async (recipient) => {
+    for (const recipient of recipients) {
       if (senderId !== recipient.id) {
         const notification = this.getReplyCmtNotificationInfo(recipient);
 
         await NotificationStorage.createNotification(notification);
       }
-    });
+    }
   }
 
   getReplyCmtNotificationInfo(recipient) {
     const { params } = this;
     const category = boardCategory[params.category];
     const replyCmt = {
-      description: this.body.description,
+      description: this.body.replyCmtDescription,
       notiCategoryNum: this.body.notiCategoryNum,
     };
 
@@ -355,7 +252,9 @@ class Notification {
 
     try {
       if (notiCategoryNum === 2) {
-        const recipients = await NotificationStorage.findAllByClubNum(clubNum);
+        const recipients = await NotificationStorage.findAllMemberInfoByClubNum(
+          clubNum
+        );
 
         await this.sendJoinApproveNotification(recipients);
 
@@ -379,7 +278,7 @@ class Notification {
     const senderId = this.auth.id;
     const { applicant } = this.body;
 
-    recipients.forEach(async (recipient) => {
+    for (const recipient of recipients) {
       if (senderId !== recipient.id) {
         const notification = await this.getJoinApproveNotificationInfo(
           recipient
@@ -390,7 +289,7 @@ class Notification {
         }
         await NotificationStorage.createNotification(notification);
       }
-    });
+    }
   }
 
   async getJoinApproveNotificationInfo(recipient) {
@@ -449,9 +348,11 @@ class Notification {
 
     try {
       if (notiCategoryNum === 4 || notiCategoryNum === 5) {
-        const recipients = await NotificationStorage.findAllByClubNum(clubNum);
+        const recipients = await NotificationStorage.findAllMemberInfoByClubNum(
+          clubNum
+        );
 
-        await this.sendSchedulenotification(recipients);
+        await this.sendScheduleNotification(recipients);
 
         return { success: true, msg: '일정에 대한 알림이 생성되었습니다.' };
       }
@@ -461,34 +362,35 @@ class Notification {
     }
   }
 
-  async sendSchedulenotification(recipients) {
+  async sendScheduleNotification(recipients) {
     const senderId = this.auth.id;
 
-    recipients.forEach(async (recipient) => {
+    for (const recipient of recipients) {
       if (senderId !== recipient.id) {
         const notification = await this.getScheduleNotification(recipient);
 
         await NotificationStorage.createNotification(notification);
       }
-    });
+    }
   }
 
   async getScheduleNotification(recipient) {
     const { clubNum } = this.params;
-    const schedule = this.body;
+    const { scheduleTitle } = this.body;
+    const { notiCategoryNum } = this.body;
 
     const { clubName } = await NotificationStorage.findClubInfoByClubNum(
       clubNum
     );
 
     return {
+      notiCategoryNum,
       senderName: this.auth.name,
       recipientId: recipient.id,
       recipientName: recipient.name,
       title: clubName,
-      content: schedule.title,
+      content: scheduleTitle,
       url: `clubhome/${clubNum}`,
-      notiCategoryNum: schedule.notiCategoryNum,
     };
   }
 
@@ -496,17 +398,9 @@ class Notification {
     try {
       const notification = await this.getClubResignNotificationInfo();
 
-      const isCreate = await NotificationStorage.createNotification(
-        notification
-      );
+      await NotificationStorage.createNotification(notification);
 
-      if (isCreate) {
-        return { success: true, msg: '동아리탈퇴 알림이 생성되었습니다.' };
-      }
-      return {
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      return { success: true, msg: '동아리탈퇴 알림이 생성되었습니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -543,37 +437,6 @@ class Notification {
           msg: '알림이 성공적으로 조회되었습니다.',
           notifications,
         };
-      }
-      return {
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
-    }
-  }
-
-  // 없어질 함수.
-  async createNotification(notification) {
-    const { body } = this;
-
-    try {
-      const notificationInfo = {
-        title: notification.title || notification.clubName,
-        senderName: notification.senderName,
-        recipientName: notification.recipientName,
-        recipientId: notification.recipientId,
-        content: notification.content,
-        url: body.url || notification.url,
-        notiCategoryNum: body.notiCategoryNum,
-      };
-
-      const success = await NotificationStorage.createNotification(
-        notificationInfo
-      );
-
-      if (success) {
-        return { success: true };
       }
       return {
         success: false,
