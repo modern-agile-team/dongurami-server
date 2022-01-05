@@ -1,8 +1,8 @@
 'use strict';
 
 const ScheduleStorage = require('./ScheduleStorage');
-const Notification = require('../Notification/Notification');
-const NotificationStorage = require('../Notification/NotificationStorage');
+// const Notification = require('../Notification/Notification');
+// const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Schedule {
@@ -99,14 +99,13 @@ class Schedule {
 
   async updateSchedule() {
     const data = this.body;
-    const { no } = this.params;
-    const { clubNum } = this.params;
-    const userInfo = this.auth;
-    const notification = new Notification(this.req);
+    // const { clubNum } = this.params;
+    // const userInfo = this.auth;
+    // const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
-        no,
+        no: this.params.no,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
@@ -115,33 +114,28 @@ class Schedule {
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
       if (success) {
-        const recipients = await NotificationStorage.findAllByClubNum(clubNum);
-
-        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-          clubNum
-        );
-
-        const senderId = userInfo.id;
-
-        recipients.forEach(async (recipient) => {
-          if (senderId !== recipient.id) {
-            const notificationInfo = {
-              clubName,
-              senderName: userInfo.name,
-              recipientName: recipient.name,
-              recipientId: recipient.id,
-              content: scheduleInfo.title,
-            };
-
-            await notification.createNotification(notificationInfo);
-          }
-        });
-
-        return { success: true, msg: '일정이 수정되었습니다.' };
+        // const recipients = await NotificationStorage.findAllByClubNum(clubNum);
+        // const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+        //   clubNum
+        // );
+        // const senderId = userInfo.id;
+        // recipients.forEach(async (recipient) => {
+        //   if (senderId !== recipient.id) {
+        //     const notificationInfo = {
+        //       clubName,
+        //       senderName: userInfo.name,
+        //       recipientName: recipient.name,
+        //       recipientId: recipient.id,
+        //       content: scheduleInfo.title,
+        //     };
+        //     await notification.createNotification(notificationInfo);
+        //   }
+        // });
+        return Schedule.makeMsg(200, '일정이 수정되었습니다.');
       }
-      return { success: false, msg: '일정 수정에 실패하였습니다.' };
+      return Schedule.makeMsg(400, '일정 수정에 실패하였습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
