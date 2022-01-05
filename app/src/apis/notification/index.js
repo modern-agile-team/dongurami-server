@@ -29,17 +29,17 @@ router.put(
 );
 
 router.post(
-  '/board/:boardNum',
+  '/board/notice/:boardNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createNoticeBoardNotification
 );
 
 router.post(
-  '/board/:clubNum/:boardNum',
+  '/board/club-notice/:clubNum/:boardNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
-  ctrl.process.createClubBoardNotification
+  ctrl.process.createClubNoticeNotification
 );
 
 router.post(
@@ -75,7 +75,7 @@ router.post(
 );
 
 router.post(
-  '/join-club/:clubNum',
+  '/join-club/result/:clubNum',
   loginAuth.loginCheck,
   ctrl.process.createJoinNotification
 );

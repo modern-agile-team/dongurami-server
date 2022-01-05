@@ -11,28 +11,30 @@ const process = {
 
     if (response.isError) {
       logger.error(
-        `POST /api/notification/${boardNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.info(`POST /api/notification/${boardNum} 200: ${response.msg}`);
-    return res.status(200).json(response);
-  },
-
-  createClubBoardNotification: async (req, res) => {
-    const { boardNum } = req.params;
-    const { clubNum } = req.params;
-    const notification = new Notification(req);
-    const response = await notification.createClubBoardNotification();
-
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/${clubNum}/${boardNum} 500: \n${response.errMsg.stack}`
+        `POST /api/notification/board/notice/${boardNum} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST /api/notification/${clubNum}/${boardNum} 200: ${response.msg}`
+      `POST /api/notification/board/notice/${boardNum} 200: ${response.msg}`
+    );
+    return res.status(200).json(response);
+  },
+
+  createClubNoticeNotification: async (req, res) => {
+    const { boardNum } = req.params;
+    const { clubNum } = req.params;
+    const notification = new Notification(req);
+    const response = await notification.createClubNoticeBoardNotification();
+
+    if (response.isError) {
+      logger.error(
+        `POST /api/notification/board/club-notice/${clubNum}/${boardNum} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.info(
+      `POST /api/notification/board/club-notice/${clubNum}/${boardNum} 200: ${response.msg}`
     );
     return res.status(200).json(response);
   },
@@ -136,12 +138,12 @@ const process = {
 
     if (response.isError) {
       logger.error(
-        `POST /api/notification/join-club/${clubNum}/${applicant} 500: \n${response.errMsg.stack}`
+        `POST /api/notification/join-club/result/${clubNum}/${applicant} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
     logger.info(
-      `POST api/notification/join-club/${clubNum}/${applicant} 200: ${response.msg}`
+      `POST api/notification/join-club/result/${clubNum}/${applicant} 200: ${response.msg}`
     );
     return res.status(200).json(response);
   },

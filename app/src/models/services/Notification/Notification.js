@@ -1,10 +1,6 @@
 'use strict';
 
 const NotificationStorage = require('./NotificationStorage');
-const StudentStorage = require('../Student/StudentStorage');
-const CommentStorage = require('../Board/Comment/CommentStorage');
-const ApplicationStorage = require('../Application/ApplicationStorage');
-const BoardStorage = require('../Board/BoardStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
@@ -16,53 +12,60 @@ class Notification {
     this.auth = req.auth;
   }
 
+  // async createNoticeBoardNotification() {
+  //   try {
+  //     const { notificationInfo, recipients } =
+  //       await this.getBoardNotificationInfo();
+
+  //     await this.sendBoardNotification(notificationInfo, recipients);
+
+  //     return { success: true, msg: '전체공지 알림이 생성되었습니다.' };
+  //   } catch (err) {
+  //     return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+  //   }
+  // }
+
   async createNoticeBoardNotification() {
     try {
-      const { notificationInfo, recipients } =
-        await this.getBoardNotificationInfo();
+      const recipients = await NotificationStorage.findAllStudentNameAndId();
 
-      await this.sendBoardNotification(notificationInfo, recipients);
+      await this.sendBoardNotification(recipients);
 
-      return { success: true, msg: '전체 공지 생성 알림이 생성되었습니다.' };
+      return { success: true, msg: '전체공지 알림이 생성되었습니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
 
-  async createClubBoardNotification() {
+  async createClubNoticeBoardNotification() {
+    const { clubNum } = this.params;
+
     try {
-      const { notificationInfo, recipients } =
-        await this.getClubBoardNotificationInfo();
+      const recipients = await NotificationStorage.findAllMemberInfoByClubNum(
+        clubNum
+      );
 
-      await this.sendBoardNotification(notificationInfo, recipients);
+      await this.sendBoardNotification(recipients);
 
-      return { success: true, msg: '동아리 공지 생성 알림이 생성되었습니다.' };
+      return { success: true, msg: '동아리공지 알림이 생성되었습니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
 
-  async getBoardNotificationInfo() {
-    const board = {
-      no: this.params.boardNum,
-      title: this.body.boardTitle,
-      notiCategoryNum: this.body.notiCategoryNum,
-    };
+  async sendBoardNotification(recipients) {
+    const senderId = this.auth.id;
 
-    const notificationInfo = {
-      senderName: this.auth.name,
-      title: '공지 게시판',
-      content: board.title,
-      url: `notice/${board.no}`,
-      notiCategoryNum: board.notiCategoryNum,
-    };
+    recipients.forEach(async (recipient) => {
+      if (senderId !== recipient.id) {
+        const notification = await this.xgetBoardNotificationInfo(recipient);
 
-    const recipients = await StudentStorage.findAllNameAndId();
-
-    return { notificationInfo, recipients };
+        await NotificationStorage.createNotification(notification);
+      }
+    });
   }
 
-  async getClubBoardNotificationInfo() {
+  async xgetBoardNotificationInfo(recipient) {
     const { clubNum } = this.params;
     const board = {
       no: this.params.boardNum,
@@ -70,42 +73,105 @@ class Notification {
       notiCategoryNum: this.body.notiCategoryNum,
     };
 
-    const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-      clubNum
-    );
-
-    const notificationInfo = {
+    const notification = {
       senderName: this.auth.name,
-      title: clubName,
+      recipientName: recipient.name,
+      recipientId: recipient.id,
+      title: '공지 게시판',
       content: board.title,
-      url: `clubhome/${clubNum}/notice/${board.no}`,
+      url: `notice/${board.no}`,
       notiCategoryNum: board.notiCategoryNum,
     };
 
-    const recipients = await NotificationStorage.findAllByClubNum(clubNum);
+    if (clubNum) {
+      const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+        clubNum
+      );
 
-    return { notificationInfo, recipients };
+      notification.title = clubName;
+      notification.ulr = `clubhome/${clubNum}/notice/${board.no}`;
+    }
+    return notification;
   }
 
-  async sendBoardNotification(notificationInfo, recipients) {
-    const senderId = this.auth.id;
+  // async createClubBoardNotification() {
+  //   try {
+  //     const { notificationInfo, recipients } =
+  //       await this.getClubBoardNotificationInfo();
 
-    recipients.forEach(async (recipient) => {
-      if (senderId !== recipient.id) {
-        const notification = {
-          senderName: notificationInfo.senderName,
-          recipientName: recipient.name,
-          recipientId: recipient.id,
-          title: notificationInfo.title,
-          content: notificationInfo.content,
-          url: notificationInfo.url,
-          notiCategoryNum: notificationInfo.notiCategoryNum,
-        };
+  //     await this.sendBoardNotification(notificationInfo, recipients);
 
-        await NotificationStorage.createNotification(notification);
-      }
-    });
-  }
+  //     return { success: true, msg: '동아리공지 알림이 생성되었습니다.' };
+  //   } catch (err) {
+  //     return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+  //   }
+  // }
+
+  // async getBoardNotificationInfo() {
+  //   const board = {
+  //     no: this.params.boardNum,
+  //     title: this.body.boardTitle,
+  //     notiCategoryNum: this.body.notiCategoryNum,
+  //   };
+
+  //   const recipients = await NotificationStorage.findAllStudentNameAndId();
+
+  //   const notificationInfo = {
+  //     senderName: this.auth.name,
+  //     title: '공지 게시판',
+  //     content: board.title,
+  //     url: `notice/${board.no}`,
+  //     notiCategoryNum: board.notiCategoryNum,
+  //   };
+
+  //   return { recipients, notificationInfo };
+  // }
+
+  // async getClubBoardNotificationInfo() {
+  //   const { clubNum } = this.params;
+  //   const board = {
+  //     no: this.params.boardNum,
+  //     title: this.body.boardTitle,
+  //     notiCategoryNum: this.body.notiCategoryNum,
+  //   };
+
+  //   const { clubName } = await NotificationStorage.findClubInfoByClubNum(
+  //     clubNum
+  //   );
+
+  //   const recipients = await NotificationStorage.findAllMemberInfoByClubNum(
+  //     clubNum
+  //   );
+  //   const notificationInfo = {
+  //     senderName: this.auth.name,
+  //     title: clubName,
+  //     content: board.title,
+  //     url: `clubhome/${clubNum}/notice/${board.no}`,
+  //     notiCategoryNum: board.notiCategoryNum,
+  //   };
+
+  //   return { recipients, notificationInfo };
+  // }
+
+  // async sendBoardNotification(notificationInfo, recipients) {
+  //   const senderId = this.auth.id;
+
+  //   recipients.forEach(async (recipient) => {
+  //     if (senderId !== recipient.id) {
+  //       const notification = {
+  //         senderName: notificationInfo.senderName,
+  //         recipientName: recipient.name,
+  //         recipientId: recipient.id,
+  //         title: notificationInfo.title,
+  //         content: notificationInfo.content,
+  //         url: notificationInfo.url,
+  //         notiCategoryNum: notificationInfo.notiCategoryNum,
+  //       };
+
+  //       await NotificationStorage.createNotification(notification);
+  //     }
+  //   });
+  // }
 
   async createCmtNotification() {
     try {
@@ -132,14 +198,14 @@ class Notification {
       description: this.body.description,
       notiCategoryNum: this.body.notiCategoryNum,
     };
-    const recipientInfo = await BoardStorage.findBoardInfoByBoardNum(
+    const recipient = await NotificationStorage.findBoardInfoByBoardNum(
       params.boardNum
     );
 
     const notification = {
       senderName: this.auth.name,
-      recipientName: recipientInfo.name,
-      recipientId: recipientInfo.id,
+      recipientName: recipient.name,
+      recipientId: recipient.id,
       title: recipientInfo.title,
       content: comment.description,
       url: `${params.category}/${params.boardNum}`,
@@ -168,7 +234,7 @@ class Notification {
 
   async createReplyCmtNotification() {
     try {
-      const recipients = await this.getRecipientsInfoByCmtNum();
+      const recipients = await this.getRecipientInfoByCmtNum();
 
       await this.sendReplyCmtNotification(recipients);
 
@@ -178,13 +244,14 @@ class Notification {
     }
   }
 
-  async getRecipientsInfoByCmtNum() {
+  async getRecipientInfoByCmtNum() {
     const { params } = this;
 
-    const recipients = await CommentStorage.findRecipientNamesByCmtAndBoardNum(
-      params.cmtNum,
-      params.boardNum
-    );
+    const recipients =
+      await NotificationStorage.findRecipientNamesByCmtAndBoardNum(
+        params.cmtNum,
+        params.boardNum
+      );
 
     return recipients;
   }
@@ -228,7 +295,7 @@ class Notification {
 
   async createLikeNotification() {
     try {
-      const recipientInfo = await this.getRecipientInfo();
+      const recipientInfo = await this.getLikeRecipientInfo();
 
       const notification = await this.getLikeNotificationInfo(recipientInfo);
 
@@ -240,20 +307,22 @@ class Notification {
     }
   }
 
-  async getRecipientInfo() {
+  async getLikeRecipientInfo() {
     const { params } = this;
     let recipientInfo;
 
     if (params.boardNum) {
-      recipientInfo = await BoardStorage.findBoardInfoByBoardNum(
+      recipientInfo = await NotificationStorage.findBoardInfoByBoardNum(
         params.boardNum
       );
     }
     if (params.cmtNum) {
-      recipientInfo = await CommentStorage.findAllByCmtNum(params.cmtNum);
+      recipientInfo = await NotificationStorage.findAllByCmtNum(params.cmtNum);
     }
     if (params.replyCmtNum) {
-      recipientInfo = await CommentStorage.findAllByCmtNum(params.replyCmtNum);
+      recipientInfo = await NotificationStorage.findAllByCmtNum(
+        params.replyCmtNum
+      );
     }
 
     return recipientInfo;
@@ -336,7 +405,7 @@ class Notification {
     );
 
     const applicantName =
-      await ApplicationStorage.findOneByApplicantIdAndClubNum(applicantInfo);
+      await NotificationStorage.findApplicantNameByClubNumAndId(applicantInfo);
 
     return {
       notiCategoryNum,
@@ -361,7 +430,7 @@ class Notification {
     );
 
     const applicantName =
-      await ApplicationStorage.findOneByApplicantIdAndClubNum(applicantInfo);
+      await NotificationStorage.findApplicantNameByClubNumAndId(applicantInfo);
 
     return {
       notiCategoryNum,

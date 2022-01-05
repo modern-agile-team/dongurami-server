@@ -24,14 +24,19 @@ class NotificationStorage {
     }
   }
 
-  static async findAllByClubNum(clubNum) {
+  // 동아리 공지 수신자.
+  static async findAllMemberInfoByClubNum(clubNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'SELECT s.name, s.id FROM members AS m JOIN students AS s ON m.student_id = s.id WHERE m.club_no = ?;';
+      const query = `
+        SELECT s.name, s.id 
+        FROM members AS m 
+        JOIN students AS s 
+        ON m.student_id = s.id 
+        WHERE m.club_no = ?;`;
 
       const members = await conn.query(query, clubNum);
 
@@ -43,14 +48,19 @@ class NotificationStorage {
     }
   }
 
+  // 동아리 정보.
   static async findClubInfoByClubNum(clubNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'SELECT s.name, s.id, c.name AS clubName FROM clubs AS c JOIN students AS s ON c.leader = s.id WHERE c.no = ?;';
+      const query = `
+        SELECT s.name, s.id, c.name AS clubName 
+        FROM clubs AS c 
+        JOIN students AS s 
+        ON c.leader = s.id 
+        WHERE c.no = ?;`;
 
       const club = await conn.query(query, clubNum);
 
@@ -124,6 +134,125 @@ class NotificationStorage {
 
       if (notification.affectedRows) return true;
       return false;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  // 전체 공지 수신자
+  static async findAllStudentNameAndId() {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT id, name FROM students;`;
+
+      const students = await conn.query(query);
+
+      return students;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findBoardInfoByBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT s.name, s.id, b.title 
+        FROM boards AS b 
+        JOIN students AS s 
+        ON b.student_id = s.id 
+        WHERE b.no = ?;`;
+
+      const board = await conn.query(query, [boardNum]);
+
+      const recipient = {
+        id: board[0].id,
+        name: board[0].name,
+        title: board[0].title,
+      };
+
+      return recipient;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllByCmtNum(cmtNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT s.name, s.id, c.description  
+        FROM comments AS c
+        JOIN students AS s 
+        ON c.student_id = s.id 
+        WHERE c.no = ?;`;
+
+      const comment = await conn.query(query, [cmtNum]);
+
+      const recipientInfo = {
+        id: comment[0].id,
+        name: comment[0].name,
+        description: comment[0].description,
+      };
+
+      return recipientInfo;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findApplicantNameByClubNumAndId(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'SELECT s.name FROM applicants AS a JOIN students AS s ON a.student_id = s.id WHERE a.student_id = ? AND a.club_no = ?;';
+
+      const applicant = await conn.query(query, [
+        userInfo.id,
+        userInfo.clubNum,
+      ]);
+
+      return applicant[0].name;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findRecipientNamesByCmtAndBoardNum(cmtNum, boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT DISTINCT s.name, s.id, c.description FROM comments AS c 
+        JOIN students AS s ON c.student_id = s.id 
+        WHERE c.board_no = ? AND c.group_no = ?;`;
+
+      const recipients = await conn.query(query, [boardNum, cmtNum]);
+
+      return recipients;
     } catch (err) {
       throw err;
     } finally {
