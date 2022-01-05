@@ -79,6 +79,24 @@ class EmotionStorage {
     }
   }
 
+  static async existOnlyBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no FROM boards WHERE no = ?;`;
+
+      const existence = await conn.query(query, [boardNum]);
+
+      return existence[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async existOnlyCmtByCmtNumAndDepth(cmtInfo) {
     let conn;
 

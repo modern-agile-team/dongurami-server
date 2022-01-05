@@ -2,7 +2,6 @@
 
 const EmotionStorage = require('./EmotionStorage');
 const EmotionUtil = require('./utils');
-const BoardStorage = require('../Board/BoardStorage');
 const Error = require('../../utils/Error');
 
 class Emotion {
@@ -17,7 +16,7 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
-      const boardExistence = await BoardStorage.existOnlyBoardNum(
+      const boardExistence = await EmotionStorage.existOnlyBoardNum(
         emotionInfo.boardNum
       );
 
@@ -48,7 +47,7 @@ class Emotion {
     try {
       const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
-      const boardExistence = await BoardStorage.existOnlyBoardNum(
+      const boardExistence = await EmotionStorage.existOnlyBoardNum(
         emotionInfo.boardNum
       );
 
