@@ -11,10 +11,9 @@ dotenv.config();
 
 const options = {
   origin: [
-    'http://dongurami-front.herokuapp.com',
-    'https://dongurami-front.herokuapp.com',
+    'http://dongurami.herokuapp.com',
+    'https://dongurami.herokuapp.com',
     'http://localhost:3000',
-    'http://localhost:5000',
   ],
   credentials: true, // 응답 헤더에 Access-Control-Allow-Credentials 추가
   optionsSuccessStatus: 200, // 응답 상태 200으로 설정
@@ -28,7 +27,7 @@ app.use(morgan(':method :status :response-time ms', { stream: logger.stream }));
 const board = require('./src/apis/boards');
 const root = require('./src/apis/root');
 const review = require('./src/apis/review');
-const home = require('./src/apis/circle-home');
+const home = require('./src/apis/home');
 const schedule = require('./src/apis/schedule');
 const clubList = require('./src/apis/club');
 const application = require('./src/apis/application');
@@ -41,7 +40,7 @@ const notification = require('./src/apis/notification');
 const s3 = require('./src/apis/s3');
 const letter = require('./src/apis/letter');
 const naver = require('./src/apis/naver');
-const emotion = require('./src/apis/emotions');
+const emotion = require('./src/apis/emotion');
 
 app.use('/api/board', board);
 app.use('/api', root);

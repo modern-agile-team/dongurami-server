@@ -11,54 +11,50 @@ class Schedule {
     this.auth = req.auth;
   }
 
-  async findAllByClubNum() {
-    const { clubNum } = this.params;
-
-    try {
-      const success = await ScheduleStorage.existClub(clubNum);
-
-      if (success) {
-        const result = await ScheduleStorage.findAllByClubNum(clubNum);
-
-        return { success: true, msg: '일정 조회 성공', result };
-      }
-      return { success: false, msg: '존재하지 않는 동아리입니다.' };
-    } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
-    }
+  static makeMsg(status, msg, schedule) {
+    return {
+      status,
+      success: status < 400,
+      msg,
+      schedule,
+    };
   }
 
-  async findAllByDate() {
-    const { clubNum } = this.params;
-    const { date } = this.params;
-    const ScheduleInfo = {
-      clubNum,
-      date,
+  async existClub() {
+    const club = await ScheduleStorage.existClub(this.params.clubNum);
+
+    return !!club;
+  }
+
+  async findAllScheduleByDate() {
+    const scheduleInfo = {
+      clubNum: this.params.clubNum,
+      date: this.params.date,
     };
 
     try {
-      const success = await ScheduleStorage.existClub(clubNum);
+      const club = await this.existClub();
 
-      if (success) {
-        const result = await ScheduleStorage.findAllByDate(ScheduleInfo);
+      if (club) {
+        const schedule = await ScheduleStorage.findAllScheduleByDate(
+          scheduleInfo
+        );
 
-        return { success: true, msg: '일정 조회 성공', result };
+        return Schedule.makeMsg(200, '일정 조회 성공', schedule);
       }
-      return { success: false, msg: '존재하지 않는 동아리입니다.' };
+      return Schedule.makeMsg(404, '존재하지 않는 동아리입니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async createSchedule() {
     const data = this.body;
-    const { clubNum } = this.params;
-    const user = this.auth;
 
     try {
       const scheduleInfo = {
-        clubNum,
-        studentId: user.id,
+        clubNum: this.params.clubNum,
+        studentId: this.auth.id,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
@@ -67,69 +63,59 @@ class Schedule {
 
       const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
-      if (success) {
-        return { success: true, msg: '일정이 등록되었습니다.' };
-      }
-      return { success: false, msg: '일정 등록에 실패하였습니다.' };
+      if (success) return Schedule.makeMsg(201, '일정이 등록되었습니다.');
+      return Schedule.makeMsg(400, '일정 등록에 실패하였습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async updateSchedule() {
     const data = this.body;
-    const { no } = this.params;
 
     try {
       const scheduleInfo = {
-        no,
+        no: this.params.no,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
-        endDate: data.endDate, // 수정하는 사람 =/= 작성자 가능성O => 학생 정보는 수정시 받지 X
+        endDate: data.endDate,
       };
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
-      if (success) {
-        return { success: true, msg: '일정이 수정되었습니다.' };
-      }
-      return { success: false, msg: '일정 수정에 실패하였습니다.' };
+      if (success) return Schedule.makeMsg(200, '일정이 수정되었습니다.');
+      return Schedule.makeMsg(400, '일정이 수정되지 않았습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async updateOnlyImportant() {
-    const data = this.body;
-    const { no } = this.params;
-
     try {
       const scheduleInfo = {
-        no,
-        important: data.important,
+        no: this.params.no,
+        important: this.body.important,
       };
 
       const success = await ScheduleStorage.updateOnlyImportant(scheduleInfo);
 
       if (success) {
-        return { success: true, msg: '주요 일정으로 등록되었습니다.' };
+        return Schedule.makeMsg(200, '주요 일정으로 등록되었습니다.');
       }
-      return { success: false, msg: '주요 일정 등록이되지 않았습니다.' };
+      return Schedule.makeMsg(400, '주요 일정으로 등록되지 않았습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async deleteSchedule() {
-    const { no } = this.params;
-
     try {
-      const success = await ScheduleStorage.deleteSchedule(no);
+      const success = await ScheduleStorage.deleteSchedule(this.params.no);
 
       if (success) {
-        return { success: true, msg: '일정이 삭제되었습니다.' };
+        return Schedule.makeMsg(200, '일정이 삭제되었습니다.');
       }
-      return { success: false, msg: '일정이 삭제되지 않았습니다.' };
+      return Schedule.makeMsg(400, '일정이 삭제되지 않았습니다.');
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }

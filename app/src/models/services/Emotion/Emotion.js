@@ -1,300 +1,190 @@
 'use strict';
 
 const EmotionStorage = require('./EmotionStorage');
-const BoardStorage = require('../Board/BoardStorage');
+const EmotionUtil = require('./utils');
 const Error = require('../../utils/Error');
 
 class Emotion {
   constructor(req) {
     this.auth = req.auth;
-    this.params = req.params;
     this.req = req;
   }
 
   async likedByBoardNum() {
-    const user = this.auth;
+    const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        boardNum: this.params.boardNum,
-      };
-
-      const isBoardExist = await BoardStorage.existOnlyBoardNum(
+      const boardExistence = await EmotionStorage.existOnlyBoardNum(
         emotionInfo.boardNum
       );
 
-      if (!isBoardExist) {
-        return {
-          success: false,
-          msg: '해당 게시글이 존재하지 않습니다.',
-          status: 404,
-        };
+      if (!boardExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
+      );
 
-      if (isEmotion) {
-        return {
-          success: false,
-          msg: '이미 좋아요를 눌렀습니다.',
-          status: 409,
-        };
+      if (emotionExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
-      const isCreat = await EmotionStorage.likedByBoardNum(emotionInfo);
+      const isCreate = await EmotionStorage.likedByTarget(emotionInfo);
 
-      if (isCreat) {
-        return {
-          success: true,
-          msg: '해당 게시글에 좋아요를 했습니다.',
-        };
-      }
-      return {
-        success: false,
-        msg: '해당 게시글에 좋아요를 실패했습니다.',
-      };
+      if (isCreate) return EmotionUtil.makeResponseByStatusCode(request, 200);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async unLikedByBoardNum() {
-    const user = this.auth;
+    const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        boardNum: this.params.boardNum,
-      };
-
-      const isBoardExist = await BoardStorage.existOnlyBoardNum(
+      const boardExistence = await EmotionStorage.existOnlyBoardNum(
         emotionInfo.boardNum
       );
 
-      if (!isBoardExist) {
-        return {
-          success: false,
-          msg: '해당 게시글이 존재하지 않습니다.',
-          status: 404,
-        };
+      if (!boardExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
+      );
 
-      if (!isEmotion)
-        return {
-          success: false,
-          msg: '좋아요를 누르지 않았습니다.',
-          status: 409,
-        };
-
-      const isDelete = await EmotionStorage.unLikedByBoardNum(emotionInfo);
-
-      if (isDelete) {
-        return {
-          success: true,
-          msg: '해당 게시글의 좋아요가 취소 되었습니다.',
-        };
+      if (!emotionExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
-      return {
-        success: false,
-        msg: '해당 게시글의 좋아요가 취소되지 않았습니다.',
-      };
+
+      const isDelete = await EmotionStorage.unlikedByTarget(emotionInfo);
+
+      if (isDelete) return EmotionUtil.makeResponseByStatusCode(request, 200);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 
   async likedByCmtNum() {
-    const user = this.auth;
+    const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        cmtNum: this.params.cmtNum,
-      };
-
-      const isCmtExist = await EmotionStorage.existOnlyCmtNum(
-        emotionInfo.cmtNum
+      const cmtExistence = await EmotionStorage.existOnlyCmtByCmtNumAndDepth(
+        emotionInfo.cmtInfo
       );
 
-      if (!isCmtExist) {
-        return {
-          success: false,
-          msg: '해당 댓글이 존재하지 않습니다.',
-          status: 404,
-        };
+      if (!cmtExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
+      );
 
-      if (isEmotion) {
-        return {
-          success: false,
-          msg: '이미 좋아요를 눌렀습니다.',
-          status: 409,
-        };
+      if (emotionExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
-      const isCreat = await EmotionStorage.likedByCmtNum(emotionInfo);
+      const isCreate = await EmotionStorage.likedByTarget(emotionInfo);
 
-      if (isCreat) {
-        return {
-          success: true,
-          msg: '해당 댓글에 좋아요를 했습니다.',
-        };
-      }
-      return {
-        success: false,
-        msg: '해당 댓글에 좋아요를 실패했습니다.',
-      };
+      if (isCreate) return EmotionUtil.makeResponseByStatusCode(request, 200);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 
   async unLikedByCmtNum() {
-    const user = this.auth;
+    const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        cmtNum: this.params.cmtNum,
-      };
-
-      const isCmtExist = await EmotionStorage.existOnlyCmtNum(
-        emotionInfo.cmtNum
+      const cmtExistence = await EmotionStorage.existOnlyCmtByCmtNumAndDepth(
+        emotionInfo.cmtInfo
       );
 
-      if (!isCmtExist) {
-        return {
-          success: false,
-          msg: '해당 댓글이 존재하지 않습니다.',
-          status: 404,
-        };
+      if (!cmtExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
+      );
 
-      if (!isEmotion) {
-        return {
-          success: false,
-          msg: '좋아요를 누르지 않았습니다.',
-          status: 409,
-        };
+      if (!emotionExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
-      const isDelete = await EmotionStorage.unLikedByCmtNum(emotionInfo);
+      const isDelete = await EmotionStorage.unlikedByTarget(emotionInfo);
 
-      if (isDelete) {
-        return {
-          success: true,
-          msg: '해당 댓글의 좋아요가 취소 되었습니다.',
-        };
-      }
-      return {
-        success: false,
-        msg: '해당 댓글의 좋아요가 취소되지 않았습니다.',
-      };
+      if (isDelete) return EmotionUtil.makeResponseByStatusCode(request, 200);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async likedByReplyCmtNum() {
-    const user = this.auth;
+    const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        replyCmtNum: this.params.replyCmtNum,
-      };
+      const replyCmtExistence =
+        await EmotionStorage.existOnlyCmtByCmtNumAndDepth(emotionInfo.cmtInfo);
 
-      const isReplyCmtExist = await EmotionStorage.existOnlyReplyCmtNum(
-        emotionInfo.replyCmtNum
+      if (!replyCmtExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
+      }
+
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
       );
 
-      if (!isReplyCmtExist) {
-        return {
-          success: false,
-          msg: '해당 답글이 존재하지 않습니다.',
-          status: 404,
-        };
+      if (emotionExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const isCreate = await EmotionStorage.likedByTarget(emotionInfo);
 
-      if (isEmotion) {
-        return {
-          success: false,
-          msg: '이미 좋아요를 눌렀습니다.',
-          status: 409,
-        };
-      }
-
-      const isCreat = await EmotionStorage.likedByReplyCmtNum(emotionInfo);
-
-      if (isCreat) {
-        return {
-          success: true,
-          msg: '해당 답글에 좋아요를 했습니다.',
-        };
-      }
-      return {
-        success: false,
-        msg: '해당 답글에 좋아요를 실패했습니다.',
-      };
+      if (isCreate) return EmotionUtil.makeResponseByStatusCode(request, 200);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 
   async unLikedByReplyCmtNum() {
-    const user = this.auth;
+    const request = this.req;
+    const emotionInfo = EmotionUtil.makeEmotionInfo(request);
 
     try {
-      const emotionInfo = {
-        studentId: user.id,
-        replyCmtNum: this.params.replyCmtNum,
-      };
+      const replyCmtExistence =
+        await EmotionStorage.existOnlyCmtByCmtNumAndDepth(emotionInfo.cmtInfo);
 
-      const isReplyCmtExist = await EmotionStorage.existOnlyReplyCmtNum(
-        emotionInfo.replyCmtNum
+      if (!replyCmtExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 404);
+      }
+
+      const emotionExistence = await EmotionStorage.existOnlyEmotion(
+        emotionInfo
       );
 
-      if (!isReplyCmtExist) {
-        return {
-          success: false,
-          msg: '해당 답글이 존재하지 않습니다.',
-          status: 404,
-        };
+      if (!emotionExistence) {
+        return EmotionUtil.makeResponseByStatusCode(request, 409);
       }
 
-      const isEmotion = await EmotionStorage.isEmotion(emotionInfo);
+      const isDelete = await EmotionStorage.unlikedByTarget(emotionInfo);
 
-      if (!isEmotion) {
-        return {
-          success: false,
-          msg: '좋아요를 누르지 않았습니다.',
-          status: 409,
-        };
-      }
-
-      const isDelete = await EmotionStorage.unLikedByReplyCmtNum(emotionInfo);
-
-      if (isDelete) {
-        return {
-          success: true,
-          msg: '해당 답글의 좋아요가 취소 되었습니다.',
-        };
-      }
-      return {
-        success: false,
-        msg: '해당 답글의 좋아요가 취소되지 않았습니다.',
-      };
+      if (isDelete) return EmotionUtil.makeResponseByStatusCode(request, 200);
+      return EmotionUtil.makeResponseByStatusCode(request, 400);
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 }
