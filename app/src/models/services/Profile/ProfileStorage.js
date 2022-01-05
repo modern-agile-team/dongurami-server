@@ -23,6 +23,28 @@ class ProfileStorage {
     }
   }
 
+  static async findOneSnsUserById(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT sns.student_id AS studentId, st.email
+      FROM sns_info AS sns
+      LEFT JOIN students AS st
+      ON sns.student_id = st.id
+      WHERE student_id = ?;`;
+
+      const result = await conn.query(query, [id]);
+
+      return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findAllClubByStudentId(id) {
     let conn;
 
@@ -58,7 +80,7 @@ class ProfileStorage {
         userInfo.phoneNumber,
         userInfo.grade,
         userInfo.profileImageUrl,
-        userInfo.userId,
+        userInfo.id,
       ]);
 
       return student.affectedRows;

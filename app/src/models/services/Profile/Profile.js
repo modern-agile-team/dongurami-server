@@ -74,7 +74,7 @@ class Profile {
         status: 400,
       };
     }
-    if (this.params.studentId !== userInfo.userId) {
+    if (this.params.studentId !== userInfo.id) {
       return {
         success: false,
         msg: '로그인된 사람의 프로필이 아닙니다.',
@@ -83,23 +83,9 @@ class Profile {
     }
 
     try {
-      const studentUpdateCnt = await ProfileStorage.updateStudentInfo(userInfo);
+      const snsUserInfo = await ProfileStorage.findOneSnsUserById(userInfo.id);
 
-      if (studentUpdateCnt === 0) {
-        return {
-          success: false,
-          msg: '존재하지 않는 회원입니다.',
-          status: 404,
-        };
-      }
-
-      const snsUserInfo = await StudentStorage.findOneSnsUserById(userInfo.id);
-
-      if (
-        snsUserInfo &&
-        snsUserInfo.studentId === userInfo.id &&
-        snsUserInfo.email !== userInfo.email
-      ) {
+      if (snsUserInfo && snsUserInfo.email !== userInfo.email) {
         return {
           success: false,
           msg: '네이버 이메일로 가입된 회원은 이메일 변경이 불가능합니다.',
@@ -130,7 +116,17 @@ class Profile {
         };
       }
 
-      if (userInfo.profileImageUrl !== user.profilePath) {
+      const studentUpdateCnt = await ProfileStorage.updateStudentInfo(userInfo);
+
+      if (studentUpdateCnt === 0) {
+        return {
+          success: false,
+          msg: '존재하지 않는 회원입니다.',
+          status: 404,
+        };
+      }
+
+      if (userInfo.profileImageUrl !== this.auth.profilePath) {
         const checkedId = await StudentStorage.findOneById(userInfo.id);
         const clubs = await StudentStorage.findOneByLoginedId(userInfo.id);
         const jwt = await Auth.createJWT(checkedId, clubs);

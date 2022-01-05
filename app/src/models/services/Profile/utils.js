@@ -8,7 +8,6 @@ class ProfileUtil {
     delete profile.phoneNumber;
     delete profile.grade;
     delete profile.gender;
-    delete profile.naverUserFlag;
   }
 
   static async getNaverUserFlag(user, studentId) {
