@@ -14,9 +14,8 @@ class EmotionStorage {
       const emotions = EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
 
       const query = `
-      INSERT INTO ${emotions.table}
-      (student_id, ${emotions.column})
-      VALUES (?, ?);`;
+        INSERT INTO ${emotions.table} (student_id, ${emotions.column})
+        VALUES (?, ?);`;
 
       const isCreate = await conn.query(query, [
         emotionInfo.studentId,
@@ -41,8 +40,8 @@ class EmotionStorage {
       const emotions = EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
 
       const query = `
-      DELETE FROM ${emotions.table}
-      WHERE student_id = ? AND ${emotions.column} = ?;`;
+        DELETE FROM ${emotions.table}
+        WHERE student_id = ? AND ${emotions.column} = ?;`;
 
       const isDelete = await conn.query(query, [
         emotionInfo.studentId,
@@ -67,9 +66,9 @@ class EmotionStorage {
       const emotions = EmotionUtil.getTableAndcolumnByEmotionInfo(emotionInfo);
 
       const query = `
-      SELECT no
-      FROM ${emotions.table}
-      WHERE student_id = ? AND ${emotions.column} = ?;`;
+        SELECT no
+        FROM ${emotions.table}
+        WHERE student_id = ? AND ${emotions.column} = ?;`;
 
       const existence = await conn.query(query, [
         emotionInfo.studentId,
@@ -91,9 +90,9 @@ class EmotionStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-      SELECT no
-      FROM boards 
-      WHERE no = ?;`;
+        SELECT no
+        FROM boards 
+        WHERE no = ?;`;
 
       const existence = await conn.query(query, [boardNum]);
 
@@ -112,9 +111,9 @@ class EmotionStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-      SELECT no
-      FROM comments
-      WHERE no = ? AND depth = ?;`;
+        SELECT no
+        FROM comments
+        WHERE no = ? AND depth = ?;`;
 
       const existence = await conn.query(query, [
         cmtInfo.cmtNum || cmtInfo.replyCmtNum,
