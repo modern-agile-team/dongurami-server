@@ -12,6 +12,7 @@ router.post(
   '/:clubNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  clubAuth.clubJoinCheck,
   ctrl.process.createSchedule
 );
 
@@ -27,12 +28,14 @@ router.put(
   '/:clubNum/:no',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  clubAuth.clubJoinCheck,
   ctrl.process.updateSchedule
 );
 router.patch(
   '/:clubNum/:no',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  clubAuth.clubJoinCheck,
   ctrl.process.updateOnlyImportant
 );
 
@@ -40,6 +43,7 @@ router.delete(
   '/:clubNum/:no',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  clubAuth.clubJoinCheck,
   ctrl.process.deleteSchedule
 );
 

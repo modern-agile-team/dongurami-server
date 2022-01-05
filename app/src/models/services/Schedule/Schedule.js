@@ -11,19 +11,19 @@ class Schedule {
     this.auth = req.auth;
   }
 
-  static makeMsg(status, msg, result) {
+  static makeMsg(status, msg, schedule) {
     return {
       status,
       success: status < 400,
       msg,
-      result,
+      schedule,
     };
   }
 
   async existClub() {
     const club = await ScheduleStorage.existClub(this.params.clubNum);
 
-    return club;
+    return !!club;
   }
 
   async findAllScheduleByDate() {
@@ -36,11 +36,11 @@ class Schedule {
       const club = await this.existClub();
 
       if (club) {
-        const result = await ScheduleStorage.findAllScheduleByDate(
+        const schedule = await ScheduleStorage.findAllScheduleByDate(
           scheduleInfo
         );
 
-        return Schedule.makeMsg(200, '일정 조회 성공', result);
+        return Schedule.makeMsg(200, '일정 조회 성공', schedule);
       }
       return Schedule.makeMsg(404, '존재하지 않는 동아리입니다.');
     } catch (err) {
