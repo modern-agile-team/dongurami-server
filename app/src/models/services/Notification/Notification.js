@@ -423,7 +423,7 @@ class Notification {
     };
   }
 
-  async findAllById() {
+  async gifindAllById() {
     const studentId = this.auth.id;
 
     try {
