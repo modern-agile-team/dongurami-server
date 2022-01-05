@@ -52,13 +52,12 @@ class Profile {
 
   async updateStudentInfo() {
     const request = this.body;
-    const user = this.auth;
     const userInfo = {
       email: request.email,
       phoneNumber: request.phoneNumber,
       grade: request.grade,
       profileImageUrl: request.profileImageUrl,
-      userId: user.id,
+      id: this.auth.id,
     };
 
     if (ProfileUtil.emailFormatCheck(userInfo.email)) {
@@ -94,11 +93,11 @@ class Profile {
         };
       }
 
-      const snsUserInfo = await StudentStorage.findOneSnsUserById(user.id);
+      const snsUserInfo = await StudentStorage.findOneSnsUserById(userInfo.id);
 
       if (
         snsUserInfo &&
-        snsUserInfo.studentId === user.id &&
+        snsUserInfo.studentId === userInfo.id &&
         snsUserInfo.email !== userInfo.email
       ) {
         return {
@@ -110,7 +109,7 @@ class Profile {
 
       const isEmail = await StudentStorage.findOneByEmail(userInfo.email);
 
-      if (isEmail && isEmail.id !== user.id) {
+      if (isEmail && isEmail.id !== userInfo.id) {
         return {
           success: false,
           msg: '다른 유저가 사용중인 이메일입니다.',
@@ -120,7 +119,7 @@ class Profile {
 
       const isPhoneNum = await StudentStorage.findOneByPhoneNum(
         userInfo.phoneNumber,
-        user.id
+        userInfo.id
       );
 
       if (isPhoneNum) {
@@ -132,8 +131,8 @@ class Profile {
       }
 
       if (userInfo.profileImageUrl !== user.profilePath) {
-        const checkedId = await StudentStorage.findOneById(user.id);
-        const clubs = await StudentStorage.findOneByLoginedId(user.id);
+        const checkedId = await StudentStorage.findOneById(userInfo.id);
+        const clubs = await StudentStorage.findOneByLoginedId(userInfo.id);
         const jwt = await Auth.createJWT(checkedId, clubs);
 
         return { success: true, msg: '회원정보 수정 성공', status: 200, jwt };
