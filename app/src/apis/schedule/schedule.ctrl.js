@@ -4,11 +4,11 @@ const Schedule = require('../../models/services/Schedule/Schedule');
 const logger = require('../../config/logger');
 
 const process = {
-  findAllSchedule: async (req, res) => {
+  findAllScheduleByDate: async (req, res) => {
     const schedule = new Schedule(req);
     const { clubNum } = req.params;
     const { date } = req.params;
-    const response = await schedule.findAllSchedule();
+    const response = await schedule.findAllScheduleByDate();
 
     if (response.success) {
       logger.info(
