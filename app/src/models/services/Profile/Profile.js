@@ -60,21 +60,15 @@ class Profile {
       profileImageUrl: request.profileImageUrl,
       userId: user.id,
     };
-    const EMAIL_REG_EXP =
-      /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
-    const PHONE_NUMBER_REG_EXP = /[^0-9]/;
 
-    if (!EMAIL_REG_EXP.test(userInfo.email)) {
+    if (ProfileUtil.emailFormatCheck(userInfo.email)) {
       return {
         success: false,
         msg: '이메일 형식이 맞지 않습니다.',
         status: 400,
       };
     }
-    if (
-      userInfo.phoneNumber.length !== 11 ||
-      PHONE_NUMBER_REG_EXP.test(userInfo.phoneNumber)
-    ) {
+    if (ProfileUtil.phoneNumberFormatCheck(userInfo.phoneNumber)) {
       return {
         success: false,
         msg: '전화번호 형식이 맞지 않습니다.',

@@ -26,6 +26,19 @@ class ProfileUtil {
       return { no: club.no, name: club.name };
     });
   }
+
+  static emailFormatCheck(email) {
+    const EMAIL_REG_EXP =
+      /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+
+    return !EMAIL_REG_EXP.test(email);
+  }
+
+  static phoneNumberFormatCheck(phoneNumber) {
+    const PHONE_NUMBER_REG_EXP = /[^0-9]/;
+
+    return phoneNumber.length !== 11 || PHONE_NUMBER_REG_EXP.test(phoneNumber);
+  }
 }
 
 module.exports = ProfileUtil;
