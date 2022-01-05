@@ -1,8 +1,6 @@
 'use strict';
 
 const ScheduleStorage = require('./ScheduleStorage');
-// const Notification = require('../Notification/Notification');
-// const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Schedule {
@@ -52,13 +50,11 @@ class Schedule {
 
   async createSchedule() {
     const data = this.body;
-    const user = this.auth;
-    // const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
         clubNum: this.params.clubNum,
-        studentId: user.id,
+        studentId: this.auth.id,
         colorCode: data.colorCode,
         title: data.title,
         startDate: data.startDate,
@@ -67,30 +63,7 @@ class Schedule {
 
       const success = await ScheduleStorage.createSchedule(scheduleInfo);
 
-      if (success) {
-        // const recipients = await NotificationStorage.findAllByClubNum(clubNum);
-
-        // const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-        //   clubNum
-        // );
-
-        // const senderId = scheduleInfo.studentId;
-
-        // recipients.forEach(async (recipient) => {
-        //   if (senderId !== recipient.id) {
-        //     const notificationInfo = {
-        //       clubName,
-        //       senderName: user.name,
-        //       recipientName: recipient.name,
-        //       recipientId: recipient.id,
-        //       content: scheduleInfo.title,
-        //     };
-
-        //     await notification.createNotification(notificationInfo);
-        //   }
-        // });
-        return Schedule.makeMsg(201, '일정이 등록되었습니다.');
-      }
+      if (success) return Schedule.makeMsg(201, '일정이 등록되었습니다.');
       return Schedule.makeMsg(400, '일정 등록에 실패하였습니다.');
     } catch (err) {
       return Error.ctrl('', err);
@@ -99,9 +72,6 @@ class Schedule {
 
   async updateSchedule() {
     const data = this.body;
-    // const { clubNum } = this.params;
-    // const userInfo = this.auth;
-    // const notification = new Notification(this.req);
 
     try {
       const scheduleInfo = {
@@ -113,26 +83,7 @@ class Schedule {
       };
       const success = await ScheduleStorage.updateSchedule(scheduleInfo);
 
-      if (success) {
-        // const recipients = await NotificationStorage.findAllByClubNum(clubNum);
-        // const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-        //   clubNum
-        // );
-        // const senderId = userInfo.id;
-        // recipients.forEach(async (recipient) => {
-        //   if (senderId !== recipient.id) {
-        //     const notificationInfo = {
-        //       clubName,
-        //       senderName: userInfo.name,
-        //       recipientName: recipient.name,
-        //       recipientId: recipient.id,
-        //       content: scheduleInfo.title,
-        //     };
-        //     await notification.createNotification(notificationInfo);
-        //   }
-        // });
-        return Schedule.makeMsg(200, '일정이 수정되었습니다.');
-      }
+      if (success) return Schedule.makeMsg(200, '일정이 수정되었습니다.');
       return Schedule.makeMsg(400, '일정이 수정되지 않았습니다.');
     } catch (err) {
       return Error.ctrl('', err);
