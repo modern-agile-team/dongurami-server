@@ -43,25 +43,22 @@ class Student {
   //   };
   // }
 
-  inputNullCheck() {
-    const client = this.body;
-
-    if (client.id && client.password) return { success: true };
-    return Student.makeResponseMsg(400, '아이디 또는 비밀번호를 확인해주세요.');
+  static inputNullCheck(client) {
+    return client.id && client.password;
   }
 
   static comparePassword(input, stored) {
-    const inputPassword = input.password;
-    const storedPassword = stored.password;
-
-    return bcrypt.compareSync(inputPassword, storedPassword);
+    return bcrypt.compareSync(input.password, stored.password);
   }
 
   async login() {
     const client = this.body;
 
-    const inputNullCheck = this.inputNullCheck();
-    if (!inputNullCheck.success) return inputNullCheck;
+    if (!Student.inputNullCheck(client))
+      return Student.makeResponseMsg(
+        400,
+        '아이디 또는 비밀번호를 확인해주세요.'
+      );
 
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
@@ -70,9 +67,7 @@ class Student {
         return Student.makeResponseMsg(401, '가입된 아이디가 아닙니다.');
       }
 
-      const comparePassword = Student.comparePassword(client, checkedId);
-
-      if (comparePassword) {
+      if (Student.comparePassword(client, checkedId)) {
         const clubNum = await StudentStorage.findOneByLoginedId(client.id);
         const jwt = await Auth.createJWT(checkedId, clubNum);
 
