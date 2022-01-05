@@ -1,126 +1,50 @@
 'use strict';
 
 const Schedule = require('../../models/services/Schedule/Schedule');
-const logger = require('../../config/logger');
+const getApiInfo = require('../../models/utils/getApiInfo');
+const processCtrl = require('../../models/utils/processCtrl');
 
 const process = {
   findAllScheduleByDate: async (req, res) => {
     const schedule = new Schedule(req);
-    const { clubNum } = req.params;
-    const { date } = req.params;
     const response = await schedule.findAllScheduleByDate();
+    const apiInfo = getApiInfo('GET', response, req);
 
-    if (response.success) {
-      logger.info(
-        `GET /api/club/schedule/${clubNum}/${date} 200: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `GET /api/club/schedule/${clubNum}/${date} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.error(
-      `GET /api/club/schedule/${clubNum}/${date} 404: ${response.msg}`
-    );
-    return res.status(404).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createSchedule: async (req, res) => {
     const schedule = new Schedule(req);
-    const { clubNum } = req.params;
     const response = await schedule.createSchedule();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(`POST /api/club/schedule/${clubNum} 201: ${response.msg}`);
-      return res.status(201).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/club/schedule/${clubNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.error(`POST /api/club/schedule/${clubNum} 400: ${response.msg}`);
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   updateSchedule: async (req, res) => {
     const schedule = new Schedule(req);
-    const { clubNum } = req.params;
-    const { no } = req.params;
     const response = await schedule.updateSchedule();
+    const apiInfo = getApiInfo('PUT', response, req);
 
-    if (response.success) {
-      logger.info(
-        `PUT /api/club/schedule/${clubNum}/${no} 200: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `PUT /api/club/schedule/${clubNum}/${no} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.error(
-      `PUT /api/club/schedule/${clubNum}/${no} 400: ${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   updateOnlyImportant: async (req, res) => {
-    // 일정 중요도 수정
     const schedule = new Schedule(req);
-    const { clubNum } = req.params;
-    const { no } = req.params;
     const response = await schedule.updateOnlyImportant();
+    const apiInfo = getApiInfo('PATCH', response, req);
 
-    if (response.success) {
-      logger.info(
-        `PATCH /api/club/schedule/${clubNum}/${no} 200: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `PATCH /api/club/schedule/${clubNum}/${no} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.error(
-      `PATCH /api/club/schedule/${clubNum}/${no} 400: ${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   deleteSchedule: async (req, res) => {
     const schedule = new Schedule(req);
-    const { clubNum } = req.params;
-    const { no } = req.params;
     const response = await schedule.deleteSchedule();
+    const apiInfo = getApiInfo('DELETE', response, req);
 
-    if (response.success) {
-      logger.info(
-        `DELETE /api/club/schedule/${clubNum}/${no} 200: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `DELETE /api/club/schedule/${clubNum}/${no} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.error(
-      `DELETE /api/club/schedule/${clubNum}/${no} 400: ${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 };
-
 module.exports = {
   process,
 };
