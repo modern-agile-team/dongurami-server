@@ -56,16 +56,16 @@ class Notification {
   async sendBoardNotification(recipients) {
     const senderId = this.auth.id;
 
-    recipients.forEach(async (recipient) => {
+    for (const recipient of recipients) {
       if (senderId !== recipient.id) {
-        const notification = await this.xgetBoardNotificationInfo(recipient);
+        const notification = await this.getBoardNotificationInfo(recipient);
 
         await NotificationStorage.createNotification(notification);
       }
-    });
+    }
   }
 
-  async xgetBoardNotificationInfo(recipient) {
+  async getBoardNotificationInfo(recipient) {
     const { clubNum } = this.params;
     const board = {
       no: this.params.boardNum,
@@ -89,7 +89,7 @@ class Notification {
       );
 
       notification.title = clubName;
-      notification.ulr = `clubhome/${clubNum}/notice/${board.no}`;
+      notification.url = `clubhome/${clubNum}/notice/${board.no}`;
     }
     return notification;
   }
