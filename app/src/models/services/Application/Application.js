@@ -2,8 +2,6 @@
 
 const ApplicationStorage = require('./ApplicationStorage');
 const StudentStorage = require('../Student/StudentStorage');
-const Notification = require('../Notification/Notification');
-const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Application {
@@ -201,31 +199,12 @@ class Application {
       const result = await ApplicationStorage.createApplicant(applicantInfo);
 
       if (result) {
-        await this.sendNotification();
-
         return { success: true, msg: '가입 신청이 완료 되었습니다.' };
       }
       return { success: false, msg: '가입 신청이 완료되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
-  }
-
-  async sendNotification() {
-    const notification = new Notification(this.req);
-
-    const { clubName, leaderName, leaderId } =
-      await NotificationStorage.findClubInfoByClubNum(this.params.clubNum);
-
-    const notificationInfo = {
-      clubName,
-      senderName: this.auth.name,
-      recipientName: leaderName,
-      recipientId: leaderId,
-      content: '동아리 가입 신청 완료',
-    };
-
-    await notification.createNotification(notificationInfo);
   }
 
   async findOneByClubNum() {
