@@ -15,7 +15,8 @@
     "no-console": "off",
     "no-restricted-syntax": "off",
     "no-continue": "off",
-    "no-param-reassign": ["error", { "props": false }]
+    "no-param-reassign": ["error", { "props": false }],
+    "no-await-in-loop": "off"
   },
   "ignorePatterns": ["node_modules/"],
   "parserOptions": {

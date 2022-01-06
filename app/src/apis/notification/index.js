@@ -28,4 +28,68 @@ router.put(
   ctrl.process.updateAllById
 );
 
+router.post(
+  '/board/notice/:boardNum',
+  apiAuth.apiAuth,
+  loginAuth.loginCheck,
+  ctrl.process.createNoticeBoardNotification
+);
+
+router.post(
+  '/board/club-notice/:clubNum/:boardNum',
+  apiAuth.apiAuth,
+  loginAuth.loginCheck,
+  ctrl.process.createClubNoticeNotification
+);
+
+router.post(
+  '/comment/:category/:boardNum',
+  apiAuth.apiAuth,
+  loginAuth.loginCheck,
+  ctrl.process.createCmtNotification
+);
+
+router.post(
+  '/reply-comment/:category/:boardNum/:cmtNum',
+  apiAuth.apiAuth,
+  loginAuth.loginCheck,
+  ctrl.process.createReplyCmtNotification
+);
+
+router.post(
+  '/like/board/:category/:boardNum',
+  loginAuth.loginCheck,
+  ctrl.process.createLikeNotificationByBoardNum
+);
+
+router.post(
+  '/like/comment/:category/:cmtNum',
+  loginAuth.loginCheck,
+  ctrl.process.createLikeNotificationByCmtNum
+);
+
+router.post(
+  '/like/reply-comment/:category/:replyCmtNum',
+  loginAuth.loginCheck,
+  ctrl.process.createLikeNotificationByReplyCmtNum
+);
+
+router.post(
+  '/join-club/result/:clubNum',
+  loginAuth.loginCheck,
+  ctrl.process.createJoinNotification
+);
+
+router.post(
+  '/schedule/:clubNum',
+  loginAuth.loginCheck,
+  ctrl.process.createScheduleNotification
+);
+
+router.post(
+  '/resign-club/:clubNum',
+  loginAuth.loginCheck,
+  ctrl.process.createClubResignNotification
+);
+
 module.exports = router;

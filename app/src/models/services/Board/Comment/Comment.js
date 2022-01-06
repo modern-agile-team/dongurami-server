@@ -2,7 +2,6 @@
 
 const CommentStorage = require('./CommentStorage');
 const BoardStorage = require('../BoardStorage');
-const Notification = require('../../Notification/Notification');
 const Error = require('../../../utils/Error');
 const WriterCheck = require('../../../utils/WriterCheck');
 const boardCategory = require('../../Category/board');
@@ -18,7 +17,6 @@ class Comment {
   async createCommentNum() {
     const comment = this.body;
     const user = this.auth;
-    const notification = new Notification(this.req);
 
     try {
       const commentInfo = {
@@ -52,21 +50,6 @@ class Comment {
         user.name = '익명';
       }
 
-      const { recipientId, recipientName, title } =
-        await BoardStorage.findBoardInfoByBoardNum(commentInfo.boardNum);
-
-      if (user.id !== recipientId) {
-        const notificationInfo = {
-          title,
-          recipientName,
-          recipientId,
-          senderName: user.name,
-          content: commentInfo.description,
-        };
-
-        await notification.createNotification(notificationInfo);
-      }
-
       return { success: true, msg: '댓글 생성 성공' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
@@ -77,7 +60,6 @@ class Comment {
     const replyComment = this.body;
     const user = this.auth;
     const { params } = this;
-    const notification = new Notification(this.req);
 
     try {
       const replyCommentInfo = {
@@ -113,31 +95,9 @@ class Comment {
 
       await CommentStorage.createReplyCommentNum(replyCommentInfo);
 
-      const recipients =
-        await CommentStorage.findRecipientNamesByCmtAndBoardNum(
-          replyCommentInfo.cmtNum,
-          replyCommentInfo.boardNum
-        );
-
-      const senderId = replyCommentInfo.id;
-
       if (replyCommentInfo.hiddenFlag) {
         user.name = '익명';
       }
-
-      recipients.forEach(async (recipient) => {
-        if (senderId !== recipient.id) {
-          const notificationInfo = {
-            title: recipient.description,
-            senderName: user.name,
-            recipientName: recipient.name,
-            recipientId: recipient.id,
-            content: replyCommentInfo.description,
-          };
-
-          await notification.createNotification(notificationInfo);
-        }
-      });
 
       return { success: true, msg: '답글 생성 성공' };
     } catch (err) {
