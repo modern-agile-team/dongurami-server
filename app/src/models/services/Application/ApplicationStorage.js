@@ -3,7 +3,62 @@
 const mariadb = require('../../../config/mariadb');
 
 class ApplicationStorage {
-  static async findAllByClubNum(clubInfo) {
+  static async findOneLeader(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT leader FROM clubs WHERE no = ?;`;
+
+      const leader = await conn.query(query, [clubNum]);
+
+      return leader[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findOneClient(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT id, name, major, grade, gender, phone_number AS phoneNumber FROM students WHERE id = ?;`;
+
+      const clientInfo = await conn.query(query, [id]);
+
+      return clientInfo;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllQuestions(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const qustion =
+        'SELECT no, description FROM questions WHERE club_no = ?;';
+
+      const questions = await conn.query(qustion, [clubNum]);
+
+      return questions;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async xxfindAllByClubNum(clubInfo) {
     let conn;
 
     try {
