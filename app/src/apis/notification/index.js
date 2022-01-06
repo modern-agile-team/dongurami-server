@@ -77,6 +77,12 @@ router.post(
 router.post(
   '/join-club/result/:clubNum',
   loginAuth.loginCheck,
+  ctrl.process.createJoinResultNotification
+);
+
+router.post(
+  '/join-club/:clubNum',
+  loginAuth.loginCheck,
   ctrl.process.createJoinNotification
 );
 

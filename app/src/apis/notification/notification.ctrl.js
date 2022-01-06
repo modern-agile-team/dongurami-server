@@ -130,11 +130,11 @@ const process = {
     return res.status(200).json(response);
   },
 
-  createJoinNotification: async (req, res) => {
+  createJoinResultNotification: async (req, res) => {
     const { clubNum } = req.params;
     const { applicant } = req.params;
     const notification = new Notification(req);
-    const response = await notification.createJoinNotification();
+    const response = await notification.createJoinResultNotification();
 
     if (response.isError) {
       logger.error(

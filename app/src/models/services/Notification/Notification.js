@@ -246,7 +246,7 @@ class Notification {
     return notification;
   }
 
-  async createJoinNotification() {
+  async createJoinResultNotification() {
     const { notiCategoryNum } = this.body;
     const { clubNum } = this.params;
 
