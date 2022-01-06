@@ -305,7 +305,10 @@ class Notification {
 
         return { success: true, msg: '동아리가입 거절 알림이 생성되었습니다.' };
       }
-      return { success: false, msg: '동아리가입 알림에 대한 요청이 아닙니다.' };
+      return {
+        success: false,
+        msg: '동아리가입 결과 알림에 대한 요청이 아닙니다.',
+      };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
