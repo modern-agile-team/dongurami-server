@@ -342,6 +342,41 @@ class Notification {
     };
   }
 
+  async createJoinNotification() {
+    const { notiCategoryNum } = this.body;
+
+    try {
+      if (notiCategoryNum === 7) {
+        const notification = await this.getJoinNotificationInfo();
+
+        await NotificationStorage.createNotification(notification);
+
+        return { success: true, msg: '가입 신청 알림이 생성되었습니다.' };
+      }
+      return { success: false, msg: '가입 신청에 대한 알림이 아닙니다.' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async getJoinNotificationInfo() {
+    const { clubNum } = this.params;
+    const { notiCategoryNum } = this.body;
+
+    const { clubName, leaderName, leaderId } =
+      await NotificationStorage.findClubInfoByClubNum(clubNum);
+
+    return {
+      notiCategoryNum,
+      senderName: this.auth.name,
+      recipientName: leaderName,
+      recipientId: leaderId,
+      title: clubName,
+      content: '동아리 가입 신청',
+      url: `clubhome/${clubNum}`,
+    };
+  }
+
   async createScheduleNotification() {
     const { clubNum } = this.params;
     const { notiCategoryNum } = this.body;

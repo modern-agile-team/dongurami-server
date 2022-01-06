@@ -148,6 +148,24 @@ const process = {
     return res.status(200).json(response);
   },
 
+  createJoinNotification: async (req, res) => {
+    const { clubNum } = req.params;
+    const { applicant } = req.params;
+    const notification = new Notification(req);
+    const response = await notification.createJoinNotification();
+
+    if (response.isError) {
+      logger.error(
+        `POST /api/notification/join-club/result/${clubNum}/${applicant} 500: \n${response.errMsg.stack}`
+      );
+      return res.status(500).json(response.clientMsg);
+    }
+    logger.info(
+      `POST api/notification/join-club/result/${clubNum}/${applicant} 201: ${response.msg}`
+    );
+    return res.status(200).json(response);
+  },
+
   createScheduleNotification: async (req, res) => {
     const { clubNum } = req.params;
     const notification = new Notification(req);
