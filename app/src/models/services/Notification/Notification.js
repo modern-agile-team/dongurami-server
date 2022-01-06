@@ -13,12 +13,20 @@ class Notification {
   }
 
   async createNoticeBoardNotification() {
+    const { notiCategoryNum } = this.params;
+
     try {
-      const recipients = await NotificationStorage.findAllStudentNameAndId();
+      if (notiCategoryNum === 12) {
+        const recipients = await NotificationStorage.findAllStudentNameAndId();
 
-      await this.sendBoardNotification(recipients);
+        await this.sendBoardNotification(recipients);
 
-      return { success: true, msg: '전체공지 알림이 생성되었습니다.' };
+        return { success: true, msg: '전체공지 알림이 생성되었습니다.' };
+      }
+      return {
+        success: false,
+        msg: '전체공지 생성 알림에 대한 요청이 아닙니다.',
+      };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -26,15 +34,22 @@ class Notification {
 
   async createClubNoticeBoardNotification() {
     const { clubNum } = this.params;
+    const { notiCategoryNum } = this.params;
 
     try {
-      const recipients = await NotificationStorage.findAllMemberInfoByClubNum(
-        clubNum
-      );
+      if (notiCategoryNum === 6) {
+        const recipients = await NotificationStorage.findAllMemberInfoByClubNum(
+          clubNum
+        );
 
-      await this.sendBoardNotification(recipients);
+        await this.sendBoardNotification(recipients);
 
-      return { success: true, msg: '동아리공지 알림이 생성되었습니다.' };
+        return { success: true, msg: '동아리공지 알림이 생성되었습니다.' };
+      }
+      return {
+        success: false,
+        msg: '동아리공지 생성 알림에 대한 요청이 아닙니다.',
+      };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -82,12 +97,17 @@ class Notification {
   }
 
   async createCmtNotification() {
+    const { notiCategoryNum } = this.params;
+
     try {
-      const notification = await this.getCmtNotificationInfo();
+      if (notiCategoryNum === 0) {
+        const notification = await this.getCmtNotificationInfo();
 
-      await this.sendLikeAndCmtNotification(notification);
+        await this.sendLikeAndCmtNotification(notification);
 
-      return { success: true, msg: '댓글 알림이 생성되었습니다.' };
+        return { success: true, msg: '댓글 알림이 생성되었습니다.' };
+      }
+      return { success: false, msg: '댓글 생성 알림에 대한 요청이 아닙니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -130,12 +150,17 @@ class Notification {
   }
 
   async createReplyCmtNotification() {
+    const { notiCategoryNum } = this.params;
+
     try {
-      const recipients = await this.getRecipientInfoByCmtNum();
+      if (notiCategoryNum === 1) {
+        const recipients = await this.getRecipientInfoByCmtNum();
 
-      await this.sendReplyCmtNotification(recipients);
+        await this.sendReplyCmtNotification(recipients);
 
-      return { success: true, msg: '답글 알림이 생성되었습니다.' };
+        return { success: true, msg: '답글 알림이 생성되었습니다.' };
+      }
+      return { success: false, msg: '답글 생성 알림에 대한 요청이 아닙니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -191,14 +216,26 @@ class Notification {
   }
 
   async createLikeNotification() {
+    const { notiCategoryNum } = this.params;
+
     try {
-      const recipientInfo = await this.getLikeRecipientInfo();
+      if (
+        notiCategoryNum === 9 ||
+        notiCategoryNum === 10 ||
+        notiCategoryNum === 11
+      ) {
+        const recipientInfo = await this.getLikeRecipientInfo();
 
-      const notification = await this.getLikeNotificationInfo(recipientInfo);
+        const notification = await this.getLikeNotificationInfo(recipientInfo);
 
-      await this.sendLikeAndCmtNotification(notification);
+        await this.sendLikeAndCmtNotification(notification);
 
-      return { success: true, msg: '좋아요 알림이 생성되었습니다.' };
+        return { success: true, msg: '좋아요 알림이 생성되었습니다.' };
+      }
+      return {
+        success: false,
+        msg: '좋아요 생성 알림에 대한 요청이 아닙니다.',
+      };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -258,7 +295,7 @@ class Notification {
 
         await this.sendJoinApproveNotification(recipients);
 
-        return { success: true, msg: '동아리가입 승인알림이 생성되었습니다.' };
+        return { success: true, msg: '동아리가입 승인 알림이 생성되었습니다.' };
       }
 
       if (notiCategoryNum === 3) {
@@ -266,7 +303,7 @@ class Notification {
 
         await NotificationStorage.createNotification(notification);
 
-        return { success: true, msg: '동아리가입 거절알림이 생성되었습니다.' };
+        return { success: true, msg: '동아리가입 거절 알림이 생성되었습니다.' };
       }
       return { success: false, msg: '동아리가입 알림에 대한 요청이 아닙니다.' };
     } catch (err) {
@@ -353,7 +390,7 @@ class Notification {
 
         return { success: true, msg: '가입 신청 알림이 생성되었습니다.' };
       }
-      return { success: false, msg: '가입 신청에 대한 알림이 아닙니다.' };
+      return { success: false, msg: '가입 신청 알림에 대한 요청이 아닙니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -391,7 +428,7 @@ class Notification {
 
         return { success: true, msg: '일정에 대한 알림이 생성되었습니다.' };
       }
-      return { success: false, msg: '일정알림에 대한 요청이 아닙니다.' };
+      return { success: false, msg: '일정 알림에 대한 요청이 아닙니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -430,12 +467,17 @@ class Notification {
   }
 
   async createClubResignNotification() {
+    const { notiCategoryNum } = this.params;
+
     try {
-      const notification = await this.getClubResignNotificationInfo();
+      if (notiCategoryNum === 8) {
+        const notification = await this.getClubResignNotificationInfo();
 
-      await NotificationStorage.createNotification(notification);
+        await NotificationStorage.createNotification(notification);
 
-      return { success: true, msg: '동아리탈퇴 알림이 생성되었습니다.' };
+        return { success: true, msg: '동아리탈퇴 알림이 생성되었습니다.' };
+      }
+      return { success: false, msg: '동아리탈퇴 알림에 대한 요청이 아닙니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
