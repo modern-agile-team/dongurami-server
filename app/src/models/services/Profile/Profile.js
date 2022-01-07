@@ -103,10 +103,7 @@ class Profile {
         };
       }
 
-      const isPhoneNum = await StudentStorage.findOneByPhoneNum(
-        userInfo.phoneNumber,
-        userInfo.id
-      );
+      const isPhoneNum = await ProfileStorage.findOneOtherPhoneNum(userInfo);
 
       if (isPhoneNum) {
         return {

@@ -63,6 +63,27 @@ class ProfileStorage {
     }
   }
 
+  static async findOneOtherPhoneNum(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT id FROM students WHERE phone_number = ? AND id != ?;`;
+
+      const studentId = await conn.query(query, [
+        userInfo.phoneNumber,
+        userInfo.id,
+      ]);
+
+      return studentId[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findAllClubByStudentId(id) {
     let conn;
 
