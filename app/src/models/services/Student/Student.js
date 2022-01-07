@@ -168,17 +168,15 @@ class Student {
     try {
       const student = await StudentStorage.findOneByIdOrEmail(clientInfo);
 
-      if (!student) return { success: true };
-      if (student.id === client.id) {
-        return Student.makeResponseMsg(409, '이미 가입된 학번입니다.');
+      if (student) {
+        if (student.id === client.id) {
+          return Student.makeResponseMsg(409, '이미 가입된 학번입니다.');
+        }
+        if (student.email === client.email) {
+          return Student.makeResponseMsg(409, '이미 가입된 이메일입니다.');
+        }
       }
-      if (student.email === client.email) {
-        return Student.makeResponseMsg(409, '이미 가입된 이메일입니다.');
-      }
-      return Student.makeResponseMsg(
-        500,
-        '서버 에러입니다. 서버개발자에게 문의하세요.'
-      );
+      return { success: true };
     } catch (err) {
       return Error.ctrl('', err);
     }
