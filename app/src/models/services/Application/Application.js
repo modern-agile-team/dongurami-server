@@ -61,18 +61,23 @@ class Application {
   }
 
   async createQuestion() {
-    const { clubNum } = this.params;
-    const { description } = this.body;
-
     try {
       const questionInfo = {
-        clubNum,
-        description,
+        clubNum: this.params.clubNum,
+        description: this.body.description,
       };
-      const success = await ApplicationStorage.createQuestion(questionInfo);
 
-      if (success) return { success: true, msg: '질문 등록에 성공하셨습니다.' };
-      return { success: false, msg: '질문 등록에 실패하셨습니다.' };
+      const leaderInfo = this.findOneLeader();
+
+      if (leaderInfo === this.auth.id) {
+        const success = await ApplicationStorage.createQuestion(questionInfo);
+
+        if (success) {
+          return { success: true, msg: '질문 등록에 성공하셨습니다.' };
+        }
+        return { success: false, msg: '질문 등록에 실패하셨습니다.' };
+      }
+      return { suceess: false, msg: '질문 등록 권한이 없습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }

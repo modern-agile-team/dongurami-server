@@ -9,7 +9,10 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT leader FROM clubs WHERE no = ?;`;
+      const query = `
+        SELECT leader 
+        FROM clubs 
+        WHERE no = ?;`;
 
       const leader = await conn.query(query, [clubNum]);
 
@@ -27,7 +30,10 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT id, name, major, grade, gender, phone_number AS phoneNumber FROM students WHERE id = ?;`;
+      const query = `
+        SELECT id, name, major, grade, gender, phone_number AS phoneNumber 
+        FROM students 
+        WHERE id = ?;`;
 
       const clientInfo = await conn.query(query, [id]);
 
@@ -45,41 +51,14 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const qustion =
-        'SELECT no, description FROM questions WHERE club_no = ?;';
+      const qustion = `
+        SELECT no, description 
+        FROM questions 
+        WHERE club_no = ?;`;
 
       const questions = await conn.query(qustion, [clubNum]);
 
       return questions;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async xxfindAllByClubNum(clubInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const client =
-        'SELECT id, name, major, grade, gender, phone_number AS phoneNumber FROM students WHERE id = ?;';
-      const leader = 'SELECT leader FROM clubs WHERE no = ?;'; // 동아리 회장만 수정 가능 -> 동아리 회장 학번 조회
-      const qustion =
-        'SELECT no, description FROM questions WHERE club_no = ?;';
-      const clubLeader = await conn.query(leader, clubInfo.clubNum);
-
-      if (clubLeader[0] === undefined) {
-        // 동아리 존재 x
-        return { success: false };
-      }
-
-      const clientInfo = await conn.query(client, clubInfo.id);
-      const questions = await conn.query(qustion, clubInfo.clubNum);
-
-      return { success: true, clubLeader, clientInfo, questions };
     } catch (err) {
       throw err;
     } finally {
@@ -93,8 +72,9 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'INSERT INTO questions (club_no, description) VALUE (?, ?);';
+      const query = `
+        INSERT INTO questions (club_no, description) 
+        VALUES (?, ?);`;
 
       const question = await conn.query(query, [
         questionInfo.clubNum,
