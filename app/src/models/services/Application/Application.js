@@ -14,6 +14,15 @@ class Application {
     this.auth = req.auth;
   }
 
+  static makeMsg(status, msg, result) {
+    return {
+      status,
+      success: status < 400,
+      msg,
+      result,
+    };
+  }
+
   async findOneLeader() {
     const leaderInfo = await ApplicationStorage.findOneLeader(
       this.params.clubNum
@@ -44,19 +53,17 @@ class Application {
       const leaderInfo = await this.findOneLeader();
 
       if (leaderInfo) {
-        const clientInfo = await this.findOneClient(leaderInfo.id);
+        const clientInfo = await this.findOneClient(leaderInfo.leader);
         const questions = await this.findAllQuestions();
 
-        return {
-          success: true,
-          msg: '동아리 가입 신청서 조회 성공',
+        return Application.makeMsg(200, '동아리 가입 신청서 조회 성공', {
           clientInfo,
           questions,
-        };
+        });
       }
-      return { success: false, msg: '존재하지 않는 동아리입니다.' };
+      return Application.makeMsg(404, '존재하지 않는 동아리입니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -69,17 +76,15 @@ class Application {
 
       const leaderInfo = await this.findOneLeader();
 
-      if (leaderInfo === this.auth.id) {
+      if (leaderInfo.leader === this.auth.id) {
         const success = await ApplicationStorage.createQuestion(questionInfo);
 
-        if (success) {
-          return { success: true, msg: '질문 등록에 성공하셨습니다.' };
-        }
-        return { success: false, msg: '질문 등록에 실패하셨습니다.' };
+        if (success) return Application.makeMsg(201, '질문이 등록되었습니다.');
+        return Application.makeMsg(400, '질문이 등록되지 않았습니다.');
       }
-      return { suceess: false, msg: '질문 등록 권한이 없습니다.' };
+      return Application.makeMsg(403, '질문 등록 권한이 없습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -99,10 +104,10 @@ class Application {
         const waitingApplicant = await this.findOneWaitingApplicant();
 
         if (waitingApplicant) {
-          return {
-            success: false,
-            msg: '가입 신청 대기자가 있으므로 질문을 변경하실 수 없습니다.',
-          };
+          return Application.makeMsg(
+            400,
+            '가입 신청 대기자가 있으므로 질문을 변경할 수 없습니다.'
+          );
         }
 
         const questionInfo = {
@@ -111,13 +116,12 @@ class Application {
         };
         const success = await ApplicationStorage.updateQuestion(questionInfo);
 
-        if (success)
-          return { success: true, msg: '질문 수정에 성공하셨습니다.' };
-        return { success: false, msg: '질문 수정에 실패하셨습니다.' };
+        if (success) return Application.makeMsg(200, '질문이 수정되었습니다.');
+        return Application.makeMsg(400, '질문이 수정되지 않았습니다.');
       }
-      return { success: false, msg: '질문 수정 권한이 없습니다.' };
+      return Application.makeMsg(403, '질문 수정 권한이 없습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -129,21 +133,20 @@ class Application {
         const waitingApplicant = await this.findOneWaitingApplicant();
 
         if (waitingApplicant) {
-          return {
-            success: false,
-            msg: '가입 신청 대기자가 있으므로 질문을 삭제하실 수 없습니다.',
-          };
+          return Application.makeMsg(
+            400,
+            '가입 신청 대기자가 있으므로 질문을 삭제할 수 없습니다.'
+          );
         }
 
         const success = await ApplicationStorage.deleteQuestion(
           this.params.questionNo
         );
 
-        if (success)
-          return { success: true, msg: '질문 삭제에 성공하셨습니다.' };
-        return { success: false, msg: '질문 삭제에 실패하셨습니다.' };
+        if (success) return Application.makeMsg(200, '질문이 삭제되었습니다.');
+        return Application.makeMsg(400, '질문이 삭제되지 않았습니다.');
       }
-      return { success: false, msg: '질문 삭제 권한이 없습니다.' };
+      return Application.makeMsg(403, '질문 삭제 권한이 없습니다.');
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }

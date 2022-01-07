@@ -14,7 +14,6 @@ router.get(
   ctrl.process.findAllByClubNum
 );
 
-// Only 회장
 router.post(
   '/:clubNum',
   apiAuth.apiAuth,
@@ -22,7 +21,6 @@ router.post(
   ctrl.process.createQuestion
 );
 
-// 가입 희망자
 router.post(
   '/:clubNum/answer',
   apiAuth.apiAuth,

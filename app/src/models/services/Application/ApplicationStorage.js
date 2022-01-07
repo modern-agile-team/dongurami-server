@@ -141,7 +141,10 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'DELETE FROM questions WHERE no = ?;';
+      const query = `
+        DELETE 
+        FROM questions 
+        WHERE no = ?;`;
 
       const question = await conn.query(query, [questionNo]);
 
