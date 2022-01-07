@@ -8,6 +8,7 @@ const Auth = require('../Auth/Auth');
 const EmailAuth = require('../Auth/EmailAuth/EmailAuth');
 const EmailAuthStorage = require('../Auth/EmailAuth/EmailAuthStorage');
 const ProfileStorage = require('../Profile/ProfileStorage');
+const SignUpCheck = require('./SignUpCheck');
 
 class Student {
   constructor(req) {
@@ -82,6 +83,10 @@ class Student {
 
   async signUp() {
     const saveInfo = this.body;
+
+    if (!SignUpCheck.infoCheck(saveInfo).success) {
+      return SignUpCheck.infoCheck(saveInfo);
+    }
 
     try {
       const checkedIdAndEmail = await this.checkIdAndEmail();
