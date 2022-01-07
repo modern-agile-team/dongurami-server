@@ -39,7 +39,7 @@ class Profile {
 
       return makeResponse(200, '프로필 조회 성공.', { profile });
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -102,7 +102,7 @@ class Profile {
       }
       return makeResponse(200, '회원정보 수정 성공');
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 }
