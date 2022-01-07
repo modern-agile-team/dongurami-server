@@ -99,9 +99,7 @@ class Application {
       const leaderInfo = await this.findOneLeader();
 
       if (leaderInfo.leader === this.auth.id) {
-        const waitingApplicant = await this.findOneWaitingApplicant();
-
-        if (waitingApplicant) {
+        if (await this.findOneWaitingApplicant()) {
           return Application.makeMsg(
             400,
             '가입 신청 대기자가 있으므로 질문을 변경할 수 없습니다.'
@@ -128,9 +126,7 @@ class Application {
       const leaderInfo = await this.findOneLeader();
 
       if (leaderInfo.leader === this.auth.id) {
-        const waitingApplicant = await this.findOneWaitingApplicant();
-
-        if (waitingApplicant) {
+        if (await this.findOneWaitingApplicant()) {
           return Application.makeMsg(
             400,
             '가입 신청 대기자가 있으므로 질문을 삭제할 수 없습니다.'
