@@ -18,17 +18,9 @@ const process = {
   signUp: async (req, res) => {
     const student = new Student(req);
     const response = await student.signUp();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(`POST /api/sign-up 201: ${response.msg}`);
-      return res.status(201).json(response);
-    }
-    if (response.isError) {
-      logger.error(`POST /api/sign-up 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(`POST /api/sign-up 409: ${response.msg}`);
-    return res.status(409).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   findId: async (req, res) => {
