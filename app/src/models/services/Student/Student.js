@@ -86,23 +86,23 @@ class Student {
     try {
       const checkedIdAndEmail = await this.checkIdAndEmail();
 
-      if (checkedIdAndEmail.saveable) {
-        saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
-        saveInfo.hash = bcrypt.hashSync(
-          saveInfo.password,
-          saveInfo.passwordSalt
-        );
+      if (checkedIdAndEmail.success) {
+        Student.createHash(saveInfo);
 
-        const response = await StudentStorage.save(saveInfo);
-
-        if (response) {
-          return { success: true, msg: '회원가입에 성공하셨습니다.' };
+        if (await StudentStorage.save(saveInfo)) {
+          return Student.makeResponseMsg(201, '회원가입에 성공하셨습니다.');
         }
       }
       return checkedIdAndEmail;
     } catch (err) {
       return Error.ctrl('', err);
     }
+  }
+
+  static createHash(saveInfo) {
+    saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+    saveInfo.hash = bcrypt.hashSync(saveInfo.password, saveInfo.passwordSalt);
+    return saveInfo;
   }
 
   async findId() {
@@ -163,25 +163,17 @@ class Student {
     try {
       const student = await StudentStorage.findOneByIdOrEmail(clientInfo);
 
-      if (!student) {
-        return { saveable: true };
-      }
+      if (!student) return { success: true };
       if (student.id === client.id) {
-        return {
-          saveable: false,
-          msg: '이미 가입된 학번입니다.',
-        };
+        return Student.makeResponseMsg(409, '이미 가입된 학번입니다.');
       }
       if (student.email === client.email) {
-        return {
-          saveable: false,
-          msg: '이미 가입된 이메일입니다.',
-        };
+        return Student.makeResponseMsg(409, '이미 가입된 이메일입니다.');
       }
-      return {
-        saveable: false,
-        msg: '서버 에러입니다. 서버개발자에게 문의하세요.',
-      };
+      return Student.makeResponseMsg(
+        500,
+        '서버 에러입니다. 서버개발자에게 문의하세요.'
+      );
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -381,6 +373,7 @@ class Student {
 
     try {
       const checkedIdAndEmail = await this.checkIdAndEmail();
+
       if (checkedIdAndEmail.saveable) {
         saveInfo.hash = '';
         saveInfo.passwordSalt = '';
