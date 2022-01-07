@@ -60,6 +60,13 @@ class Profile {
       id: this.auth.id,
     };
 
+    if (this.params.studentId !== userInfo.id) {
+      return {
+        success: false,
+        msg: '로그인된 사람의 프로필이 아닙니다.',
+        status: 403,
+      };
+    }
     if (ProfileUtil.emailFormatCheck(userInfo.email)) {
       return {
         success: false,
@@ -72,13 +79,6 @@ class Profile {
         success: false,
         msg: '전화번호 형식이 맞지 않습니다.',
         status: 400,
-      };
-    }
-    if (this.params.studentId !== userInfo.id) {
-      return {
-        success: false,
-        msg: '로그인된 사람의 프로필이 아닙니다.',
-        status: 403,
       };
     }
 
