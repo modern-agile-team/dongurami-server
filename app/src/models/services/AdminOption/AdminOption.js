@@ -1,10 +1,12 @@
 'use strict';
 
 const AdminOptionStorage = require('./AdminOptionStorage');
+const ApplicationStorage = require('../Application/ApplicationStorage');
 const Error = require('../../utils/Error');
 
 class AdminOption {
   constructor(req) {
+    this.req = req;
     this.body = req.body;
     this.params = req.params;
     this.auth = req.auth;
@@ -128,6 +130,53 @@ class AdminOption {
         };
       }
       return { success: false, msg: '회장만 접근이 가능합니다.' };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async createMemberById() {
+    try {
+      const applicantInfo = {
+        clubNum: this.params.clubNum,
+        applicant: this.body.applicant,
+      };
+
+      const isUpdate = await ApplicationStorage.updateAcceptedApplicantById(
+        applicantInfo
+      );
+
+      const isCreate = await ApplicationStorage.createMemberById(applicantInfo);
+
+      if (isUpdate && isCreate) {
+        return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
+      }
+      return {
+        success: false,
+        msg: '존재하지 않는 회원이거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
+    } catch (err) {
+      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    }
+  }
+
+  async updateApplicantById() {
+    try {
+      const applicantInfo = {
+        clubNum: this.params.clubNum,
+        applicantId: this.body.applicant,
+      };
+      const isUpdate = await ApplicationStorage.updateRejectedApplicantById(
+        applicantInfo
+      );
+
+      if (isUpdate) {
+        return { success: true, msg: '동아리 가입 신청을 거절하셨습니다.' };
+      }
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }

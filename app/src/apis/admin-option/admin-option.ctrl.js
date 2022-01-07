@@ -61,8 +61,8 @@ const process = {
   },
 
   createMemberById: async (req, res) => {
-    const application = new Application(req);
-    const response = await application.createMemberById();
+    const adminOption = new AdminOption(req);
+    const response = await adminOption.createMemberById();
     const { clubNum } = req.params;
 
     if (response.success) {
@@ -130,8 +130,8 @@ const process = {
   },
 
   updateApplicantById: async (req, res) => {
-    const application = new Application(req);
-    const response = await application.updateApplicantById();
+    const adminOption = new AdminOption(req);
+    const response = await adminOption.updateApplicantById();
     const { clubNum } = req.params;
 
     if (response.success) {
