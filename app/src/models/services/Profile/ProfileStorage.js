@@ -54,7 +54,8 @@ class ProfileStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT id FROM students
+        SELECT id
+        FROM students
         WHERE email = ? AND id != ?;`;
 
       const studentId = await conn.query(query, [userInfo.email, userInfo.id]);
@@ -74,7 +75,8 @@ class ProfileStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT id FROM students
+        SELECT id
+        FROM students
         WHERE phone_number = ? AND id != ?;`;
 
       const studentId = await conn.query(query, [
@@ -97,7 +99,8 @@ class ProfileStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT clubs.no, clubs.name FROM clubs
+        SELECT clubs.no, clubs.name
+        FROM clubs
         LEFT JOIN members
         ON clubs.no = members.club_no
         WHERE members.student_id = ?
@@ -121,7 +124,8 @@ class ProfileStorage {
 
       const query = `
         SELECT club_no AS clubNum
-        FROM members WHERE student_id = ?;`;
+        FROM members
+        WHERE student_id = ?;`;
 
       const clubs = await conn.query(query, [studentId]);
 
