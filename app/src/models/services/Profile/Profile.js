@@ -1,6 +1,5 @@
 'use strict';
 
-const StudentStorage = require('../Student/StudentStorage');
 const ProfileStorage = require('./ProfileStorage');
 const ProfileUtil = require('./utils');
 const Error = require('../../utils/Error');
@@ -35,6 +34,7 @@ class Profile {
         user,
         studentId
       );
+
       if (!user || profile.id !== user.id) {
         ProfileUtil.deleteSomeProfileInfo(profile);
       }
@@ -124,9 +124,12 @@ class Profile {
       }
 
       if (userInfo.profileImageUrl !== this.auth.profilePath) {
-        const checkedId = await StudentStorage.findOneById(userInfo.id);
-        const clubs = await StudentStorage.findOneByLoginedId(userInfo.id);
-        const jwt = await Auth.createJWT(checkedId, clubs);
+        const checkedId = await ProfileStorage.findInfoByStudentId(userInfo.id);
+        const clubs = await ProfileStorage.findAllClubNumByid(userInfo.id);
+        const jwt = await Auth.createJWT(
+          checkedId,
+          ProfileUtil.formattingClubsNum(clubs)
+        );
 
         return { success: true, msg: '회원정보 수정 성공', status: 200, jwt };
       }

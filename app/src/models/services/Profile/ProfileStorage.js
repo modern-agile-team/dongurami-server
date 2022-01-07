@@ -9,7 +9,7 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT id, name, email, phone_number AS phoneNumber, grade, gender, major, profile_image_url AS profileImageUrl
+      const query = `SELECT id, name, email, phone_number AS phoneNumber, grade, gender, major, profile_image_url AS profileImageUrl, admin_flag AS adminFlag
       FROM students
       WHERE id = ?;`;
 
@@ -99,6 +99,25 @@ class ProfileStorage {
       const clubList = await conn.query(query, [id]);
 
       return clubList;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllClubNumByid(studentId) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'SELECT club_no AS clubNum FROM members WHERE student_id = ?;';
+
+      const clubs = await conn.query(query, [studentId]);
+
+      return clubs;
     } catch (err) {
       throw err;
     } finally {
