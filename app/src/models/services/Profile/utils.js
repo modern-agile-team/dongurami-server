@@ -3,6 +3,15 @@
 const StudentStorage = require('../Student/StudentStorage');
 
 class ProfileUtil {
+  static makeResponse(status, msg, jwt) {
+    return {
+      success: status < 400,
+      msg,
+      status,
+      jwt,
+    };
+  }
+
   static deleteSomeProfileInfo(profile) {
     delete profile.email;
     delete profile.phoneNumber;

@@ -5,6 +5,8 @@ const ProfileUtil = require('./utils');
 const Error = require('../../utils/Error');
 const Auth = require('../Auth/Auth');
 
+const { makeResponse } = ProfileUtil;
+
 class Profile {
   constructor(req) {
     this.body = req.body;
@@ -20,11 +22,7 @@ class Profile {
       const profile = await ProfileStorage.findInfoByStudentId(studentId);
 
       if (profile === undefined) {
-        return {
-          success: false,
-          msg: '존재하지 않는 회원입니다.',
-          status: 404,
-        };
+        return makeResponse(404, '존재하지 않는 회원입니다.');
       }
 
       const clubs = await ProfileStorage.findAllClubById(studentId);
@@ -39,12 +37,7 @@ class Profile {
         ProfileUtil.deleteSomeProfileInfo(profile);
       }
 
-      return {
-        success: true,
-        msg: '프로필 조회 성공',
-        status: 200,
-        profile,
-      };
+      return makeResponse(200, '프로필 조회 성공.');
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
     }
@@ -61,66 +54,38 @@ class Profile {
     };
 
     if (this.params.studentId !== userInfo.id) {
-      return {
-        success: false,
-        msg: '로그인된 사람의 프로필이 아닙니다.',
-        status: 403,
-      };
+      return makeResponse(403, '로그인된 사람의 프로필이 아닙니다.');
     }
     if (ProfileUtil.emailFormatCheck(userInfo.email)) {
-      return {
-        success: false,
-        msg: '이메일 형식이 맞지 않습니다.',
-        status: 400,
-      };
+      return makeResponse(400, '이메일 형식이 맞지 않습니다.');
     }
     if (ProfileUtil.phoneNumberFormatCheck(userInfo.phoneNumber)) {
-      return {
-        success: false,
-        msg: '전화번호 형식이 맞지 않습니다.',
-        status: 400,
-      };
+      return makeResponse(400, '전화번호 형식이 맞지 않습니다.');
     }
 
     try {
       const snsUserInfo = await ProfileStorage.findOneSnsUserById(userInfo.id);
 
       if (snsUserInfo && snsUserInfo.email !== userInfo.email) {
-        return {
-          success: false,
-          msg: '네이버 이메일로 가입된 회원은 이메일 변경이 불가능합니다.',
-          status: 403,
-        };
+        return makeResponse(403, '네이버 회원은 이메일 변경이 불가능합니다.');
       }
 
       const isEmail = await ProfileStorage.findOneOtherEmail(userInfo);
 
       if (isEmail) {
-        return {
-          success: false,
-          msg: '다른 유저가 사용중인 이메일입니다.',
-          status: 409,
-        };
+        return makeResponse(409, '다른 유저가 사용중인 이메일입니다.');
       }
 
       const isPhoneNum = await ProfileStorage.findOneOtherPhoneNum(userInfo);
 
       if (isPhoneNum) {
-        return {
-          success: false,
-          msg: '다른 유저가 사용중인 번호입니다.',
-          status: 409,
-        };
+        return makeResponse(409, '다른 유저가 사용중인 번호입니다.');
       }
 
       const studentUpdateCnt = await ProfileStorage.updateStudentInfo(userInfo);
 
       if (studentUpdateCnt === 0) {
-        return {
-          success: false,
-          msg: '존재하지 않는 회원입니다.',
-          status: 404,
-        };
+        return makeResponse(404, '존재하지 않는 회원입니다.');
       }
 
       if (userInfo.profileImageUrl !== this.auth.profilePath) {
@@ -131,9 +96,9 @@ class Profile {
           ProfileUtil.formattingClubsNum(clubs)
         );
 
-        return { success: true, msg: '회원정보 수정 성공', status: 200, jwt };
+        return makeResponse(200, '회원정보 수정 성공', jwt);
       }
-      return { success: true, msg: '회원정보 수정 성공', status: 200 };
+      return makeResponse(200, '회원정보 수정 성공');
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
