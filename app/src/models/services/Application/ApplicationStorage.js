@@ -101,7 +101,7 @@ class ApplicationStorage {
         WHERE club_no = ? AND reading_flag = 0 
         LIMIT 1;`;
 
-      const applicants = await conn.query(query, clubNum);
+      const applicants = await conn.query(query, [clubNum]);
 
       return applicants[0];
     } catch (err) {
@@ -135,7 +135,7 @@ class ApplicationStorage {
     }
   }
 
-  static async deleteQuestion(no) {
+  static async deleteQuestion(questionNo) {
     let conn;
 
     try {
@@ -143,7 +143,7 @@ class ApplicationStorage {
 
       const query = 'DELETE FROM questions WHERE no = ?;';
 
-      const question = await conn.query(query, no);
+      const question = await conn.query(query, [questionNo]);
 
       return question.affectedRows;
     } catch (err) {

@@ -121,57 +121,29 @@ class Application {
     }
   }
 
-  // async xxupdateQuestion() {
-  //   const data = this.body;
-  //   const { params } = this;
-
-  //   try {
-  //     const questionInfo = {
-  //       no: params.questionNo,
-  //       description: data.description,
-  //     };
-
-  //     const waitingApplicant = await ApplicationStorage.findWaitingApplicants(
-  //       params.clubNum
-  //     );
-
-  //     if (waitingApplicant) {
-  //       return {
-  //         success: false,
-  //         msg: '가입 신청 대기자가 있으므로 질문을 변경하실 수 없습니다.',
-  //       };
-  //     }
-
-  //     const success = await ApplicationStorage.updateQuestion(questionInfo);
-
-  //     if (success) return { success: true, msg: '질문 수정에 성공하셨습니다.' };
-  //     return { success: false, msg: '질문 수정에 실패하셨습니다.' };
-  //   } catch (err) {
-  //     return Error.ctrl('개발자에게 문의해주세요.', err);
-  //   }
-  // }
-
   async deleteQuestion() {
-    const { params } = this;
-
     try {
-      const waitingApplicant = await ApplicationStorage.findWaitingApplicants(
-        params.clubNum
-      );
+      const leaderInfo = await this.findOneLeader();
 
-      if (waitingApplicant) {
-        return {
-          success: false,
-          msg: '가입 신청 대기자가 있으므로 질문을 삭제하실 수 없습니다.',
-        };
+      if (leaderInfo.leader === this.auth.id) {
+        const waitingApplicant = await this.findOneWaitingApplicant();
+
+        if (waitingApplicant) {
+          return {
+            success: false,
+            msg: '가입 신청 대기자가 있으므로 질문을 삭제하실 수 없습니다.',
+          };
+        }
+
+        const success = await ApplicationStorage.deleteQuestion(
+          this.params.questionNo
+        );
+
+        if (success)
+          return { success: true, msg: '질문 삭제에 성공하셨습니다.' };
+        return { success: false, msg: '질문 삭제에 실패하셨습니다.' };
       }
-
-      const success = await ApplicationStorage.deleteQuestion(
-        params.questionNo
-      );
-
-      if (success) return { success: true, msg: '질문 삭제에 성공하셨습니다.' };
-      return { success: false, msg: '질문 삭제에 실패하셨습니다.' };
+      return { success: false, msg: '질문 삭제 권한이 없습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
