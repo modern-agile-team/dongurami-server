@@ -37,9 +37,9 @@ class ProfileStorage {
         ON sns.student_id = st.id
         WHERE student_id = ?;`;
 
-      const result = await conn.query(query, [id]);
+      const snsUserInfo = await conn.query(query, [id]);
 
-      return result[0];
+      return snsUserInfo[0];
     } catch (err) {
       throw err;
     } finally {
@@ -103,9 +103,9 @@ class ProfileStorage {
         WHERE members.student_id = ?
         ORDER BY clubs.no ASC;`;
 
-      const clubList = await conn.query(query, [id]);
+      const clubs = await conn.query(query, [id]);
 
-      return clubList;
+      return clubs;
     } catch (err) {
       throw err;
     } finally {

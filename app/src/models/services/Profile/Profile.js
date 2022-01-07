@@ -70,15 +70,17 @@ class Profile {
         return makeResponse(403, '네이버 회원은 이메일 변경이 불가능합니다.');
       }
 
-      const isEmail = await ProfileStorage.findOneOtherEmail(userInfo);
+      const otherEmail = await ProfileStorage.findOneOtherEmail(userInfo);
 
-      if (isEmail) {
+      if (otherEmail) {
         return makeResponse(409, '다른 유저가 사용중인 이메일입니다.');
       }
 
-      const isPhoneNum = await ProfileStorage.findOneOtherPhoneNum(userInfo);
+      const otherPhoneNumber = await ProfileStorage.findOneOtherPhoneNum(
+        userInfo
+      );
 
-      if (isPhoneNum) {
+      if (otherPhoneNumber) {
         return makeResponse(409, '다른 유저가 사용중인 번호입니다.');
       }
 
