@@ -3,28 +3,62 @@
 const mariadb = require('../../../config/mariadb');
 
 class ApplicationStorage {
-  static async findAllByClubNum(clubInfo) {
+  static async findOneLeader(clubNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const client =
-        'SELECT id, name, major, grade, gender, phone_number AS phoneNumber FROM students WHERE id = ?;';
-      const leader = 'SELECT leader FROM clubs WHERE no = ?;'; // 동아리 회장만 수정 가능 -> 동아리 회장 학번 조회
-      const qustion =
-        'SELECT no, description FROM questions WHERE club_no = ?;';
-      const clubLeader = await conn.query(leader, clubInfo.clubNum);
+      const query = `
+        SELECT leader 
+        FROM clubs 
+        WHERE no = ?;`;
 
-      if (clubLeader[0] === undefined) {
-        // 동아리 존재 x
-        return { success: false };
-      }
+      const leader = await conn.query(query, [clubNum]);
 
-      const clientInfo = await conn.query(client, clubInfo.id);
-      const questions = await conn.query(qustion, clubInfo.clubNum);
+      return leader[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 
-      return { success: true, clubLeader, clientInfo, questions };
+  static async findOneClient(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT id, name, major, grade, gender, phone_number AS phoneNumber 
+        FROM students 
+        WHERE id = ?;`;
+
+      const clientInfo = await conn.query(query, [id]);
+
+      return clientInfo[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllQuestions(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const qustion = `
+        SELECT no, description 
+        FROM questions 
+        WHERE club_no = ?;`;
+
+      const questions = await conn.query(qustion, [clubNum]);
+
+      return questions;
     } catch (err) {
       throw err;
     } finally {
@@ -38,8 +72,9 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'INSERT INTO questions (club_no, description) VALUE (?, ?);';
+      const query = `
+        INSERT INTO questions (club_no, description) 
+        VALUES (?, ?);`;
 
       const question = await conn.query(query, [
         questionInfo.clubNum,
@@ -54,13 +89,38 @@ class ApplicationStorage {
     }
   }
 
+  static async findOneWaitingApplicant(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT no 
+        FROM applicants 
+        WHERE club_no = ? AND reading_flag = 0 
+        LIMIT 1;`;
+
+      const applicants = await conn.query(query, [clubNum]);
+
+      return applicants[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async updateQuestion(questionInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'UPDATE questions SET description = ? WHERE no = ?;';
+      const query = `
+        UPDATE questions 
+        SET description = ? 
+        WHERE no = ?;`;
 
       const question = await conn.query(query, [
         questionInfo.description,
@@ -75,35 +135,20 @@ class ApplicationStorage {
     }
   }
 
-  static async deleteQuestion(no) {
+  static async deleteQuestion(questionNo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'DELETE FROM questions WHERE no = ?;';
+      const query = `
+        DELETE 
+        FROM questions 
+        WHERE no = ?;`;
 
-      const question = await conn.query(query, no);
+      const question = await conn.query(query, [questionNo]);
 
       return question.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findWaitingApplicants(clubNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT no FROM applicants WHERE club_no = ? AND reading_flag = 0 LIMIT 1;`;
-
-      const applicants = await conn.query(query, clubNum);
-
-      return applicants[0];
     } catch (err) {
       throw err;
     } finally {

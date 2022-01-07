@@ -2,92 +2,40 @@
 
 const Application = require('../../models/services/Application/Application');
 const logger = require('../../config/logger');
+const getApiInfo = require('../../models/utils/getApiInfo');
+const processCtrl = require('../../models/utils/processCtrl');
 
 const process = {
   findAllByClubNum: async (req, res) => {
     const application = new Application(req);
-    const { clubNum } = req.params;
     const response = await application.findAllByClubNum();
+    const apiInfo = getApiInfo('GET', response, req);
 
-    if (response.success) {
-      logger.info(`GET /api/club/application/${clubNum} 200: ${response.msg}`);
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `GET /api/club/application/${clubNum}  500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.error(`GET /api/club/application/${clubNum}  404: ${response.msg}`);
-    return res.status(404).json(response); // 동아리가 존재 하지 않을 시
+    return processCtrl(res, apiInfo);
   },
 
   createQuestion: async (req, res) => {
     const application = new Application(req);
-    const { clubNum } = req.params;
     const response = await application.createQuestion();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(`POST /api/club/application/${clubNum} 201: ${response.msg}`);
-      return res.status(201).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/club/application/${clubNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.error(`POST /api/club/application/${clubNum} 400: ${response.msg}`);
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   updateQuestion: async (req, res) => {
     const application = new Application(req);
-    const { clubNum } = req.params;
-    const { questionNo } = req.params;
     const response = await application.updateQuestion();
+    const apiInfo = getApiInfo('PUT', response, req);
 
-    if (response.success) {
-      logger.info(
-        `PUT /api/club/application/${clubNum}/${questionNo} 200: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `PUT /api/club/application/${clubNum}/${questionNo} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.error(
-      `PUT /api/club/application/${clubNum}/${questionNo} 400: ${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   deleteQuestion: async (req, res) => {
     const application = new Application(req);
-    const { clubNum } = req.params;
-    const { questionNo } = req.params;
     const response = await application.deleteQuestion();
+    const apiInfo = getApiInfo('DELETE', response, req);
 
-    if (response.success) {
-      logger.info(
-        `DELETE /api/club/application/${clubNum}/${questionNo} 200: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `DELETE /api/club/application/${clubNum}/${questionNo} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json({ success: false, msg: response.clientMsg });
-    }
-    logger.error(
-      `DELETE /api/club/application/${clubNum}/${questionNo} 400: ${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createAnswer: async (req, res) => {

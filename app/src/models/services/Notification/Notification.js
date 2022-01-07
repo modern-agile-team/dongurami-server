@@ -13,7 +13,7 @@ class Notification {
   }
 
   async createNoticeBoardNotification() {
-    const { notiCategoryNum } = this.params;
+    const { notiCategoryNum } = this.body;
 
     try {
       if (notiCategoryNum === 12) {
@@ -34,7 +34,7 @@ class Notification {
 
   async createClubNoticeBoardNotification() {
     const { clubNum } = this.params;
-    const { notiCategoryNum } = this.params;
+    const { notiCategoryNum } = this.body;
 
     try {
       if (notiCategoryNum === 6) {
@@ -97,7 +97,7 @@ class Notification {
   }
 
   async createCmtNotification() {
-    const { notiCategoryNum } = this.params;
+    const { notiCategoryNum } = this.body;
 
     try {
       if (notiCategoryNum === 0) {
@@ -150,7 +150,7 @@ class Notification {
   }
 
   async createReplyCmtNotification() {
-    const { notiCategoryNum } = this.params;
+    const { notiCategoryNum } = this.body;
 
     try {
       if (notiCategoryNum === 1) {
@@ -216,7 +216,7 @@ class Notification {
   }
 
   async createLikeNotification() {
-    const { notiCategoryNum } = this.params;
+    const { notiCategoryNum } = this.body;
 
     try {
       if (
@@ -470,7 +470,7 @@ class Notification {
   }
 
   async createClubResignNotification() {
-    const { notiCategoryNum } = this.params;
+    const { notiCategoryNum } = this.body;
 
     try {
       if (notiCategoryNum === 8) {
