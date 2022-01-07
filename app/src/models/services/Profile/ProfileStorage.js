@@ -9,9 +9,10 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT id, name, email, phone_number AS phoneNumber, grade, gender, major, profile_image_url AS profileImageUrl, admin_flag AS adminFlag
-      FROM students
-      WHERE id = ?;`;
+      const query = `
+        SELECT id, name, email, phone_number AS phoneNumber, grade, gender, major, profile_image_url AS profileImageUrl, admin_flag AS adminFlag
+        FROM students
+        WHERE id = ?;`;
 
       const studentInfo = await conn.query(query, [id]);
 
@@ -29,11 +30,12 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT sns.student_id AS studentId, st.email
-      FROM sns_info AS sns
-      LEFT JOIN students AS st
-      ON sns.student_id = st.id
-      WHERE student_id = ?;`;
+      const query = `
+        SELECT sns.student_id AS studentId, st.email
+        FROM sns_info AS sns
+        LEFT JOIN students AS st
+        ON sns.student_id = st.id
+        WHERE student_id = ?;`;
 
       const result = await conn.query(query, [id]);
 
@@ -51,7 +53,9 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'SELECT id FROM students WHERE email = ? AND id != ?;';
+      const query = `
+        SELECT id FROM students
+        WHERE email = ? AND id != ?;`;
 
       const studentId = await conn.query(query, [userInfo.email, userInfo.id]);
 
@@ -69,7 +73,9 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT id FROM students WHERE phone_number = ? AND id != ?;`;
+      const query = `
+        SELECT id FROM students
+        WHERE phone_number = ? AND id != ?;`;
 
       const studentId = await conn.query(query, [
         userInfo.phoneNumber,
@@ -90,11 +96,12 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT clubs.no, clubs.name FROM clubs
-      LEFT JOIN members
-      ON clubs.no = members.club_no
-      WHERE members.student_id = ?
-      ORDER BY clubs.no ASC;`;
+      const query = `
+        SELECT clubs.no, clubs.name FROM clubs
+        LEFT JOIN members
+        ON clubs.no = members.club_no
+        WHERE members.student_id = ?
+        ORDER BY clubs.no ASC;`;
 
       const clubList = await conn.query(query, [id]);
 
@@ -112,8 +119,9 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'SELECT club_no AS clubNum FROM members WHERE student_id = ?;';
+      const query = `
+        SELECT club_no AS clubNum
+        FROM members WHERE student_id = ?;`;
 
       const clubs = await conn.query(query, [studentId]);
 
@@ -131,7 +139,10 @@ class ProfileStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE students SET email = ?, phone_number = ?, grade = ?, profile_image_url = ? WHERE id = ?;`;
+      const query = `
+        UPDATE students
+        SET email = ?, phone_number = ?, grade = ?, profile_image_url = ?
+        WHERE id = ?;`;
 
       const student = await conn.query(query, [
         userInfo.email,
