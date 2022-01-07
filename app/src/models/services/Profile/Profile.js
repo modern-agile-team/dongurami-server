@@ -25,9 +25,8 @@ class Profile {
         return makeResponse(404, '존재하지 않는 회원입니다.');
       }
 
-      const clubs = await ProfileStorage.findAllClubById(studentId);
+      profile.clubs = await ProfileStorage.findAllClubById(studentId);
 
-      profile.clubs = ProfileUtil.formattingClubs(clubs);
       profile.naverUserFlag = await ProfileUtil.getNaverUserFlag(
         user,
         studentId

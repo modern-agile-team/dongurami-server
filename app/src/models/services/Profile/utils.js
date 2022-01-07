@@ -37,12 +37,6 @@ class ProfileUtil {
     return false;
   }
 
-  static formattingClubs(clubs) {
-    return clubs.map((club) => {
-      return { no: club.no, name: club.name };
-    });
-  }
-
   static formattingClubsNum(clubs) {
     return clubs.map((club) => {
       return club.clubNum;
