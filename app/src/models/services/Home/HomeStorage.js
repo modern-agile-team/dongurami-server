@@ -13,7 +13,8 @@ class HomeStorage {
         SELECT s.id, s.name, s.profile_image_url AS profileImageUrl 
         FROM students AS s
         LEFT JOIN clubs AS c 
-        ON c.leader = s.id WHERE c.no = ?;`;
+        ON c.leader = s.id 
+        WHERE c.no = ?;`;
 
       const leader = await conn.query(query, [clubNum]);
 
