@@ -37,7 +37,7 @@ class Profile {
         ProfileUtil.deleteSomeProfileInfo(profile);
       }
 
-      return makeResponse(200, '프로필 조회 성공.');
+      return makeResponse(200, '프로필 조회 성공.', { profile });
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
     }
@@ -98,7 +98,7 @@ class Profile {
           ProfileUtil.formattingClubsNum(clubs)
         );
 
-        return makeResponse(200, '회원정보 수정 성공', jwt);
+        return makeResponse(200, '회원정보 수정 성공', { jwt });
       }
       return makeResponse(200, '회원정보 수정 성공');
     } catch (err) {

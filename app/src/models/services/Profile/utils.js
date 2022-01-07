@@ -3,13 +3,20 @@
 const StudentStorage = require('../Student/StudentStorage');
 
 class ProfileUtil {
-  static makeResponse(status, msg, jwt) {
-    return {
+  static makeResponse(status, msg, moreInfo) {
+    const response = {
       success: status < 400,
       msg,
       status,
-      jwt,
     };
+
+    for (const info in moreInfo) {
+      if (Object.prototype.hasOwnProperty.call(moreInfo, info)) {
+        response[info] = moreInfo[info];
+      }
+    }
+
+    return response;
   }
 
   static deleteSomeProfileInfo(profile) {
