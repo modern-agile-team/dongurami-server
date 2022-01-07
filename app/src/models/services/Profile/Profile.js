@@ -86,7 +86,7 @@ class Profile {
       const studentUpdateCnt = await ProfileStorage.updateStudentInfo(userInfo);
 
       if (studentUpdateCnt === 0) {
-        return makeResponse(404, '존재하지 않는 회원입니다.');
+        return makeResponse(400, '회원정보 수정에 실패했습니다.');
       }
 
       if (userInfo.profileImageUrl !== this.auth.profilePath) {
