@@ -14,24 +14,44 @@ class Application {
     this.auth = req.auth;
   }
 
+  async findOneLeader() {
+    const leaderInfo = await ApplicationStorage.findOneLeader(
+      this.params.clubNum
+    );
+
+    return leaderInfo;
+  }
+
+  async findOneClient(leaderId) {
+    const clientId = this.auth.id;
+    const clientInfo = await ApplicationStorage.findOneClient(clientId);
+
+    clientInfo.leaderFlag = leaderId === clientId;
+
+    return clientInfo;
+  }
+
+  async findAllQuestions() {
+    const questions = await ApplicationStorage.findAllQuestions(
+      this.params.clubNum
+    );
+
+    return questions;
+  }
+
   async findAllByClubNum() {
-    const { id } = this.auth;
-    const { clubNum } = this.params;
-
     try {
-      const clubInfo = {
-        id,
-        clubNum,
-      };
-      const result = await ApplicationStorage.findAllByClubNum(clubInfo);
+      const leaderInfo = await this.findOneLeader();
 
-      if (result.success) {
+      if (leaderInfo) {
+        const clientInfo = await this.findOneClient(leaderInfo.id);
+        const questions = await this.findAllQuestions();
+
         return {
           success: true,
           msg: '동아리 가입 신청서 조회 성공',
-          clientInfo: result.clientInfo,
-          leader: result.clubLeader[0].leader,
-          questions: result.questions,
+          clientInfo,
+          questions,
         };
       }
       return { success: false, msg: '존재하지 않는 동아리입니다.' };

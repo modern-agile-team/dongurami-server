@@ -31,7 +31,7 @@ class ApplicationStorage {
 
       const clientInfo = await conn.query(query, [id]);
 
-      return clientInfo;
+      return clientInfo[0];
     } catch (err) {
       throw err;
     } finally {
