@@ -2,8 +2,6 @@
 
 const ApplicationStorage = require('./ApplicationStorage');
 const StudentStorage = require('../Student/StudentStorage');
-const Notification = require('../Notification/Notification');
-const NotificationStorage = require('../Notification/NotificationStorage');
 const Error = require('../../utils/Error');
 
 class Application {
@@ -156,7 +154,6 @@ class Application {
     const { clubNum } = this.params;
     const { auth } = this;
     const answer = this.body;
-    const notification = new Notification(this.req);
 
     try {
       const applicantInfo = {
@@ -240,21 +237,6 @@ class Application {
       const result = await ApplicationStorage.createApplicant(applicantInfo);
 
       if (result) {
-        const { clubName, leaderName, leaderId } =
-          await NotificationStorage.findClubInfoByClubNum(
-            applicantInfo.clubNum
-          );
-
-        const notificationInfo = {
-          clubName,
-          senderName: auth.name,
-          recipientName: leaderName,
-          recipientId: leaderId,
-          content: '동아리 가입 신청 완료',
-        };
-
-        await notification.createNotification(notificationInfo);
-
         return { success: true, msg: '가입 신청이 완료 되었습니다.' };
       }
       return { success: false, msg: '가입 신청이 완료되지 않았습니다.' };
@@ -272,108 +254,6 @@ class Application {
 
       if (success) {
         return { success: true, applicantInfo, questionsAnswers };
-      }
-      return {
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
-    }
-  }
-
-  async createMemberById() {
-    const user = this.auth;
-    const notification = new Notification(this.req);
-
-    try {
-      const applicantInfo = {
-        clubNum: this.params.clubNum,
-        applicant: this.body.applicant,
-      };
-
-      const isUpdate = await ApplicationStorage.updateAcceptedApplicantById(
-        applicantInfo
-      );
-
-      const isCreate = await ApplicationStorage.createMemberById(applicantInfo);
-
-      if (isUpdate && isCreate) {
-        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-          applicantInfo.clubNum
-        );
-
-        const recipients = await NotificationStorage.findAllByClubNum(
-          applicantInfo.clubNum
-        );
-
-        const recipientName =
-          await ApplicationStorage.findOneByApplicantIdAndClubNum(
-            applicantInfo
-          );
-
-        recipients.forEach(async (recipient) => {
-          if (user.id !== recipient.id) {
-            const notificationInfo = {
-              clubName,
-              senderName: user.name,
-              recipientName: recipient.name,
-              recipientId: recipient.id,
-              content: `${recipientName}님 가입`,
-            };
-
-            if (recipient.id === applicantInfo.applicant) {
-              notificationInfo.content = '동아리 가입을 축하합니다.🎊';
-            }
-            await notification.createNotification(notificationInfo);
-          }
-        });
-        return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
-      }
-      return {
-        success: false,
-        msg: '존재하지 않는 회원이거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
-    }
-  }
-
-  async updateApplicantById() {
-    const notification = new Notification(this.req);
-
-    try {
-      const applicantInfo = {
-        clubNum: this.params.clubNum,
-        applicant: this.body.applicant,
-      };
-      const isUpdate = await ApplicationStorage.updateRejectedApplicantById(
-        applicantInfo
-      );
-
-      if (isUpdate) {
-        const senderName = this.auth.name;
-
-        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-          applicantInfo.clubNum
-        );
-
-        const applicantName =
-          await ApplicationStorage.findOneByApplicantIdAndClubNum(
-            applicantInfo
-          );
-
-        const notificationInfo = {
-          clubName,
-          senderName,
-          recipientName: applicantName,
-          recipientId: applicantInfo.applicant,
-          content: '동아리 가입 신청 결과',
-        };
-
-        await notification.createNotification(notificationInfo);
-
-        return { success: true, msg: '동아리 가입 신청을 거절하셨습니다.' };
       }
       return {
         success: false,

@@ -340,11 +340,13 @@ class BoardStorage {
 
       const board = await conn.query(query, [boardNum]);
 
-      return {
-        recipientId: board[0].id,
-        recipientName: board[0].name,
+      const recipientInfo = {
+        id: board[0].id,
+        name: board[0].name,
         title: board[0].title,
       };
+
+      return recipientInfo;
     } catch (err) {
       throw err;
     } finally {

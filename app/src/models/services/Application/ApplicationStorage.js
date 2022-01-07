@@ -368,7 +368,7 @@ class ApplicationStorage {
 
       const updateRejectedApplicant = await conn.query(query, [
         userInfo.clubNum,
-        userInfo.applicant,
+        userInfo.applicantId,
       ]);
 
       if (updateRejectedApplicant.affectedRows) return true;
@@ -390,7 +390,7 @@ class ApplicationStorage {
         'SELECT s.name FROM applicants AS a JOIN students AS s ON a.student_id = s.id WHERE a.student_id = ? AND a.club_no = ?;';
 
       const applicant = await conn.query(query, [
-        userInfo.applicant,
+        userInfo.id,
         userInfo.clubNum,
       ]);
 
