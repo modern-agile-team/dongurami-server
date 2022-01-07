@@ -90,7 +90,7 @@ class ProfileStorage {
     }
   }
 
-  static async findAllClubByStudentId(id) {
+  static async findAllClubById(id) {
     let conn;
 
     try {

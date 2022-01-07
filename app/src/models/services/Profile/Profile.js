@@ -27,7 +27,7 @@ class Profile {
         };
       }
 
-      const clubs = await ProfileStorage.findAllClubByStudentId(studentId);
+      const clubs = await ProfileStorage.findAllClubById(studentId);
 
       profile.clubs = ProfileUtil.formattingClubs(clubs);
       profile.naverUserFlag = await ProfileUtil.getNaverUserFlag(
