@@ -67,7 +67,7 @@ class Application {
         description: this.body.description,
       };
 
-      const leaderInfo = this.findOneLeader();
+      const leaderInfo = await this.findOneLeader();
 
       if (leaderInfo === this.auth.id) {
         const success = await ApplicationStorage.createQuestion(questionInfo);
@@ -83,35 +83,73 @@ class Application {
     }
   }
 
+  async findOneWaitingApplicant() {
+    const waitingApplicant = await ApplicationStorage.findOneWaitingApplicant(
+      this.params.clubNum
+    );
+
+    return waitingApplicant;
+  }
+
   async updateQuestion() {
-    const data = this.body;
-    const { params } = this;
-
     try {
-      const questionInfo = {
-        no: params.questionNo,
-        description: data.description,
-      };
+      const leaderInfo = await this.findOneLeader();
 
-      const waitingApplicant = await ApplicationStorage.findWaitingApplicants(
-        params.clubNum
-      );
+      if (leaderInfo.leader === this.auth.id) {
+        const waitingApplicant = await this.findOneWaitingApplicant();
 
-      if (waitingApplicant) {
-        return {
-          success: false,
-          msg: '가입 신청 대기자가 있으므로 질문을 변경하실 수 없습니다.',
+        if (waitingApplicant) {
+          return {
+            success: false,
+            msg: '가입 신청 대기자가 있으므로 질문을 변경하실 수 없습니다.',
+          };
+        }
+
+        const questionInfo = {
+          no: this.params.questionNo,
+          description: this.body.description,
         };
+        const success = await ApplicationStorage.updateQuestion(questionInfo);
+
+        if (success)
+          return { success: true, msg: '질문 수정에 성공하셨습니다.' };
+        return { success: false, msg: '질문 수정에 실패하셨습니다.' };
       }
-
-      const success = await ApplicationStorage.updateQuestion(questionInfo);
-
-      if (success) return { success: true, msg: '질문 수정에 성공하셨습니다.' };
-      return { success: false, msg: '질문 수정에 실패하셨습니다.' };
+      return { success: false, msg: '질문 수정 권한이 없습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
+
+  // async xxupdateQuestion() {
+  //   const data = this.body;
+  //   const { params } = this;
+
+  //   try {
+  //     const questionInfo = {
+  //       no: params.questionNo,
+  //       description: data.description,
+  //     };
+
+  //     const waitingApplicant = await ApplicationStorage.findWaitingApplicants(
+  //       params.clubNum
+  //     );
+
+  //     if (waitingApplicant) {
+  //       return {
+  //         success: false,
+  //         msg: '가입 신청 대기자가 있으므로 질문을 변경하실 수 없습니다.',
+  //       };
+  //     }
+
+  //     const success = await ApplicationStorage.updateQuestion(questionInfo);
+
+  //     if (success) return { success: true, msg: '질문 수정에 성공하셨습니다.' };
+  //     return { success: false, msg: '질문 수정에 실패하셨습니다.' };
+  //   } catch (err) {
+  //     return Error.ctrl('개발자에게 문의해주세요.', err);
+  //   }
+  // }
 
   async deleteQuestion() {
     const { params } = this;

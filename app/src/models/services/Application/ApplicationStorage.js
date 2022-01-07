@@ -89,13 +89,38 @@ class ApplicationStorage {
     }
   }
 
+  static async findOneWaitingApplicant(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT no 
+        FROM applicants 
+        WHERE club_no = ? AND reading_flag = 0 
+        LIMIT 1;`;
+
+      const applicants = await conn.query(query, clubNum);
+
+      return applicants[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async updateQuestion(questionInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'UPDATE questions SET description = ? WHERE no = ?;';
+      const query = `
+        UPDATE questions 
+        SET description = ? 
+        WHERE no = ?;`;
 
       const question = await conn.query(query, [
         questionInfo.description,
@@ -121,24 +146,6 @@ class ApplicationStorage {
       const question = await conn.query(query, no);
 
       return question.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findWaitingApplicants(clubNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT no FROM applicants WHERE club_no = ? AND reading_flag = 0 LIMIT 1;`;
-
-      const applicants = await conn.query(query, clubNum);
-
-      return applicants[0];
     } catch (err) {
       throw err;
     } finally {
