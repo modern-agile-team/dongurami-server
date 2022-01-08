@@ -2,27 +2,17 @@
 
 const Student = require('../../models/services/Student/Student');
 const Email = require('../../models/services/Email/Email');
+const processCtrl = require('../../models/utils/processCtrl');
+const getApiInfo = require('../../models/utils/getApiInfo');
 const logger = require('../../config/logger');
 
 const process = {
   login: async (req, res) => {
     const student = new Student(req);
     const response = await student.login();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (!response.success) {
-      if (response.status) {
-        logger.error(`POST /api/login 401: ${response.msg}`);
-        return res.status(401).json(response);
-      }
-      logger.error(`POST /api/login 400: ${response.msg}`);
-      return res.status(400).json(response);
-    }
-    if (response.isError) {
-      logger.error(`POST /api/login 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.info(`POST /api/login 200: ${response.msg}`);
-    return res.status(200).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   signUp: async (req, res) => {

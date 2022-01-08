@@ -1,10 +1,7 @@
 'use strict';
 
 const BoardStorage = require('./BoardStorage');
-const Notification = require('../Notification/Notification');
-const NotificationStorage = require('../Notification/NotificationStorage');
 const AdminoOptionStorage = require('../AdminOption/AdminOptionStorage');
-const StudentStorage = require('../Student/StudentStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
@@ -23,7 +20,6 @@ class Board {
     const board = this.body;
     const { clubNum } = this.params;
     const category = boardCategory[this.params.category];
-    const notification = new Notification(this.req);
 
     try {
       const boardInfo = {
@@ -74,53 +70,6 @@ class Board {
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
-      if (category === 1) {
-        const senderId = boardInfo.id;
-
-        const recipients = await StudentStorage.findAllNameAndId();
-
-        recipients.forEach(async (recipient) => {
-          if (senderId !== recipient.id) {
-            const notificationInfo = {
-              title: '공지 게시판',
-              senderName: user.name,
-              recipientName: recipient.name,
-              recipientId: recipient.id,
-              content: boardInfo.title,
-              url: `notice/${boardNum}`,
-            };
-
-            await notification.createNotification(notificationInfo);
-          }
-        });
-      }
-
-      if (category === 5) {
-        const senderId = boardInfo.id;
-
-        const recipients = await NotificationStorage.findAllByClubNum(
-          boardInfo.clubNum
-        );
-
-        const { clubName } = await NotificationStorage.findClubInfoByClubNum(
-          boardInfo.clubNum
-        );
-
-        recipients.forEach(async (recipient) => {
-          if (senderId !== recipient.id) {
-            const notificationInfo = {
-              clubName,
-              senderName: user.name,
-              recipientName: recipient.name,
-              recipientId: recipient.id,
-              content: boardInfo.title,
-              url: `clubhome/${clubNum}/notice/${boardNum}`,
-            };
-
-            await notification.createNotification(notificationInfo);
-          }
-        });
-      }
       return { success: true, msg: '게시글 생성 성공', boardNum };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
@@ -405,87 +354,6 @@ class Board {
       return { success: true, msg: '조회수 1 증가' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
-    }
-  }
-
-  async search() {
-    const searchInfo = this.query;
-    const searchType = ['title', 'name'];
-
-    searchInfo.category = boardCategory[this.params.category];
-
-    if (!searchInfo.category) {
-      return { success: false, msg: '존재하지 않는 게시판입니다.' };
-    }
-    if (!searchType.includes(searchInfo.type)) {
-      return { success: false, msg: '검색 타입을 확인해주세요' };
-    }
-    if (searchInfo.type === 'name') searchInfo.type = 'st.name';
-
-    try {
-      if (searchInfo.category === 5) {
-        if (searchInfo.clubno === '1' || !searchInfo.clubno) {
-          return {
-            success: false,
-            msg: '동아리 고유번호를 확인해주세요.',
-          };
-        }
-      } else {
-        searchInfo.clubno = 1;
-      }
-
-      const boards = await BoardStorage.findAllSearch(searchInfo);
-
-      boards.forEach((post) => {
-        if (post.writerHiddenFlag) {
-          post.studentId = '익명';
-          post.studentName = '익명';
-          post.url = null;
-        }
-      });
-
-      return {
-        success: true,
-        msg: `${searchInfo.keyword}(을)를 검색한 결과입니다.`,
-        boards,
-      };
-    } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
-    }
-  }
-
-  async promotionSearch() {
-    const { query } = this;
-    const searchType = ['title', 'clubName'];
-
-    if (!searchType.includes(query.type)) {
-      return { success: false, msg: '검색 타입을 확인해주세요' };
-    }
-    if (query.type === 'clubName') query.type = 'clubs.name';
-
-    try {
-      const searchInfo = {
-        type: query.type,
-        keyword: query.keyword,
-        sort: query.sort || 'inDate',
-        order: query.order || 'desc',
-        lastNum: query.lastNum,
-      };
-      const boards = await BoardStorage.findAllPromotionSearch(searchInfo);
-
-      return {
-        success: true,
-        msg: `${searchInfo.keyword}(을)를 검색한 결과입니다.`,
-        boards,
-      };
-    } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
-      );
     }
   }
 }

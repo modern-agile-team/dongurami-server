@@ -249,43 +249,26 @@ class CommentStorage {
     }
   }
 
-  static async findRecipientNamesByCmtAndBoardNum(cmtNum, boardNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT DISTINCT s.name, s.id, c.description FROM comments AS c 
-        JOIN students AS s ON c.student_id = s.id 
-        WHERE c.board_no = ? AND c.group_no = ?;`;
-
-      const students = await conn.query(query, [boardNum, cmtNum]);
-
-      return students;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
   static async findAllByCmtNum(cmtNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT s.name, s.id, c.description FROM comments AS c
+      const query = `SELECT s.name, s.id, c.description, c.board_no AS boardNum FROM comments AS c
       JOIN students AS s ON c.student_id = s.id 
       WHERE c.no = ?;`;
 
-      const cmt = await conn.query(query, [cmtNum]);
+      const comment = await conn.query(query, [cmtNum]);
 
-      return {
-        recipientId: cmt.id,
-        recipientName: cmt.name,
-        description: cmt.description,
+      const recipientInfo = {
+        id: comment[0].id,
+        name: comment[0].name,
+        description: comment[0].description,
+        boardNum: comment[0].boardNum,
       };
+
+      return recipientInfo;
     } catch (err) {
       throw err;
     } finally {
