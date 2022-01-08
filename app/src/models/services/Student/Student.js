@@ -62,7 +62,9 @@ class Student {
         const clubNum = await StudentStorage.findOneByLoginedId(client.id);
         const jwt = await Auth.createJWT(checkedId, clubNum);
 
-        return Student.makeResponseMsg(200, '로그인에 성공하셨습니다.', jwt);
+        return Student.makeResponseMsg(200, '로그인에 성공하셨습니다.', {
+          jwt,
+        });
       }
 
       return Student.makeResponseMsg(401, '잘못된 비밀번호입니다.');
