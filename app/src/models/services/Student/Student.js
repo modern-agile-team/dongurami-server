@@ -34,7 +34,7 @@ class Student {
     return response;
   }
 
-  static inputNullCheck(client) {
+  static idOrPasswordInputNullCheck(client) {
     return client.id && client.password;
   }
 
@@ -45,7 +45,7 @@ class Student {
   async login() {
     const client = this.body;
 
-    if (!Student.inputNullCheck(client))
+    if (!Student.idOrPasswordInputNullCheck(client))
       return Student.makeResponseMsg(
         400,
         '아이디 또는 비밀번호를 확인해주세요.'
