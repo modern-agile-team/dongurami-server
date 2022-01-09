@@ -162,7 +162,11 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const applicant = `SELECT reading_flag AS readingFlag FROM applicants WHERE club_no = ? AND student_id = ? ORDER BY no DESC;`;
+      const applicant = `
+        SELECT reading_flag AS readingFlag 
+        FROM applicants 
+        WHERE club_no = ? AND student_id = ? 
+        ORDER BY no DESC;`;
 
       const isApplicant = await conn.query(applicant, [
         applicantInfo.clubNum,
@@ -183,7 +187,10 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const studentInfo = `UPDATE students SET grade = ?, gender = ?, phone_number = ? WHERE id = ?;`;
+      const studentInfo = `
+        UPDATE students 
+        SET grade = ?, gender = ?, phone_number = ? 
+        WHERE id = ?;`;
 
       const basic = await conn.query(studentInfo, [
         answerInfo.grade,
@@ -206,7 +213,9 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
+      let answer = `
+        INSERT INTO answers (question_no, student_id, description) 
+        VALUES`;
 
       answerInfo.extra.forEach((x, idx) => {
         if (idx) {
@@ -231,7 +240,10 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `DELETE FROM answers WHERE question_no IN (?) AND student_id = ?;`;
+      const query = `
+        DELETE FROM answers 
+        WHERE question_no 
+        IN (?) AND student_id = ?;`;
 
       await conn.query(query, [extraQuestionNums, id]);
       return;
@@ -248,7 +260,9 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO applicants (club_no, student_id) VALUE (?, ?);`;
+      const query = `
+        INSERT INTO applicants (club_no, student_id) 
+        VALUE (?, ?);`;
 
       const result = await conn.query(query, [
         applicantInfo.clubNum,
@@ -263,144 +277,144 @@ class ApplicationStorage {
     }
   }
 
-  static async findOneByClubNum(clubNum) {
-    let conn;
+  // static async findOneByClubNum(clubNum) {
+  //   let conn;
 
-    try {
-      conn = await mariadb.getConnection();
+  //   try {
+  //     conn = await mariadb.getConnection();
 
-      const applicantInfoQuery = `SELECT app.in_date AS inDate, s.name, s.id, s.major, 
-        s.grade, s.gender, s.phone_number AS phoneNum 
-        FROM students AS s JOIN applicants AS app ON app.club_no = ?
-        AND app.student_id = s.id AND app.reading_flag = 0;`;
+  //     const applicantInfoQuery = `SELECT app.in_date AS inDate, s.name, s.id, s.major,
+  //       s.grade, s.gender, s.phone_number AS phoneNum
+  //       FROM students AS s JOIN applicants AS app ON app.club_no = ?
+  //       AND app.student_id = s.id AND app.reading_flag = 0;`;
 
-      const questionAnswerQuery = `SELECT app.student_id AS id, q.description AS question, a.description AS answer
-      FROM applicants AS app JOIN answers AS a ON a.student_id = app.student_id
-      AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q
-      ON a.question_no = q.no AND app.club_no = q.club_no;`;
+  //     const questionAnswerQuery = `SELECT app.student_id AS id, q.description AS question, a.description AS answer
+  //     FROM applicants AS app JOIN answers AS a ON a.student_id = app.student_id
+  //     AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q
+  //     ON a.question_no = q.no AND app.club_no = q.club_no;`;
 
-      const applicantQuery = `SELECT student_id AS id FROM applicants WHERE reading_flag = 0 AND club_no = ?;`;
+  //     const applicantQuery = `SELECT student_id AS id FROM applicants WHERE reading_flag = 0 AND club_no = ?;`;
 
-      const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
-      const qAndA = await conn.query(questionAnswerQuery, clubNum);
-      const applicants = await conn.query(applicantQuery, clubNum);
+  //     const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
+  //     const qAndA = await conn.query(questionAnswerQuery, clubNum);
+  //     const applicants = await conn.query(applicantQuery, clubNum);
 
-      const questionsAnswers = [[]];
+  //     const questionsAnswers = [[]];
 
-      for (let i = 0; i < applicants.length; i += 1) {
-        const studentId = applicants[i].id;
+  //     for (let i = 0; i < applicants.length; i += 1) {
+  //       const studentId = applicants[i].id;
 
-        for (let j = 0; j < qAndA.length; j += 1) {
-          if (studentId === qAndA[j].id) {
-            questionsAnswers[i].push(qAndA[j]);
-          }
-        }
-        if (i === applicants.length - 1) break;
-        else questionsAnswers.push([]);
-      }
+  //       for (let j = 0; j < qAndA.length; j += 1) {
+  //         if (studentId === qAndA[j].id) {
+  //           questionsAnswers[i].push(qAndA[j]);
+  //         }
+  //       }
+  //       if (i === applicants.length - 1) break;
+  //       else questionsAnswers.push([]);
+  //     }
 
-      return {
-        success: true,
-        applicantInfo,
-        questionsAnswers,
-      };
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
+  //     return {
+  //       success: true,
+  //       applicantInfo,
+  //       questionsAnswers,
+  //     };
+  //   } catch (err) {
+  //     throw err;
+  //   } finally {
+  //     conn?.release();
+  //   }
+  // }
 
-  static async updateAcceptedApplicantById(userInfo) {
-    let conn;
+  // static async updateAcceptedApplicantById(userInfo) {
+  //   let conn;
 
-    try {
-      conn = await mariadb.getConnection();
+  //   try {
+  //     conn = await mariadb.getConnection();
 
-      const query =
-        'UPDATE applicants SET reading_flag = 1 WHERE club_no = ? AND student_id = ?;';
+  //     const query =
+  //       'UPDATE applicants SET reading_flag = 1 WHERE club_no = ? AND student_id = ?;';
 
-      const approvedApplicant = await conn.query(query, [
-        userInfo.clubNum,
-        userInfo.applicant,
-      ]);
+  //     const approvedApplicant = await conn.query(query, [
+  //       userInfo.clubNum,
+  //       userInfo.applicant,
+  //     ]);
 
-      if (approvedApplicant.affectedRows) return true;
-      return false;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
+  //     if (approvedApplicant.affectedRows) return true;
+  //     return false;
+  //   } catch (err) {
+  //     throw err;
+  //   } finally {
+  //     conn?.release();
+  //   }
+  // }
 
-  static async createMemberById(userInfo) {
-    let conn;
+  // static async createMemberById(userInfo) {
+  //   let conn;
 
-    try {
-      conn = await mariadb.getConnection();
+  //   try {
+  //     conn = await mariadb.getConnection();
 
-      const query =
-        'INSERT INTO members (student_id, club_no, join_admin_flag, board_admin_flag) VALUES (?, ?, 0, 0);';
+  //     const query =
+  //       'INSERT INTO members (student_id, club_no, join_admin_flag, board_admin_flag) VALUES (?, ?, 0, 0);';
 
-      const updateMember = await conn.query(query, [
-        userInfo.applicant,
-        userInfo.clubNum,
-      ]);
+  //     const updateMember = await conn.query(query, [
+  //       userInfo.applicant,
+  //       userInfo.clubNum,
+  //     ]);
 
-      if (updateMember.affectedRows) return true;
-      return false;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
+  //     if (updateMember.affectedRows) return true;
+  //     return false;
+  //   } catch (err) {
+  //     throw err;
+  //   } finally {
+  //     conn?.release();
+  //   }
+  // }
 
-  static async updateRejectedApplicantById(userInfo) {
-    let conn;
+  // static async updateRejectedApplicantById(userInfo) {
+  //   let conn;
 
-    try {
-      conn = await mariadb.getConnection();
+  //   try {
+  //     conn = await mariadb.getConnection();
 
-      const query =
-        'UPDATE applicants SET reading_flag = 2 WHERE club_no = ? AND student_id = ?;';
+  //     const query =
+  //       'UPDATE applicants SET reading_flag = 2 WHERE club_no = ? AND student_id = ?;';
 
-      const updateRejectedApplicant = await conn.query(query, [
-        userInfo.clubNum,
-        userInfo.applicantId,
-      ]);
+  //     const updateRejectedApplicant = await conn.query(query, [
+  //       userInfo.clubNum,
+  //       userInfo.applicantId,
+  //     ]);
 
-      if (updateRejectedApplicant.affectedRows) return true;
-      return false;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
+  //     if (updateRejectedApplicant.affectedRows) return true;
+  //     return false;
+  //   } catch (err) {
+  //     throw err;
+  //   } finally {
+  //     conn?.release();
+  //   }
+  // }
 
-  static async findOneByApplicantIdAndClubNum(userInfo) {
-    let conn;
+  // static async findOneByApplicantIdAndClubNum(userInfo) {
+  //   let conn;
 
-    try {
-      conn = await mariadb.getConnection();
+  //   try {
+  //     conn = await mariadb.getConnection();
 
-      const query =
-        'SELECT s.name FROM applicants AS a JOIN students AS s ON a.student_id = s.id WHERE a.student_id = ? AND a.club_no = ?;';
+  //     const query =
+  //       'SELECT s.name FROM applicants AS a JOIN students AS s ON a.student_id = s.id WHERE a.student_id = ? AND a.club_no = ?;';
 
-      const applicant = await conn.query(query, [
-        userInfo.id,
-        userInfo.clubNum,
-      ]);
+  //     const applicant = await conn.query(query, [
+  //       userInfo.id,
+  //       userInfo.clubNum,
+  //     ]);
 
-      return applicant[0].name;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
+  //     return applicant[0].name;
+  //   } catch (err) {
+  //     throw err;
+  //   } finally {
+  //     conn?.release();
+  //   }
+  // }
 }
 
 module.exports = ApplicationStorage;
