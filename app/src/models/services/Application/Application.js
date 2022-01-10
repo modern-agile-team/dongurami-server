@@ -159,47 +159,47 @@ class Application {
     return applicant;
   }
 
-  async phoneNumCheck() {
-    const { phoneNum } = this.body.basic;
-    const phoneNumberRegExp = /^[0-9]+$/;
-
-    if (phoneNum.length !== 11 || !phoneNum.match(phoneNumberRegExp)) {
-      return { success: false, msg: '전화번호 형식이 맞지 않습니다.' };
-    }
-
-    const isPhoneNum = await StudentStorage.findOneByPhoneNum(
-      phoneNum,
-      this.auth.id
-    );
-
-    if (isPhoneNum) {
-      return { success: false, msg: '다른 유저가 사용중인 번호입니다.' };
-    }
-    return true;
-  }
-
   async createBasicAnswer() {
-    const { auth } = this;
     const basicAnswer = this.body.basic;
-    const basicAnswerInfo = {
-      id: auth.id,
-      name: auth.name,
-      grade: basicAnswer.grade,
-      gender: basicAnswer.gender,
-      phoneNum: basicAnswer.phoneNum,
-    };
 
     if (!(basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum)) {
       return { success: false, msg: '필수 답변을 전부 기입해주세요.' };
     }
 
-    const phoneNumCheck = await this.phoneNumCheck();
+    const phoneNumCheck = await this.phoneNumCheck(basicAnswer.phonNum);
 
     if (!phoneNumCheck) return phoneNumCheck;
 
-    const isBasic = await ApplicationStorage.createBasicAnswer(basicAnswerInfo);
+    const basicAnswerInfo = {
+      id: this.auth.id,
+      grade: basicAnswer.grade,
+      gender: basicAnswer.gender,
+      phoneNum: basicAnswer.phoneNum,
+    };
 
-    return isBasic;
+    const createBasicAnswer = await ApplicationStorage.createBasicAnswer(
+      basicAnswerInfo
+    );
+
+    return createBasicAnswer;
+  }
+
+  async phoneNumCheck(phoneNum) {
+    const PHONE_NUMBER_REGEXP = /^[0-9]+$/;
+
+    if (phoneNum.length !== 11 || !phoneNum.match(PHONE_NUMBER_REGEXP)) {
+      return { success: false, msg: '전화번호 형식이 맞지 않습니다.' };
+    }
+
+    const existPhoneNum = await StudentStorage.findOneByPhoneNum(
+      phoneNum,
+      this.auth.id
+    );
+
+    if (existPhoneNum) {
+      return { success: false, msg: '다른 유저가 사용중인 번호입니다.' };
+    }
+    return true;
   }
 
   async deleteExtraAnswer() {
