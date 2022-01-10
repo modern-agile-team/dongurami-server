@@ -250,28 +250,25 @@ class Student {
     };
 
     try {
-      // 토큰 검증
       const checkedByToken = await EmailAuth.checkByUseableToken(reqInfo);
-      if (!checkedByToken.useable) return checkedByToken;
+      if (!checkedByToken.success) return checkedByToken;
 
-      // 비밀번호 검증
-      const checkedByChangePassword = await this.checkByChangePassword();
+      const checkedByChangePassword = await Student.checkByChangePassword(
+        saveInfo
+      );
       if (!checkedByChangePassword.success) return checkedByChangePassword;
 
-      // 암호화
       saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
       saveInfo.hash = bcrypt.hashSync(
         saveInfo.newPassword,
         saveInfo.passwordSalt
       );
 
-      // DB 수정
       const isReset = await StudentStorage.modifyPasswordSave(saveInfo);
       if (!isReset) {
         return { success: false, msg: '비밀번호 변경에 실패하였습니다.' };
       }
 
-      // 토큰 삭제 && 비밀번호 변경
       const isDeleteToken = await EmailAuthStorage.deleteTokenByStudentId(
         saveInfo.id
       );
@@ -284,20 +281,18 @@ class Student {
     }
   }
 
-  async checkByChangePassword() {
-    const client = this.body;
-
+  static async checkByChangePassword(client) {
     if (!client.newPassword.length) {
-      return { success: false, msg: '비밀번호를 입력해주세요.' };
+      return Student.makeResponseMsg(400, '비밀번호를 입력해주세요.');
     }
     if (client.newPassword.length < 8) {
-      return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
+      return Student.makeResponseMsg(400, '비밀번호가 8자리수 미만입니다.');
     }
     if (client.newPassword !== client.checkNewPassword) {
-      return {
-        success: false,
-        msg: '비밀번호와 비밀번호확인이 일치하지 않습니다.',
-      };
+      return Student.makeResponseMsg(
+        400,
+        '비밀번호와 비밀번호확인이 일치하지 않습니다.'
+      );
     }
     return { success: true };
   }
