@@ -157,17 +157,15 @@ class Application {
   }
 
   async phoneNumCheck() {
+    const { phoneNum } = this.body.basic;
     const phoneNumberRegExp = /^[0-9]+$/;
 
-    if (
-      this.body.phoneNum.length !== 11 ||
-      !this.body.phoneNum.match(phoneNumberRegExp)
-    ) {
+    if (phoneNum.length !== 11 || !phoneNum.match(phoneNumberRegExp)) {
       return { success: false, msg: '전화번호 형식이 맞지 않습니다.' };
     }
 
     const isPhoneNum = await StudentStorage.findOneByPhoneNum(
-      this.body.phoneNum,
+      phoneNum,
       this.auth.id
     );
 
@@ -177,20 +175,66 @@ class Application {
     return true;
   }
 
-  async createAnswer() {
-    const { clubNum } = this.params;
+  async createBasicAnswer() {
     const { auth } = this;
-    const answer = this.body;
+    const basicAnswer = this.body.basic;
+    const basicAnswerInfo = {
+      id: auth.id,
+      name: auth.name,
+      grade: basicAnswer.grade,
+      gender: basicAnswer.gender,
+      phoneNum: basicAnswer.phoneNum,
+    };
+
+    if (!(basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum)) {
+      return { success: false, msg: '필수 답변을 전부 기입해주세요.' };
+    }
+
+    const phoneNumCheck = await this.phoneNumCheck();
+
+    if (!phoneNumCheck) return phoneNumCheck;
+
+    const isBasic = await ApplicationStorage.createBasicAnswer(basicAnswerInfo);
+
+    return isBasic;
+  }
+
+  async deleteExtraAnswer() {
+    const extraAnswerInfo = this.body.extra;
+    const extraQuestionNums = [];
+
+    extraAnswerInfo.forEach((x) => {
+      extraQuestionNums.push(x.no);
+    });
+
+    await ApplicationStorage.deleteExtraAnswer(extraQuestionNums, this.auth.id);
+  }
+
+  async createExtraAnswer() {
+    const answerInfo = this.body.extra;
+    answerInfo.id = this.auth.id;
+
+    const isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
+
+    return isExtra;
+  }
+
+  async createApplicant() {
+    const applicantInfo = {
+      clubNum: this.params.clubNum,
+      id: this.auth.id,
+    };
+    const result = await ApplicationStorage.createApplicant(applicantInfo);
+
+    return result;
+  }
+
+  async createAnswer() {
+    const data = this.body;
 
     try {
-      const applicantInfo = {
-        clubNum,
-        id: auth.id,
-      };
-
       const isApplicant = await this.isApplicant();
 
-      // 중복 가입 신청 방지 (승인 전 OR 멤버)
       if (isApplicant !== undefined && isApplicant.readingFlag !== 2) {
         const msg = isApplicant.readingFlag
           ? '이미 가입된 동아리입니다.'
@@ -199,56 +243,25 @@ class Application {
         return { success: false, msg };
       }
 
-      // 멤버 x , 중복 가입 신청 x
-      const answerInfo = {
-        id: auth.id,
-        name: auth.name,
-        grade: answer.basic.grade,
-        gender: answer.basic.gender,
-        phoneNum: answer.basic.phoneNum,
-        extra: answer.extra,
-      };
+      const isBasic = await this.createBasicAnswer();
 
-      if (!(answerInfo.grade && answerInfo.gender && answerInfo.phoneNum)) {
-        return { success: false, msg: '필수 답변을 전부 기입해주세요.' };
-      }
-      const phoneNumCheck = await this.phoneNumCheck();
-
-      if (!phoneNumCheck) return phoneNumCheck;
-
-      const isBasic = await ApplicationStorage.createBasicAnswer(answerInfo);
-
-      // 필수 질문 추가 완 x
       if (!isBasic) {
         return { success: false, msg: '필수 답변이 작성되지 않았습니다.' };
       }
 
-      // 필수 질문 추가 완 / 추가 질문 여부
-      if (answerInfo.extra.length) {
-        // 추가 질문이 있을 시
-        // 첫 가입 신청 시 아닐 때
-        if (isApplicant) {
-          const extraQuestionNums = [];
+      if (data.extra.length) {
+        if (isApplicant) await this.deleteExtraAnswer();
 
-          answerInfo.extra.forEach((x) => {
-            extraQuestionNums.push(x.no);
-          });
+        const isExtra = await this.createExtraAnswer();
 
-          await ApplicationStorage.deleteExtraAnswer(
-            extraQuestionNums,
-            auth.id
-          );
-        }
-        const isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
-
-        if (isExtra !== answerInfo.extra.length) {
+        if (isExtra !== data.extra.length) {
           return { success: false, msg: '추가 답변이 작성되지 않았습니다.' };
         }
       }
-      // 질문 추가 완 => 동아리 지원자 테이블 추가
-      const result = await ApplicationStorage.createApplicant(applicantInfo);
 
-      if (result) {
+      const createApplicant = await this.createApplicant();
+
+      if (createApplicant) {
         return { success: true, msg: '가입 신청이 완료 되었습니다.' };
       }
       return { success: false, msg: '가입 신청이 완료되지 않았습니다.' };
@@ -349,25 +362,6 @@ class Application {
       return { success: false, msg: '가입 신청이 완료되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
-    }
-  }
-
-  async findOneByClubNum() {
-    const { clubNum } = this.params;
-
-    try {
-      const { success, applicantInfo, questionsAnswers } =
-        await ApplicationStorage.findOneByClubNum(clubNum);
-
-      if (success) {
-        return { success: true, applicantInfo, questionsAnswers };
-      }
-      return {
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
 }

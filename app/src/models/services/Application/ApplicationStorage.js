@@ -217,7 +217,7 @@ class ApplicationStorage {
         INSERT INTO answers (question_no, student_id, description) 
         VALUES`;
 
-      answerInfo.extra.forEach((x, idx) => {
+      answerInfo.forEach((x, idx) => {
         if (idx) {
           answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
         } else answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
