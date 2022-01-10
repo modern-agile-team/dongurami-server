@@ -1,7 +1,6 @@
 'use strict';
 
 const ApplicationStorage = require('./ApplicationStorage');
-const StudentStorage = require('../Student/StudentStorage');
 const Error = require('../../utils/Error');
 
 class Application {
@@ -145,7 +144,6 @@ class Application {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
-  /// //////////////////////////////////////////////////////////////////////////////////////////////////
 
   async checkApplicantRecord() {
     const applicantInfo = {
@@ -163,12 +161,12 @@ class Application {
     const basicAnswer = this.body.basic;
 
     if (!(basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum)) {
-      return { success: false, msg: '필수 답변을 전부 기입해주세요.' };
+      return Application.makeMsg(400, '필수 답변을 전부 기입해주세요.');
     }
 
     const phoneNumCheck = await this.phoneNumCheck(basicAnswer.phoneNum);
 
-    if (!phoneNumCheck) return phoneNumCheck;
+    if (!phoneNumCheck.success) return phoneNumCheck;
 
     const basicAnswerInfo = {
       id: this.auth.id,
@@ -181,25 +179,30 @@ class Application {
       basicAnswerInfo
     );
 
-    return createBasicAnswer;
+    return createBasicAnswer
+      ? { success: true }
+      : Application.makeMsg(400, '필수 답변이 작성되지 않았습니다.');
   }
 
   async phoneNumCheck(phoneNum) {
     const PHONE_NUMBER_REGEXP = /^[0-9]+$/;
 
     if (phoneNum.length !== 11 || !phoneNum.match(PHONE_NUMBER_REGEXP)) {
-      return { success: false, msg: '전화번호 형식이 맞지 않습니다.' };
+      return Application.makeMsg(400, '전화번호 형식이 맞지 않습니다.');
     }
 
-    const existPhoneNum = await StudentStorage.findOneByPhoneNum(
+    const phoneNumInfo = {
       phoneNum,
-      this.auth.id
+      id: this.auth.id,
+    };
+    const duplicatePhoneNum = await ApplicationStorage.findDuplicatePhoneNum(
+      phoneNumInfo
     );
 
-    if (existPhoneNum) {
-      return { success: false, msg: '다른 유저가 사용중인 번호입니다.' };
+    if (duplicatePhoneNum) {
+      return Application.makeMsg(409, '다른 유저가 사용중인 번호입니다.');
     }
-    return true;
+    return { success: true };
   }
 
   async deleteExtraAnswer(extraAnswer) {
@@ -209,16 +212,25 @@ class Application {
       extraQuestionNums.push(x.no);
     });
 
-    await ApplicationStorage.deleteExtraAnswer(extraQuestionNums, this.auth.id);
+    const extraAnswerInfo = {
+      extraQuestionNums,
+      id: this.auth.id,
+    };
+
+    await ApplicationStorage.deleteExtraAnswer(extraAnswerInfo);
   }
 
   async createExtraAnswer() {
-    const answerInfo = this.body.extra;
-    answerInfo.id = this.auth.id;
+    const answerInfo = {
+      extraAnswers: this.body.extra,
+      id: this.auth.id,
+    };
 
-    const isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
+    const createExtraAnswer = await ApplicationStorage.createExtraAnswer(
+      answerInfo
+    );
 
-    return isExtra;
+    return createExtraAnswer;
   }
 
   async createApplicant() {
@@ -226,13 +238,18 @@ class Application {
       clubNum: this.params.clubNum,
       id: this.auth.id,
     };
-    const result = await ApplicationStorage.createApplicant(applicantInfo);
 
-    return result;
+    const applicant = await ApplicationStorage.createApplicant(applicantInfo);
+
+    return applicant;
   }
 
   async createAnswer() {
     try {
+      if ((await this.findOneLeader()).leader === this.auth.id) {
+        return Application.makeMsg(400, '이미 가입된 동아리입니다.');
+      }
+
       const applicant = await this.checkApplicantRecord();
 
       if (applicant !== undefined && applicant.readingFlag !== 2) {
@@ -240,130 +257,29 @@ class Application {
           ? '이미 가입된 동아리입니다.'
           : '가입 승인 대기중입니다.';
 
-        return { success: false, msg };
+        return Application.makeMsg(400, msg);
       }
 
       const createBasicAnswer = await this.createBasicAnswer();
 
-      if (!createBasicAnswer) {
-        return { success: false, msg: '필수 답변이 작성되지 않았습니다.' };
-      }
+      if (!createBasicAnswer.success) return createBasicAnswer;
 
       const extraAnswer = this.body.extra;
 
       if (extraAnswer.length) {
         if (applicant) await this.deleteExtraAnswer(extraAnswer);
 
-        const isExtra = await this.createExtraAnswer();
+        const createExtraAnswer = await this.createExtraAnswer();
 
-        if (isExtra !== extraAnswer.length) {
-          return { success: false, msg: '추가 답변이 작성되지 않았습니다.' };
+        if (createExtraAnswer !== extraAnswer.length) {
+          return Application.makeMsg(400, '추가 답변이 작성되지 않았습니다.');
         }
       }
 
-      const createApplicant = await this.createApplicant();
-
-      if (createApplicant) {
-        return { success: true, msg: '가입 신청이 완료 되었습니다.' };
-      }
-      return { success: false, msg: '가입 신청이 완료되지 않았습니다.' };
+      await this.createApplicant();
+      return Application.makeMsg(200, '가입 신청이 완료되었습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
-    }
-  }
-
-  async xxcreateAnswer() {
-    const { clubNum } = this.params;
-    const { auth } = this;
-    const answer = this.body;
-
-    try {
-      const applicantInfo = {
-        clubNum,
-        id: auth.id,
-      };
-
-      // 중복 가입 신청 방지 (승인 전 OR 멤버)
-      const isApplicant = await ApplicationStorage.findApplicant(applicantInfo);
-
-      if (isApplicant !== undefined && isApplicant.readingFlag !== 2) {
-        const msg = isApplicant.readingFlag
-          ? '이미 가입된 동아리입니다.'
-          : '가입 승인 대기중입니다.';
-
-        return { success: false, msg };
-      }
-
-      // 멤버 x , 중복 가입 신청 x
-      const answerInfo = {
-        id: auth.id,
-        name: auth.name,
-        grade: answer.basic.grade,
-        gender: answer.basic.gender,
-        phoneNum: answer.basic.phoneNum,
-        extra: answer.extra,
-      };
-
-      if (!(answerInfo.grade && answerInfo.gender && answerInfo.phoneNum)) {
-        return { success: false, msg: '필수 답변을 전부 기입해주세요.' };
-      }
-
-      const phoneNumberRegExp = /^[0-9]+$/;
-
-      if (
-        answerInfo.phoneNum.length !== 11 ||
-        !answerInfo.phoneNum.match(phoneNumberRegExp)
-      ) {
-        return { success: false, msg: '전화번호 형식이 맞지 않습니다.' };
-      }
-
-      const isPhoneNum = await StudentStorage.findOneByPhoneNum(
-        answerInfo.phoneNum,
-        auth.id
-      );
-
-      if (isPhoneNum) {
-        return { success: false, msg: '다른 유저가 사용중인 번호입니다.' };
-      }
-
-      const isBasic = await ApplicationStorage.createBasicAnswer(answerInfo);
-
-      // 필수 질문 추가 완 x
-      if (!isBasic) {
-        return { success: false, msg: '필수 답변이 작성되지 않았습니다.' };
-      }
-
-      // 필수 질문 추가 완 / 추가 질문 여부
-      if (answerInfo.extra.length) {
-        // 추가 질문이 있을 시
-        // 첫 가입 신청 시 아닐 때
-        if (isApplicant) {
-          const extraQuestionNums = [];
-
-          answerInfo.extra.forEach((x) => {
-            extraQuestionNums.push(x.no);
-          });
-
-          await ApplicationStorage.deleteExtraAnswer(
-            extraQuestionNums,
-            auth.id
-          );
-        }
-        const isExtra = await ApplicationStorage.createExtraAnswer(answerInfo);
-
-        if (isExtra !== answerInfo.extra.length) {
-          return { success: false, msg: '추가 답변이 작성되지 않았습니다.' };
-        }
-      }
-      // 질문 추가 완 => 동아리 지원자 테이블 추가
-      const result = await ApplicationStorage.createApplicant(applicantInfo);
-
-      if (result) {
-        return { success: true, msg: '가입 신청이 완료 되었습니다.' };
-      }
-      return { success: false, msg: '가입 신청이 완료되지 않았습니다.' };
-    } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 }

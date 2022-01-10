@@ -162,18 +162,42 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const applicant = `
+      const query = `
         SELECT reading_flag AS readingFlag 
         FROM applicants 
         WHERE club_no = ? AND student_id = ? 
         ORDER BY no DESC;`;
 
-      const isApplicant = await conn.query(applicant, [
+      const isApplicant = await conn.query(query, [
         applicantInfo.clubNum,
         applicantInfo.id,
       ]);
 
       return isApplicant[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findDuplicatePhoneNum(phoneNumInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT phone_number 
+        FROM students 
+        WHERE id != ? AND phone_number = ?;`;
+
+      const duplicatePhoneNum = await conn.query(query, [
+        phoneNumInfo.id,
+        phoneNumInfo.phoneNum,
+      ]);
+
+      return duplicatePhoneNum[0];
     } catch (err) {
       throw err;
     } finally {
@@ -207,34 +231,7 @@ class ApplicationStorage {
     }
   }
 
-  static async createExtraAnswer(answerInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      let query = `
-        INSERT INTO answers (question_no, student_id, description) 
-        VALUES`;
-
-      answerInfo.forEach((x, idx) => {
-        if (idx) {
-          query += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-        } else query += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-      });
-      query += ';';
-
-      const extra = await conn.query(`${query}`);
-
-      return extra.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async deleteExtraAnswer(extraQuestionNums, id) {
+  static async deleteExtraAnswer(extraAnswerInfo) {
     let conn;
 
     try {
@@ -245,8 +242,39 @@ class ApplicationStorage {
         WHERE question_no 
         IN (?) AND student_id = ?;`;
 
-      await conn.query(query, [extraQuestionNums, id]);
+      await conn.query(query, [
+        extraAnswerInfo.extraQuestionNums,
+        extraAnswerInfo.id,
+      ]);
       return;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async createExtraAnswer(answerInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      let query = `
+        INSERT INTO answers (question_no, student_id, description) 
+        VALUES`;
+
+      answerInfo.extraAnswers.forEach((extraAnswer, idx) => {
+        if (idx) {
+          query += `, ("${extraAnswer.no}", "${answerInfo.id}", "${extraAnswer.description}")`;
+        } else
+          query += ` ("${extraAnswer.no}", "${answerInfo.id}", "${extraAnswer.description}")`;
+      });
+      query += ';';
+
+      const extra = await conn.query(`${query}`);
+
+      return extra.affectedRows;
     } catch (err) {
       throw err;
     } finally {
