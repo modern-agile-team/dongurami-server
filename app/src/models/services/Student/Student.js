@@ -97,7 +97,7 @@ class Student {
     }
   }
 
-  static idOrEmailInputNullCheck(client) {
+  static idOrEmailNullCheck(client) {
     return client.name && client.email;
   }
 
@@ -111,24 +111,18 @@ class Student {
   async findId() {
     const client = this.body;
 
-    if (!Student.idOrEmailInputNullCheck(client)) {
+    if (!Student.idOrEmailNullCheck(client)) {
       return Student.makeResponseMsg(400, '아이디 또는 이메일을 확인해주세요.');
     }
 
     try {
-      const clientInfo = {
-        name: client.name,
-        email: client.email,
-      };
-      const student = await StudentStorage.findOneByNameAndEmail(clientInfo);
+      const student = await StudentStorage.findOneByNameAndEmail(client);
 
       if (student) {
-        const id = { id: student.id };
-
         return Student.makeResponseMsg(
           200,
           '해당하는 아이디를 찾았습니다.',
-          id
+          student
         );
       }
       return Student.makeResponseMsg(400, '해당하는 아이디가 없습니다.');
