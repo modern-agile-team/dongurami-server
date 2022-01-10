@@ -35,7 +35,7 @@ class Student {
     return response;
   }
 
-  static inputNullCheck(client) {
+  static idOrPasswordNullCheck(client) {
     return client.id && client.password;
   }
 
@@ -46,7 +46,7 @@ class Student {
   async login() {
     const client = this.body;
 
-    if (!Student.inputNullCheck(client))
+    if (!Student.idOrPasswordNullCheck(client))
       return Student.makeResponseMsg(
         400,
         '아이디 또는 비밀번호를 확인해주세요.'
@@ -63,9 +63,10 @@ class Student {
         const clubNum = await StudentStorage.findOneByLoginedId(client.id);
         const jwt = await Auth.createJWT(checkedId, clubNum);
 
-        return Student.makeResponseMsg(200, '로그인에 성공하셨습니다.', jwt);
+        return Student.makeResponseMsg(200, '로그인에 성공하셨습니다.', {
+          jwt,
+        });
       }
-
       return Student.makeResponseMsg(401, '잘못된 비밀번호입니다.');
     } catch (err) {
       return Error.ctrl('', err);
