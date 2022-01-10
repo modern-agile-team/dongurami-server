@@ -51,12 +51,12 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const qustion = `
+      const query = `
         SELECT no, description 
         FROM questions 
         WHERE club_no = ?;`;
 
-      const questions = await conn.query(qustion, [clubNum]);
+      const questions = await conn.query(query, [clubNum]);
 
       return questions;
     } catch (err) {
@@ -187,12 +187,12 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const studentInfo = `
+      const query = `
         UPDATE students 
         SET grade = ?, gender = ?, phone_number = ? 
         WHERE id = ?;`;
 
-      const basic = await conn.query(studentInfo, [
+      const basic = await conn.query(query, [
         answerInfo.grade,
         answerInfo.gender,
         answerInfo.phoneNum,
@@ -213,18 +213,18 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      let answer = `
+      let query = `
         INSERT INTO answers (question_no, student_id, description) 
         VALUES`;
 
       answerInfo.forEach((x, idx) => {
         if (idx) {
-          answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-        } else answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+          query += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+        } else query += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
       });
-      answer += ';';
+      query += ';';
 
-      const extra = await conn.query(`${answer}`);
+      const extra = await conn.query(`${query}`);
 
       return extra.affectedRows;
     } catch (err) {

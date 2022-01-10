@@ -166,7 +166,7 @@ class Application {
       return { success: false, msg: '필수 답변을 전부 기입해주세요.' };
     }
 
-    const phoneNumCheck = await this.phoneNumCheck(basicAnswer.phonNum);
+    const phoneNumCheck = await this.phoneNumCheck(basicAnswer.phoneNum);
 
     if (!phoneNumCheck) return phoneNumCheck;
 
@@ -202,11 +202,10 @@ class Application {
     return true;
   }
 
-  async deleteExtraAnswer() {
-    const extraAnswerInfo = this.body.extra;
+  async deleteExtraAnswer(extraAnswer) {
     const extraQuestionNums = [];
 
-    extraAnswerInfo.forEach((x) => {
+    extraAnswer.forEach((x) => {
       extraQuestionNums.push(x.no);
     });
 
@@ -233,8 +232,6 @@ class Application {
   }
 
   async createAnswer() {
-    const data = this.body;
-
     try {
       const applicant = await this.checkApplicantRecord();
 
@@ -246,18 +243,20 @@ class Application {
         return { success: false, msg };
       }
 
-      const isBasic = await this.createBasicAnswer();
+      const createBasicAnswer = await this.createBasicAnswer();
 
-      if (!isBasic) {
+      if (!createBasicAnswer) {
         return { success: false, msg: '필수 답변이 작성되지 않았습니다.' };
       }
 
-      if (data.extra.length) {
-        if (applicant) await this.deleteExtraAnswer();
+      const extraAnswer = this.body.extra;
+
+      if (extraAnswer.length) {
+        if (applicant) await this.deleteExtraAnswer(extraAnswer);
 
         const isExtra = await this.createExtraAnswer();
 
-        if (isExtra !== data.extra.length) {
+        if (isExtra !== extraAnswer.length) {
           return { success: false, msg: '추가 답변이 작성되지 않았습니다.' };
         }
       }
