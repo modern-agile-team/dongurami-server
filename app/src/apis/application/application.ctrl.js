@@ -21,6 +21,14 @@ const process = {
     return processCtrl(res, apiInfo);
   },
 
+  createAnswer: async (req, res) => {
+    const application = new Application(req);
+    const response = await application.createAnswer();
+    const apiInfo = getApiInfo('POST', response, req);
+
+    return processCtrl(res, apiInfo);
+  },
+
   updateQuestion: async (req, res) => {
     const application = new Application(req);
     const response = await application.updateQuestion();
@@ -33,14 +41,6 @@ const process = {
     const application = new Application(req);
     const response = await application.deleteQuestion();
     const apiInfo = getApiInfo('DELETE', response, req);
-
-    return processCtrl(res, apiInfo);
-  },
-
-  createAnswer: async (req, res) => {
-    const application = new Application(req);
-    const response = await application.createAnswer();
-    const apiInfo = getApiInfo('POST', response, req);
 
     return processCtrl(res, apiInfo);
   },
