@@ -238,7 +238,8 @@ class ApplicationStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        DELETE FROM answers 
+        DELETE 
+        FROM answers 
         WHERE question_no 
         IN (?) AND student_id = ?;`;
 
@@ -290,7 +291,7 @@ class ApplicationStorage {
 
       const query = `
         INSERT INTO applicants (club_no, student_id) 
-        VALUE (?, ?);`;
+        VALUES (?, ?);`;
 
       const result = await conn.query(query, [
         applicantInfo.clubNum,
