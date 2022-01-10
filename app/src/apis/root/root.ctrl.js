@@ -64,10 +64,9 @@ const process = {
     return res.status(400).json(response);
   },
 
-  // 메일 전송
   sendEmailForPassword: async (req, res) => {
     const email = new Email(req);
-    const response = await email.sendLinkForPassword();
+    const response = await email.sendEmailForPassword();
 
     if (response.success) {
       logger.info(`POST /api/forgot-password 201: ${response.msg}`);
