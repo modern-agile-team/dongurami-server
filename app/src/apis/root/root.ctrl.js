@@ -26,17 +26,9 @@ const process = {
   findId: async (req, res) => {
     const student = new Student(req);
     const response = await student.findId();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(`POST /api/find-id 200: 해당 아이디를 확인했습니다.`);
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(`POST /api/find-id 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(`POST /api/find-id 400: ${response.msg}`);
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   // 비밀번호 변경
