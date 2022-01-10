@@ -205,11 +205,11 @@ class Application {
     return { success: true };
   }
 
-  async deleteExtraAnswer(extraAnswer) {
+  async deleteExtraAnswer(extraAnswers) {
     const extraQuestionNums = [];
 
-    extraAnswer.forEach((x) => {
-      extraQuestionNums.push(x.no);
+    extraAnswers.forEach((extraAnswer) => {
+      extraQuestionNums.push(extraAnswer.no);
     });
 
     const extraAnswerInfo = {
@@ -264,10 +264,10 @@ class Application {
 
       if (!createBasicAnswer.success) return createBasicAnswer;
 
-      const extraAnswer = this.body.extra;
+      const extraAnswers = this.body.extra;
 
-      if (extraAnswer.length) {
-        if (applicant) await this.deleteExtraAnswer(extraAnswer);
+      if (extraAnswers.length) {
+        if (applicant) await this.deleteExtraAnswer(extraAnswers);
 
         const createExtraAnswer = await this.createExtraAnswer();
 
