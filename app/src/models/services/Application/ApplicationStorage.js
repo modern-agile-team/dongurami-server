@@ -101,9 +101,9 @@ class ApplicationStorage {
         WHERE club_no = ? AND reading_flag = 0 
         LIMIT 1;`;
 
-      const applicants = await conn.query(query, [clubNum]);
+      const applicant = await conn.query(query, [clubNum]);
 
-      return applicants[0];
+      return applicant[0];
     } catch (err) {
       throw err;
     } finally {
@@ -168,12 +168,12 @@ class ApplicationStorage {
         WHERE club_no = ? AND student_id = ? 
         ORDER BY no DESC;`;
 
-      const isApplicant = await conn.query(query, [
+      const applicant = await conn.query(query, [
         applicantInfo.clubNum,
         applicantInfo.id,
       ]);
 
-      return isApplicant[0];
+      return applicant[0];
     } catch (err) {
       throw err;
     } finally {
@@ -216,14 +216,14 @@ class ApplicationStorage {
         SET grade = ?, gender = ?, phone_number = ? 
         WHERE id = ?;`;
 
-      const basic = await conn.query(query, [
+      const basicAnswer = await conn.query(query, [
         answerInfo.grade,
         answerInfo.gender,
         answerInfo.phoneNum,
         answerInfo.id,
       ]);
 
-      return basic.affectedRows;
+      return basicAnswer.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -273,9 +273,9 @@ class ApplicationStorage {
       });
       query += ';';
 
-      const extra = await conn.query(`${query}`);
+      const extraAnswer = await conn.query(`${query}`);
 
-      return extra.affectedRows;
+      return extraAnswer.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -293,12 +293,12 @@ class ApplicationStorage {
         INSERT INTO applicants (club_no, student_id) 
         VALUES (?, ?);`;
 
-      const result = await conn.query(query, [
+      const applicant = await conn.query(query, [
         applicantInfo.clubNum,
         applicantInfo.id,
       ]);
 
-      return result.affectedRows;
+      return applicant.affectedRows;
     } catch (err) {
       throw err;
     } finally {
