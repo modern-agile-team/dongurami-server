@@ -67,7 +67,6 @@ class Student {
           jwt,
         });
       }
-
       return Student.makeResponseMsg(401, '잘못된 비밀번호입니다.');
     } catch (err) {
       return Error.ctrl('', err);
