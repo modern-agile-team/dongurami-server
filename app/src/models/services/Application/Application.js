@@ -185,9 +185,9 @@ class Application {
   }
 
   async phoneNumCheck(phoneNum) {
-    const PHONE_NUMBER_REGEXP = /^[0-9]+$/;
+    const PHONE_NUMBER_REGEXP = /^[0-9]/;
 
-    if (phoneNum.length !== 11 || !phoneNum.match(PHONE_NUMBER_REGEXP)) {
+    if (phoneNum.length !== 11 || !PHONE_NUMBER_REGEXP.test(phoneNum)) {
       return Application.makeMsg(400, '전화번호 형식이 맞지 않습니다.');
     }
 
