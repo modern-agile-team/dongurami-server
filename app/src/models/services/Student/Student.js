@@ -315,7 +315,8 @@ class Student {
 
     try {
       if (user) {
-        user.club = await ProfileStorage.findAllClubByStudentId(user.id);
+        user.club = await ProfileStorage.findAllClubById(user.id);
+
         return { success: true, msg: '유저 정보 조회 성공', user };
       }
       return { success: false, msg: '유저 정보 조회 실패' };
