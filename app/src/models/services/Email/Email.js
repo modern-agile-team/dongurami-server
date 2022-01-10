@@ -19,12 +19,9 @@ class Email {
 
     try {
       const existInfo = await Student.isExistIdAndEmail(client);
-
       if (!existInfo.success) return existInfo;
-      // if (!existInfo.isExist) return existInfo;
 
       const tokenInfo = await EmailAuth.createToken(client.id);
-
       if (!tokenInfo.success) return tokenInfo;
 
       const message = {
@@ -35,13 +32,9 @@ class Email {
       };
 
       const transporter = nodemailer.createTransport(mailConfig);
-      // 메일 전송
       transporter.sendMail(message);
-      return {
-        success: true,
-        msg: '성공적으로 메일을 발송했습니다.',
-        token: tokenInfo.token,
-      };
+
+      return Student.makeResponseMsg(200, '성공적으로 메일을 발송했습니다.');
     } catch (err) {
       return Error.ctrl(
         '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
