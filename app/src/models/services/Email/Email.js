@@ -14,13 +14,11 @@ class Email {
     this.body = req.body;
   }
 
-  async sendLinkForPassword() {
+  async sendEmailForPassword() {
     const client = this.body;
-    const { req } = this;
-    const student = new Student(req);
 
     try {
-      const existInfo = await student.isExistIdAndEmail();
+      const existInfo = await Student.isExistIdAndEmail(client);
 
       if (!existInfo.isExist) return existInfo;
 
