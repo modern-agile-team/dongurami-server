@@ -13,7 +13,6 @@ class S3 {
 
   async createPutUrl() {
     const isEmpty = resourceNullCheck(this.body);
-    let { img } = this.body;
 
     if (isEmpty.success) {
       return makeResponse(isEmpty.status, isEmpty.msg);
@@ -22,7 +21,7 @@ class S3 {
     try {
       const randomString = crypto.randomBytes(5).toString('hex');
 
-      img = `${randomString}_${img}`;
+      const img = `${randomString}_${this.body.img}`;
       const readObjectUrl = process.env.CLOUDFRONT_URL + img;
 
       const s3 = new AWS.S3({
