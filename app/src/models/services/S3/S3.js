@@ -3,6 +3,8 @@
 const AWS = require('aws-sdk');
 const crypto = require('crypto');
 const Error = require('../../utils/Error');
+const resourceNullCheck = require('../../utils/resourceNullCheck');
+const makeResponse = require('../../utils/makeResponse');
 
 class S3 {
   constructor(req) {
@@ -10,10 +12,11 @@ class S3 {
   }
 
   async createPutUrl() {
+    const isEmpty = resourceNullCheck(this.body);
     let { img } = this.body;
 
-    if (img === undefined) {
-      return { success: false, msg: '객체 이름을 적어주세요' };
+    if (isEmpty.success) {
+      return makeResponse(isEmpty.status, isEmpty.msg);
     }
 
     try {
