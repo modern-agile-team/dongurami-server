@@ -107,6 +107,7 @@ class Student {
   static createHash(saveInfo) {
     saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
     saveInfo.hash = bcrypt.hashSync(saveInfo.password, saveInfo.passwordSalt);
+
     return saveInfo;
   }
 
