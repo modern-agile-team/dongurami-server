@@ -219,34 +219,23 @@ class Student {
 
       if (!checkedId) {
         return Student.makeResponseMsg(400, '가입된 아이디가 아닙니다.');
-        // return { isExist: false, msg: '가입된 아이디가 아닙니다.' };
       }
 
       const checkedEmail = await StudentStorage.findOneByEmail(client.email);
 
       if (!checkedEmail) {
         return Student.makeResponseMsg(400, '가입된 이메일이 아닙니다.');
-        // return { isExist: false, msg: '가입된 이메일이 아닙니다.' };
       }
       if (checkedId.email !== checkedEmail.email) {
         return Student.makeResponseMsg(
           400,
           '아이디 또는 이메일이 일치하지 않습니다.'
         );
-        // return {
-        //   isExist: false,
-        //   msg: '아이디 또는 이메일이 일치하지 않습니다.',
-        // };
       }
       const info = {
         name: checkedId.name,
       };
       return Student.makeResponseMsg(200, '확인 성공', info);
-
-      // return {
-      //   isExist: true,
-      //   name: checkedId.name,
-      // };
     } catch (err) {
       throw err;
     }
