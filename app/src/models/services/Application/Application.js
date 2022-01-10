@@ -145,15 +145,18 @@ class Application {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
+  /// //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  async isApplicant() {
+  async checkApplicantRecord() {
     const applicantInfo = {
       clubNum: this.params.clubNum,
       id: this.auth.id,
     };
-    const isApplicant = await ApplicationStorage.findApplicant(applicantInfo);
+    const applicant = await ApplicationStorage.checkApplicantRecord(
+      applicantInfo
+    );
 
-    return isApplicant;
+    return applicant;
   }
 
   async phoneNumCheck() {
@@ -233,10 +236,10 @@ class Application {
     const data = this.body;
 
     try {
-      const isApplicant = await this.isApplicant();
+      const applicant = await this.checkApplicantRecord();
 
-      if (isApplicant !== undefined && isApplicant.readingFlag !== 2) {
-        const msg = isApplicant.readingFlag
+      if (applicant !== undefined && applicant.readingFlag !== 2) {
+        const msg = applicant.readingFlag
           ? '이미 가입된 동아리입니다.'
           : '가입 승인 대기중입니다.';
 
@@ -250,7 +253,7 @@ class Application {
       }
 
       if (data.extra.length) {
-        if (isApplicant) await this.deleteExtraAnswer();
+        if (applicant) await this.deleteExtraAnswer();
 
         const isExtra = await this.createExtraAnswer();
 

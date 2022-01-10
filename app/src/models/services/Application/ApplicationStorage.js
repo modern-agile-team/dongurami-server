@@ -156,7 +156,7 @@ class ApplicationStorage {
     }
   }
 
-  static async findApplicant(applicantInfo) {
+  static async checkApplicantRecord(applicantInfo) {
     let conn;
 
     try {
