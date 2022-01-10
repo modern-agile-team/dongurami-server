@@ -21,7 +21,7 @@ router.post('/find-id', apiAuth.apiAuth, ctrl.process.findId);
 router.post(
   '/forgot-password',
   apiAuth.apiAuth,
-  ctrl.process.sendEmailForPassword
+  ctrl.process.sendEmailForFindPassword
 );
 
 router.patch(

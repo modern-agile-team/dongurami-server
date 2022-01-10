@@ -48,9 +48,9 @@ const process = {
     return res.status(400).json(response);
   },
 
-  sendEmailForPassword: async (req, res) => {
+  sendEmailForFindPassword: async (req, res) => {
     const email = new Email(req);
-    const response = await email.sendEmailForPassword();
+    const response = await email.sendEmailForFindPassword();
     const apiInfo = getApiInfo('POST', response, req);
 
     return processCtrl(res, apiInfo);
