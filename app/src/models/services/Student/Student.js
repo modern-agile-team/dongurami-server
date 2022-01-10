@@ -18,30 +18,21 @@ class Student {
     this.SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
   }
 
-  static makeResponseMsg(status, msg, jwt) {
-    return {
+  static makeResponseMsg(status, msg, extra) {
+    const response = {
       success: status < 400,
       status,
       msg,
-      jwt,
     };
+
+    for (const info in extra) {
+      if (Object.prototype.hasOwnProperty.call(extra, info)) {
+        response[info] = extra[info];
+      }
+    }
+
+    return response;
   }
-
-  // static successMessage(msg, jwt) {
-  //   return {
-  //     success: true,
-  //     msg,
-  //     jwt,
-  //   };
-  // }
-
-  // static failMessage(msg, status) {
-  //   return {
-  //     success: false,
-  //     msg,
-  //     status,
-  //   };
-  // }
 
   static inputNullCheck(client) {
     return client.id && client.password;
@@ -105,12 +96,17 @@ class Student {
     }
   }
 
+  static idOrEmailInputNullCheck(client) {
+    return client.name && client.email;
+  }
+
   async findId() {
     const client = this.body;
 
-    if (!(client.name && client.email)) {
-      return { success: false, msg: '아이디 또는 이메일을 확인해주세요.' };
+    if (!Student.idOrEmailInputNullCheck(client)) {
+      return Student.makeResponseMsg(400, '아이디 또는 이메일을 확인해주세요.');
     }
+
     try {
       const clientInfo = {
         name: client.name,
@@ -119,9 +115,15 @@ class Student {
       const student = await StudentStorage.findOneByNameAndEmail(clientInfo);
 
       if (student) {
-        return { success: true, id: student.id };
+        const id = { id: student.id };
+
+        return Student.makeResponseMsg(
+          200,
+          '해당하는 아이디를 찾았습니다.',
+          id
+        );
       }
-      return { success: false, msg: '해당하는 아이디가 없습니다.' };
+      return Student.makeResponseMsg(400, '해당하는 아이디가 없습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
