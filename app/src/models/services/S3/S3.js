@@ -3,7 +3,7 @@
 const AWS = require('aws-sdk');
 const crypto = require('crypto');
 const Error = require('../../utils/Error');
-const resourceNullCheck = require('../../utils/resourceNullCheck');
+const getNullResource = require('../../utils/getNullResource');
 const makeResponse = require('../../utils/makeResponse');
 
 class S3 {
@@ -12,10 +12,10 @@ class S3 {
   }
 
   async createPutUrl() {
-    const isEmpty = resourceNullCheck(this.body);
+    const nullValue = getNullResource(this.body);
 
-    if (isEmpty.success) {
-      return makeResponse(isEmpty.status, isEmpty.msg);
+    if (nullValue) {
+      return makeResponse(400, `${key}이(가) 빈값입니다.`);
     }
 
     try {
