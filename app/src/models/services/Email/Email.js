@@ -20,7 +20,8 @@ class Email {
     try {
       const existInfo = await Student.isExistIdAndEmail(client);
 
-      if (!existInfo.isExist) return existInfo;
+      if (!existInfo.success) return existInfo;
+      // if (!existInfo.isExist) return existInfo;
 
       const tokenInfo = await EmailAuth.createToken(client.id);
 

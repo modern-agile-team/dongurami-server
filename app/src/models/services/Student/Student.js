@@ -237,11 +237,15 @@ class Student {
         //   msg: '아이디 또는 이메일이 일치하지 않습니다.',
         // };
       }
-
-      return {
-        isExist: true,
+      const info = {
         name: checkedId.name,
       };
+      return Student.makeResponseMsg(200, '확인 성공', info);
+
+      // return {
+      //   isExist: true,
+      //   name: checkedId.name,
+      // };
     } catch (err) {
       throw err;
     }
