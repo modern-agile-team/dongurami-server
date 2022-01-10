@@ -220,27 +220,32 @@ class Student {
     }
   }
 
-  async isExistIdAndEmail() {
-    const client = this.body;
-
+  static async isExistIdAndEmail(client) {
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
 
       if (!checkedId) {
-        return { isExist: false, msg: '가입된 아이디가 아닙니다.' };
+        return Student.makeResponseMsg(400, '가입된 아이디가 아닙니다.');
+        // return { isExist: false, msg: '가입된 아이디가 아닙니다.' };
       }
 
       const checkedEmail = await StudentStorage.findOneByEmail(client.email);
 
       if (!checkedEmail) {
-        return { isExist: false, msg: '가입된 이메일이 아닙니다.' };
+        return Student.makeResponseMsg(400, '가입된 이메일이 아닙니다.');
+        // return { isExist: false, msg: '가입된 이메일이 아닙니다.' };
       }
       if (checkedId.email !== checkedEmail.email) {
-        return {
-          isExist: false,
-          msg: '아이디 또는 이메일이 일치하지 않습니다.',
-        };
+        return Student.makeResponseMsg(
+          400,
+          '아이디 또는 이메일이 일치하지 않습니다.'
+        );
+        // return {
+        //   isExist: false,
+        //   msg: '아이디 또는 이메일이 일치하지 않습니다.',
+        // };
       }
+
       return {
         isExist: true,
         name: checkedId.name,
