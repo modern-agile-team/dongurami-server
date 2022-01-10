@@ -32,12 +32,12 @@ class HomeStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const findFlag = `
+      const query = `
         SELECT join_admin_flag AS joinAdminFlag, board_admin_flag AS boardAdminFlag 
         FROM members 
         WHERE student_id = ?;`;
 
-      const flags = await conn.query(findFlag, ids.clientId);
+      const flags = await conn.query(query, ids.clientId);
       const clientInfo = {};
 
       clientInfo.leaderFlag = ids.leaderId === ids.clientId;
@@ -58,12 +58,12 @@ class HomeStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const findClubInfo = `
+      const query = `
         SELECT name, category, logo_url AS logoUrl, introduce 
         FROM clubs 
         WHERE no = ?;`;
 
-      const clubInfo = await conn.query(findClubInfo, clubNum);
+      const clubInfo = await conn.query(query, clubNum);
 
       return clubInfo[0];
     } catch (err) {
