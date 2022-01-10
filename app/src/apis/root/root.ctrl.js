@@ -51,17 +51,9 @@ const process = {
   sendEmailForPassword: async (req, res) => {
     const email = new Email(req);
     const response = await email.sendEmailForPassword();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(`POST /api/forgot-password 201: ${response.msg}`);
-      return res.status(201).json(response);
-    }
-    if (response.isError) {
-      logger.error(`POST /api/forgot-password 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(`POST /api/forgot-password 400: ${response.msg}`);
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   // 비밀번호 찾기
