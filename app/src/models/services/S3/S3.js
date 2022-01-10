@@ -36,12 +36,7 @@ class S3 {
         Key: img,
       });
 
-      return {
-        success: true,
-        msg: 'url 생성 성공',
-        preSignedPutUrl,
-        readObjectUrl,
-      };
+      return makeResponse(200, 'url 생성 성공', preSignedPutUrl, readObjectUrl);
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
     }
