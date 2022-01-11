@@ -39,6 +39,14 @@ class Applicationutil {
 
     return waitingApplicant;
   }
+
+  static async checkApplicantRecord(applicantInfo) {
+    const applicant = await ApplicationStorage.checkApplicantRecord(
+      applicantInfo
+    );
+
+    return applicant;
+  }
 }
 
 module.exports = Applicationutil;

@@ -112,18 +112,6 @@ class Application {
     }
   }
 
-  async checkApplicantRecord() {
-    const applicantInfo = {
-      clubNum: this.params.clubNum,
-      id: this.auth.id,
-    };
-    const applicant = await ApplicationStorage.checkApplicantRecord(
-      applicantInfo
-    );
-
-    return applicant;
-  }
-
   static nullCheckBasicAnswer(basicAnswer) {
     return basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum;
   }
@@ -202,13 +190,22 @@ class Application {
   async createAnswer() {
     const basicAnswer = this.body.basic;
     const extraAnswers = this.body.extra;
+    const clientId = this.auth.id;
+    const { clubNum } = this.params;
 
     try {
-      if ((await ApplicationUtil.findOneLeader()).leader === this.auth.id) {
+      if ((await ApplicationUtil.findOneLeader(clubNum)).leader === clientId) {
         return ApplicationUtil.makeMsg(400, '이미 가입된 동아리입니다.');
       }
 
-      const applicant = await this.checkApplicantRecord();
+      const applicantInfo = {
+        clientId,
+        clubNum,
+      };
+
+      const applicant = await ApplicationUtil.checkApplicantRecord(
+        applicantInfo
+      );
 
       if (applicant !== undefined && applicant.readingFlag !== 2) {
         const msg = applicant.readingFlag

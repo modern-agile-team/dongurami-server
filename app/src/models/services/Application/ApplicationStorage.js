@@ -170,7 +170,7 @@ class ApplicationStorage {
 
       const applicant = await conn.query(query, [
         applicantInfo.clubNum,
-        applicantInfo.id,
+        applicantInfo.clientId,
       ]);
 
       return applicant[0];
