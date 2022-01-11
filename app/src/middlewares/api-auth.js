@@ -19,7 +19,7 @@ const apiAuth = async (req, res, next) => {
       msg: '허가받지 못한 사이트는 해당 API를 사용할 수 없습니다.',
     });
   } catch (err) {
-    return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+    return Error.ctrl('', err);
   }
 };
 
