@@ -37,13 +37,15 @@ class Application {
   }
 
   async createQuestion() {
+    const { clubNum } = this.params;
+
     try {
       const questionInfo = {
-        clubNum: this.params.clubNum,
+        clubNum,
         description: this.body.description,
       };
 
-      const leaderInfo = await ApplicationUtil.findOneLeader();
+      const leaderInfo = await ApplicationUtil.findOneLeader(clubNum);
 
       if (leaderInfo.leader === this.auth.id) {
         if (await ApplicationStorage.createQuestion(questionInfo)) {
@@ -57,20 +59,13 @@ class Application {
     }
   }
 
-  async findOneWaitingApplicant() {
-    const waitingApplicant = await ApplicationStorage.findOneWaitingApplicant(
-      this.params.clubNum
-    );
-
-    return waitingApplicant;
-  }
-
   async updateQuestion() {
+    const { clubNum } = this.params;
     try {
-      const leaderInfo = await ApplicationUtil.findOneLeader();
+      const leaderInfo = await ApplicationUtil.findOneLeader(clubNum);
 
       if (leaderInfo.leader === this.auth.id) {
-        if (await this.findOneWaitingApplicant()) {
+        if (await ApplicationUtil.findOneWaitingApplicant(clubNum)) {
           return ApplicationUtil.makeMsg(
             400,
             '가입 신청 대기자가 있으므로 질문을 변경할 수 없습니다.'
@@ -94,11 +89,12 @@ class Application {
   }
 
   async deleteQuestion() {
+    const { clubNum } = this.params;
     try {
-      const leaderInfo = await ApplicationUtil.findOneLeader();
+      const leaderInfo = await ApplicationUtil.findOneLeader(clubNum);
 
       if (leaderInfo.leader === this.auth.id) {
-        if (await this.findOneWaitingApplicant()) {
+        if (await ApplicationUtil.findOneWaitingApplicant(clubNum)) {
           return ApplicationUtil.makeMsg(
             400,
             '가입 신청 대기자가 있으므로 질문을 삭제할 수 없습니다.'

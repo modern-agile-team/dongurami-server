@@ -31,6 +31,14 @@ class Applicationutil {
 
     return questions;
   }
+
+  static async findOneWaitingApplicant(clubNum) {
+    const waitingApplicant = await ApplicationStorage.findOneWaitingApplicant(
+      clubNum
+    );
+
+    return waitingApplicant;
+  }
 }
 
 module.exports = Applicationutil;
