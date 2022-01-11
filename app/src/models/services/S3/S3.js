@@ -12,7 +12,7 @@ class S3 {
   }
 
   async createPutUrl() {
-    const missKey = getRequestMissKey(this.body, ['img', 'name']);
+    const missKey = getRequestMissKey(this.body, ['img']);
 
     if (missKey) {
       return makeResponse(400, `${missKey}이(가) 존재하지 않습니다.`);
