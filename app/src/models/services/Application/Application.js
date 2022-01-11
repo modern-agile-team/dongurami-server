@@ -157,17 +157,17 @@ class Application {
     return applicant;
   }
 
-  async createBasicAnswer() {
+  nullCheckBasicAnswer() {
     const basicAnswer = this.body.basic;
 
     if (!(basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum)) {
       return Application.makeMsg(400, '필수 답변을 전부 기입해주세요.');
     }
+    return { success: true };
+  }
 
-    const phoneNumCheck = await this.phoneNumCheck(basicAnswer.phoneNum);
-
-    if (!phoneNumCheck.success) return phoneNumCheck;
-
+  async createBasicAnswer() {
+    const basicAnswer = this.body.basic;
     const basicAnswerInfo = {
       id: this.auth.id,
       grade: basicAnswer.grade,
@@ -184,7 +184,8 @@ class Application {
       : Application.makeMsg(400, '필수 답변이 작성되지 않았습니다.');
   }
 
-  async phoneNumCheck(phoneNum) {
+  async checkPhoneNum() {
+    const { phoneNum } = this.body.basic;
     const PHONE_NUMBER_REGEXP = /^[0-9]/;
 
     if (phoneNum.length !== 11 || !PHONE_NUMBER_REGEXP.test(phoneNum)) {
@@ -259,6 +260,14 @@ class Application {
 
         return Application.makeMsg(400, msg);
       }
+
+      const existBlank = this.nullCheckBasicAnswer();
+
+      if (!existBlank.success) return existBlank;
+
+      const checkPhoneNum = await this.checkPhoneNum();
+
+      if (!checkPhoneNum.success) return checkPhoneNum;
 
       const createBasicAnswer = await this.createBasicAnswer();
 
