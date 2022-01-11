@@ -26,18 +26,6 @@ class Applicationutil {
     return clientInfo;
   }
 
-  static async checkApplicantRecord(clientId, clubNum) {
-    const applicantInfo = {
-      clientId,
-      clubNum,
-    };
-    const applicant = await ApplicationStorage.checkApplicantRecord(
-      applicantInfo
-    );
-
-    return applicant;
-  }
-
   static async checkDuplicatePhoneNum(phoneNum, clientId) {
     const phoneNumInfo = {
       phoneNum,
@@ -92,12 +80,10 @@ class Applicationutil {
   }
 
   static async createApplicant(clubNum, clientId) {
-    const applicantInfo = {
+    const applicant = await ApplicationStorage.createApplicant({
       clubNum,
       clientId,
-    };
-
-    const applicant = await ApplicationStorage.createApplicant(applicantInfo);
+    });
 
     return applicant;
   }

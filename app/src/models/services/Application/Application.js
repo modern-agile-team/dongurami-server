@@ -129,10 +129,10 @@ class Application {
         return ApplicationUtil.makeMsg(400, '이미 가입된 동아리입니다.');
       }
 
-      const applicant = await ApplicationUtil.checkApplicantRecord(
+      const applicant = await ApplicationStorage.checkApplicantRecord({
         clientId,
-        clubNum
-      );
+        clubNum,
+      });
 
       if (applicant !== undefined && applicant.readingFlag !== 2) {
         const msg = applicant.readingFlag
