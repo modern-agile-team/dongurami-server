@@ -35,15 +35,9 @@ class Email {
       const transporter = nodemailer.createTransport(mailConfig);
       transporter.sendMail(message);
 
-      const token = {
+      return Student.makeResponseMsg(200, '성공적으로 메일을 발송했습니다.', {
         token: tokenInfo.token,
-      };
-
-      return Student.makeResponseMsg(
-        200,
-        '성공적으로 메일을 발송했습니다.',
-        token
-      );
+      });
     } catch (err) {
       return Error.ctrl('', err);
     }
