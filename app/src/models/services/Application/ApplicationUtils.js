@@ -19,11 +19,9 @@ class Applicationutil {
   }
 
   static extractQuestionNums(extraAnswers) {
-    const extraQuestionNums = extraAnswers.map((extraAnswer) => {
+    return extraAnswers.map((extraAnswer) => {
       return extraAnswer.no;
     });
-
-    return extraQuestionNums;
   }
 
   static async findOneClient(ids) {
