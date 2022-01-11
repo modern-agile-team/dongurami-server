@@ -259,6 +259,11 @@ class Student {
       id: saveInfo.id,
       token: this.params.token,
     };
+    const hashInfo = {
+      password: saveInfo.newPassword,
+      passwordSalt: saveInfo.passwordSalt,
+    };
+    const material = { ...hashInfo, ...saveInfo };
 
     try {
       const checkedByToken = await EmailAuth.checkByUseableToken(reqInfo);
@@ -269,12 +274,7 @@ class Student {
       );
       if (!checkedByChangePassword.success) return checkedByChangePassword;
 
-      const hashInfo = {
-        password: saveInfo.newPassword,
-        passwordSalt: saveInfo.passwordSalt,
-      };
       Student.createHash(hashInfo);
-      const material = { ...hashInfo, ...saveInfo };
 
       if (!(await StudentStorage.modifyPasswordSave(material))) {
         return Student.makeResponseMsg(400, '비밀번호 변경에 실패하였습니다.');
