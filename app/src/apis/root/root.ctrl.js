@@ -31,10 +31,9 @@ const process = {
     return processCtrl(res, apiInfo);
   },
 
-  // 비밀번호 변경
-  resetPassword: async (req, res) => {
+  changePassword: async (req, res) => {
     const student = new Student(req);
-    const response = await student.resetPassword();
+    const response = await student.changePassword();
 
     if (response.success) {
       logger.info(`PATCH /api/reset-password 200: ${response.msg}`);
