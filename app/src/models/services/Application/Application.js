@@ -280,7 +280,7 @@ class Application {
 
         const createExtraAnswer = await this.createExtraAnswer();
 
-        if (createExtraAnswer !== extraAnswer.length) {
+        if (createExtraAnswer !== extraAnswers.length) {
           return Application.makeMsg(400, '추가 답변이 작성되지 않았습니다.');
         }
       }
