@@ -15,7 +15,7 @@ class Application {
   async findAllByClubNum() {
     const { clubNum } = this.params;
     try {
-      const leaderInfo = await ApplicationUtil.findOneLeader(clubNum);
+      const leaderInfo = await ApplicationStorage.findOneLeader(clubNum);
 
       if (leaderInfo) {
         const ids = {
@@ -45,7 +45,7 @@ class Application {
         description: this.body.description,
       };
 
-      const leaderInfo = await ApplicationUtil.findOneLeader(clubNum);
+      const leaderInfo = await ApplicationStorage.findOneLeader(clubNum);
 
       if (leaderInfo.leader === this.auth.id) {
         if (await ApplicationStorage.createQuestion(questionInfo)) {
@@ -62,7 +62,7 @@ class Application {
   async updateQuestion() {
     const { clubNum } = this.params;
     try {
-      const leaderInfo = await ApplicationUtil.findOneLeader(clubNum);
+      const leaderInfo = await ApplicationStorage.findOneLeader(clubNum);
 
       if (leaderInfo.leader === this.auth.id) {
         if (await ApplicationUtil.findOneWaitingApplicant(clubNum)) {
@@ -91,7 +91,7 @@ class Application {
   async deleteQuestion() {
     const { clubNum } = this.params;
     try {
-      const leaderInfo = await ApplicationUtil.findOneLeader(clubNum);
+      const leaderInfo = await ApplicationStorage.findOneLeader(clubNum);
 
       if (leaderInfo.leader === this.auth.id) {
         if (await ApplicationUtil.findOneWaitingApplicant(clubNum)) {
@@ -120,7 +120,9 @@ class Application {
     const { phoneNum } = this.body.basic;
 
     try {
-      if ((await ApplicationUtil.findOneLeader(clubNum)).leader === clientId) {
+      if (
+        (await ApplicationStorage.findOneLeader(clubNum)).leader === clientId
+      ) {
         return ApplicationUtil.makeMsg(400, '이미 가입된 동아리입니다.');
       }
 

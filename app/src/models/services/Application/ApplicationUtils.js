@@ -22,12 +22,6 @@ class Applicationutil {
     return !!(phoneNum.length !== 11 || !PHONE_NUMBER_REGEXP.test(phoneNum));
   }
 
-  static async findOneLeader(clubNum) {
-    const leaderInfo = await ApplicationStorage.findOneLeader(clubNum);
-
-    return leaderInfo;
-  }
-
   static async findOneClient(ids) {
     const clientInfo = await ApplicationStorage.findOneClient(ids.clientId);
 
