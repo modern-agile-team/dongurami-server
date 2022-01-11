@@ -13,16 +13,16 @@ class S3 {
   }
 
   async createPutUrl() {
-    const missKey = getRequestMissKey(this.body, ['img']);
+    const requestKey = getRequestMissKey(this.body, ['img']);
 
-    if (missKey) {
-      return makeResponse(400, `${missKey}이(가) 존재하지 않습니다.`);
+    if (requestKey) {
+      return makeResponse(400, `${requestKey}이(가) 존재하지 않습니다.`);
     }
 
-    const nullKey = getRequestNullKey(this.body, ['img']);
+    const needKey = getRequestNullKey(this.body, ['img']);
 
-    if (nullKey) {
-      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
+    if (needKey) {
+      return makeResponse(400, `${needKey}이(가) 빈 값입니다.`);
     }
 
     try {
