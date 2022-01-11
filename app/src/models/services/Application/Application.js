@@ -142,7 +142,7 @@ class Application {
         return ApplicationUtil.makeMsg(400, msg);
       }
 
-      if (!ApplicationUtil.nullCheckBasicAnswer(basicAnswer)) {
+      if (!(basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum)) {
         return ApplicationUtil.makeMsg(400, '필수 답변을 전부 기입해주세요.');
       }
 

@@ -12,10 +12,6 @@ class Applicationutil {
     };
   }
 
-  static nullCheckBasicAnswer(basicAnswer) {
-    return !!(basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum);
-  }
-
   static checkPhoneNumFormat(phoneNum) {
     const PHONE_NUMBER_REGEXP = /^[0-9]/;
 
