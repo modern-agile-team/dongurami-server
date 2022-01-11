@@ -14,6 +14,7 @@ class Application {
 
   async findAllByClubNum() {
     const { clubNum } = this.params;
+
     try {
       const leaderInfo = await ApplicationStorage.findOneLeader(clubNum);
 
@@ -61,11 +62,12 @@ class Application {
 
   async updateQuestion() {
     const { clubNum } = this.params;
+
     try {
       const leaderInfo = await ApplicationStorage.findOneLeader(clubNum);
 
       if (leaderInfo.leader === this.auth.id) {
-        if (await ApplicationUtil.findOneWaitingApplicant(clubNum)) {
+        if (await ApplicationStorage.findOneWaitingApplicant(clubNum)) {
           return ApplicationUtil.makeMsg(
             400,
             '가입 신청 대기자가 있으므로 질문을 변경할 수 없습니다.'
@@ -90,11 +92,12 @@ class Application {
 
   async deleteQuestion() {
     const { clubNum } = this.params;
+
     try {
       const leaderInfo = await ApplicationStorage.findOneLeader(clubNum);
 
       if (leaderInfo.leader === this.auth.id) {
-        if (await ApplicationUtil.findOneWaitingApplicant(clubNum)) {
+        if (await ApplicationStorage.findOneWaitingApplicant(clubNum)) {
           return ApplicationUtil.makeMsg(
             400,
             '가입 신청 대기자가 있으므로 질문을 삭제할 수 없습니다.'
