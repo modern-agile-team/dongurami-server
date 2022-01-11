@@ -168,16 +168,16 @@ class Application {
           const extraQuestionNums =
             ApplicationUtil.extractQuestionNums(extraAnswers);
 
-          await ApplicationUtil.deleteExtraAnswer({
+          await ApplicationStorage.deleteExtraAnswer({
             extraQuestionNums,
             clientId,
           });
         }
 
-        const createExtraAnswer = await ApplicationUtil.createExtraAnswer(
+        const createExtraAnswer = await ApplicationStorage.createExtraAnswer({
           extraAnswers,
-          clientId
-        );
+          clientId,
+        });
 
         if (createExtraAnswer !== extraAnswers.length) {
           return ApplicationUtil.makeMsg(
@@ -187,8 +187,10 @@ class Application {
         }
       }
 
-      await ApplicationUtil.createApplicant(clubNum, clientId);
-      return ApplicationUtil.makeMsg(200, '가입 신청이 완료되었습니다.');
+      if (await ApplicationStorage.createApplicant({ clubNum, clientId })) {
+        return ApplicationUtil.makeMsg(200, '가입 신청이 완료되었습니다.');
+      }
+      return ApplicationUtil.makeMsg(400, '가입 신청이 완료되지 않았습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }

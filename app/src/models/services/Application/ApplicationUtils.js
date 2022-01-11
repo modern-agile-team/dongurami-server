@@ -48,28 +48,6 @@ class Applicationutil {
 
     return !!isCreate;
   }
-
-  static async createExtraAnswer(extraAnswers, clientId) {
-    const answerInfo = {
-      extraAnswers,
-      clientId,
-    };
-
-    const createExtraAnswer = await ApplicationStorage.createExtraAnswer(
-      answerInfo
-    );
-
-    return createExtraAnswer;
-  }
-
-  static async createApplicant(clubNum, clientId) {
-    const applicant = await ApplicationStorage.createApplicant({
-      clubNum,
-      clientId,
-    });
-
-    return applicant;
-  }
 }
 
 module.exports = Applicationutil;
