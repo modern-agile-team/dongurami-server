@@ -157,13 +157,8 @@ class Application {
     return applicant;
   }
 
-  nullCheckBasicAnswer() {
-    const basicAnswer = this.body.basic;
-
-    if (!(basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum)) {
-      return Application.makeMsg(400, '필수 답변을 전부 기입해주세요.');
-    }
-    return { success: true };
+  static nullCheckBasicAnswer(basicAnswer) {
+    return basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum;
   }
 
   async createBasicAnswer() {
@@ -175,42 +170,34 @@ class Application {
       phoneNum: basicAnswer.phoneNum,
     };
 
-    const createBasicAnswer = await ApplicationStorage.createBasicAnswer(
+    const isCreate = await ApplicationStorage.createBasicAnswer(
       basicAnswerInfo
     );
 
-    return createBasicAnswer
-      ? { success: true }
-      : Application.makeMsg(400, '필수 답변이 작성되지 않았습니다.');
+    return !!isCreate;
   }
 
-  async checkPhoneNum() {
-    const { phoneNum } = this.body.basic;
+  static checkPhoneNumFormat(phoneNum) {
     const PHONE_NUMBER_REGEXP = /^[0-9]/;
 
-    if (phoneNum.length !== 11 || !PHONE_NUMBER_REGEXP.test(phoneNum)) {
-      return Application.makeMsg(400, '전화번호 형식이 맞지 않습니다.');
-    }
+    return phoneNum.length !== 11 || !PHONE_NUMBER_REGEXP.test(phoneNum);
+  }
 
+  async checkDuplicatePhoneNum() {
     const phoneNumInfo = {
-      phoneNum,
+      phoneNum: this.body.basic.phoneNum,
       id: this.auth.id,
     };
     const duplicatePhoneNum = await ApplicationStorage.findDuplicatePhoneNum(
       phoneNumInfo
     );
 
-    if (duplicatePhoneNum) {
-      return Application.makeMsg(409, '다른 유저가 사용중인 번호입니다.');
-    }
-    return { success: true };
+    return !!duplicatePhoneNum;
   }
 
   async deleteExtraAnswer(extraAnswers) {
-    const extraQuestionNums = [];
-
-    extraAnswers.forEach((extraAnswer) => {
-      extraQuestionNums.push(extraAnswer.no);
+    const extraQuestionNums = extraAnswers.map((extraAnswer) => {
+      return extraAnswer.no;
     });
 
     const extraAnswerInfo = {
@@ -246,6 +233,9 @@ class Application {
   }
 
   async createAnswer() {
+    const basicAnswer = this.body.basic;
+    const extraAnswers = this.body.extra;
+
     try {
       if ((await this.findOneLeader()).leader === this.auth.id) {
         return Application.makeMsg(400, '이미 가입된 동아리입니다.');
@@ -261,19 +251,21 @@ class Application {
         return Application.makeMsg(400, msg);
       }
 
-      const existBlank = this.nullCheckBasicAnswer();
+      if (this.nullCheckBasicAnswer(basicAnswer)) {
+        return Application.makeMsg(400, '필수 답변을 전부 기입해주세요.');
+      }
 
-      if (!existBlank.success) return existBlank;
+      if (!Application.checkPhoneNumFormat(basicAnswer.phoneNum)) {
+        return Application.makeMsg(400, '전화번호 형식이 맞지 않습니다.');
+      }
 
-      const checkPhoneNum = await this.checkPhoneNum();
+      if (!(await this.checkDuplicatePhoneNum())) {
+        return Application.makeMsg(409, '다른 유저가 사용중인 번호입니다.');
+      }
 
-      if (!checkPhoneNum.success) return checkPhoneNum;
-
-      const createBasicAnswer = await this.createBasicAnswer();
-
-      if (!createBasicAnswer.success) return createBasicAnswer;
-
-      const extraAnswers = this.body.extra;
+      if (!(await this.createBasicAnswer())) {
+        return Application.makeMsg(400, '필수 답변이 작성되지 않았습니다.');
+      }
 
       if (extraAnswers.length) {
         if (applicant) await this.deleteExtraAnswer(extraAnswers);
