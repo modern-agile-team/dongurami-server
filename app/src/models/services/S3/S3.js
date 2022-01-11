@@ -12,9 +12,9 @@ class S3 {
   }
 
   async createPutUrl() {
-    const nullValue = getNullResource(this.body);
+    const key = getNullResource(this.body);
 
-    if (nullValue) {
+    if (key) {
       return makeResponse(400, `${key}이(가) 빈값입니다.`);
     }
 
