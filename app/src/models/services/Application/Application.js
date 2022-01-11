@@ -12,38 +12,18 @@ class Application {
     this.auth = req.auth;
   }
 
-  async findOneLeader() {
-    const leaderInfo = await ApplicationStorage.findOneLeader(
-      this.params.clubNum
-    );
-
-    return leaderInfo;
-  }
-
-  async findOneClient(leaderId) {
-    const clientId = this.auth.id;
-    const clientInfo = await ApplicationStorage.findOneClient(clientId);
-
-    clientInfo.leaderFlag = leaderId === clientId;
-
-    return clientInfo;
-  }
-
-  async findAllQuestions() {
-    const questions = await ApplicationStorage.findAllQuestions(
-      this.params.clubNum
-    );
-
-    return questions;
-  }
-
   async findAllByClubNum() {
+    const { clubNum } = this.params;
     try {
-      const leaderInfo = await this.findOneLeader();
+      const leaderInfo = await ApplicationUtil.findOneLeader(clubNum);
 
       if (leaderInfo) {
-        const clientInfo = await this.findOneClient(leaderInfo.leader);
-        const questions = await this.findAllQuestions();
+        const ids = {
+          leaderId: leaderInfo.leader,
+          clientId: this.auth.id,
+        };
+        const clientInfo = await ApplicationUtil.findOneClient(ids);
+        const questions = await ApplicationUtil.findAllQuestions(clubNum);
 
         return ApplicationUtil.makeMsg(200, '동아리 가입 신청서 조회 성공', {
           clientInfo,
@@ -63,7 +43,7 @@ class Application {
         description: this.body.description,
       };
 
-      const leaderInfo = await this.findOneLeader();
+      const leaderInfo = await ApplicationUtil.findOneLeader();
 
       if (leaderInfo.leader === this.auth.id) {
         if (await ApplicationStorage.createQuestion(questionInfo)) {
@@ -87,7 +67,7 @@ class Application {
 
   async updateQuestion() {
     try {
-      const leaderInfo = await this.findOneLeader();
+      const leaderInfo = await ApplicationUtil.findOneLeader();
 
       if (leaderInfo.leader === this.auth.id) {
         if (await this.findOneWaitingApplicant()) {
@@ -115,7 +95,7 @@ class Application {
 
   async deleteQuestion() {
     try {
-      const leaderInfo = await this.findOneLeader();
+      const leaderInfo = await ApplicationUtil.findOneLeader();
 
       if (leaderInfo.leader === this.auth.id) {
         if (await this.findOneWaitingApplicant()) {
@@ -228,7 +208,7 @@ class Application {
     const extraAnswers = this.body.extra;
 
     try {
-      if ((await this.findOneLeader()).leader === this.auth.id) {
+      if ((await ApplicationUtil.findOneLeader()).leader === this.auth.id) {
         return ApplicationUtil.makeMsg(400, '이미 가입된 동아리입니다.');
       }
 
