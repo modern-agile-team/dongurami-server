@@ -53,6 +53,104 @@ class Student {
     return saveInfo;
   }
 
+  static async checkByChangePassword(client) {
+    if (!client.newPassword.length) {
+      return Student.makeResponseMsg(400, '비밀번호를 입력해주세요.');
+    }
+    if (client.newPassword.length < 8) {
+      return Student.makeResponseMsg(400, '비밀번호가 8자리수 미만입니다.');
+    }
+    if (client.newPassword !== client.checkNewPassword) {
+      return Student.makeResponseMsg(
+        400,
+        '비밀번호와 비밀번호확인이 일치하지 않습니다.'
+      );
+    }
+    return { success: true };
+  }
+
+  static async checkExistIdAndEmail(client) {
+    try {
+      const registeredId = await StudentStorage.findOneById(client.id);
+      if (!registeredId) {
+        return Student.makeResponseMsg(400, '가입된 아이디가 아닙니다.');
+      }
+
+      const registeredEmail = await StudentStorage.findOneByEmail(client.email);
+      if (!registeredEmail) {
+        return Student.makeResponseMsg(400, '가입된 이메일이 아닙니다.');
+      }
+      if (registeredId.email !== registeredEmail.email) {
+        return Student.makeResponseMsg(
+          400,
+          '아이디 또는 이메일이 일치하지 않습니다.'
+        );
+      }
+      return Student.makeResponseMsg(200, '계정 확인 성공', {
+        name: registeredId.name,
+      });
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async checkIdAndEmail() {
+    const client = this.body;
+    const clientInfo = {
+      id: client.id,
+      email: client.email,
+    };
+
+    try {
+      const student = await StudentStorage.findOneByIdOrEmail(clientInfo);
+
+      if (student) {
+        if (student.id === client.id) {
+          return Student.makeResponseMsg(409, '이미 가입된 학번입니다.');
+        }
+        if (student.email === client.email) {
+          return Student.makeResponseMsg(409, '이미 가입된 이메일입니다.');
+        }
+      }
+      return { success: true };
+    } catch (err) {
+      return Error.ctrl('', err);
+    }
+  }
+
+  async checkPassword() {
+    const client = this.body;
+    const user = this.auth;
+
+    try {
+      const userId = user.id;
+      const student = await StudentStorage.findOneById(userId);
+      const comparePassword = bcrypt.compareSync(
+        client.password,
+        student.password
+      );
+
+      if (comparePassword) {
+        if (client.newPassword.length < 8) {
+          return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
+        }
+        if (client.password === client.newPassword) {
+          return {
+            success: false,
+            msg: '기존 비밀번호와 다른 비밀번호를 설정해주세요.',
+          };
+        }
+        if (client.newPassword === client.checkNewPassword) {
+          return { success: true, msg: '비밀번호가 일치합니다.', student };
+        }
+        return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
+      }
+      return { success: false, msg: '기존 비밀번호가 틀렸습니다.' };
+    } catch (err) {
+      return Error.ctrl('', err);
+    }
+  }
+
   async login() {
     const client = this.body;
 
@@ -155,95 +253,11 @@ class Student {
     }
   }
 
-  async checkIdAndEmail() {
-    const client = this.body;
-    const clientInfo = {
-      id: client.id,
-      email: client.email,
-    };
-
-    try {
-      const student = await StudentStorage.findOneByIdOrEmail(clientInfo);
-
-      if (student) {
-        if (student.id === client.id) {
-          return Student.makeResponseMsg(409, '이미 가입된 학번입니다.');
-        }
-        if (student.email === client.email) {
-          return Student.makeResponseMsg(409, '이미 가입된 이메일입니다.');
-        }
-      }
-      return { success: true };
-    } catch (err) {
-      return Error.ctrl('', err);
-    }
-  }
-
-  async checkPassword() {
-    const client = this.body;
-    const user = this.auth;
-
-    try {
-      const userId = user.id;
-      const student = await StudentStorage.findOneById(userId);
-      const comparePassword = bcrypt.compareSync(
-        client.password,
-        student.password
-      );
-
-      if (comparePassword) {
-        if (client.newPassword.length < 8) {
-          return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
-        }
-        if (client.password === client.newPassword) {
-          return {
-            success: false,
-            msg: '기존 비밀번호와 다른 비밀번호를 설정해주세요.',
-          };
-        }
-        if (client.newPassword === client.checkNewPassword) {
-          return { success: true, msg: '비밀번호가 일치합니다.', student };
-        }
-        return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
-      }
-      return { success: false, msg: '기존 비밀번호가 틀렸습니다.' };
-    } catch (err) {
-      return Error.ctrl('', err);
-    }
-  }
-
-  static async checkExistIdAndEmail(client) {
-    try {
-      const registeredId = await StudentStorage.findOneById(client.id);
-      if (!registeredId) {
-        return Student.makeResponseMsg(400, '가입된 아이디가 아닙니다.');
-      }
-
-      const registeredEmail = await StudentStorage.findOneByEmail(client.email);
-      if (!registeredEmail) {
-        return Student.makeResponseMsg(400, '가입된 이메일이 아닙니다.');
-      }
-      if (registeredId.email !== registeredEmail.email) {
-        return Student.makeResponseMsg(
-          400,
-          '아이디 또는 이메일이 일치하지 않습니다.'
-        );
-      }
-      const info = {
-        name: registeredId.name,
-      };
-      return Student.makeResponseMsg(200, '계정 확인 성공', info);
-    } catch (err) {
-      throw err;
-    }
-  }
-
   async findPassword() {
     const saveInfo = this.body;
-    const { params } = this;
     const reqInfo = {
       id: saveInfo.id,
-      token: params.token,
+      token: this.params.token,
     };
 
     try {
@@ -272,22 +286,6 @@ class Student {
     } catch (err) {
       return Error.ctrl('', err);
     }
-  }
-
-  static async checkByChangePassword(client) {
-    if (!client.newPassword.length) {
-      return Student.makeResponseMsg(400, '비밀번호를 입력해주세요.');
-    }
-    if (client.newPassword.length < 8) {
-      return Student.makeResponseMsg(400, '비밀번호가 8자리수 미만입니다.');
-    }
-    if (client.newPassword !== client.checkNewPassword) {
-      return Student.makeResponseMsg(
-        400,
-        '비밀번호와 비밀번호확인이 일치하지 않습니다.'
-      );
-    }
-    return { success: true };
   }
 
   async getUserInfoByJWT() {
