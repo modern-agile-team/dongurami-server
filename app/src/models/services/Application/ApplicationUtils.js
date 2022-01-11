@@ -26,18 +26,6 @@ class Applicationutil {
     return clientInfo;
   }
 
-  static async checkDuplicatePhoneNum(phoneNum, clientId) {
-    const phoneNumInfo = {
-      phoneNum,
-      clientId,
-    };
-    const duplicatePhoneNum = await ApplicationStorage.findDuplicatePhoneNum(
-      phoneNumInfo
-    );
-
-    return !!duplicatePhoneNum;
-  }
-
   static async createBasicAnswer(basicAnswer, clientId) {
     const basicAnswerInfo = {
       clientId,

@@ -150,7 +150,12 @@ class Application {
         return ApplicationUtil.makeMsg(400, '전화번호 형식이 맞지 않습니다.');
       }
 
-      if (await ApplicationUtil.checkDuplicatePhoneNum(phoneNum, clientId)) {
+      if (
+        await ApplicationStorage.findDuplicatePhoneNum({
+          phoneNum,
+          clientId,
+        })
+      ) {
         return ApplicationUtil.makeMsg(409, '다른 유저가 사용중인 번호입니다.');
       }
 
