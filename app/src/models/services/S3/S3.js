@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const Error = require('../../utils/Error');
 const makeResponse = require('../../utils/makeResponse');
 const getRequestMissKey = require('../../utils/getRequestMissKey');
+const getRequestNullKey = require('../../utils/getRequestNullKey');
 
 class S3 {
   constructor(req) {
@@ -16,6 +17,12 @@ class S3 {
 
     if (missKey) {
       return makeResponse(400, `${missKey}이(가) 존재하지 않습니다.`);
+    }
+
+    const nullKey = getRequestNullKey(this.body, ['img']);
+
+    if (nullKey) {
+      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
     }
 
     try {
