@@ -23,7 +23,7 @@ class Application {
           clientId: this.auth.id,
         };
         const clientInfo = await ApplicationUtil.findOneClient(ids);
-        const questions = await ApplicationUtil.findAllQuestions(clubNum);
+        const questions = await ApplicationStorage.findAllQuestions(clubNum);
 
         return ApplicationUtil.makeMsg(200, '동아리 가입 신청서 조회 성공', {
           clientInfo,

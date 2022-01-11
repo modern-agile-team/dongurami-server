@@ -30,12 +30,6 @@ class Applicationutil {
     return clientInfo;
   }
 
-  static async findAllQuestions(clubNum) {
-    const questions = await ApplicationStorage.findAllQuestions(clubNum);
-
-    return questions;
-  }
-
   static async findOneWaitingApplicant(clubNum) {
     const waitingApplicant = await ApplicationStorage.findOneWaitingApplicant(
       clubNum
