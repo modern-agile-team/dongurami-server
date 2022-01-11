@@ -7,9 +7,8 @@ const identityCheck = (req, res, next) => {
 
   if (token === 'null') token = '';
 
-  if (token) {
-    loginCheck.loginCheck(req, res, next);
-  } else next();
+  if (token) loginCheck.loginCheck(req, res, next);
+  else next();
 };
 
 module.exports = {
