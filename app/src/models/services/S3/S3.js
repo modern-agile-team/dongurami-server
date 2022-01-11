@@ -14,9 +14,7 @@ class S3 {
   async createPutUrl() {
     const key = getNullResource(this.body);
 
-    if (key) {
-      return makeResponse(400, `${key}이(가) 빈값입니다.`);
-    }
+    if (key) return makeResponse(400, `${key}이(가) 빈값입니다.`);
 
     try {
       const randomString = crypto.randomBytes(5).toString('hex');
