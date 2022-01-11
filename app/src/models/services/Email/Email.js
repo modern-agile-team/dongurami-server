@@ -10,22 +10,17 @@ const { CHANGE_PASSWORD_URL } = process.env;
 
 class Email {
   constructor(req) {
-    this.req = req;
     this.body = req.body;
   }
 
-  async sendLinkForPassword() {
+  async sendEmailForFindPassword() {
     const client = this.body;
-    const { req } = this;
-    const student = new Student(req);
 
     try {
-      const existInfo = await student.isExistIdAndEmail();
-
-      if (!existInfo.isExist) return existInfo;
+      const existInfo = await Student.checkExistIdAndEmail(client);
+      if (!existInfo.success) return existInfo;
 
       const tokenInfo = await EmailAuth.createToken(client.id);
-
       if (!tokenInfo.success) return tokenInfo;
 
       const message = {
@@ -36,18 +31,19 @@ class Email {
       };
 
       const transporter = nodemailer.createTransport(mailConfig);
-      // 메일 전송
       transporter.sendMail(message);
-      return {
-        success: true,
-        msg: '성공적으로 메일을 발송했습니다.',
+
+      const token = {
         token: tokenInfo.token,
       };
-    } catch (err) {
-      return Error.ctrl(
-        '알 수 없는 오류입니다. 서버개발자에게 문의하세요.',
-        err
+
+      return Student.makeResponseMsg(
+        200,
+        '성공적으로 메일을 발송했습니다.',
+        token
       );
+    } catch (err) {
+      return Error.ctrl('', err);
     }
   }
 }

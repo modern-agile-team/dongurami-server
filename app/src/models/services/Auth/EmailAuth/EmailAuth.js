@@ -4,16 +4,29 @@ const crypto = require('crypto');
 const EmailAuthStorage = require('./EmailAuthStorage');
 const Error = require('../../../utils/Error');
 
-class Auth {
+class EmailAuth {
+  static makeResponseMsg(status, msg, extra) {
+    const response = {
+      success: status < 400,
+      status,
+      msg,
+    };
+
+    for (const info in extra) {
+      if (Object.prototype.hasOwnProperty.call(extra, info)) {
+        response[info] = extra[info];
+      }
+    }
+    return response;
+  }
+
   static async createToken(id) {
     try {
-      // 토큰 생성
       const token = crypto.randomBytes(30).toString('hex');
       const student = {
         token,
         id,
       };
-      // redis -> 토큰, 아이디, 유효시간 설정
       const isSave = await EmailAuthStorage.saveToken(student);
 
       if (isSave) return { success: true, token };
@@ -29,17 +42,18 @@ class Auth {
   static async checkByUseableToken(reqInfo) {
     try {
       const token = await EmailAuthStorage.findOneByStudentId(reqInfo.id);
+
       if (token === reqInfo.token) {
-        return { useable: true };
+        return { success: true };
       }
-      return {
-        useable: false,
-        msg: '토큰이 유효하지 않거나 입력한 아이디와 일치하지 않습니다.',
-      };
+      return EmailAuth.makeResponseMsg(
+        403,
+        '토큰이 유효하지 않거나 입력한 아이디와 일치하지 않습니다.'
+      );
     } catch (err) {
       throw err;
     }
   }
 }
 
-module.exports = Auth;
+module.exports = EmailAuth;

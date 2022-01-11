@@ -5,7 +5,6 @@ const express = require('express');
 const router = express.Router();
 const ctrl = require('./root.ctrl');
 const loginAuth = require('../../middlewares/login-auth');
-const signUpAuth = require('../../middlewares/signUp-auth');
 const identityCheck = require('../../middlewares/identify-auth');
 const apiAuth = require('../../middlewares/api-auth');
 
@@ -17,17 +16,12 @@ router.get(
 );
 
 router.post('/login', apiAuth.apiAuth, ctrl.process.login);
-router.post(
-  '/sign-up',
-  apiAuth.apiAuth,
-  signUpAuth.signUpCheck,
-  ctrl.process.signUp
-);
+router.post('/sign-up', apiAuth.apiAuth, ctrl.process.signUp);
 router.post('/find-id', apiAuth.apiAuth, ctrl.process.findId);
 router.post(
   '/forgot-password',
   apiAuth.apiAuth,
-  ctrl.process.sendEmailForPassword
+  ctrl.process.sendEmailForFindPassword
 );
 
 router.patch(
