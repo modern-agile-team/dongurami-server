@@ -112,99 +112,21 @@ class Application {
     }
   }
 
-  static nullCheckBasicAnswer(basicAnswer) {
-    return basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum;
-  }
-
-  async createBasicAnswer() {
-    const basicAnswer = this.body.basic;
-    const basicAnswerInfo = {
-      id: this.auth.id,
-      grade: basicAnswer.grade,
-      gender: basicAnswer.gender,
-      phoneNum: basicAnswer.phoneNum,
-    };
-
-    const isCreate = await ApplicationStorage.createBasicAnswer(
-      basicAnswerInfo
-    );
-
-    return !!isCreate;
-  }
-
-  static checkPhoneNumFormat(phoneNum) {
-    const PHONE_NUMBER_REGEXP = /^[0-9]/;
-
-    return phoneNum.length !== 11 || !PHONE_NUMBER_REGEXP.test(phoneNum);
-  }
-
-  async checkDuplicatePhoneNum() {
-    const phoneNumInfo = {
-      phoneNum: this.body.basic.phoneNum,
-      id: this.auth.id,
-    };
-    const duplicatePhoneNum = await ApplicationStorage.findDuplicatePhoneNum(
-      phoneNumInfo
-    );
-
-    return !!duplicatePhoneNum;
-  }
-
-  async deleteExtraAnswer(extraAnswers) {
-    const extraQuestionNums = extraAnswers.map((extraAnswer) => {
-      return extraAnswer.no;
-    });
-
-    const extraAnswerInfo = {
-      extraQuestionNums,
-      id: this.auth.id,
-    };
-
-    await ApplicationStorage.deleteExtraAnswer(extraAnswerInfo);
-  }
-
-  async createExtraAnswer() {
-    const answerInfo = {
-      extraAnswers: this.body.extra,
-      id: this.auth.id,
-    };
-
-    const createExtraAnswer = await ApplicationStorage.createExtraAnswer(
-      answerInfo
-    );
-
-    return createExtraAnswer;
-  }
-
-  async createApplicant() {
-    const applicantInfo = {
-      clubNum: this.params.clubNum,
-      id: this.auth.id,
-    };
-
-    const applicant = await ApplicationStorage.createApplicant(applicantInfo);
-
-    return applicant;
-  }
-
   async createAnswer() {
     const basicAnswer = this.body.basic;
     const extraAnswers = this.body.extra;
     const clientId = this.auth.id;
     const { clubNum } = this.params;
+    const { phoneNum } = this.body.basic;
 
     try {
       if ((await ApplicationUtil.findOneLeader(clubNum)).leader === clientId) {
         return ApplicationUtil.makeMsg(400, '이미 가입된 동아리입니다.');
       }
 
-      const applicantInfo = {
-        clientId,
-        clubNum,
-      };
-
       const applicant = await ApplicationUtil.checkApplicantRecord(
-        applicantInfo
+        clientId,
+        clubNum
       );
 
       if (applicant !== undefined && applicant.readingFlag !== 2) {
@@ -215,26 +137,30 @@ class Application {
         return ApplicationUtil.makeMsg(400, msg);
       }
 
-      if (this.nullCheckBasicAnswer(basicAnswer)) {
+      if (!ApplicationUtil.nullCheckBasicAnswer(basicAnswer)) {
         return ApplicationUtil.makeMsg(400, '필수 답변을 전부 기입해주세요.');
       }
 
-      if (!Application.checkPhoneNumFormat(basicAnswer.phoneNum)) {
+      if (ApplicationUtil.checkPhoneNumFormat(phoneNum)) {
         return ApplicationUtil.makeMsg(400, '전화번호 형식이 맞지 않습니다.');
       }
 
-      if (!(await this.checkDuplicatePhoneNum())) {
+      if (await ApplicationUtil.checkDuplicatePhoneNum(phoneNum, clientId)) {
         return ApplicationUtil.makeMsg(409, '다른 유저가 사용중인 번호입니다.');
       }
 
-      if (!(await this.createBasicAnswer())) {
+      if (!(await ApplicationUtil.createBasicAnswer(basicAnswer, clientId))) {
         return ApplicationUtil.makeMsg(400, '필수 답변이 작성되지 않았습니다.');
       }
 
       if (extraAnswers.length) {
-        if (applicant) await this.deleteExtraAnswer(extraAnswers);
+        if (applicant)
+          await ApplicationUtil.deleteExtraAnswer(extraAnswers, clientId);
 
-        const createExtraAnswer = await this.createExtraAnswer();
+        const createExtraAnswer = await ApplicationUtil.createExtraAnswer(
+          extraAnswers,
+          clientId
+        );
 
         if (createExtraAnswer !== extraAnswers.length) {
           return ApplicationUtil.makeMsg(
@@ -244,7 +170,7 @@ class Application {
         }
       }
 
-      await this.createApplicant();
+      await ApplicationUtil.createApplicant(clubNum, clientId);
       return ApplicationUtil.makeMsg(200, '가입 신청이 완료되었습니다.');
     } catch (err) {
       return Error.ctrl('', err);

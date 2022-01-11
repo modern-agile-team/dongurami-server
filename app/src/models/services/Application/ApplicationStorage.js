@@ -193,7 +193,7 @@ class ApplicationStorage {
         WHERE id != ? AND phone_number = ?;`;
 
       const duplicatePhoneNum = await conn.query(query, [
-        phoneNumInfo.id,
+        phoneNumInfo.clientId,
         phoneNumInfo.phoneNum,
       ]);
 
@@ -220,7 +220,7 @@ class ApplicationStorage {
         answerInfo.grade,
         answerInfo.gender,
         answerInfo.phoneNum,
-        answerInfo.id,
+        answerInfo.clientId,
       ]);
 
       return basicAnswer.affectedRows;
@@ -245,7 +245,7 @@ class ApplicationStorage {
 
       await conn.query(query, [
         extraAnswerInfo.extraQuestionNums,
-        extraAnswerInfo.id,
+        extraAnswerInfo.clientId,
       ]);
       return;
     } catch (err) {
@@ -267,9 +267,9 @@ class ApplicationStorage {
 
       answerInfo.extraAnswers.forEach((extraAnswer, idx) => {
         if (idx) {
-          query += `, ("${extraAnswer.no}", "${answerInfo.id}", "${extraAnswer.description}")`;
+          query += `, ("${extraAnswer.no}", "${answerInfo.clientId}", "${extraAnswer.description}")`;
         } else
-          query += ` ("${extraAnswer.no}", "${answerInfo.id}", "${extraAnswer.description}")`;
+          query += ` ("${extraAnswer.no}", "${answerInfo.clientId}", "${extraAnswer.description}")`;
       });
       query += ';';
 
@@ -295,7 +295,7 @@ class ApplicationStorage {
 
       const applicant = await conn.query(query, [
         applicantInfo.clubNum,
-        applicantInfo.id,
+        applicantInfo.clientId,
       ]);
 
       return applicant.affectedRows;
