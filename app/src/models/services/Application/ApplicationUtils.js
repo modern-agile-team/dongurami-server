@@ -18,6 +18,14 @@ class Applicationutil {
     return !!(phoneNum.length !== 11 || !PHONE_NUMBER_REGEXP.test(phoneNum));
   }
 
+  static extractQuestionNums(extraAnswers) {
+    const extraQuestionNums = extraAnswers.map((extraAnswer) => {
+      return extraAnswer.no;
+    });
+
+    return extraQuestionNums;
+  }
+
   static async findOneClient(ids) {
     const clientInfo = await ApplicationStorage.findOneClient(ids.clientId);
 
@@ -39,19 +47,6 @@ class Applicationutil {
     );
 
     return !!isCreate;
-  }
-
-  static async deleteExtraAnswer(extraAnswers, clientId) {
-    const extraQuestionNums = extraAnswers.map((extraAnswer) => {
-      return extraAnswer.no;
-    });
-
-    const extraAnswerInfo = {
-      extraQuestionNums,
-      clientId,
-    };
-
-    await ApplicationStorage.deleteExtraAnswer(extraAnswerInfo);
   }
 
   static async createExtraAnswer(extraAnswers, clientId) {

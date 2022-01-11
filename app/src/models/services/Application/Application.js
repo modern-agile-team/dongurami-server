@@ -164,8 +164,15 @@ class Application {
       }
 
       if (extraAnswers.length) {
-        if (applicant)
-          await ApplicationUtil.deleteExtraAnswer(extraAnswers, clientId);
+        if (applicant) {
+          const extraQuestionNums =
+            ApplicationUtil.extractQuestionNums(extraAnswers);
+
+          await ApplicationUtil.deleteExtraAnswer({
+            extraQuestionNums,
+            clientId,
+          });
+        }
 
         const createExtraAnswer = await ApplicationUtil.createExtraAnswer(
           extraAnswers,
