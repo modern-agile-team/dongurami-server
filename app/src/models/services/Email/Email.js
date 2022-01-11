@@ -21,7 +21,9 @@ class Email {
       if (!existInfo.success) return existInfo;
 
       const tokenInfo = await EmailAuth.createToken(client.id);
-      if (!tokenInfo.success) return tokenInfo;
+      if (!tokenInfo.success) {
+        return Student.makeResponseMsg(400, '입력된 정보의 오류입니다.');
+      }
 
       const message = {
         from: process.env.MAIL_SENDER,
