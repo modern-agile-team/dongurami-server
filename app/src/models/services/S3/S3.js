@@ -3,7 +3,6 @@
 const AWS = require('aws-sdk');
 const crypto = require('crypto');
 const Error = require('../../utils/Error');
-const getNullResource = require('../../utils/getNullResource');
 const makeResponse = require('../../utils/makeResponse');
 const getRequestMissKey = require('../../utils/getRequestMissKey');
 
@@ -18,10 +17,6 @@ class S3 {
     if (missKey) {
       return makeResponse(400, `${missKey}이(가) 존재하지 않습니다.`);
     }
-
-    const key = getNullResource(this.body);
-
-    if (key) return makeResponse(400, `${key}이(가) 빈값입니다.`);
 
     try {
       const randomString = crypto.randomBytes(5).toString('hex');
@@ -41,7 +36,10 @@ class S3 {
         Key: img,
       });
 
-      return makeResponse(200, 'url 생성 성공', preSignedPutUrl, readObjectUrl);
+      return makeResponse(200, 'url 생성 성공', {
+        preSignedPutUrl,
+        readObjectUrl,
+      });
     } catch (err) {
       return Error.ctrl('', err);
     }
