@@ -46,11 +46,14 @@ class Student {
     return client.name && client.email;
   }
 
-  static createHash(saveInfo) {
-    saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
-    saveInfo.hash = bcrypt.hashSync(saveInfo.password, saveInfo.passwordSalt);
+  static createHash(password) {
+    const passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+    const hash = bcrypt.hashSync(password, passwordSalt);
 
-    return saveInfo;
+    return {
+      passwordSalt,
+      hash,
+    };
   }
 
   static async checkByChangePassword(client) {
@@ -120,32 +123,26 @@ class Student {
 
   async checkPassword() {
     const client = this.body;
-    const user = this.auth;
 
     try {
-      const userId = user.id;
-      const student = await StudentStorage.findOneById(userId);
-      const comparePassword = bcrypt.compareSync(
-        client.password,
-        student.password
-      );
+      const student = await StudentStorage.findOneById(this.auth.id);
 
-      if (comparePassword) {
+      if (Student.comparePassword(client, student)) {
         if (client.newPassword.length < 8) {
-          return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
+          return Student.makeResponseMsg(400, '비밀번호가 8자리수 미만입니다.');
         }
         if (client.password === client.newPassword) {
-          return {
-            success: false,
-            msg: '기존 비밀번호와 다른 비밀번호를 설정해주세요.',
-          };
+          return Student.makeResponseMsg(
+            400,
+            '기존 비밀번호와 다른 비밀번호를 설정해주세요.'
+          );
         }
         if (client.newPassword === client.checkNewPassword) {
-          return { success: true, msg: '비밀번호가 일치합니다.', student };
+          return { success: true, student };
         }
-        return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
+        return Student.makeResponseMsg(400, '비밀번호가 일치하지 않습니다.');
       }
-      return { success: false, msg: '기존 비밀번호가 틀렸습니다.' };
+      return Student.makeResponseMsg(400, '기존 비밀번호가 틀렸습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -182,17 +179,17 @@ class Student {
   }
 
   async signUp() {
-    const saveInfo = this.body;
+    const client = this.body;
 
-    if (!SignUpCheck.infoCheck(saveInfo).success) {
-      return SignUpCheck.infoCheck(saveInfo);
-    }
+    const checkFormat = SignUpCheck.infoCheck(client);
+    if (!checkFormat.success) return checkFormat;
 
     try {
       const checkedIdAndEmail = await this.checkIdAndEmail();
 
       if (checkedIdAndEmail.success) {
-        Student.createHash(saveInfo);
+        const hashInfo = Student.createHash(client.password);
+        const saveInfo = { ...hashInfo, ...client };
 
         if (await StudentStorage.save(saveInfo)) {
           return Student.makeResponseMsg(201, '회원가입에 성공하셨습니다.');
@@ -227,24 +224,19 @@ class Student {
     }
   }
 
-  async resetPassword() {
-    const saveInfo = this.body;
+  async changePassword() {
+    const client = this.body;
 
     try {
       const checkedPassword = await this.checkPassword();
+      const hashInfo = Student.createHash(client.newPassword);
+      const saveInfo = { ...hashInfo, ...client };
 
       if (checkedPassword.success) {
-        saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
-        saveInfo.hash = bcrypt.hashSync(
-          saveInfo.newPassword,
-          saveInfo.passwordSalt
-        );
         saveInfo.id = checkedPassword.student.id;
 
-        const student = await StudentStorage.modifyPasswordSave(saveInfo);
-
-        if (student) {
-          return { success: true, msg: '비밀번호 변경을 성공하였습니다.' };
+        if (await StudentStorage.changePasswordSave(saveInfo)) {
+          return Student.makeResponseMsg(200, '비밀번호 변경 성공.');
         }
       }
       return checkedPassword;
@@ -259,10 +251,7 @@ class Student {
       id: saveInfo.id,
       token: this.params.token,
     };
-    const hashInfo = {
-      password: saveInfo.newPassword,
-      passwordSalt: saveInfo.passwordSalt,
-    };
+    const hashInfo = Student.createHash(saveInfo.newPassword);
     const material = { ...hashInfo, ...saveInfo };
 
     try {
@@ -274,9 +263,7 @@ class Student {
       );
       if (!checkedByChangePassword.success) return checkedByChangePassword;
 
-      Student.createHash(hashInfo);
-
-      if (!(await StudentStorage.modifyPasswordSave(material))) {
+      if (!(await StudentStorage.changePasswordSave(material))) {
         return Student.makeResponseMsg(400, '비밀번호 변경에 실패하였습니다.');
       }
       if (!(await EmailAuthStorage.deleteTokenByStudentId(saveInfo.id))) {

@@ -25,10 +25,10 @@ router.post(
 );
 
 router.patch(
-  '/reset-password',
+  '/change-password',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
-  ctrl.process.resetPassword
+  ctrl.process.changePassword
 );
 router.patch(
   '/find-password/:token',
