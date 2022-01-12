@@ -51,12 +51,12 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const qustion = `
+      const query = `
         SELECT no, description 
         FROM questions 
         WHERE club_no = ?;`;
 
-      const questions = await conn.query(qustion, [clubNum]);
+      const questions = await conn.query(query, [clubNum]);
 
       return questions;
     } catch (err) {
@@ -101,9 +101,9 @@ class ApplicationStorage {
         WHERE club_no = ? AND reading_flag = 0 
         LIMIT 1;`;
 
-      const applicants = await conn.query(query, [clubNum]);
+      const applicant = await conn.query(query, [clubNum]);
 
-      return applicants[0];
+      return applicant[0];
     } catch (err) {
       throw err;
     } finally {
@@ -156,20 +156,48 @@ class ApplicationStorage {
     }
   }
 
-  static async findApplicant(applicantInfo) {
+  static async checkApplicantRecord(applicantInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const applicant = `SELECT reading_flag AS readingFlag FROM applicants WHERE club_no = ? AND student_id = ? ORDER BY no DESC;`;
+      const query = `
+        SELECT reading_flag AS readingFlag 
+        FROM applicants 
+        WHERE club_no = ? AND student_id = ? 
+        ORDER BY no DESC;`;
 
-      const isApplicant = await conn.query(applicant, [
+      const applicant = await conn.query(query, [
         applicantInfo.clubNum,
-        applicantInfo.id,
+        applicantInfo.clientId,
       ]);
 
-      return isApplicant[0];
+      return applicant[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findDuplicatePhoneNum(phoneNumInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT phone_number 
+        FROM students 
+        WHERE id != ? AND phone_number = ?;`;
+
+      const duplicatePhoneNum = await conn.query(query, [
+        phoneNumInfo.clientId,
+        phoneNumInfo.phoneNum,
+      ]);
+
+      return duplicatePhoneNum[0];
     } catch (err) {
       throw err;
     } finally {
@@ -183,16 +211,43 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const studentInfo = `UPDATE students SET grade = ?, gender = ?, phone_number = ? WHERE id = ?;`;
+      const query = `
+        UPDATE students 
+        SET grade = ?, gender = ?, phone_number = ? 
+        WHERE id = ?;`;
 
-      const basic = await conn.query(studentInfo, [
+      const basicAnswer = await conn.query(query, [
         answerInfo.grade,
         answerInfo.gender,
         answerInfo.phoneNum,
-        answerInfo.id,
+        answerInfo.clientId,
       ]);
 
-      return basic.affectedRows;
+      return basicAnswer.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteExtraAnswer(extraAnswerInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        DELETE 
+        FROM answers 
+        WHERE question_no 
+        IN (?) AND student_id = ?;`;
+
+      await conn.query(query, [
+        extraAnswerInfo.extraQuestionNums,
+        extraAnswerInfo.clientId,
+      ]);
+      return;
     } catch (err) {
       throw err;
     } finally {
@@ -206,35 +261,21 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      let answer = `INSERT INTO answers (question_no, student_id, description) VALUES`;
+      let query = `
+        INSERT INTO answers (question_no, student_id, description) 
+        VALUES`;
 
-      answerInfo.extra.forEach((x, idx) => {
+      answerInfo.extraAnswers.forEach((extraAnswer, idx) => {
         if (idx) {
-          answer += `, ("${x.no}", "${answerInfo.id}", "${x.description}")`;
-        } else answer += ` ("${x.no}", "${answerInfo.id}", "${x.description}")`;
+          query += `, ("${extraAnswer.no}", "${answerInfo.clientId}", "${extraAnswer.description}")`;
+        } else
+          query += ` ("${extraAnswer.no}", "${answerInfo.clientId}", "${extraAnswer.description}")`;
       });
-      answer += ';';
+      query += ';';
 
-      const extra = await conn.query(`${answer}`);
+      const extraAnswer = await conn.query(`${query}`);
 
-      return extra.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async deleteExtraAnswer(extraQuestionNums, id) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `DELETE FROM answers WHERE question_no IN (?) AND student_id = ?;`;
-
-      await conn.query(query, [extraQuestionNums, id]);
-      return;
+      return extraAnswer.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -248,153 +289,16 @@ class ApplicationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO applicants (club_no, student_id) VALUE (?, ?);`;
-
-      const result = await conn.query(query, [
-        applicantInfo.clubNum,
-        applicantInfo.id,
-      ]);
-
-      return result.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findOneByClubNum(clubNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const applicantInfoQuery = `SELECT app.in_date AS inDate, s.name, s.id, s.major, 
-        s.grade, s.gender, s.phone_number AS phoneNum 
-        FROM students AS s JOIN applicants AS app ON app.club_no = ?
-        AND app.student_id = s.id AND app.reading_flag = 0;`;
-
-      const questionAnswerQuery = `SELECT app.student_id AS id, q.description AS question, a.description AS answer
-      FROM applicants AS app JOIN answers AS a ON a.student_id = app.student_id
-      AND app.club_no = ? AND app.reading_flag = 0 JOIN questions AS q
-      ON a.question_no = q.no AND app.club_no = q.club_no;`;
-
-      const applicantQuery = `SELECT student_id AS id FROM applicants WHERE reading_flag = 0 AND club_no = ?;`;
-
-      const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
-      const qAndA = await conn.query(questionAnswerQuery, clubNum);
-      const applicants = await conn.query(applicantQuery, clubNum);
-
-      const questionsAnswers = [[]];
-
-      for (let i = 0; i < applicants.length; i += 1) {
-        const studentId = applicants[i].id;
-
-        for (let j = 0; j < qAndA.length; j += 1) {
-          if (studentId === qAndA[j].id) {
-            questionsAnswers[i].push(qAndA[j]);
-          }
-        }
-        if (i === applicants.length - 1) break;
-        else questionsAnswers.push([]);
-      }
-
-      return {
-        success: true,
-        applicantInfo,
-        questionsAnswers,
-      };
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async updateAcceptedApplicantById(userInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query =
-        'UPDATE applicants SET reading_flag = 1 WHERE club_no = ? AND student_id = ?;';
-
-      const approvedApplicant = await conn.query(query, [
-        userInfo.clubNum,
-        userInfo.applicant,
-      ]);
-
-      if (approvedApplicant.affectedRows) return true;
-      return false;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async createMemberById(userInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query =
-        'INSERT INTO members (student_id, club_no, join_admin_flag, board_admin_flag) VALUES (?, ?, 0, 0);';
-
-      const updateMember = await conn.query(query, [
-        userInfo.applicant,
-        userInfo.clubNum,
-      ]);
-
-      if (updateMember.affectedRows) return true;
-      return false;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async updateRejectedApplicantById(userInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query =
-        'UPDATE applicants SET reading_flag = 2 WHERE club_no = ? AND student_id = ?;';
-
-      const updateRejectedApplicant = await conn.query(query, [
-        userInfo.clubNum,
-        userInfo.applicantId,
-      ]);
-
-      if (updateRejectedApplicant.affectedRows) return true;
-      return false;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findOneByApplicantIdAndClubNum(userInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query =
-        'SELECT s.name FROM applicants AS a JOIN students AS s ON a.student_id = s.id WHERE a.student_id = ? AND a.club_no = ?;';
+      const query = `
+        INSERT INTO applicants (club_no, student_id) 
+        VALUES (?, ?);`;
 
       const applicant = await conn.query(query, [
-        userInfo.id,
-        userInfo.clubNum,
+        applicantInfo.clubNum,
+        applicantInfo.clientId,
       ]);
 
-      return applicant[0].name;
+      return applicant.affectedRows;
     } catch (err) {
       throw err;
     } finally {
