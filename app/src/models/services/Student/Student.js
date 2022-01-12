@@ -118,34 +118,30 @@ class Student {
     }
   }
 
-  async checkPassword() {
-    const client = this.body;
-    const user = this.auth;
-
+  async checkPassword(client) {
     try {
-      const userId = user.id;
-      const student = await StudentStorage.findOneById(userId);
-      const comparePassword = bcrypt.compareSync(
-        client.password,
-        student.password
-      );
+      const student = await StudentStorage.findOneById(this.auth.id);
 
-      if (comparePassword) {
+      if (Student.comparePassword(client, student)) {
         if (client.newPassword.length < 8) {
-          return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
+          return Student.makeResponseMsg(400, '비밀번호가 8자리수 미만입니다.');
         }
         if (client.password === client.newPassword) {
-          return {
-            success: false,
-            msg: '기존 비밀번호와 다른 비밀번호를 설정해주세요.',
-          };
+          return Student.makeResponseMsg(
+            400,
+            '기존 비밀번호와 다른 비밀번호를 설정해주세요.'
+          );
         }
         if (client.newPassword === client.checkNewPassword) {
-          return { success: true, msg: '비밀번호가 일치합니다.', student };
+          return Student.makeResponseMsg(
+            200,
+            '비밀번호가 일치합니다.',
+            student
+          );
         }
-        return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
+        return Student.makeResponseMsg(400, '비밀번호가 일치하지 않습니다.');
       }
-      return { success: false, msg: '기존 비밀번호가 틀렸습니다.' };
+      return Student.makeResponseMsg(400, '기존 비밀번호가 틀렸습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -231,7 +227,7 @@ class Student {
     const saveInfo = this.body;
 
     try {
-      const checkedPassword = await this.checkPassword();
+      const checkedPassword = await this.checkPassword(saveInfo);
 
       if (checkedPassword.success) {
         saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
@@ -239,7 +235,7 @@ class Student {
           saveInfo.newPassword,
           saveInfo.passwordSalt
         );
-        saveInfo.id = checkedPassword.student.id;
+        saveInfo.id = checkedPassword.id;
 
         const student = await StudentStorage.modifyPasswordSave(saveInfo);
 
