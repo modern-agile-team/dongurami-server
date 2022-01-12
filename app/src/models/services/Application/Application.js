@@ -4,6 +4,8 @@ const ApplicationUtil = require('./ApplicationUtils');
 const ApplicationStorage = require('./ApplicationStorage');
 const Error = require('../../utils/Error');
 
+const { makeMsg } = ApplicationUtil;
+
 class Application {
   constructor(req) {
     this.req = req;
@@ -26,12 +28,12 @@ class Application {
         const clientInfo = await ApplicationUtil.findOneClient(ids);
         const questions = await ApplicationStorage.findAllQuestions(clubNum);
 
-        return ApplicationUtil.makeMsg(200, '동아리 가입 신청서 조회 성공', {
+        return makeMsg(200, '동아리 가입 신청서 조회 성공', {
           clientInfo,
           questions,
         });
       }
-      return ApplicationUtil.makeMsg(404, '존재하지 않는 동아리입니다.');
+      return makeMsg(404, '존재하지 않는 동아리입니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -50,11 +52,11 @@ class Application {
 
       if (leaderInfo.leader === this.auth.id) {
         if (await ApplicationStorage.createQuestion(questionInfo)) {
-          return ApplicationUtil.makeMsg(201, '질문이 등록되었습니다.');
+          return makeMsg(201, '질문이 등록되었습니다.');
         }
-        return ApplicationUtil.makeMsg(400, '질문이 등록되지 않았습니다.');
+        return makeMsg(400, '질문이 등록되지 않았습니다.');
       }
-      return ApplicationUtil.makeMsg(403, '질문 등록 권한이 없습니다.');
+      return makeMsg(403, '질문 등록 권한이 없습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -68,7 +70,7 @@ class Application {
 
       if (leaderInfo.leader === this.auth.id) {
         if (await ApplicationStorage.findOneWaitingApplicant(clubNum)) {
-          return ApplicationUtil.makeMsg(
+          return makeMsg(
             400,
             '가입 신청 대기자가 있으므로 질문을 변경할 수 없습니다.'
           );
@@ -80,11 +82,11 @@ class Application {
         };
 
         if (await ApplicationStorage.updateQuestion(questionInfo)) {
-          return ApplicationUtil.makeMsg(200, '질문이 수정되었습니다.');
+          return makeMsg(200, '질문이 수정되었습니다.');
         }
-        return ApplicationUtil.makeMsg(400, '질문이 수정되지 않았습니다.');
+        return makeMsg(400, '질문이 수정되지 않았습니다.');
       }
-      return ApplicationUtil.makeMsg(403, '질문 수정 권한이 없습니다.');
+      return makeMsg(403, '질문 수정 권한이 없습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -98,18 +100,18 @@ class Application {
 
       if (leaderInfo.leader === this.auth.id) {
         if (await ApplicationStorage.findOneWaitingApplicant(clubNum)) {
-          return ApplicationUtil.makeMsg(
+          return makeMsg(
             400,
             '가입 신청 대기자가 있으므로 질문을 삭제할 수 없습니다.'
           );
         }
 
         if (await ApplicationStorage.deleteQuestion(this.params.questionNo)) {
-          return ApplicationUtil.makeMsg(200, '질문이 삭제되었습니다.');
+          return makeMsg(200, '질문이 삭제되었습니다.');
         }
-        return ApplicationUtil.makeMsg(400, '질문이 삭제되지 않았습니다.');
+        return makeMsg(400, '질문이 삭제되지 않았습니다.');
       }
-      return ApplicationUtil.makeMsg(403, '질문 삭제 권한이 없습니다.');
+      return makeMsg(403, '질문 삭제 권한이 없습니다.');
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
@@ -126,7 +128,7 @@ class Application {
       if (
         (await ApplicationStorage.findOneLeader(clubNum)).leader === clientId
       ) {
-        return ApplicationUtil.makeMsg(400, '이미 가입된 동아리입니다.');
+        return makeMsg(400, '이미 가입된 동아리입니다.');
       }
 
       const applicant = await ApplicationStorage.checkApplicantRecord({
@@ -139,15 +141,15 @@ class Application {
           ? '이미 가입된 동아리입니다.'
           : '가입 승인 대기중입니다.';
 
-        return ApplicationUtil.makeMsg(400, msg);
+        return makeMsg(400, msg);
       }
 
       if (!(basicAnswer.grade && basicAnswer.gender && basicAnswer.phoneNum)) {
-        return ApplicationUtil.makeMsg(400, '필수 답변을 전부 기입해주세요.');
+        return makeMsg(400, '필수 답변을 전부 기입해주세요.');
       }
 
       if (ApplicationUtil.checkPhoneNumFormat(phoneNum)) {
-        return ApplicationUtil.makeMsg(400, '전화번호 형식이 맞지 않습니다.');
+        return makeMsg(400, '전화번호 형식이 맞지 않습니다.');
       }
 
       if (
@@ -156,11 +158,11 @@ class Application {
           clientId,
         })
       ) {
-        return ApplicationUtil.makeMsg(409, '다른 유저가 사용중인 번호입니다.');
+        return makeMsg(409, '다른 유저가 사용중인 번호입니다.');
       }
 
       if (!(await ApplicationUtil.createBasicAnswer(basicAnswer, clientId))) {
-        return ApplicationUtil.makeMsg(400, '필수 답변이 작성되지 않았습니다.');
+        return makeMsg(400, '필수 답변이 작성되지 않았습니다.');
       }
 
       if (extraAnswers.length) {
@@ -180,17 +182,14 @@ class Application {
         });
 
         if (createExtraAnswer !== extraAnswers.length) {
-          return ApplicationUtil.makeMsg(
-            400,
-            '추가 답변이 작성되지 않았습니다.'
-          );
+          return makeMsg(400, '추가 답변이 작성되지 않았습니다.');
         }
       }
 
       if (await ApplicationStorage.createApplicant({ clubNum, clientId })) {
-        return ApplicationUtil.makeMsg(200, '가입 신청이 완료되었습니다.');
+        return makeMsg(200, '가입 신청이 완료되었습니다.');
       }
-      return ApplicationUtil.makeMsg(400, '가입 신청이 완료되지 않았습니다.');
+      return makeMsg(400, '가입 신청이 완료되지 않았습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
