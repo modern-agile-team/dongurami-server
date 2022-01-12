@@ -121,7 +121,9 @@ class Student {
     }
   }
 
-  async checkPassword(client) {
+  async checkPassword() {
+    const client = this.body;
+
     try {
       const student = await StudentStorage.findOneById(this.auth.id);
 
@@ -136,11 +138,7 @@ class Student {
           );
         }
         if (client.newPassword === client.checkNewPassword) {
-          return Student.makeResponseMsg(
-            200,
-            '비밀번호가 일치합니다.',
-            student
-          );
+          return { success: true, student };
         }
         return Student.makeResponseMsg(400, '비밀번호가 일치하지 않습니다.');
       }
@@ -230,12 +228,12 @@ class Student {
     const client = this.body;
 
     try {
-      const checkedPassword = await this.checkPassword(client);
+      const checkedPassword = await this.checkPassword();
       const hashInfo = Student.createHash(client.newPassword);
       const saveInfo = { ...hashInfo, ...client };
 
       if (checkedPassword.success) {
-        saveInfo.id = checkedPassword.id;
+        saveInfo.id = checkedPassword.student.id;
 
         if (await StudentStorage.changePasswordSave(saveInfo)) {
           return Student.makeResponseMsg(200, '비밀번호 변경 성공.');
