@@ -34,17 +34,9 @@ const process = {
   changePassword: async (req, res) => {
     const student = new Student(req);
     const response = await student.changePassword();
+    const apiInfo = getApiInfo('PATCH', response, req);
 
-    if (response.success) {
-      logger.info(`PATCH /api/reset-password 200: ${response.msg}`);
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(`PATCH /api/reset-password 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(`PATCH /api/reset-password 400: ${response.msg}`);
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   sendEmailForFindPassword: async (req, res) => {
