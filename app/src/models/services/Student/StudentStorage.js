@@ -167,7 +167,7 @@ class StudentStorage {
     }
   }
 
-  static async modifyPasswordSave(saveInfo) {
+  static async changePasswordSave(saveInfo) {
     let conn;
 
     try {

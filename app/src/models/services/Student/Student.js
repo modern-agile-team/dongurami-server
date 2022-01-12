@@ -230,14 +230,12 @@ class Student {
       const checkedPassword = await this.checkPassword(saveInfo);
 
       if (checkedPassword.success) {
-        saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
-        saveInfo.hash = bcrypt.hashSync(
-          saveInfo.newPassword,
-          saveInfo.passwordSalt
-        );
+        saveInfo.password = saveInfo.newPassword;
         saveInfo.id = checkedPassword.id;
 
-        const student = await StudentStorage.modifyPasswordSave(saveInfo);
+        Student.createHash(saveInfo);
+
+        const student = await StudentStorage.changePasswordSave(saveInfo);
 
         if (student) {
           return Student.makeResponseMsg(200, '비밀번호 변경 성공.');
@@ -259,6 +257,7 @@ class Student {
       password: saveInfo.newPassword,
       passwordSalt: saveInfo.passwordSalt,
     };
+    Student.createHash(hashInfo);
     const material = { ...hashInfo, ...saveInfo };
 
     try {
@@ -270,9 +269,7 @@ class Student {
       );
       if (!checkedByChangePassword.success) return checkedByChangePassword;
 
-      Student.createHash(hashInfo);
-
-      if (!(await StudentStorage.modifyPasswordSave(material))) {
+      if (!(await StudentStorage.changePasswordSave(material))) {
         return Student.makeResponseMsg(400, '비밀번호 변경에 실패하였습니다.');
       }
       if (!(await EmailAuthStorage.deleteTokenByStudentId(saveInfo.id))) {
