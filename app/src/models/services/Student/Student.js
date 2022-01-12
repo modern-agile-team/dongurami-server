@@ -183,9 +183,8 @@ class Student {
   async signUp() {
     const client = this.body;
 
-    if (!SignUpCheck.infoCheck(client).success) {
-      return SignUpCheck.infoCheck(client);
-    }
+    const checkFormat = SignUpCheck.infoCheck(client);
+    if (!checkFormat.success) return checkFormat;
 
     try {
       const checkedIdAndEmail = await this.checkIdAndEmail();
