@@ -47,44 +47,20 @@ const process = {
     return res.status(400).json(response);
   },
 
-  // 메일 전송
-  sendEmailForPassword: async (req, res) => {
+  sendEmailForFindPassword: async (req, res) => {
     const email = new Email(req);
-    const response = await email.sendLinkForPassword();
+    const response = await email.sendEmailForFindPassword();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(`POST /api/forgot-password 201: ${response.msg}`);
-      return res.status(201).json(response);
-    }
-    if (response.isError) {
-      logger.error(`POST /api/forgot-password 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(`POST /api/forgot-password 400: ${response.msg}`);
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
-  // 비밀번호 찾기
   findPassword: async (req, res) => {
     const student = new Student(req);
     const response = await student.findPassword();
+    const apiInfo = getApiInfo('PATCH', response, req);
 
-    if (response.useable === false) {
-      logger.error(`PATCH /api/find-password/token 403: ${response.msg}`);
-      return res.status(403).json(response);
-    }
-    if (!response.success) {
-      logger.error(`PATCH /api/find-password/token 400: ${response.msg}`);
-      return res.status(400).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `PATCH /api/find-password/token 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.info(`PATCH /api/find-password/token 200: ${response.msg}`);
-    return res.status(200).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   getUserInfoByJWT: async (req, res) => {

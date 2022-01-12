@@ -31,7 +31,6 @@ class Student {
         response[info] = extra[info];
       }
     }
-
     return response;
   }
 
@@ -41,6 +40,115 @@ class Student {
 
   static comparePassword(input, stored) {
     return bcrypt.compareSync(input.password, stored.password);
+  }
+
+  static idOrEmailNullCheck(client) {
+    return client.name && client.email;
+  }
+
+  static createHash(saveInfo) {
+    saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+    saveInfo.hash = bcrypt.hashSync(saveInfo.password, saveInfo.passwordSalt);
+
+    return saveInfo;
+  }
+
+  static async checkByChangePassword(client) {
+    if (!client.newPassword.length) {
+      return Student.makeResponseMsg(400, '비밀번호를 입력해주세요.');
+    }
+    if (client.newPassword.length < 8) {
+      return Student.makeResponseMsg(400, '비밀번호가 8자리수 미만입니다.');
+    }
+    if (client.newPassword !== client.checkNewPassword) {
+      return Student.makeResponseMsg(
+        400,
+        '비밀번호와 비밀번호확인이 일치하지 않습니다.'
+      );
+    }
+    return { success: true };
+  }
+
+  static async checkExistIdAndEmail(client) {
+    try {
+      const registeredId = await StudentStorage.findOneById(client.id);
+      if (!registeredId) {
+        return Student.makeResponseMsg(400, '가입된 아이디가 아닙니다.');
+      }
+
+      const registeredEmail = await StudentStorage.findOneByEmail(client.email);
+      if (!registeredEmail) {
+        return Student.makeResponseMsg(400, '가입된 이메일이 아닙니다.');
+      }
+      if (registeredId.email !== registeredEmail.email) {
+        return Student.makeResponseMsg(
+          400,
+          '아이디 또는 이메일이 일치하지 않습니다.'
+        );
+      }
+      return Student.makeResponseMsg(200, '계정 확인 성공', {
+        name: registeredId.name,
+      });
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async checkIdAndEmail() {
+    const client = this.body;
+    const clientInfo = {
+      id: client.id,
+      email: client.email,
+    };
+
+    try {
+      const student = await StudentStorage.findOneByIdOrEmail(clientInfo);
+
+      if (student) {
+        if (student.id === client.id) {
+          return Student.makeResponseMsg(409, '이미 가입된 학번입니다.');
+        }
+        if (student.email === client.email) {
+          return Student.makeResponseMsg(409, '이미 가입된 이메일입니다.');
+        }
+      }
+      return { success: true };
+    } catch (err) {
+      return Error.ctrl('', err);
+    }
+  }
+
+  async checkPassword() {
+    const client = this.body;
+    const user = this.auth;
+
+    try {
+      const userId = user.id;
+      const student = await StudentStorage.findOneById(userId);
+      const comparePassword = bcrypt.compareSync(
+        client.password,
+        student.password
+      );
+
+      if (comparePassword) {
+        if (client.newPassword.length < 8) {
+          return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
+        }
+        if (client.password === client.newPassword) {
+          return {
+            success: false,
+            msg: '기존 비밀번호와 다른 비밀번호를 설정해주세요.',
+          };
+        }
+        if (client.newPassword === client.checkNewPassword) {
+          return { success: true, msg: '비밀번호가 일치합니다.', student };
+        }
+        return { success: false, msg: '비밀번호가 일치하지 않습니다.' };
+      }
+      return { success: false, msg: '기존 비밀번호가 틀렸습니다.' };
+    } catch (err) {
+      return Error.ctrl('', err);
+    }
   }
 
   async login() {
@@ -96,17 +204,6 @@ class Student {
     }
   }
 
-  static idOrEmailNullCheck(client) {
-    return client.name && client.email;
-  }
-
-  static createHash(saveInfo) {
-    saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
-    saveInfo.hash = bcrypt.hashSync(saveInfo.password, saveInfo.passwordSalt);
-
-    return saveInfo;
-  }
-
   async findId() {
     const client = this.body;
 
@@ -156,149 +253,39 @@ class Student {
     }
   }
 
-  async checkIdAndEmail() {
-    const client = this.body;
-    const clientInfo = {
-      id: client.id,
-      email: client.email,
-    };
-
-    try {
-      const student = await StudentStorage.findOneByIdOrEmail(clientInfo);
-
-      if (student) {
-        if (student.id === client.id) {
-          return Student.makeResponseMsg(409, '이미 가입된 학번입니다.');
-        }
-        if (student.email === client.email) {
-          return Student.makeResponseMsg(409, '이미 가입된 이메일입니다.');
-        }
-      }
-      return { success: true };
-    } catch (err) {
-      return Error.ctrl('', err);
-    }
-  }
-
-  async checkPassword() {
-    const client = this.body;
-    const user = this.auth;
-
-    try {
-      const student = await StudentStorage.findOneById(user.id);
-
-      if (Student.comparePassword(client, student)) {
-        if (client.newPassword.length < 8) {
-          return Student.makeResponseMsg(400, '비밀번호가 8자리수 미만입니다.');
-        }
-        if (client.password === client.newPassword) {
-          return Student.makeResponseMsg(
-            400,
-            '기존 비밀번호와 다른 비밀번호를 설정해주세요.'
-          );
-        }
-        if (client.newPassword === client.checkNewPassword) {
-          return Student.makeResponseMsg(200, '비밀번호가 일치합니다.', {
-            student,
-          });
-        }
-        return Student.makeResponseMsg(400, '비밀번호가 일치하지 않습니다.');
-      }
-      return Student.makeResponseMsg(400, '기존 비밀번호가 틀렸습니다.');
-    } catch (err) {
-      return Error.ctrl('', err);
-    }
-  }
-
-  async isExistIdAndEmail() {
-    const client = this.body;
-
-    try {
-      const checkedId = await StudentStorage.findOneById(client.id);
-
-      if (!checkedId) {
-        return { isExist: false, msg: '가입된 아이디가 아닙니다.' };
-      }
-
-      const checkedEmail = await StudentStorage.findOneByEmail(client.email);
-
-      if (!checkedEmail) {
-        return { isExist: false, msg: '가입된 이메일이 아닙니다.' };
-      }
-      if (checkedId.email !== checkedEmail.email) {
-        return {
-          isExist: false,
-          msg: '아이디 또는 이메일이 일치하지 않습니다.',
-        };
-      }
-      return {
-        isExist: true,
-        name: checkedId.name,
-      };
-    } catch (err) {
-      throw err;
-    }
-  }
-
   async findPassword() {
     const saveInfo = this.body;
-    const { params } = this;
     const reqInfo = {
       id: saveInfo.id,
-      token: params.token,
+      token: this.params.token,
     };
+    const hashInfo = {
+      password: saveInfo.newPassword,
+      passwordSalt: saveInfo.passwordSalt,
+    };
+    const material = { ...hashInfo, ...saveInfo };
 
     try {
-      // 토큰 검증
       const checkedByToken = await EmailAuth.checkByUseableToken(reqInfo);
-      if (!checkedByToken.useable) return checkedByToken;
+      if (!checkedByToken.success) return checkedByToken;
 
-      // 비밀번호 검증
-      const checkedByChangePassword = await this.checkByChangePassword();
+      const checkedByChangePassword = await Student.checkByChangePassword(
+        saveInfo
+      );
       if (!checkedByChangePassword.success) return checkedByChangePassword;
 
-      // 암호화
-      saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
-      saveInfo.hash = bcrypt.hashSync(
-        saveInfo.newPassword,
-        saveInfo.passwordSalt
-      );
+      Student.createHash(hashInfo);
 
-      // DB 수정
-      const isReset = await StudentStorage.modifyPasswordSave(saveInfo);
-      if (!isReset) {
-        return { success: false, msg: '비밀번호 변경에 실패하였습니다.' };
+      if (!(await StudentStorage.modifyPasswordSave(material))) {
+        return Student.makeResponseMsg(400, '비밀번호 변경에 실패하였습니다.');
       }
-
-      // 토큰 삭제 && 비밀번호 변경
-      const isDeleteToken = await EmailAuthStorage.deleteTokenByStudentId(
-        saveInfo.id
-      );
-      if (!isDeleteToken) {
-        return { success: false, msg: '토큰 삭제에 실패하였습니다.' };
+      if (!(await EmailAuthStorage.deleteTokenByStudentId(saveInfo.id))) {
+        return Student.makeResponseMsg(400, '토큰 삭제에 실패하였습니다.');
       }
-      return { success: true, msg: '비밀번호가 변경되었습니다.' };
+      return Student.makeResponseMsg(200, '비밀번호가 변경되었습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
-  }
-
-  async checkByChangePassword() {
-    const client = this.body;
-
-    if (!client.newPassword.length) {
-      return { success: false, msg: '비밀번호를 입력해주세요.' };
-    }
-    if (client.newPassword.length < 8) {
-      return { success: false, msg: '비밀번호가 8자리수 미만입니다.' };
-    }
-    if (client.newPassword !== client.checkNewPassword) {
-      return {
-        success: false,
-        msg: '비밀번호와 비밀번호확인이 일치하지 않습니다.',
-      };
-    }
-    return { success: true };
   }
 
   async getUserInfoByJWT() {

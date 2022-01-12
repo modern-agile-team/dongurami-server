@@ -3,6 +3,9 @@
 const AWS = require('aws-sdk');
 const crypto = require('crypto');
 const Error = require('../../utils/Error');
+const makeResponse = require('../../utils/makeResponse');
+const getRequestMissKey = require('../../utils/getRequestMissKey');
+const getRequestNullKey = require('../../utils/getRequestNullKey');
 
 class S3 {
   constructor(req) {
@@ -10,16 +13,22 @@ class S3 {
   }
 
   async createPutUrl() {
-    let { img } = this.body;
+    const missKey = getRequestMissKey(this.body, ['img']);
 
-    if (img === undefined) {
-      return { success: false, msg: '객체 이름을 적어주세요' };
+    if (missKey) {
+      return makeResponse(400, `${missKey}이(가) 존재하지 않습니다.`);
+    }
+
+    const nullKey = getRequestNullKey(this.body, ['img']);
+
+    if (nullKey) {
+      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
     }
 
     try {
       const randomString = crypto.randomBytes(5).toString('hex');
 
-      img = `${randomString}_${img}`;
+      const img = `${randomString}_${this.body.img}`;
       const readObjectUrl = process.env.CLOUDFRONT_URL + img;
 
       const s3 = new AWS.S3({
@@ -34,14 +43,12 @@ class S3 {
         Key: img,
       });
 
-      return {
-        success: true,
-        msg: 'url 생성 성공',
+      return makeResponse(200, 'url 생성 성공', {
         preSignedPutUrl,
         readObjectUrl,
-      };
+      });
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 }
