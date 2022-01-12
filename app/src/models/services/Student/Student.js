@@ -46,11 +46,14 @@ class Student {
     return client.name && client.email;
   }
 
-  static createHash(saveInfo) {
-    saveInfo.passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
-    saveInfo.hash = bcrypt.hashSync(saveInfo.password, saveInfo.passwordSalt);
+  static createHash(password) {
+    const passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+    const hash = bcrypt.hashSync(password, passwordSalt);
 
-    return saveInfo;
+    return {
+      passwordSalt,
+      hash,
+    };
   }
 
   static async checkByChangePassword(client) {
@@ -178,17 +181,18 @@ class Student {
   }
 
   async signUp() {
-    const saveInfo = this.body;
+    const client = this.body;
 
-    if (!SignUpCheck.infoCheck(saveInfo).success) {
-      return SignUpCheck.infoCheck(saveInfo);
+    if (!SignUpCheck.infoCheck(client).success) {
+      return SignUpCheck.infoCheck(client);
     }
 
     try {
       const checkedIdAndEmail = await this.checkIdAndEmail();
 
       if (checkedIdAndEmail.success) {
-        Student.createHash(saveInfo);
+        const hashInfo = Student.createHash(client.password);
+        const saveInfo = { ...hashInfo, ...client };
 
         if (await StudentStorage.save(saveInfo)) {
           return Student.makeResponseMsg(201, '회원가입에 성공하셨습니다.');
@@ -224,20 +228,17 @@ class Student {
   }
 
   async changePassword() {
-    const saveInfo = this.body;
+    const client = this.body;
 
     try {
-      const checkedPassword = await this.checkPassword(saveInfo);
+      const checkedPassword = await this.checkPassword(client);
+      const hashInfo = Student.createHash(client.newPassword);
+      const saveInfo = { ...hashInfo, ...client };
 
       if (checkedPassword.success) {
-        saveInfo.password = saveInfo.newPassword;
         saveInfo.id = checkedPassword.id;
 
-        Student.createHash(saveInfo);
-
-        const student = await StudentStorage.changePasswordSave(saveInfo);
-
-        if (student) {
+        if (await StudentStorage.changePasswordSave(saveInfo)) {
           return Student.makeResponseMsg(200, '비밀번호 변경 성공.');
         }
       }
@@ -253,11 +254,7 @@ class Student {
       id: saveInfo.id,
       token: this.params.token,
     };
-    const hashInfo = {
-      password: saveInfo.newPassword,
-      passwordSalt: saveInfo.passwordSalt,
-    };
-    Student.createHash(hashInfo);
+    const hashInfo = Student.createHash(saveInfo.newPassword);
     const material = { ...hashInfo, ...saveInfo };
 
     try {
