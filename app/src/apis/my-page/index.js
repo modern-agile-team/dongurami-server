@@ -12,7 +12,7 @@ router.get(
   '/:id/personal/:clubNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
-  myPageCtrl.process.findAllScrapsByClubNum
+  myPageCtrl.process.findAllScrapsMyPagePosts
 );
 
 router.get(
