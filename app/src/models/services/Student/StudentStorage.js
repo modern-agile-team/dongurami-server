@@ -167,7 +167,7 @@ class StudentStorage {
     }
   }
 
-  static async modifyPasswordSave(saveInfo) {
+  static async changePasswordSave(saveInfo) {
     let conn;
 
     try {
@@ -178,13 +178,13 @@ class StudentStorage {
         SET password = ?, password_salt = ?
         WHERE id = ?;`;
 
-      await conn.query(query, [
+      const result = await conn.query(query, [
         saveInfo.hash,
         saveInfo.passwordSalt,
         saveInfo.id,
       ]);
 
-      return true;
+      return result.affectedRows;
     } catch (err) {
       throw err;
     } finally {

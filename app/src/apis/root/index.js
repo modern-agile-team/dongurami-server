@@ -21,14 +21,14 @@ router.post('/find-id', apiAuth.apiAuth, ctrl.process.findId);
 router.post(
   '/forgot-password',
   apiAuth.apiAuth,
-  ctrl.process.sendEmailForPassword
+  ctrl.process.sendEmailForFindPassword
 );
 
 router.patch(
-  '/reset-password',
+  '/change-password',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
-  ctrl.process.resetPassword
+  ctrl.process.changePassword
 );
 router.patch(
   '/find-password/:token',
