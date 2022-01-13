@@ -4,11 +4,11 @@ const MyPage = require('../../models/services/MyPage/MyPage');
 const logger = require('../../config/logger');
 
 const process = {
-  findAllScrapsByClubNum: async (req, res) => {
+  findAllScrapsMyPagePosts: async (req, res) => {
     const myPage = new MyPage(req);
     const { id } = req.params;
     const { clubNum } = req.params;
-    const response = await myPage.findAllScrapsByClubNum();
+    const response = await myPage.findAllScrapsMyPagePosts();
 
     if (response.success) {
       logger.info(

@@ -11,7 +11,7 @@ class MyPageStorage {
 
       const query = 'SELECT no FROM clubs WHERE no = ?;';
 
-      const club = await conn.query(query, clubNum);
+      const club = await conn.query(query, [clubNum]);
 
       return club[0];
     } catch (err) {
@@ -21,7 +21,56 @@ class MyPageStorage {
     }
   }
 
-  static async findAllScrapsByclubNum(userInfo) {
+  static async findAllScraps(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT no AS scrapNo, title, in_date AS inDate, file_url AS imgPath
+      FROM scraps
+      WHERE student_id = ? AND club_no = ? ORDER BY in_date DESC;`;
+
+      const scraps = await conn.query(query, [userInfo.id, userInfo.clubNum]);
+
+      return scraps;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllMyPagePosts(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT b.no AS boardNo, title, in_date AS inDate, url AS imgPath
+      FROM boards AS b LEFT JOIN images ON b.no = board_no 
+      WHERE board_category_no = 7 AND student_id = ? AND club_no = ?
+      UNION
+      SELECT b.no AS boardNo, title, in_date AS inDate, url AS imgPath
+      FROM images RIGTH JOIN boards AS b ON b.no = board_no 
+      WHERE board_category_no = 7 AND student_id = ? AND club_no = ?;`;
+
+      const myPagePosts = await conn.query(query, [
+        userInfo.id,
+        userInfo.clubNum,
+        userInfo.id,
+        userInfo.clubNum,
+      ]);
+
+      return myPagePosts;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async xxfindAllScrapsByclubNum(userInfo) {
     let conn;
 
     try {

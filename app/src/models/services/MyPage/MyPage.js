@@ -15,12 +15,32 @@ class MyPage {
   }
 
   async existClub() {
-    const isClub = await MyPageStorage.existClub(this.params.id);
+    const isClub = await MyPageStorage.existClub(this.params.clubNum);
 
     return isClub;
   }
 
-  async findAllScrapsByClubNum() {
+  async findAllScraps() {
+    const userInfo = {
+      id: this.params.id,
+      clubNum: this.params.clubNum,
+    };
+    const scraps = await MyPageStorage.findAllScraps(userInfo);
+
+    return scraps;
+  }
+
+  async findAllMyPagePosts() {
+    const userInfo = {
+      id: this.params.id,
+      clubNum: this.params.clubNum,
+    };
+    const myPagePosts = await MyPageStorage.findAllMyPagePosts(userInfo);
+
+    return myPagePosts;
+  }
+
+  async findAllScrapsMyPagePosts() {
     const { params } = this;
 
     try {
@@ -28,20 +48,14 @@ class MyPage {
         return { succeess: false, msg: '본인만 열람 가능합니다.' };
       }
 
-      const userInfo = {
-        id: params.id,
-        clubNum: params.clubNum,
-      };
-
       const isClub = await this.existClub();
 
       if (!isClub) {
         return { success: false, msg: '존재하지 않는 동아리입니다.' };
       }
 
-      const { scraps, boards } = await MyPageStorage.findAllScrapsByclubNum(
-        userInfo
-      );
+      const scraps = await this.findAllScraps();
+      const boards = await this.findAllMyPagePosts();
 
       if (scraps || boards) {
         return { success: true, msg: '전체 글 조회 성공', scraps, boards };
