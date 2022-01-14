@@ -1,23 +1,20 @@
 'use strict';
 
 const AdminOption = require('../../models/services/AdminOption/AdminOption');
+const processCtrl = require('../../models/utils/processCtrl');
+const getApiInfo = require('../../models/utils/getApiInfo');
 const logger = require('../../config/logger');
 
 const process = {
   checkClubAdmin: async (req, res, next) => {
-    const url = req.originalUrl;
     const adminOption = new AdminOption(req);
     const response = await adminOption.checkClubAdmin();
+    const apiInfo = getApiInfo('GET', response, req);
 
-    if (response.isError) {
-      logger.error(`GET ${url} 400: ${response.errMsg.stack}`);
-      return res.status(500).json(response);
-    }
-    if (!response.success) {
-      logger.error(`GET ${url} 403: ${response.msg}`);
-      return res.status(403).json(response);
-    }
-    return next();
+    const result = processCtrl(res, apiInfo, 1);
+
+    if (result) return next();
+    return result;
   },
 
   findOneByClubNum: async (req, res) => {

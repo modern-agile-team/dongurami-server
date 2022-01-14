@@ -24,11 +24,13 @@ class AdminOption {
 
       if (clubAdminId === clubAdminInfo.id || user.isAdmin) {
         return {
+          status: 200,
           success: true,
           msg: '권한 있음',
         };
       }
       return {
+        status: 403,
         success: false,
         msg: '동아리 관리 페이지에 접근 권한이 없습니다.',
       };
