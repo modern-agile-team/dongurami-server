@@ -41,9 +41,7 @@ class Board {
       return makeResponse(400, '전체공지는 관리자만 작성 가능합니다.');
     }
 
-    if (clubNum !== undefined && clubNum > 1) {
-      boardInfo.clubNum = clubNum;
-    }
+    if (clubNum !== undefined && clubNum > 1) boardInfo.clubNum = clubNum;
 
     if (boardInfo.category === 4) {
       if (boardInfo.images.length === 0) {
@@ -87,7 +85,7 @@ class Board {
     if (boardInfo.category === 4 || boardInfo.category === 7) {
       return makeResponse(400, '잘못된 URL의 접근입니다.');
     }
-    if (boardInfo.category < 5 && this.params.clubNum !== undefined) {
+    if (boardInfo.category < 5 && clubNum !== undefined) {
       return makeResponse(400, '잘못된 URL의 접근입니다.');
     }
 
