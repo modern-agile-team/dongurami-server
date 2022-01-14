@@ -62,7 +62,7 @@ class Board {
 
       return makeResponse(201, '게시글 생성 성공', { boardNum });
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -123,7 +123,7 @@ class Board {
 
       return makeResponse(200, '게시판 조회 성공', { userInfo, boards });
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -155,7 +155,7 @@ class Board {
 
       return makeResponse(200, '장르별 조회 성공', { userInfo, boards });
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -204,7 +204,7 @@ class Board {
         board,
       });
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -258,7 +258,7 @@ class Board {
       }
       return makeResponse(200, '게시글 수정 성공');
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -301,7 +301,7 @@ class Board {
       }
       return makeResponse(200, '게시글 삭제 성공');
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -330,7 +330,7 @@ class Board {
       }
       return makeResponse(200, '조회수 1 증가');
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 }
