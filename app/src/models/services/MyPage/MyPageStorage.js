@@ -9,7 +9,10 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'SELECT no FROM clubs WHERE no = ?;';
+      const query = `
+        SELECT no 
+        FROM clubs 
+        WHERE no = ?;`;
 
       const club = await conn.query(query, [clubNum]);
 
@@ -27,9 +30,11 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no AS scrapNo, title, in_date AS inDate, file_url AS imgPath
-      FROM scraps
-      WHERE student_id = ? AND club_no = ? ORDER BY in_date DESC;`;
+      const query = `
+        SELECT no AS scrapNo, title, in_date AS inDate, file_url AS imgPath
+        FROM scraps
+        WHERE student_id = ? AND club_no = ? 
+        ORDER BY in_date DESC;`;
 
       const scraps = await conn.query(query, [userInfo.id, userInfo.clubNum]);
 
@@ -47,13 +52,18 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT b.no AS boardNo, title, in_date AS inDate, url AS imgPath
-      FROM boards AS b LEFT JOIN images ON b.no = board_no 
-      WHERE board_category_no = 7 AND student_id = ? AND club_no = ?
-      UNION
-      SELECT b.no AS boardNo, title, in_date AS inDate, url AS imgPath
-      FROM images RIGTH JOIN boards AS b ON b.no = board_no 
-      WHERE board_category_no = 7 AND student_id = ? AND club_no = ?;`;
+      const query = `
+        SELECT b.no AS boardNo, title, in_date AS inDate, url AS imgPath
+        FROM boards AS b 
+        LEFT JOIN images 
+        ON b.no = board_no 
+        WHERE board_category_no = 7 AND student_id = ? AND club_no = ?
+        UNION
+        SELECT b.no AS boardNo, title, in_date AS inDate, url AS imgPath
+        FROM images 
+        RIGTH JOIN boards AS b 
+        ON b.no = board_no 
+        WHERE board_category_no = 7 AND student_id = ? AND club_no = ?;`;
 
       const myPagePosts = await conn.query(query, [
         userInfo.id,
@@ -99,10 +109,12 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const findScrap = `SELECT no, student_id AS studentId, st.name, st.profile_image_url AS profileImageUrl, title, scrap_description AS scrapDescription, board_description AS boardDescription, LEFT(s.in_date, 10) AS inDate
-      FROM scraps AS s
-      INNER JOIN students AS st ON st.id = student_id
-      WHERE student_id = ? AND no = ?;`;
+      const findScrap = `
+        SELECT no, student_id AS studentId, st.name, st.profile_image_url AS profileImageUrl, title, scrap_description AS scrapDescription, board_description AS boardDescription, LEFT(s.in_date, 10) AS inDate
+        FROM scraps AS s
+        INNER JOIN students AS st 
+        ON st.id = student_id
+        WHERE student_id = ? AND no = ?;`;
 
       const scrap = await conn.query(findScrap, [
         userInfo.id,
