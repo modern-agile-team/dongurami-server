@@ -4,6 +4,7 @@ const BoardStorage = require('./BoardStorage');
 const AdminoOptionStorage = require('../AdminOption/AdminOptionStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
+const BoardUtil = require('./Utils');
 const boardCategory = require('../Category/board');
 const makeResponse = require('../../utils/makeResponse');
 const getRequestNullKey = require('../../utils/getRequestNullKey');
@@ -108,13 +109,7 @@ class Board {
 
       const boards = await BoardStorage.findAllByCategoryNum(boardInfo);
 
-      for (const board of boards) {
-        if (board.writerHiddenFlag) {
-          board.studentId = '익명';
-          board.studentName = '익명';
-          board.profileImageUrl = null;
-        }
-      }
+      BoardUtil.changeAnonymous(boards);
 
       return makeResponse(200, '게시판 조회 성공', { boards });
     } catch (err) {
@@ -161,11 +156,7 @@ class Board {
       }
       board.isWriter = boardInfo.studentId === board.studentId;
 
-      if (board.writerHiddenFlag === 1) {
-        board.name = '익명1';
-        board.studentId = '익명1';
-        board.profileImageUrl = null;
-      }
+      BoardUtil.changeAnonymous(board);
 
       return makeResponse(200, '게시글 조회 성공', { board });
     } catch (err) {
@@ -205,12 +196,12 @@ class Board {
 
       // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 수정 가능
       if (boardInfo.category === 5 || boardInfo.category === 6) {
-        const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
+        const boardAdminFlag = await AdminoOptionStorage.findBoardAdminFlag(
           this.params.clubNum,
           user.id
         );
 
-        if (!boardFlag) {
+        if (!boardAdminFlag) {
           return makeResponse(403, '게시글 수정 권한이 없습니다.');
         }
       }
