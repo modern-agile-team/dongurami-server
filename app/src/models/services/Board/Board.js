@@ -42,7 +42,9 @@ class Board {
 
     if (clubNum !== undefined && clubNum > 1) {
       boardInfo.clubNum = clubNum;
-    } else if (boardInfo.category === 4) {
+    }
+
+    if (boardInfo.category === 4) {
       if (boardInfo.images.length === 0) {
         return makeResponse(400, '사진을 첨부해주세요');
       }
@@ -61,7 +63,8 @@ class Board {
     try {
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
-      return makeResponse(201, '게시글 생성 성공', { boardNum });
+      if (boardNum) return makeResponse(201, '게시글 생성 성공', { boardNum });
+      return makeResponse(400, '게시글 생성 실패');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -94,6 +97,7 @@ class Board {
         if (!club) {
           return makeResponse(404, '존재하지 않는 동아리입니다.');
         }
+
         if (boardInfo.category === 5 && !user.isAdmin) {
           if (!user.clubNum.includes(Number(clubNum))) {
             return makeResponse(403, '해당 동아리에 가입하지 않았습니다.');
@@ -197,6 +201,8 @@ class Board {
         'boards'
       );
 
+      if (!writerCheck.success) return writerCheck;
+
       // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 수정 가능
       if (boardInfo.category === 5 || boardInfo.category === 6) {
         const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
@@ -204,13 +210,10 @@ class Board {
           user.id
         );
 
-        if (!writerCheck.success) {
-          if (!boardFlag) {
-            return makeResponse(403, '게시글 수정 권한이 없습니다.');
-          }
-          return writerCheck;
+        if (!boardFlag) {
+          return makeResponse(403, '게시글 수정 권한이 없습니다.');
         }
-      } else if (!writerCheck.success) return writerCheck;
+      }
 
       const isUpdate = await BoardStorage.updateOneByBoardNum(boardInfo);
 
@@ -235,6 +238,8 @@ class Board {
         'boards'
       );
 
+      if (!writerCheck.success) return writerCheck;
+
       // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 삭제 가능
       if (boardInfo.category === 5 || boardInfo.category === 6) {
         const boardAdminFlag = await AdminoOptionStorage.findBoardAdminFlag(
@@ -242,13 +247,10 @@ class Board {
           user.id
         );
 
-        if (!writerCheck.success) {
-          if (!boardAdminFlag) {
-            return makeResponse(403, '게시글 수정 권한이 없습니다.');
-          }
-          return writerCheck;
+        if (!boardAdminFlag) {
+          return makeResponse(403, '게시글 수정 권한이 없습니다.');
         }
-      } else if (!writerCheck.success) return writerCheck;
+      }
 
       const isDelete = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
