@@ -9,6 +9,12 @@ class LetterUtil {
       letter.url = `message?id=${letter.groupNo}`;
     });
   }
+
+  static checkHiddenFlag(letters) {
+    letters.forEach((letter) => {
+      if (letter.hiddenFlag) letter.name = '익명';
+    });
+  }
 }
 
 module.exports = LetterUtil;

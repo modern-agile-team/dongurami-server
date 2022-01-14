@@ -25,7 +25,7 @@ class Letter {
     }
   }
 
-  async findLetters() {
+  async findAllLetterList() {
     const { id } = this.auth;
 
     try {
@@ -33,13 +33,10 @@ class Letter {
         return { success: false, msg: '본인만 열람 가능합니다.' };
       }
 
-      const letters = await LetterStorage.findLetters(id);
-
-      letters.forEach((letter) => {
-        if (letter.hiddenFlag) letter.name = '익명';
-      });
+      const letters = await LetterStorage.findAllLetterList(id);
 
       if (letters[0]) {
+        LetterUtil.checkHiddenFlag(letters);
         return { success: true, msg: '쪽지 전체 조회 성공', letters };
       }
       return { success: true, msg: '쪽지가 존재하지 않습니다.' };

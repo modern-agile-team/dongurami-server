@@ -26,19 +26,23 @@ class LetterStorage {
     }
   }
 
-  static async findLetters(id) {
+  static async findAllLetterList(id) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT l.no, s.name, l.description, group_no AS groupNo, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS hiddenFlag
-      FROM letters AS l
-      LEFT JOIN students AS s ON IF (sender_id = ?, recipient_id = s.id, sender_id = s.id)
-      WHERE no IN (SELECT MAX(no) FROM letters
-      WHERE host_id = ? AND delete_flag = 0 
-      GROUP BY group_no)
-      ORDER BY l.in_date DESC;`;
+      const query = `
+        SELECT l.no, s.name, l.description, group_no AS groupNo, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS hiddenFlag
+        FROM letters AS l
+        LEFT JOIN students AS s 
+        ON IF (sender_id = ?, recipient_id = s.id, sender_id = s.id)
+        WHERE no 
+        IN (SELECT MAX(no) 
+        FROM letters
+        WHERE host_id = ? AND delete_flag = 0 
+        GROUP BY group_no)
+        ORDER BY l.in_date DESC;`;
 
       const letters = await conn.query(query, [id, id, id]);
 

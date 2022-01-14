@@ -16,10 +16,10 @@ const process = {
     return res.status(500).json(response.clientMsg);
   },
 
-  findLetters: async (req, res) => {
+  findAllLetterList: async (req, res) => {
     const letter = new Letter(req);
     const { id } = req.params;
-    const response = await letter.findLetters();
+    const response = await letter.findAllLetterList();
 
     if (response.success) {
       logger.info(`GET /api/letter/${id} 200: ${response.msg}`);
