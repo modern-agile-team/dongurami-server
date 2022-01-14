@@ -86,9 +86,9 @@ class Board {
 
     try {
       if (boardInfo.category === 5 || boardInfo.category === 6) {
-        const isClub = await BoardStorage.findClub(clubNum);
+        const club = await BoardStorage.findClub(clubNum);
 
-        if (!isClub) {
+        if (!club) {
           return makeResponse(404, '존재하지 않는 동아리입니다.');
         }
         if (boardInfo.category === 5 && !user.isAdmin) {
@@ -152,7 +152,7 @@ class Board {
       if (board === undefined) {
         return makeResponse(404, '해당 게시판에 존재하지 않는 글입니다.');
       }
-      board.isWriter = boardInfo.studentId === board.studentId ? 1 : 0;
+      board.isWriter = boardInfo.studentId === board.studentId;
 
       if (board.writerHiddenFlag === 1) {
         board.name = '익명1';
@@ -206,12 +206,9 @@ class Board {
         }
       } else if (!writerCheck.success) return writerCheck;
 
-      const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
+      const isUpdate = await BoardStorage.updateOneByBoardNum(boardInfo);
 
-      if (updateBoardCnt === 0) {
-        return makeResponse(404, '해당 게시글이 없습니다.');
-      }
-
+      if (isUpdate === 0) return makeResponse(404, '해당 게시글이 없습니다.');
       return makeResponse(200, '게시글 수정 성공');
     } catch (err) {
       return Error.ctrl('', err);
@@ -234,24 +231,22 @@ class Board {
 
       // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 삭제 가능
       if (boardInfo.category === 5 || boardInfo.category === 6) {
-        const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
+        const boardAdminFlag = await AdminoOptionStorage.findBoardAdminFlag(
           this.params.clubNum,
           user.id
         );
 
         if (!writerCheck.success) {
-          if (!boardFlag) {
+          if (!boardAdminFlag) {
             return makeResponse(403, '게시글 수정 권한이 없습니다.');
           }
           return writerCheck;
         }
       } else if (!writerCheck.success) return writerCheck;
 
-      const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
+      const isDelete = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
-      if (deleteBoardCnt === 0) {
-        return makeResponse(404, '해당 게시글이 없습니다.');
-      }
+      if (isDelete === 0) return makeResponse(404, '해당 게시글이 없습니다.');
       return makeResponse(200, '게시글 삭제 성공');
     } catch (err) {
       return Error.ctrl('', err);
@@ -276,11 +271,9 @@ class Board {
         return makeResponse(202, '본인의 글은 조회수가 증가하지 않습니다.');
       }
 
-      const updateBoardCnt = await BoardStorage.updateOnlyHitByNum(boardInfo);
+      const isUpdate = await BoardStorage.updateOnlyHitByNum(boardInfo);
 
-      if (updateBoardCnt === 0) {
-        return makeResponse(404, '해당 게시글이 없습니다.');
-      }
+      if (isUpdate === 0) return makeResponse(404, '해당 게시글이 없습니다.');
       return makeResponse(200, '조회수 1 증가');
     } catch (err) {
       return Error.ctrl('', err);
