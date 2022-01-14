@@ -1,7 +1,7 @@
 'use strict';
 
 class LetterUtil {
-  static checkHiddenFlag(letters) {
+  static checkHiddenFlagForNoti(letters) {
     letters.forEach((letter) => {
       if (letter.hiddenFlag) {
         letter.name = '익명';

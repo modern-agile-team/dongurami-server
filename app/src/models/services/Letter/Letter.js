@@ -16,29 +16,7 @@ class Letter {
       const letters = await LetterStorage.findLetterNotifications(this.auth.id);
 
       if (letters[0]) {
-        LetterUtil.checkHiddenFlag(letters);
-        return { success: true, msg: '쪽지 알람 전체 조회 성공', letters };
-      }
-      return { success: true, msg: '생성된 쪽지가 없습니다.' };
-    } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
-    }
-  }
-
-  async xxfindLetterNotifications() {
-    const { id } = this.auth;
-
-    try {
-      const letters = await LetterStorage.findLetterNotifications(id);
-
-      letters.forEach((letter) => {
-        if (letter.hiddenFlag) {
-          letter.name = '익명';
-        }
-        letter.url = `message?id=${letter.groupNo}`;
-      });
-
-      if (letters[0]) {
+        LetterUtil.checkHiddenFlagForNoti(letters);
         return { success: true, msg: '쪽지 알람 전체 조회 성공', letters };
       }
       return { success: true, msg: '생성된 쪽지가 없습니다.' };
