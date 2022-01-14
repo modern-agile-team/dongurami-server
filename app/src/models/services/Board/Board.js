@@ -6,6 +6,7 @@ const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
 const makeResponse = require('../../utils/makeResponse');
+const getRequestNullKey = require('../../utils/getRequestNullKey');
 
 class Board {
   constructor(req) {
@@ -29,12 +30,14 @@ class Board {
       hiddenFlag: board.hiddenFlag || 0,
     };
 
-    if (boardInfo.category === 1 && user.isAdmin === 0) {
-      return makeResponse(400, '전체공지는 관리자만 작성 가능합니다.');
+    const nullKey = getRequestNullKey(board, ['title', 'description']);
+
+    if (nullKey) {
+      return makeResponse(404, `${nullKey}(가) 존재하지 않습니다.`);
     }
 
-    if (!(boardInfo.title && boardInfo.description)) {
-      return makeResponse(404, '제목이나 본문이 존재하지 않습니다.');
+    if (boardInfo.category === 1 && user.isAdmin === 0) {
+      return makeResponse(400, '전체공지는 관리자만 작성 가능합니다.');
     }
 
     if (clubNum !== undefined && clubNum > 1) {
@@ -169,17 +172,20 @@ class Board {
   async updateOneByBoardNum() {
     const user = this.auth;
     const boardInfo = {
-      title: this.board.title,
-      description: this.board.description,
+      title: this.body.title,
+      description: this.body.description,
       boardNum: this.params.boardNum,
-      images: this.board.images,
       category: boardCategory[this.params.category],
-      hiddenFlag: this.board.hiddenFlag || 0,
+      images: this.body.images || [],
+      hiddenFlag: this.body.hiddenFlag || 0,
     };
 
-    if (!(boardInfo.title && boardInfo.description)) {
-      return makeResponse(400, '제목이나 본문이 존재하지 않습니다.');
+    const nullKey = getRequestNullKey(this.body, ['title', 'description']);
+
+    if (nullKey) {
+      return makeResponse(404, `${nullKey}(가) 존재하지 않습니다.`);
     }
+
     if (boardInfo.category === 4 && boardInfo.images.length === 0) {
       return makeResponse(400, '사진을 첨부해주세요');
     }
