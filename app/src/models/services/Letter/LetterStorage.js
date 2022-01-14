@@ -9,10 +9,12 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT l.no, s.name, l.description, l.writer_hidden_flag AS hiddenFlag, l.group_no AS groupNo FROM letters AS l
-      LEFT JOIN students as s ON sender_id = s.id
-      WHERE host_id = ? AND sender_id != ? AND reading_flag = 0
-      ORDER BY l.in_date DESC;`;
+      const query = `
+        SELECT l.no, s.name, l.description, l.writer_hidden_flag AS hiddenFlag, l.group_no AS groupNo FROM letters AS l
+        LEFT JOIN students as s 
+        ON sender_id = s.id
+        WHERE host_id = ? AND sender_id != ? AND reading_flag = 0
+        ORDER BY l.in_date DESC;`;
 
       const letters = await conn.query(query, [id, id]);
 
