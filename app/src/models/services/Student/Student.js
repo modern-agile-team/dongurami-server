@@ -22,23 +22,20 @@ class Student {
   async login() {
     const client = this.body;
 
-    if (!Util.idOrPasswordNullCheck(client))
+    if (!Util.idOrPasswordNullCheck(client)) {
       return makeResponse(400, '아이디 또는 비밀번호를 확인해주세요.');
+    }
 
     try {
       const checkedId = await StudentStorage.findOneById(client.id);
 
-      if (!checkedId) {
-        return makeResponse(401, '가입된 아이디가 아닙니다.');
-      }
+      if (!checkedId) return makeResponse(401, '가입된 아이디가 아닙니다.');
 
       if (Util.comparePassword(client.password, checkedId.password)) {
         const clubNum = await StudentStorage.findOneByLoginedId(client.id);
         const jwt = await Auth.createJWT(checkedId, clubNum);
 
-        return makeResponse(200, '로그인에 성공하셨습니다.', {
-          jwt,
-        });
+        return makeResponse(200, '로그인에 성공하셨습니다.', { jwt });
       }
       return makeResponse(401, '잘못된 비밀번호입니다.');
     } catch (err) {
