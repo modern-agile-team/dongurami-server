@@ -70,39 +70,6 @@ class MyPageStorage {
     }
   }
 
-  static async xxfindAllScrapsByclubNum(userInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const scrap = `SELECT no AS scrapNo, title, in_date AS inDate, file_url AS imgPath
-      FROM scraps
-      WHERE student_id = ? AND club_no = ? ORDER BY in_date DESC;`;
-      const board = `SELECT b.no AS boardNo, title, in_date AS inDate, url AS imgPath
-      FROM boards AS b LEFT JOIN images ON b.no = board_no 
-      WHERE board_category_no = 7 AND student_id = ? AND club_no = ?
-      UNION
-      SELECT b.no AS boardNo, title, in_date AS inDate, url AS imgPath
-      FROM images RIGTH JOIN boards AS b ON b.no = board_no 
-      WHERE board_category_no = 7 AND student_id = ? AND club_no = ?;`;
-
-      const scraps = await conn.query(scrap, [userInfo.id, userInfo.clubNum]);
-      const boards = await conn.query(board, [
-        userInfo.id,
-        userInfo.clubNum,
-        userInfo.id,
-        userInfo.clubNum,
-      ]);
-
-      return { scraps, boards };
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
   static async findAllBoardsAndComments(id) {
     let conn;
 

@@ -40,7 +40,7 @@ class MyPage {
     return myPagePosts;
   }
 
-  async findAllScrapsMyPagePosts() {
+  async findAllScrapsAndMyPagePosts() {
     const { params } = this;
 
     try {
@@ -55,41 +55,9 @@ class MyPage {
       }
 
       const scraps = await this.findAllScraps();
-      const boards = await this.findAllMyPagePosts();
+      const myPagePosts = await this.findAllMyPagePosts();
 
-      if (scraps || boards) {
-        return { success: true, msg: '전체 글 조회 성공', scraps, boards };
-      }
-      return { success: true, msg: '글 내역이 존재하지 않습니다.' };
-    } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
-    }
-  }
-
-  async xxfindAllScrapsByClubNum() {
-    const { params } = this;
-
-    try {
-      if (params.id !== this.auth.id) {
-        return { succeess: false, msg: '본인만 열람 가능합니다.' };
-      }
-
-      const userInfo = {
-        id: params.id,
-        clubNum: params.clubNum,
-      };
-
-      const isClub = await MyPageStorage.existClub(userInfo.clubNum);
-
-      if (!isClub) {
-        return { success: false, msg: '존재하지 않는 동아리입니다.' };
-      }
-
-      const { scraps, boards } = await MyPageStorage.findAllScrapsByclubNum(
-        userInfo
-      );
-
-      if (scraps || boards) {
+      if (scraps || myPagePosts) {
         return { success: true, msg: '전체 글 조회 성공', scraps, boards };
       }
       return { success: true, msg: '글 내역이 존재하지 않습니다.' };
