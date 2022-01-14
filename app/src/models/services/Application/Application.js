@@ -206,25 +206,6 @@ class Application {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
-
-  async findOneByClubNum() {
-    const { clubNum } = this.params;
-
-    try {
-      const { success, applicantInfo, questionsAnswers } =
-        await ApplicationStorage.findOneByClubNum(clubNum);
-
-      if (success) {
-        return { success: true, applicantInfo, questionsAnswers };
-      }
-      return {
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
-    }
-  }
 }
 
 module.exports = Application;

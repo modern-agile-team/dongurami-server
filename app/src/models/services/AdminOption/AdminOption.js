@@ -1,7 +1,6 @@
 'use strict';
 
 const AdminOptionStorage = require('./AdminOptionStorage');
-const ApplicationStorage = require('../Application/ApplicationStorage');
 const Error = require('../../utils/Error');
 
 class AdminOption {
@@ -16,14 +15,14 @@ class AdminOption {
     const user = this.auth;
 
     try {
-      const adminInfo = {
+      const clubAdminInfo = {
         id: user.id,
-        clubNum: Number(this.params.clubNum),
+        clubNum: this.params.clubNum,
       };
 
-      const clubAdminId = await AdminOptionStorage.findOneById(adminInfo);
+      const clubAdminId = await AdminOptionStorage.findOneById(clubAdminInfo);
 
-      if (clubAdminId === adminInfo.id || user.isAdmin === 1) {
+      if (clubAdminId === clubAdminInfo.id || user.isAdmin) {
         return {
           success: true,
           msg: '권한 있음',
@@ -34,20 +33,32 @@ class AdminOption {
         msg: '동아리 관리 페이지에 접근 권한이 없습니다.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
-  async findOneByClubNum() {
-    const clubNum = Number(this.params.clubNum);
+  async checkLeader() {
+    const leader = await AdminOptionStorage.findLeaderByClubNum(
+      this.params.clubNum
+    );
 
+    if (leader !== this.auth.id) {
+      return {
+        success: false,
+        msg: '회장만 접근이 가능합니다.',
+      };
+    }
+    return { success: true };
+  }
+
+  async findOneByClubNum() {
     try {
       const { success, leader, clubName, memberAndAuthList } =
-        await AdminOptionStorage.findOneByClubNum(clubNum);
+        await AdminOptionStorage.findOneByClubNum(this.params.clubNum);
 
       if (success) {
         return {
-          success: true,
+          success,
           msg: '동아리원 정보 조회 성공',
           leader,
           clubName,
@@ -59,80 +70,87 @@ class AdminOption {
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
+    }
+  }
+
+  async findApplicantsByClubNum() {
+    try {
+      const { success, applicantInfo, questionsAnswers } =
+        await AdminOptionStorage.findApplicantsByClubNum(this.params.clubNum);
+
+      if (success) {
+        return { success, applicantInfo, questionsAnswers };
+      }
+      return {
+        success: false,
+        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      };
+    } catch (err) {
+      return Error.ctrl('', err);
     }
   }
 
   async updateLeaderById() {
-    const user = this.auth;
-    const clubNum = Number(this.params.clubNum);
-    const { newLeader } = this.body;
-
     try {
-      const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
+      const isLeader = await this.checkLeader();
 
-      if (leader === user.id) {
-        const leaderInfo = {
-          clubNum,
-          newLeader,
-        };
-
-        const isChangeLeader =
-          await AdminOptionStorage.updateNewLeaderByClubNum(leaderInfo);
-
-        if (isChangeLeader) {
-          const isUpdate = await AdminOptionStorage.updateLeaderAdminOptionById(
-            leaderInfo
-          );
-
-          if (isUpdate) {
-            return { success: true, msg: '회장이 양도되었습니다.' };
-          }
-          return {
-            success: false,
-            msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-          };
-        }
-      }
-      return {
-        success: false,
-        msg: '회장만 접근이 가능합니다.',
-      };
+      if (!isLeader.success) return isLeader;
+      return await this.changeNewLeader();
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
-  async updateAdminOptionById() {
-    const user = this.auth;
-    const clubNum = Number(this.params.clubNum);
-    const adminOption = this.body;
+  async changeNewLeader() {
+    const leaderInfo = {
+      clubNum: this.params.clubNum,
+      newLeader: this.body.newLeader,
+    };
 
-    try {
-      const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
+    const isChangeLeader = await AdminOptionStorage.updateNewLeaderByClubNum(
+      leaderInfo
+    );
 
-      if (leader === user.id) {
-        const adminInfo = {
-          clubNum,
-          adminOption: adminOption.adminOptions,
-        };
+    const isUpdate = await AdminOptionStorage.updateLeaderAdminOptionById(
+      leaderInfo
+    );
 
-        const isUpdate = await AdminOptionStorage.updateAdminOptionById(
-          adminInfo
-        );
-
-        if (isUpdate) {
-          return { success: true, msg: '권한이 수정되었습니다.' };
-        }
-        return {
-          success: false,
-          msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-        };
-      }
-      return { success: false, msg: '회장만 접근이 가능합니다.' };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    if (isChangeLeader && isUpdate) {
+      return { success: true, msg: '회장이 양도되었습니다.' };
     }
+    return {
+      success: false,
+      msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+    };
+  }
+
+  async updateAdminOptionById() {
+    try {
+      const isLeader = await this.checkLeader();
+
+      if (!isLeader.success) return isLeader;
+      return await this.changeAdminOption();
+    } catch (err) {
+      return Error.ctrl('', err);
+    }
+  }
+
+  async changeAdminOption() {
+    const adminInfo = {
+      clubNum: this.params.clubNum,
+      adminOption: this.body.adminOptions,
+    };
+
+    const isUpdate = await AdminOptionStorage.updateAdminOptionById(adminInfo);
+
+    if (isUpdate) {
+      return { success: true, msg: '권한이 수정되었습니다.' };
+    }
+    return {
+      success: false,
+      msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+    };
   }
 
   async createMemberById() {
@@ -142,11 +160,11 @@ class AdminOption {
         applicant: this.body.applicant,
       };
 
-      const isUpdate = await ApplicationStorage.updateAcceptedApplicantById(
+      const isUpdate = await AdminOptionStorage.updateAcceptedApplicantById(
         applicantInfo
       );
 
-      const isCreate = await ApplicationStorage.createMemberById(applicantInfo);
+      const isCreate = await AdminOptionStorage.createMemberById(applicantInfo);
 
       if (isUpdate && isCreate) {
         return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
@@ -156,64 +174,63 @@ class AdminOption {
         msg: '존재하지 않는 회원이거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
-  async updateApplicantById() {
+  async updateRejectedApplicantById() {
     try {
       const applicantInfo = {
         clubNum: this.params.clubNum,
         applicantId: this.body.applicant,
       };
-      const isUpdate = await ApplicationStorage.updateRejectedApplicantById(
+
+      const isUpdate = await AdminOptionStorage.updateRejectedApplicantById(
         applicantInfo
       );
 
       if (isUpdate) {
-        return { success: true, msg: '동아리 가입 신청을 거절하셨습니다.' };
+        return { success: true, msg: '동아리 가입 신청을 거절했습니다.' };
       }
       return {
         success: false,
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async deleteMemberById() {
-    const user = this.auth;
-    const clubNum = Number(this.params.clubNum);
+    try {
+      const isLeader = await this.checkLeader();
+
+      if (!isLeader.success) return isLeader;
+      return await this.banishMemberById();
+    } catch (err) {
+      return Error.ctrl('', err);
+    }
+  }
+
+  async banishMemberById() {
     const { memberId } = this.params;
 
-    try {
-      const leader = await AdminOptionStorage.findLeaderByClubNum(clubNum);
+    const memberInfo = {
+      clubNum: this.params.clubNum,
+      memberId,
+    };
 
-      if (leader === user.id) {
-        const memberInfo = {
-          clubNum,
-          memberId,
-        };
+    const isDelete = await AdminOptionStorage.deleteMemberById(memberInfo);
 
-        const isDelete = await AdminOptionStorage.deleteMemberById(memberInfo);
+    const isUpdate = await AdminOptionStorage.updateReadingFlagById(memberInfo);
 
-        const isUpdate = await AdminOptionStorage.updateReadingFlagById(
-          memberInfo
-        );
-
-        if (isDelete && isUpdate) {
-          return { success: true, msg: `${memberId}님이 추방되었습니다.` };
-        }
-        return {
-          success: false,
-          msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-        };
-      }
-      return { success: false, msg: '회장만 접근이 가능합니다.' };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+    if (isDelete && isUpdate) {
+      return { success: true, msg: `${memberId}님이 추방되었습니다.` };
     }
+    return {
+      success: false,
+      msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+    };
   }
 }
 

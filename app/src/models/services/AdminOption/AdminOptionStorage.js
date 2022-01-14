@@ -9,7 +9,9 @@ class AdminoOptionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT student_id AS studentId FROM members 
+      const query = `
+        SELECT student_id AS studentId 
+        FROM members 
         WHERE club_no = ? AND student_id = ? AND join_admin_flag = 1;`;
 
       const member = await conn.query(query, [adminInfo.clubNum, adminInfo.id]);
@@ -29,8 +31,10 @@ class AdminoOptionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT board_admin_flag AS boardAdminFlag FROM members 
-      WHERE club_no = ? AND student_id = ?;`;
+      const query = `
+        SELECT board_admin_flag AS boardAdminFlag 
+        FROM members 
+        WHERE club_no = ? AND student_id = ?;`;
 
       const boardFlag = await conn.query(query, [clubNum, id]);
 
@@ -48,13 +52,17 @@ class AdminoOptionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const memberAndAuthQuery = `SELECT s.name, s.id, s.grade, s.major, s.gender, s.phone_number AS phoneNum,  
-        m.join_admin_flag AS joinAdminFlag, m.board_admin_flag AS boardAdminFlag 
-        FROM members AS m JOIN students AS s 
+      const memberAndAuthQuery = `
+        SELECT s.name, s.id, s.grade, s.major, s.gender, s.phone_number AS phoneNum, m.join_admin_flag AS joinAdminFlag, m.board_admin_flag AS boardAdminFlag 
+        FROM members AS m 
+        JOIN students AS s 
         ON s.id = m.student_id AND m.club_no = ?;`;
 
-      const leaderAndClubNameQuery = `SELECT s.name AS leader , c.name FROM students AS s 
-        JOIN clubs AS c ON c.leader = s.id AND c.no = ?;`;
+      const leaderAndClubNameQuery = `
+        SELECT s.name AS leader , c.name 
+        FROM students AS s 
+        JOIN clubs AS c 
+        ON c.leader = s.id AND c.no = ?;`;
 
       const memberAndAuthList = await conn.query(memberAndAuthQuery, clubNum);
 
@@ -76,13 +84,138 @@ class AdminoOptionStorage {
     }
   }
 
+  static async findApplicantsByClubNum(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const applicantInfoQuery = `
+        SELECT app.in_date AS inDate, s.name, s.id, s.major, s.grade, s.gender, s.phone_number AS phoneNum 
+        FROM students AS s 
+        JOIN applicants AS app 
+        ON app.club_no = ? AND app.student_id = s.id AND app.reading_flag = 0;`;
+
+      const questionAnswerQuery = `
+        SELECT app.student_id AS id, q.description AS question, a.description AS answer
+        FROM applicants AS app 
+        JOIN answers AS a 
+        ON a.student_id = app.student_id AND app.club_no = ? AND app.reading_flag = 0 
+        JOIN questions AS q
+        ON a.question_no = q.no AND app.club_no = q.club_no 
+        ORDER BY id`;
+
+      const applicantQuery = `
+        SELECT student_id AS id 
+        FROM applicants 
+        WHERE reading_flag = 0 AND club_no = ?;`;
+
+      const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
+      const questionAnswerInfo = await conn.query(questionAnswerQuery, clubNum);
+      const applicants = await conn.query(applicantQuery, clubNum);
+
+      const questionsAnswers = applicants.map((applicant) => {
+        return questionAnswerInfo.filter((qAndA) => {
+          return applicant.id === qAndA.id;
+        });
+      });
+
+      return {
+        success: true,
+        applicantInfo,
+        questionsAnswers,
+      };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateAcceptedApplicantById(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE applicants 
+        SET reading_flag = 1 
+        WHERE club_no = ? AND student_id = ?;`;
+
+      const approvedApplicant = await conn.query(query, [
+        userInfo.clubNum,
+        userInfo.applicant,
+      ]);
+
+      if (approvedApplicant.affectedRows) return true;
+      return false;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async createMemberById(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        INSERT INTO members (student_id, club_no, join_admin_flag, board_admin_flag) 
+        VALUES (?, ?, 0, 0);`;
+
+      const updateMember = await conn.query(query, [
+        userInfo.applicant,
+        userInfo.clubNum,
+      ]);
+
+      if (updateMember.affectedRows) return true;
+      return false;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateRejectedApplicantById(applicantInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE applicants 
+        SET reading_flag = 2 
+        WHERE club_no = ? AND student_id = ?;`;
+
+      const updateRejectedApplicant = await conn.query(query, [
+        applicantInfo.clubNum,
+        applicantInfo.applicantId,
+      ]);
+
+      if (updateRejectedApplicant.affectedRows) return true;
+      return false;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findLeaderByClubNum(clubNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'SELECT leader FROM clubs WHERE no = ?;';
+      const query = `
+        SELECT leader 
+        FROM clubs 
+        WHERE no = ?;`;
 
       const leader = await conn.query(query, clubNum);
 
@@ -100,7 +233,10 @@ class AdminoOptionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'UPDATE clubs SET leader = ? WHERE no = ?;';
+      const query = `
+        UPDATE clubs 
+        SET leader = ? 
+        WHERE no = ?;`;
 
       const updateLeader = await conn.query(query, [
         leaderInfo.newLeader,
@@ -122,12 +258,12 @@ class AdminoOptionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'UPDATE members SET join_admin_flag = ?, board_admin_flag = ? WHERE club_no = ? AND student_id = ?;';
+      const query = `
+        UPDATE members 
+        SET join_admin_flag = 1, board_admin_flag = 1 
+        WHERE club_no = ? AND student_id = ?;`;
 
       const adminOption = await conn.query(query, [
-        1,
-        1,
         leaderInfo.clubNum,
         leaderInfo.newLeader,
       ]);
@@ -150,7 +286,9 @@ class AdminoOptionStorage {
       let query = '';
 
       adminInfo.adminOption.forEach((option) => {
-        query += `UPDATE members SET join_admin_flag = "${option.joinAdminFlag}", board_admin_flag = "${option.boardAdminFlag}"
+        query += `
+          UPDATE members 
+          SET join_admin_flag = "${option.joinAdminFlag}", board_admin_flag = "${option.boardAdminFlag}"
           WHERE student_id = "${option.id}" AND club_no = "${adminInfo.clubNum}";`;
       });
 
@@ -174,7 +312,9 @@ class AdminoOptionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'DELETE FROM members WHERE club_no = ? AND student_id = ?;';
+      const query = `
+        DELETE FROM members 
+        WHERE club_no = ? AND student_id = ?;`;
 
       const deleteMember = await conn.query(query, [
         memberInfo.clubNum,
@@ -196,7 +336,10 @@ class AdminoOptionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE applicants SET reading_flag = 2 WHERE club_no = ? AND student_id = ?;`;
+      const query = `
+        UPDATE applicants 
+        SET reading_flag = 2 
+        WHERE club_no = ? AND student_id = ?;`;
 
       const updateApplicant = await conn.query(query, [
         memberInfo.clubNum,

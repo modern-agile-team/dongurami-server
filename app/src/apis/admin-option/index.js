@@ -42,7 +42,7 @@ router.put(
   '/:clubNum/applicant',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
-  ctrl.process.updateApplicantById
+  ctrl.process.updateRejectedApplicantById
 );
 
 router.delete(
