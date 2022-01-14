@@ -40,6 +40,35 @@ class LetterStorage {
         WHERE no 
         IN (SELECT MAX(no) 
         FROM letters
+        WHERE host_id = ?
+        GROUP BY group_no)
+        ORDER BY l.in_date DESC;`;
+
+      const letters = await conn.query(query, [id, id, id]);
+
+      return letters;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  // delete flag 보류..
+  static async xxfindAllLetterList(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT l.no, s.name, l.description, group_no AS groupNo, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS hiddenFlag
+        FROM letters AS l
+        LEFT JOIN students AS s 
+        ON IF (sender_id = ?, recipient_id = s.id, sender_id = s.id)
+        WHERE no 
+        IN (SELECT MAX(no) 
+        FROM letters
         WHERE host_id = ? AND delete_flag = 0 
         GROUP BY group_no)
         ORDER BY l.in_date DESC;`;
@@ -54,15 +83,21 @@ class LetterStorage {
     }
   }
 
-  static async findLetterByGroupNo(groupNo) {
+  static async findLetterParticipantInfo(groupInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT sender_id AS senderId, recipient_id AS recipientId FROM letters WHERE group_no = ? AND delete_flag = 0;`;
+      const query = `
+        SELECT sender_id AS senderId, recipient_id AS recipientId, group_no AS groupNo
+        FROM letters 
+        WHERE group_no = ? AND host_id = ?;`;
 
-      const letterInfo = await conn.query(query, groupNo);
+      const letterInfo = await conn.query(query, [
+        groupInfo.groupNo,
+        groupInfo.id,
+      ]);
 
       return letterInfo[0];
     } catch (err) {
@@ -78,11 +113,13 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT s.name, l.sender_id AS senderId, l.recipient_id AS recipientId, description, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS otherHiddenFlag, IF (sender_id = ?, l.writer_hidden_flag, l.recipient_hidden_flag) AS myHiddenFlag
-      FROM letters AS l
-      JOIN students AS s ON s.id = l.sender_id OR s.id = l.recipient_id 
-      WHERE l.host_id = ? AND s.id = ? AND group_no = ? AND delete_flag = 0
-      ORDER BY l.in_date DESC;`;
+      const query = `
+        SELECT s.name, l.sender_id AS senderId, l.recipient_id AS recipientId, description, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS otherHiddenFlag, IF (sender_id = ?, l.writer_hidden_flag, l.recipient_hidden_flag) AS myHiddenFlag
+        FROM letters AS l
+        JOIN students AS s
+        ON s.id = l.sender_id OR s.id = l.recipient_id 
+        WHERE l.host_id = ? AND s.id = ? AND group_no = ? AND delete_flag = 0
+        ORDER BY l.in_date DESC;`;
 
       const letters = await conn.query(query, [
         letterInfo.id,
@@ -221,24 +258,25 @@ class LetterStorage {
     }
   }
 
-  static async findLetterInfo(groupNo) {
-    let conn;
+  // static async findLetterInfo(groupNo) {
+  //   let conn;
 
-    try {
-      conn = await mariadb.getConnection();
+  //   try {
+  //     conn = await mariadb.getConnection();
 
-      const query = `SELECT sender_id AS senderId, recipient_id AS recipientId, group_no AS groupNo
-      FROM letters WHERE group_no = ?;`;
+  //     const query = `
+  //       SELECT sender_id AS senderId, recipient_id AS recipientId, group_no AS groupNo
+  //       FROM letters WHERE group_no = ?;`;
 
-      const letterInfo = await conn.query(query, groupNo);
+  //     const letterInfo = await conn.query(query, [groupNo]);
 
-      return letterInfo[0];
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
+  //     return letterInfo[0];
+  //   } catch (err) {
+  //     throw err;
+  //   } finally {
+  //     conn?.release();
+  //   }
+  // }
 
   static async updateReadingFlag(letterInfo) {
     let conn;
@@ -246,7 +284,10 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE letters SET reading_flag = 1 WHERE host_id = ? AND group_no = ?;`;
+      const query = `
+        UPDATE letters 
+        SET reading_flag = 1 
+        WHERE host_id = ? AND group_no = ?;`;
 
       const letter = await conn.query(query, [
         letterInfo.id,

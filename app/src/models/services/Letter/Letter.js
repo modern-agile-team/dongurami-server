@@ -50,52 +50,30 @@ class Letter {
     const { groupNo } = this.params;
 
     try {
-      const isLetter = await LetterStorage.findLetterByGroupNo(groupNo);
+      if (this.params.id !== id) {
+        return { success: false, msg: '본인만 열람 가능합니다.', status: 403 };
+      }
 
-      if (!isLetter) {
+      const letterInfo = await LetterStorage.findLetterParticipantInfo({
+        groupNo,
+        id,
+      });
+
+      if (!letterInfo) {
         return {
           success: false,
           msg: '존재하지 않는 쪽지입니다.',
           status: 404,
         };
       }
-      if (this.params.id !== id) {
-        return { success: false, msg: '본인만 열람 가능합니다.', status: 403 };
-      }
-      const letterInfo = await LetterStorage.findLetterInfo(groupNo);
 
-      letterInfo.id = id;
-      letterInfo.otherId =
-        letterInfo.senderId === id
-          ? letterInfo.recipientId
-          : letterInfo.senderId;
+      LetterUtil.divideId(letterInfo, id);
 
-      const reading = await LetterStorage.updateReadingFlag(letterInfo);
-
-      if (reading) {
+      if (await LetterStorage.updateReadingFlag(letterInfo)) {
         const letters = await LetterStorage.findLettersByGroup(letterInfo);
 
-        if (letters[0].otherHiddenFlag || letters[0].myHiddenFlag) {
-          letters.forEach((letter) => {
-            if (letter.otherHiddenFlag) {
-              letter.name = '익명';
-              if (letter.senderId !== id) {
-                letter.senderId = '익명';
-              } else {
-                letter.recipientId = '익명';
-              }
-            }
-            if (letter.myHiddenFlag) {
-              if (letter.senderId !== id) {
-                letter.recipient = '익명';
-              } else {
-                letter.senderId = '익명';
-              }
-            }
-          });
-        }
-
         if (letters) {
+          LetterUtil.changeAnonymous(letters, id);
           return { success: true, msg: '쪽지 대화 목록 조회 성공', letters };
         }
       }
