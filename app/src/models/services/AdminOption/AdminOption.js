@@ -46,6 +46,7 @@ class AdminOption {
 
     if (leader !== this.auth.id) {
       return {
+        status: 400,
         success: false,
         msg: '회장만 접근이 가능합니다.',
       };
@@ -82,9 +83,10 @@ class AdminOption {
         await AdminOptionStorage.findApplicantsByClubNum(this.params.clubNum);
 
       if (success) {
-        return { success, applicantInfo, questionsAnswers };
+        return { status: 200, success, applicantInfo, questionsAnswers };
       }
       return {
+        status: 400,
         success: false,
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
@@ -119,9 +121,10 @@ class AdminOption {
     );
 
     if (isChangeLeader && isUpdate) {
-      return { success: true, msg: '회장이 양도되었습니다.' };
+      return { status: 200, success: true, msg: '회장이 양도되었습니다.' };
     }
     return {
+      status: 400,
       success: false,
       msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
     };
@@ -147,9 +150,10 @@ class AdminOption {
     const isUpdate = await AdminOptionStorage.updateAdminOptionById(adminInfo);
 
     if (isUpdate) {
-      return { success: true, msg: '권한이 수정되었습니다.' };
+      return { status: 200, success: true, msg: '권한이 수정되었습니다.' };
     }
     return {
+      status: 400,
       success: false,
       msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
     };
@@ -197,9 +201,14 @@ class AdminOption {
       );
 
       if (isUpdate) {
-        return { success: true, msg: '동아리 가입 신청을 거절했습니다.' };
+        return {
+          status: 200,
+          success: true,
+          msg: '동아리 가입 신청을 거절했습니다.',
+        };
       }
       return {
+        status: 400,
         success: false,
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
@@ -232,9 +241,14 @@ class AdminOption {
     const isUpdate = await AdminOptionStorage.updateReadingFlagById(memberInfo);
 
     if (isDelete && isUpdate) {
-      return { success: true, msg: `${memberId}님이 추방되었습니다.` };
+      return {
+        status: 200,
+        success: true,
+        msg: `${memberId}님이 추방되었습니다.`,
+      };
     }
     return {
+      status: 400,
       success: false,
       msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
     };

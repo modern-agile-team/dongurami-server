@@ -21,7 +21,6 @@ const process = {
     const adminOption = new AdminOption(req);
     const url = req.originalUrl;
     const response = {};
-
     response.memberInfo = await adminOption.findOneByClubNum();
 
     if (response.memberInfo.isError) {
@@ -55,71 +54,35 @@ const process = {
   },
 
   updateLeaderById: async (req, res) => {
-    const url = req.originalUrl;
     const adminOption = new AdminOption(req);
     const response = await adminOption.updateLeaderById();
+    const apiInfo = getApiInfo('PUT', response, req);
 
-    if (response.isError) {
-      logger.error(`PUT ${url} 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    if (!response.success) {
-      logger.error(`PUT ${url} 400: ${response.msg}`);
-      return res.status(400).json(response);
-    }
-    logger.info(`PUT ${url} 200: ${response.msg}`);
-    return res.status(200).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   updateAdminOptionById: async (req, res) => {
-    const url = req.originalUrl;
     const adminOption = new AdminOption(req);
     const response = await adminOption.updateAdminOptionById();
+    const apiInfo = getApiInfo('PUT', response, req);
 
-    if (response.isError) {
-      logger.error(`PUT ${url} 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    if (!response.success) {
-      logger.error(`PUT /${url} 400: ${response.msg}`);
-      return res.status(400).json(response);
-    }
-    logger.info(`PUT ${url} 200: ${response.msg}`);
-    return res.status(200).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   updateRejectedApplicantById: async (req, res) => {
-    const url = req.originalUrl;
     const adminOption = new AdminOption(req);
     const response = await adminOption.updateRejectedApplicantById();
+    const apiInfo = getApiInfo('PUT', response, req);
 
-    if (response.isError) {
-      logger.error(`PUT ${url} 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    if (!response.success) {
-      logger.error(`PUT ${url} 400: ${response.msg}`);
-      return res.status(400).json(response);
-    }
-    logger.info(`PUT ${url} 200: ${response.msg}`);
-    return res.status(200).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   deleteMemberById: async (req, res) => {
-    const url = req.originalUrl;
     const adminOption = new AdminOption(req);
     const response = await adminOption.deleteMemberById();
+    const apiInfo = getApiInfo('DELETE', response, req);
 
-    if (response.isError) {
-      logger.error(`DELETE ${url} 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    if (!response.success) {
-      logger.error(`DELETE ${url} 400: ${response.msg}`);
-      return res.status(400).json(response);
-    }
-    logger.info(`DELETE ${url} 200: ${response.msg}`);
-    return res.status(200).json(response);
+    return processCtrl(res, apiInfo);
   },
 };
 
