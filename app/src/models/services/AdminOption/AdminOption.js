@@ -77,17 +77,27 @@ class AdminOption {
   }
 
   async findApplicantsByClubNum() {
-    try {
-      const { success, applicantInfo, questionsAnswers } =
-        await AdminOptionStorage.findApplicantsByClubNum(this.params.clubNum);
+    const { clubNum } = this.params;
 
-      if (success) {
-        return { success, applicantInfo, questionsAnswers };
-      }
-      return {
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+    try {
+      const applicantInfo = await AdminOptionStorage.findApplicantInfoByClubNum(
+        clubNum
+      );
+
+      const questionAnswerInfo =
+        await AdminOptionStorage.findQuestionsAnswersByClubNum(clubNum);
+
+      const applicants = await AdminOptionStorage.findApplicantsByClubNum(
+        clubNum
+      );
+
+      const questionsAnswers = applicants.map((applicant) => {
+        return questionAnswerInfo.filter((qAndA) => {
+          return applicant.id === qAndA.id;
+        });
+      });
+
+      return { success: true, applicantInfo, questionsAnswers };
     } catch (err) {
       return Error.ctrl('', err);
     }

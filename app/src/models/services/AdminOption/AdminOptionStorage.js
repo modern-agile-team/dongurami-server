@@ -93,19 +93,35 @@ class AdminoOptionStorage {
     }
   }
 
-  static async findApplicantsByClubNum(clubNum) {
+  static async findApplicantInfoByClubNum(clubNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const applicantInfoQuery = `
+      const query = `
         SELECT app.in_date AS inDate, s.name, s.id, s.major, s.grade, s.gender, s.phone_number AS phoneNum 
         FROM students AS s 
         JOIN applicants AS app 
         ON app.club_no = ? AND app.student_id = s.id AND app.reading_flag = 0;`;
 
-      const questionAnswerQuery = `
+      const applicantInfo = await conn.query(query, [clubNum]);
+
+      return applicantInfo;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findQuestionsAnswersByClubNum(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
         SELECT app.student_id AS id, q.description AS question, a.description AS answer
         FROM applicants AS app 
         JOIN answers AS a 
@@ -114,28 +130,30 @@ class AdminoOptionStorage {
         ON a.question_no = q.no AND app.club_no = q.club_no 
         ORDER BY id`;
 
-      const applicantQuery = `
+      const questionAnswerInfo = await conn.query(query, [clubNum]);
+
+      return questionAnswerInfo;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findApplicantsByClubNum(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
         SELECT student_id AS id 
         FROM applicants 
         WHERE reading_flag = 0 AND club_no = ?;`;
 
-      const applicantInfo = await conn.query(applicantInfoQuery, [clubNum]);
-      const questionAnswerInfo = await conn.query(questionAnswerQuery, [
-        clubNum,
-      ]);
-      const applicants = await conn.query(applicantQuery, [clubNum]);
+      const applicants = await conn.query(query, [clubNum]);
 
-      const questionsAnswers = applicants.map((applicant) => {
-        return questionAnswerInfo.filter((qAndA) => {
-          return applicant.id === qAndA.id;
-        });
-      });
-
-      return {
-        success: true,
-        applicantInfo,
-        questionsAnswers,
-      };
+      return applicants;
     } catch (err) {
       throw err;
     } finally {
