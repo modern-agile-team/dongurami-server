@@ -22,7 +22,7 @@ class AdminOption {
 
       const clubAdminId = await AdminOptionStorage.findOneById(clubAdminInfo);
 
-      if (clubAdminId === clubAdminInfo.id || user.isAdmin) {
+      if (clubAdminId || user.isAdmin) {
         return {
           status: 200,
           success: true,
@@ -83,10 +83,9 @@ class AdminOption {
         await AdminOptionStorage.findApplicantsByClubNum(this.params.clubNum);
 
       if (success) {
-        return { status: 200, success, applicantInfo, questionsAnswers };
+        return { success, applicantInfo, questionsAnswers };
       }
       return {
-        status: 400,
         success: false,
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
