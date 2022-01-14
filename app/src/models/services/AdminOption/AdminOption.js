@@ -91,11 +91,9 @@ class AdminOption {
         clubNum
       );
 
-      const questionsAnswers = applicants.map((applicant) => {
-        return questionAnswerInfo.filter((qAndA) => {
-          return applicant.id === qAndA.id;
-        });
-      });
+      const questionsAnswers = applicants.map((applicant) =>
+        questionAnswerInfo.filter((qAndA) => applicant.id === qAndA.id)
+      );
 
       return { success: true, applicantInfo, questionsAnswers };
     } catch (err) {
