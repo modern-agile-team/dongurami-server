@@ -21,17 +21,16 @@ class Board {
     const board = this.body;
     const { clubNum } = this.params;
     const category = boardCategory[this.params.category];
+    const boardInfo = {
+      category,
+      clubNum: 1,
+      id: user.id,
+      title: board.title,
+      description: board.description,
+      hiddenFlag: board.hiddenFlag || 0,
+    };
 
     try {
-      const boardInfo = {
-        category,
-        clubNum: 1,
-        id: user.id,
-        title: board.title,
-        description: board.description,
-        hiddenFlag: board.hiddenFlag || 0,
-      };
-
       if (category === 1 && user.isAdmin === 0) {
         return makeResponse(400, '전체공지는 관리자만 작성 가능합니다.');
       }
@@ -120,15 +119,14 @@ class Board {
 
   async findAllByPromotionCategory() {
     const { query } = this;
+    const criteriaRead = {
+      clubCategory: query.category,
+      lastNum: query.lastNum,
+      sort: query.sort || 'inDate',
+      order: query.order || 'desc',
+    };
 
     try {
-      const criteriaRead = {
-        clubCategory: query.category,
-        lastNum: query.lastNum,
-        sort: query.sort || 'inDate',
-        order: query.order || 'desc',
-      };
-
       const boards = await BoardStorage.findAllByPromotionCategory(
         criteriaRead
       );
@@ -142,15 +140,14 @@ class Board {
   async findOneByBoardNum() {
     const user = this.auth;
     const { params } = this;
+    const category = boardCategory[params.category];
+    const boardInfo = {
+      category,
+      boardNum: params.boardNum,
+      studentId: user ? user.id : 0,
+    };
 
     try {
-      const category = boardCategory[params.category];
-      const boardInfo = {
-        category,
-        boardNum: params.boardNum,
-        studentId: user ? user.id : 0,
-      };
-
       if (category === 5 && !user.isAdmin) {
         if (!user.clubNum.includes(Number(clubNum))) {
           return makeResponse(403, '해당 동아리에 가입하지 않았습니다.');
@@ -179,17 +176,16 @@ class Board {
     const user = this.auth;
     const board = this.body;
     const { params } = this;
+    const category = boardCategory[params.category];
+    const boardInfo = {
+      category,
+      title: board.title,
+      description: board.description,
+      boardNum: params.boardNum,
+      hiddenFlag: board.hiddenFlag || 0,
+    };
 
     try {
-      const category = boardCategory[params.category];
-      const boardInfo = {
-        category,
-        title: board.title,
-        description: board.description,
-        boardNum: params.boardNum,
-        hiddenFlag: board.hiddenFlag || 0,
-      };
-
       if (!(board.title && board.description)) {
         return makeResponse(400, '제목이나 본문이 존재하지 않습니다.');
       }
@@ -232,14 +228,13 @@ class Board {
   async deleteOneByBoardNum() {
     const user = this.auth;
     const { params } = this;
+    const category = boardCategory[params.category];
+    const boardInfo = {
+      category,
+      boardNum: params.boardNum,
+    };
 
     try {
-      const category = boardCategory[params.category];
-      const boardInfo = {
-        category,
-        boardNum: params.boardNum,
-      };
-
       const writerCheck = await WriterCheck.ctrl(
         user.id,
         boardInfo.boardNum,
@@ -273,13 +268,13 @@ class Board {
   }
 
   async updateOnlyHitByNum() {
-    try {
-      const boardInfo = {
-        category: boardCategory[this.params.category],
-        boardNum: this.params.boardNum,
-      };
-      const userId = this.auth && this.auth.id;
+    const boardInfo = {
+      category: boardCategory[this.params.category],
+      boardNum: this.params.boardNum,
+    };
+    const userId = this.auth && this.auth.id;
 
+    try {
       const writerCheck = await WriterCheck.ctrl(
         userId,
         boardInfo.boardNum,
@@ -287,7 +282,7 @@ class Board {
       );
 
       if (writerCheck.success) {
-        return makeResponse(202, '본이의 글은 조회수가 증가하지 않습니다.');
+        return makeResponse(202, '본인의 글은 조회수가 증가하지 않습니다.');
       }
 
       const updateBoardCnt = await BoardStorage.updateOnlyHitByNum(boardInfo);
