@@ -16,7 +16,6 @@ class Student {
     this.body = req.body;
     this.auth = req.auth;
     this.params = req.params;
-    this.SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
   }
 
   async login() {

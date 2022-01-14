@@ -5,6 +5,8 @@ const StudentStorage = require('./StudentStorage');
 const makeResponse = require('../../utils/makeResponse');
 const Error = require('../../utils/Error');
 
+const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
+
 class Util {
   static idOrPasswordNullCheck(client) {
     return client.id && client.password;
@@ -19,7 +21,7 @@ class Util {
   }
 
   static createHash(password) {
-    const passwordSalt = bcrypt.genSaltSync(this.SALT_ROUNDS);
+    const passwordSalt = bcrypt.genSaltSync(SALT_ROUNDS);
     const hash = bcrypt.hashSync(password, passwordSalt);
 
     return {
