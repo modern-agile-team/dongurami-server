@@ -169,9 +169,14 @@ class AdminOption {
       const isCreate = await AdminOptionStorage.createMemberById(applicantInfo);
 
       if (isUpdate && isCreate) {
-        return { success: true, msg: '동아리 가입 신청을 승인하셨습니다.' };
+        return {
+          status: 201,
+          success: true,
+          msg: '동아리 가입 신청을 승인하셨습니다.',
+        };
       }
       return {
+        status: 400,
         success: false,
         msg: '존재하지 않는 회원이거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };

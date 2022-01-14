@@ -47,20 +47,11 @@ const process = {
   },
 
   createMemberById: async (req, res) => {
-    const url = req.originalUrl;
     const adminOption = new AdminOption(req);
     const response = await adminOption.createMemberById();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.isError) {
-      logger.error(`POST ${url} 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    if (!response.success) {
-      logger.error(`POST ${url} 400: ${response.msg}`);
-      return res.status(400).json(response);
-    }
-    logger.info(`POST ${url} 201: ${response.msg}`);
-    return res.status(201).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   updateLeaderById: async (req, res) => {
