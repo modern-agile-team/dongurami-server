@@ -20,35 +20,34 @@ class Board {
     const user = this.auth;
     const board = this.body;
     const { clubNum } = this.params;
-    const category = boardCategory[this.params.category];
     const boardInfo = {
-      category,
       clubNum: 1,
       id: user.id,
       title: board.title,
       description: board.description,
+      category: boardCategory[this.params.category],
       hiddenFlag: board.hiddenFlag || 0,
     };
 
     try {
-      if (category === 1 && user.isAdmin === 0) {
+      if (boardInfo.category === 1 && user.isAdmin === 0) {
         return makeResponse(400, '전체공지는 관리자만 작성 가능합니다.');
       }
 
-      if (!(board.title && board.description)) {
+      if (!(boardInfo.title && boardInfo.description)) {
         return makeResponse(404, '제목이나 본문이 존재하지 않습니다.');
       }
 
-      if (clubNum !== undefined && this.params.clubNum > 1) {
+      if (clubNum !== undefined && clubNum > 1) {
         boardInfo.clubNum = clubNum;
-      } else if (category === 4) {
-        if (board.images.length === 0) {
+      } else if (boardInfo.category === 4) {
+        if (boardInfo.images.length === 0) {
           return makeResponse(400, '사진을 첨부해주세요');
         }
         boardInfo.clubNum = board.clubNo;
       }
 
-      if (category === 5 || category === 6) {
+      if (boardInfo.category === 5 || boardInfo.category === 6) {
         if (!user.clubNum.includes(Number(clubNum))) {
           return makeResponse(403, '동아리원만 작성할 수 있습니다.');
         }
@@ -66,42 +65,40 @@ class Board {
   }
 
   async findAllByCategoryNum() {
-    const category = boardCategory[this.params.category];
-    const { clubNum } = this.params;
     const user = this.auth;
-    const { query } = this;
-    const criteriaRead = {
-      category,
+    const { clubNum } = this.params;
+    const boardInfo = {
       clubNum: 1,
-      sort: query.sort || 'inDate',
-      order: query.order || 'desc',
+      category: boardCategory[this.params.category],
+      sort: this.query.sort || 'inDate',
+      order: this.query.order || 'desc',
     };
 
     try {
-      if (category === undefined) {
+      if (boardInfo.category === undefined) {
         return makeResponse(404, '존재하지 않는 게시판 입니다.');
       }
-      if (category === 4 || category === 7) {
+      if (boardInfo.category === 4 || boardInfo.category === 7) {
         return makeResponse(400, '잘못된 URL의 접근입니다.');
       }
-      if (category === 5 || category === 6) {
+      if (boardInfo.category === 5 || boardInfo.category === 6) {
         const isClub = await BoardStorage.findClub(clubNum);
 
         if (!isClub) {
           return makeResponse(404, '존재하지 않는 동아리입니다.');
         }
-        if (category === 5 && !user.isAdmin) {
+        if (boardInfo.category === 5 && !user.isAdmin) {
           if (!user.clubNum.includes(Number(clubNum))) {
             return makeResponse(403, '해당 동아리에 가입하지 않았습니다.');
           }
         }
-        criteriaRead.clubNum = clubNum;
+        boardInfo.clubNum = clubNum;
       }
-      if (category < 5 && this.params.clubNum !== undefined) {
+      if (boardInfo.category < 5 && this.params.clubNum !== undefined) {
         return makeResponse(400, '잘못된 URL의 접근입니다.');
       }
 
-      const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
+      const boards = await BoardStorage.findAllByCategoryNum(boardInfo);
 
       for (const board of boards) {
         if (board.writerHiddenFlag) {
@@ -118,18 +115,15 @@ class Board {
   }
 
   async findAllByPromotionCategory() {
-    const { query } = this;
-    const criteriaRead = {
-      clubCategory: query.category,
-      lastNum: query.lastNum,
-      sort: query.sort || 'inDate',
-      order: query.order || 'desc',
+    const boardInfo = {
+      clubCategory: this.query.category,
+      lastNum: this.query.lastNum,
+      sort: this.query.sort || 'inDate',
+      order: this.query.order || 'desc',
     };
 
     try {
-      const boards = await BoardStorage.findAllByPromotionCategory(
-        criteriaRead
-      );
+      const boards = await BoardStorage.findAllByPromotionCategory(boardInfo);
 
       return makeResponse(200, '장르별 조회 성공', { boards });
     } catch (err) {
@@ -139,16 +133,14 @@ class Board {
 
   async findOneByBoardNum() {
     const user = this.auth;
-    const { params } = this;
-    const category = boardCategory[params.category];
     const boardInfo = {
-      category,
-      boardNum: params.boardNum,
+      category: boardCategory[this.params.category],
+      boardNum: this.params.boardNum,
       studentId: user ? user.id : 0,
     };
 
     try {
-      if (category === 5 && !user.isAdmin) {
+      if (boardInfo.category === 5 && !user.isAdmin) {
         if (!user.clubNum.includes(Number(clubNum))) {
           return makeResponse(403, '해당 동아리에 가입하지 않았습니다.');
         }
@@ -166,7 +158,7 @@ class Board {
         board.profileImageUrl = null;
       }
 
-      return makeResponse(200, '게시글 조회 성공', { category, board });
+      return makeResponse(200, '게시글 조회 성공', { board });
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -174,22 +166,20 @@ class Board {
 
   async updateOneByBoardNum() {
     const user = this.auth;
-    const board = this.body;
-    const { params } = this;
-    const category = boardCategory[params.category];
     const boardInfo = {
-      category,
-      title: board.title,
-      description: board.description,
-      boardNum: params.boardNum,
-      hiddenFlag: board.hiddenFlag || 0,
+      title: this.board.title,
+      description: this.board.description,
+      boardNum: this.params.boardNum,
+      images: this.board.images,
+      category: boardCategory[this.params.category],
+      hiddenFlag: this.board.hiddenFlag || 0,
     };
 
     try {
-      if (!(board.title && board.description)) {
+      if (!(boardInfo.title && boardInfo.description)) {
         return makeResponse(400, '제목이나 본문이 존재하지 않습니다.');
       }
-      if (category === 4 && board.images.length === 0) {
+      if (boardInfo.category === 4 && boardInfo.images.length === 0) {
         return makeResponse(400, '사진을 첨부해주세요');
       }
 
@@ -200,9 +190,9 @@ class Board {
       );
 
       // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 수정 가능
-      if (category === 5 || category === 6) {
+      if (boardInfo.category === 5 || boardInfo.category === 6) {
         const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
-          params.clubNum,
+          this.params.clubNum,
           user.id
         );
 
@@ -227,11 +217,9 @@ class Board {
 
   async deleteOneByBoardNum() {
     const user = this.auth;
-    const { params } = this;
-    const category = boardCategory[params.category];
     const boardInfo = {
-      category,
-      boardNum: params.boardNum,
+      category: boardCategory[this.params.category],
+      boardNum: this.params.boardNum,
     };
 
     try {
@@ -242,9 +230,9 @@ class Board {
       );
 
       // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 삭제 가능
-      if (category === 5 || category === 6) {
+      if (boardInfo.category === 5 || boardInfo.category === 6) {
         const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
-          params.clubNum,
+          this.params.clubNum,
           user.id
         );
 
@@ -268,11 +256,11 @@ class Board {
   }
 
   async updateOnlyHitByNum() {
+    const userId = this.auth && this.auth.id;
     const boardInfo = {
       category: boardCategory[this.params.category],
       boardNum: this.params.boardNum,
     };
-    const userId = this.auth && this.auth.id;
 
     try {
       const writerCheck = await WriterCheck.ctrl(
