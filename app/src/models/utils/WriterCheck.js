@@ -20,7 +20,11 @@ class WriterCheck {
       const writerId = await conn.query(query);
 
       if (authId === writerId[0].id) return { success: true };
-      return { success: false, msg: '작성자와 요청자가 다릅니다.' };
+      return {
+        success: false,
+        msg: '작성자와 요청자가 다릅니다.',
+        status: 403,
+      };
     } catch (err) {
       throw err;
     } finally {

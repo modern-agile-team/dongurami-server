@@ -5,6 +5,7 @@ const AdminoOptionStorage = require('../AdminOption/AdminOptionStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
+const makeResponse = require('../../utils/makeResponse');
 
 class Board {
   constructor(req) {
@@ -32,45 +33,34 @@ class Board {
       };
 
       if (category === 1 && user.isAdmin === 0) {
-        return {
-          success: false,
-          msg: '전체공지는 관리자만 작성 가능합니다.',
-          status: 403,
-        };
+        return makeResponse(400, '전체공지는 관리자만 작성 가능합니다.');
       }
 
       if (!(board.title && board.description)) {
-        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+        return makeResponse(404, '제목이나 본문이 존재하지 않습니다.');
       }
 
       if (clubNum !== undefined && this.params.clubNum > 1) {
         boardInfo.clubNum = clubNum;
       } else if (category === 4) {
         if (board.images.length === 0) {
-          return { success: false, msg: '사진을 첨부해주세요' };
+          return makeResponse(400, '사진을 첨부해주세요');
         }
         boardInfo.clubNum = board.clubNo;
       }
 
       if (category === 5 || category === 6) {
         if (!user.clubNum.includes(Number(clubNum))) {
-          return {
-            success: false,
-            msg: '동아리원만 작성할 수 있습니다.',
-            status: 403,
-          };
+          return makeResponse(403, '동아리원만 작성할 수 있습니다.');
         }
         if (boardInfo.hiddenFlag) {
-          return {
-            success: false,
-            msg: '해당 게시판에서 익명 사용이 불가능합니다.',
-          };
+          return makeResponse(400, '해당 게시판에서 익명 사용이 불가능합니다.');
         }
       }
 
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
-      return { success: true, msg: '게시글 생성 성공', boardNum };
+      return makeResponse(201, '게시글 생성 성공', { boardNum });
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -90,29 +80,26 @@ class Board {
 
     try {
       if (category === undefined) {
-        return { success: false, msg: '존재하지 않는 게시판 입니다.' };
+        return makeResponse(404, '존재하지 않는 게시판 입니다.');
       }
       if (category === 4 || category === 7) {
-        return { success: false, msg: '잘못된 URL의 접근입니다' };
+        return makeResponse(400, '잘못된 URL의 접근입니다.');
       }
       if (category === 5 || category === 6) {
         const isClub = await BoardStorage.findClub(clubNum);
 
         if (!isClub) {
-          return { success: false, msg: '존재하지 않는 동아리입니다.' };
+          return makeResponse(404, '존재하지 않는 동아리입니다.');
         }
         if (category === 5 && !user.isAdmin) {
           if (!user.clubNum.includes(Number(clubNum))) {
-            return {
-              success: false,
-              msg: '해당 동아리에 가입하지 않았습니다.',
-            };
+            return makeResponse(403, '해당 동아리에 가입하지 않았습니다.');
           }
         }
         criteriaRead.clubNum = clubNum;
       }
       if (category < 5 && this.params.clubNum !== undefined) {
-        return { success: false, msg: '잘못된 URL의 접근입니다.' };
+        return makeResponse(400, '잘못된 URL의 접근입니다.');
       }
 
       const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
@@ -134,7 +121,7 @@ class Board {
         };
       }
 
-      return { success: true, msg: '게시판 조회 성공', userInfo, boards };
+      return makeResponse(200, '게시판 조회 성공', { userInfo, boards });
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -166,7 +153,7 @@ class Board {
         };
       }
 
-      return { success: true, msg: '장르별 조회 성공', userInfo, boards };
+      return makeResponse(200, '장르별 조회 성공', { userInfo, boards });
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -186,19 +173,13 @@ class Board {
 
       if (category === 5 && !user.isAdmin) {
         if (!user.clubNum.includes(Number(clubNum))) {
-          return {
-            success: false,
-            msg: '해당 동아리에 가입하지 않았습니다.',
-          };
+          return makeResponse(403, '해당 동아리에 가입하지 않았습니다.');
         }
       }
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
       if (board === undefined) {
-        return {
-          success: false,
-          msg: '해당 게시판에 존재하지 않는 글 입니다.',
-        };
+        return makeResponse(404, '해당 게시판에 존재하지 않는 글입니다.');
       }
       board.isWriter = boardInfo.studentId === board.studentId ? 1 : 0;
 
@@ -217,13 +198,11 @@ class Board {
         };
       }
 
-      return {
-        success: true,
-        msg: '게시글 조회 성공',
+      return makeResponse(200, '게시글 조회 성공', {
         userInfo,
         category,
         board,
-      };
+      });
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -245,10 +224,10 @@ class Board {
       };
 
       if (!(board.title && board.description)) {
-        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
+        return makeResponse(400, '제목이나 본문이 존재하지 않습니다.');
       }
       if (category === 4 && board.images.length === 0) {
-        return { success: false, msg: '사진을 첨부해주세요' };
+        return makeResponse(400, '사진을 첨부해주세요');
       }
 
       const writerCheck = await WriterCheck.ctrl(
@@ -266,7 +245,7 @@ class Board {
 
         if (!writerCheck.success) {
           if (!boardFlag) {
-            return { success: false, msg: '게시글 수정 권한이 없습니다.' };
+            return makeResponse(403, '게시글 수정 권한이 없습니다.');
           }
           return writerCheck;
         }
@@ -275,9 +254,9 @@ class Board {
       const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
 
       if (updateBoardCnt === 0) {
-        return { success: false, msg: '해당 게시글이 없습니다.' };
+        return makeResponse(404, '해당 게시글이 없습니다.');
       }
-      return { success: true, msg: '게시글 수정 성공' };
+      return makeResponse(200, '게시글 수정 성공');
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
     }
@@ -309,7 +288,7 @@ class Board {
 
         if (!writerCheck.success) {
           if (!boardFlag) {
-            return { success: false, msg: '게시글 수정 권한이 없습니다.' };
+            return makeResponse(403, '게시글 수정 권한이 없습니다.');
           }
           return writerCheck;
         }
@@ -318,9 +297,9 @@ class Board {
       const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
       if (deleteBoardCnt === 0) {
-        return { success: false, msg: '해당 게시글이 없습니다.' };
+        return makeResponse(404, '해당 게시글이 없습니다.');
       }
-      return { success: true, msg: '게시글 삭제 성공' };
+      return makeResponse(200, '게시글 삭제 성공');
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -340,18 +319,16 @@ class Board {
         'boards'
       );
 
-      if (writerCheck.success)
-        return {
-          success: true,
-          msg: '본인의 글은 조회수가 증가하지 않습니다.',
-        };
+      if (writerCheck.success) {
+        return makeResponse(202, '본이의 글은 조회수가 증가하지 않습니다.');
+      }
 
       const updateBoardCnt = await BoardStorage.updateOnlyHitByNum(boardInfo);
 
       if (updateBoardCnt === 0) {
-        return { success: false, msg: '해당 게시글이 없습니다.' };
+        return makeResponse(404, '해당 게시글이 없습니다.');
       }
-      return { success: true, msg: '조회수 1 증가' };
+      return makeResponse(200, '조회수 1 증가');
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
