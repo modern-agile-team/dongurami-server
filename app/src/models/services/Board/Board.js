@@ -112,23 +112,13 @@ class Board {
         }
       }
 
-      let userInfo = '비로그인 회원입니다.';
-
-      if (user) {
-        userInfo = {
-          id: user.id,
-          isAdmin: user.isAdmin,
-        };
-      }
-
-      return makeResponse(200, '게시판 조회 성공', { userInfo, boards });
+      return makeResponse(200, '게시판 조회 성공', { boards });
     } catch (err) {
       return Error.ctrl('', err);
     }
   }
 
   async findAllByPromotionCategory() {
-    const user = this.auth;
     const { query } = this;
 
     try {
@@ -143,17 +133,7 @@ class Board {
         criteriaRead
       );
 
-      let userInfo = '비로그인 회원입니다.';
-
-      if (user) {
-        userInfo = {
-          id: user.id,
-          isAdmin: user.isAdmin,
-          club: user.clubNum,
-        };
-      }
-
-      return makeResponse(200, '장르별 조회 성공', { userInfo, boards });
+      return makeResponse(200, '장르별 조회 성공', { boards });
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -189,20 +169,7 @@ class Board {
         board.profileImageUrl = null;
       }
 
-      let userInfo = '비로그인 회원입니다.';
-
-      if (user) {
-        userInfo = {
-          id: user.id,
-          isAdmin: user.isAdmin,
-        };
-      }
-
-      return makeResponse(200, '게시글 조회 성공', {
-        userInfo,
-        category,
-        board,
-      });
+      return makeResponse(200, '게시글 조회 성공', { category, board });
     } catch (err) {
       return Error.ctrl('', err);
     }
