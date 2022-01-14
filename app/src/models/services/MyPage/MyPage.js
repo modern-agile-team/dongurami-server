@@ -58,7 +58,7 @@ class MyPage {
       const myPagePosts = await this.findAllMyPagePosts();
 
       if (scraps || myPagePosts) {
-        return { success: true, msg: '전체 글 조회 성공', scraps, boards };
+        return { success: true, msg: '전체 글 조회 성공', scraps, myPagePosts };
       }
       return { success: true, msg: '글 내역이 존재하지 않습니다.' };
     } catch (err) {
@@ -98,7 +98,6 @@ class MyPage {
     try {
       const userInfo = {
         id: params.id,
-        clubNum: params.clubNum,
         scrapNum: params.scrapNum,
       };
 
