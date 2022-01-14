@@ -46,36 +46,45 @@ class AdminoOptionStorage {
     }
   }
 
-  static async findOneByClubNum(clubNum) {
+  static async findMemberAndAuthByClubNum(clubNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const memberAndAuthQuery = `
+      const query = `
         SELECT s.name, s.id, s.grade, s.major, s.gender, s.phone_number AS phoneNum, m.join_admin_flag AS joinAdminFlag, m.board_admin_flag AS boardAdminFlag 
         FROM members AS m 
         JOIN students AS s 
         ON s.id = m.student_id AND m.club_no = ?;`;
 
-      const leaderAndClubNameQuery = `
+      const memberAndAuthList = await conn.query(query, [clubNum]);
+
+      return memberAndAuthList;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findClubInfoByClubNum(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
         SELECT s.name AS leader , c.name 
         FROM students AS s 
         JOIN clubs AS c 
         ON c.leader = s.id AND c.no = ?;`;
 
-      const memberAndAuthList = await conn.query(memberAndAuthQuery, clubNum);
-
-      const leaderAndClubName = await conn.query(
-        leaderAndClubNameQuery,
-        clubNum
-      );
+      const leaderAndClubName = await conn.query(query, clubNum);
 
       return {
-        success: true,
         leader: leaderAndClubName[0].leader,
         clubName: leaderAndClubName[0].name,
-        memberAndAuthList,
       };
     } catch (err) {
       throw err;
@@ -110,9 +119,11 @@ class AdminoOptionStorage {
         FROM applicants 
         WHERE reading_flag = 0 AND club_no = ?;`;
 
-      const applicantInfo = await conn.query(applicantInfoQuery, clubNum);
-      const questionAnswerInfo = await conn.query(questionAnswerQuery, clubNum);
-      const applicants = await conn.query(applicantQuery, clubNum);
+      const applicantInfo = await conn.query(applicantInfoQuery, [clubNum]);
+      const questionAnswerInfo = await conn.query(questionAnswerQuery, [
+        clubNum,
+      ]);
+      const applicants = await conn.query(applicantQuery, [clubNum]);
 
       const questionsAnswers = applicants.map((applicant) => {
         return questionAnswerInfo.filter((qAndA) => {
@@ -217,7 +228,7 @@ class AdminoOptionStorage {
         FROM clubs 
         WHERE no = ?;`;
 
-      const leader = await conn.query(query, clubNum);
+      const leader = await conn.query(query, [clubNum]);
 
       return leader[0].leader;
     } catch (err) {
@@ -243,7 +254,7 @@ class AdminoOptionStorage {
         leaderInfo.clubNum,
       ]);
 
-      if (updateLeader.affectedRows === 1) return true;
+      if (updateLeader.affectedRows) return true;
       return false;
     } catch (err) {
       throw err;
@@ -268,7 +279,7 @@ class AdminoOptionStorage {
         leaderInfo.newLeader,
       ]);
 
-      if (adminOption.affectedRows === 1) return true;
+      if (adminOption.affectedRows) return true;
       return true;
     } catch (err) {
       throw err;

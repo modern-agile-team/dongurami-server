@@ -55,22 +55,21 @@ class AdminOption {
   }
 
   async findOneByClubNum() {
-    try {
-      const { success, leader, clubName, memberAndAuthList } =
-        await AdminOptionStorage.findOneByClubNum(this.params.clubNum);
+    const { clubNum } = this.params;
 
-      if (success) {
-        return {
-          success,
-          msg: '동아리원 정보 조회 성공',
-          leader,
-          clubName,
-          memberAndAuthList,
-        };
-      }
+    try {
+      const memberAndAuthList =
+        await AdminOptionStorage.findMemberAndAuthByClubNum(clubNum);
+
+      const { leader, clubName } =
+        await AdminOptionStorage.findClubInfoByClubNum(clubNum);
+
       return {
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+        success: true,
+        msg: '동아리원 정보 조회 성공',
+        leader,
+        clubName,
+        memberAndAuthList,
       };
     } catch (err) {
       return Error.ctrl('', err);

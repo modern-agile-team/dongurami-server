@@ -27,10 +27,6 @@ const process = {
       logger.error(`GET ${url} 500: \n${response.memberInfo.errMsg.stack}`);
       return res.status(500).json(response.memberInfo.clientMsg);
     }
-    if (!response.memberInfo.success) {
-      logger.error(`GET ${url} 400: ${response.memberInfo.msg}`);
-      return res.status(400).json(response);
-    }
     response.applicants = await adminOption.findApplicantsByClubNum();
 
     if (response.applicants.isError) {
