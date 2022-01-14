@@ -15,8 +15,6 @@ const process = {
     if (response.success) {
       const imgNums = await image.saveBoardImg(response.boardNum);
 
-      delete response.boardNum;
-
       if (imgNums.isError) {
         logger.error(
           `POST /api/board/${category} 500: \n${imgNums.errMsg.stack}`
