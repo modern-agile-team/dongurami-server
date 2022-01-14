@@ -29,33 +29,33 @@ class Board {
       hiddenFlag: board.hiddenFlag || 0,
     };
 
+    if (boardInfo.category === 1 && user.isAdmin === 0) {
+      return makeResponse(400, '전체공지는 관리자만 작성 가능합니다.');
+    }
+
+    if (!(boardInfo.title && boardInfo.description)) {
+      return makeResponse(404, '제목이나 본문이 존재하지 않습니다.');
+    }
+
+    if (clubNum !== undefined && clubNum > 1) {
+      boardInfo.clubNum = clubNum;
+    } else if (boardInfo.category === 4) {
+      if (boardInfo.images.length === 0) {
+        return makeResponse(400, '사진을 첨부해주세요');
+      }
+      boardInfo.clubNum = board.clubNo;
+    }
+
+    if (boardInfo.category === 5 || boardInfo.category === 6) {
+      if (!user.clubNum.includes(Number(clubNum))) {
+        return makeResponse(403, '동아리원만 작성할 수 있습니다.');
+      }
+      if (boardInfo.hiddenFlag) {
+        return makeResponse(400, '해당 게시판에서 익명 사용이 불가능합니다.');
+      }
+    }
+
     try {
-      if (boardInfo.category === 1 && user.isAdmin === 0) {
-        return makeResponse(400, '전체공지는 관리자만 작성 가능합니다.');
-      }
-
-      if (!(boardInfo.title && boardInfo.description)) {
-        return makeResponse(404, '제목이나 본문이 존재하지 않습니다.');
-      }
-
-      if (clubNum !== undefined && clubNum > 1) {
-        boardInfo.clubNum = clubNum;
-      } else if (boardInfo.category === 4) {
-        if (boardInfo.images.length === 0) {
-          return makeResponse(400, '사진을 첨부해주세요');
-        }
-        boardInfo.clubNum = board.clubNo;
-      }
-
-      if (boardInfo.category === 5 || boardInfo.category === 6) {
-        if (!user.clubNum.includes(Number(clubNum))) {
-          return makeResponse(403, '동아리원만 작성할 수 있습니다.');
-        }
-        if (boardInfo.hiddenFlag) {
-          return makeResponse(400, '해당 게시판에서 익명 사용이 불가능합니다.');
-        }
-      }
-
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
       return makeResponse(201, '게시글 생성 성공', { boardNum });
@@ -74,13 +74,17 @@ class Board {
       order: this.query.order || 'desc',
     };
 
+    if (boardInfo.category === undefined) {
+      return makeResponse(404, '존재하지 않는 게시판 입니다.');
+    }
+    if (boardInfo.category === 4 || boardInfo.category === 7) {
+      return makeResponse(400, '잘못된 URL의 접근입니다.');
+    }
+    if (boardInfo.category < 5 && this.params.clubNum !== undefined) {
+      return makeResponse(400, '잘못된 URL의 접근입니다.');
+    }
+
     try {
-      if (boardInfo.category === undefined) {
-        return makeResponse(404, '존재하지 않는 게시판 입니다.');
-      }
-      if (boardInfo.category === 4 || boardInfo.category === 7) {
-        return makeResponse(400, '잘못된 URL의 접근입니다.');
-      }
       if (boardInfo.category === 5 || boardInfo.category === 6) {
         const isClub = await BoardStorage.findClub(clubNum);
 
@@ -93,9 +97,6 @@ class Board {
           }
         }
         boardInfo.clubNum = clubNum;
-      }
-      if (boardInfo.category < 5 && this.params.clubNum !== undefined) {
-        return makeResponse(400, '잘못된 URL의 접근입니다.');
       }
 
       const boards = await BoardStorage.findAllByCategoryNum(boardInfo);
@@ -139,12 +140,13 @@ class Board {
       studentId: user ? user.id : 0,
     };
 
-    try {
-      if (boardInfo.category === 5 && !user.isAdmin) {
-        if (!user.clubNum.includes(Number(clubNum))) {
-          return makeResponse(403, '해당 동아리에 가입하지 않았습니다.');
-        }
+    if (boardInfo.category === 5 && !user.isAdmin) {
+      if (!user.clubNum.includes(Number(clubNum))) {
+        return makeResponse(403, '해당 동아리에 가입하지 않았습니다.');
       }
+    }
+
+    try {
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
       if (board === undefined) {
@@ -175,14 +177,14 @@ class Board {
       hiddenFlag: this.board.hiddenFlag || 0,
     };
 
-    try {
-      if (!(boardInfo.title && boardInfo.description)) {
-        return makeResponse(400, '제목이나 본문이 존재하지 않습니다.');
-      }
-      if (boardInfo.category === 4 && boardInfo.images.length === 0) {
-        return makeResponse(400, '사진을 첨부해주세요');
-      }
+    if (!(boardInfo.title && boardInfo.description)) {
+      return makeResponse(400, '제목이나 본문이 존재하지 않습니다.');
+    }
+    if (boardInfo.category === 4 && boardInfo.images.length === 0) {
+      return makeResponse(400, '사진을 첨부해주세요');
+    }
 
+    try {
       const writerCheck = await WriterCheck.ctrl(
         user.id,
         boardInfo.boardNum,
@@ -209,6 +211,7 @@ class Board {
       if (updateBoardCnt === 0) {
         return makeResponse(404, '해당 게시글이 없습니다.');
       }
+
       return makeResponse(200, '게시글 수정 성공');
     } catch (err) {
       return Error.ctrl('', err);
