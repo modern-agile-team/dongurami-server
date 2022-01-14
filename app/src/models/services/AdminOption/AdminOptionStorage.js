@@ -80,7 +80,7 @@ class AdminoOptionStorage {
         JOIN clubs AS c 
         ON c.leader = s.id AND c.no = ?;`;
 
-      const leaderAndClubName = await conn.query(query, clubNum);
+      const leaderAndClubName = await conn.query(query, [clubNum]);
 
       return {
         leader: leaderAndClubName[0].leader,
@@ -177,8 +177,7 @@ class AdminoOptionStorage {
         userInfo.applicant,
       ]);
 
-      if (approvedApplicant.affectedRows) return true;
-      return false;
+      return approvedApplicant.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -201,8 +200,7 @@ class AdminoOptionStorage {
         userInfo.clubNum,
       ]);
 
-      if (updateMember.affectedRows) return true;
-      return false;
+      return updateMember.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -226,8 +224,7 @@ class AdminoOptionStorage {
         applicantInfo.applicantId,
       ]);
 
-      if (updateRejectedApplicant.affectedRows) return true;
-      return false;
+      return updateRejectedApplicant.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -272,8 +269,7 @@ class AdminoOptionStorage {
         leaderInfo.clubNum,
       ]);
 
-      if (updateLeader.affectedRows) return true;
-      return false;
+      return updateLeader.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -297,8 +293,7 @@ class AdminoOptionStorage {
         leaderInfo.newLeader,
       ]);
 
-      if (adminOption.affectedRows) return true;
-      return true;
+      return adminOption.affectedRows;
     } catch (err) {
       throw err;
     } finally {
