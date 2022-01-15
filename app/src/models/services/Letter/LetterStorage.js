@@ -143,9 +143,12 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT student_id AS studentId FROM boards WHERE no = ?;`;
+      const query = `
+        SELECT student_id AS studentId 
+        FROM boards 
+        WHERE no = ?;`;
 
-      const recipientId = await conn.query(query, boardNo);
+      const recipientId = await conn.query(query, [boardNo]);
 
       return recipientId[0].studentId;
     } catch (err) {
@@ -161,7 +164,10 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT student_id AS studentId FROM comments WHERE no = ?;`;
+      const query = `
+        SELECT student_id AS studentId 
+        FROM comments 
+        WHERE no = ?;`;
 
       const recipientId = await conn.query(query, [boardNo, commentNo]);
 
@@ -179,8 +185,11 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT group_no AS groupNo FROM letters 
-      WHERE host_id = ? AND recipient_id = ? AND writer_hidden_flag = ? AND recipient_hidden_flag = ? LIMIT 1;`;
+      const query = `
+        SELECT group_no AS groupNo 
+        FROM letters 
+        WHERE host_id = ? AND recipient_id = ? AND writer_hidden_flag = ? AND recipient_hidden_flag = ? 
+        LIMIT 1;`;
 
       const groupNo = await conn.query(query, [
         sendInfo.senderId,
@@ -203,8 +212,9 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'INSERT INTO letters (sender_id, recipient_id, host_id, description, writer_hidden_flag, recipient_hidden_flag) VALUES (?, ?, ?, ?, ?, ?);';
+      const query = `
+        INSERT INTO letters (sender_id, recipient_id, host_id, description, writer_hidden_flag, recipient_hidden_flag) 
+        VALUES (?, ?, ?, ?, ?, ?)`;
 
       // 쪽지는 전송자와 수신자 모두 저장이 되어 있어야 각자 따로 메세지를 지울 수 있기 때문에 host_id COLUMN 값만 다르게 두번 저장
       const addLetterBySender = await conn.query(query, [
@@ -242,7 +252,10 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'UPDATE letters SET group_no = ? WHERE no = ? OR no = ?;';
+      const query = `
+        UPDATE letters 
+        SET group_no = ? 
+        WHERE no = ? OR no = ?;`;
 
       const resultSender = await conn.query(query, [
         groupNo,
@@ -308,9 +321,12 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE letters SET reading_flag = 1 WHERE host_id = ? AND reading_flag = 0;`;
+      const query = `
+        UPDATE letters 
+        SET reading_flag = 1 
+        WHERE host_id = ? AND reading_flag = 0;`;
 
-      const letter = await conn.query(query, id);
+      const letter = await conn.query(query, [id]);
 
       return letter.affectedRows;
     } catch (err) {
@@ -326,7 +342,10 @@ class LetterStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE letters SET delete_flag = 1 WHERE host_id = ? AND group_no = ?;`;
+      const query = `
+        UPDATE letters 
+        SET delete_flag = 1 
+        WHERE host_id = ? AND group_no = ?;`;
 
       const letter = await conn.query(query, [
         letterInfo.id,
