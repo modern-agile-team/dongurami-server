@@ -79,7 +79,7 @@ class AdminoOptionStorage {
         FROM students AS s 
         JOIN clubs AS c 
         ON c.leader = s.id AND c.no = ?;`;
-
+      
       const leaderAndClubName = await conn.query(query, [clubNum]);
 
       return {
