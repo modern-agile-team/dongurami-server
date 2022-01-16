@@ -92,9 +92,7 @@ class Letter {
 
       if (!data.recipientId.length) {
         recipientHiddenFlag = 1;
-        data.recipientId = data.boardFlag
-          ? await LetterStorage.findRecipientByBoard(data.boardNo)
-          : await LetterStorage.findRecipientByComment(data.commentNo);
+        LetterUtil.findRecipientId(data);
       }
 
       if (id === data.recipientId) {

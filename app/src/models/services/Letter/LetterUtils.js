@@ -46,6 +46,12 @@ class LetterUtil {
       });
     }
   }
+
+  static async findRecipientId(data) {
+    data.recipientId = data.boardFlag
+      ? await LetterStorage.findRecipientByBoard(data.boardNo)
+      : await LetterStorage.findRecipientByComment(data.commentNo);
+  }
 }
 
 module.exports = LetterUtil;
