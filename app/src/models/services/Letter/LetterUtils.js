@@ -3,6 +3,15 @@
 const LetterStorage = require('./LetterStorage');
 
 class LetterUtil {
+  static makeMsg(status, msg, letters) {
+    return {
+      status,
+      success: status < 400,
+      msg,
+      letters,
+    };
+  }
+
   static checkHiddenFlagForNoti(letters) {
     letters.forEach((letter) => {
       if (letter.hiddenFlag) {
@@ -49,14 +58,14 @@ class LetterUtil {
     }
   }
 
+  static changeGroupNo(senderInsertNo, checkGroupNo) {
+    return checkGroupNo[0] ? checkGroupNo[0].groupNo : senderInsertNo;
+  }
+
   static async findRecipientId(data) {
     data.recipientId = data.boardFlag
       ? await LetterStorage.findRecipientByBoard(data.boardNo)
       : await LetterStorage.findRecipientByComment(data.commentNo);
-  }
-
-  static changeGroupNo(senderInsertNo, checkGroupNo) {
-    return checkGroupNo[0] ? checkGroupNo[0].groupNo : senderInsertNo;
   }
 }
 

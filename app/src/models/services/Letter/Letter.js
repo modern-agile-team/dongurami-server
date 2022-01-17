@@ -4,6 +4,8 @@ const LetterUtil = require('./LetterUtils');
 const LetterStorage = require('./LetterStorage');
 const Error = require('../../utils/Error');
 
+const { makeMsg } = LetterUtil;
+
 class Letter {
   constructor(req) {
     this.body = req.body;
@@ -17,22 +19,11 @@ class Letter {
 
       if (letters[0]) {
         LetterUtil.checkHiddenFlagForNoti(letters);
-        return { success: true, msg: '쪽지 알람 전체 조회 성공', letters };
+        return makeMsg(200, '쪽지 알람 전체 조회 성공', letters);
       }
-      return { success: true, msg: '생성된 쪽지가 없습니다.' };
+      return makeMsg(200, '생성된 쪽지가 없습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
-    }
-  }
-
-  async deleteLetterNotifications() {
-    try {
-      if (await LetterStorage.deleteLetterNotifications(this.auth.id)) {
-        return { success: true, msg: '쪽지 알림이 모두 삭제되었습니다.' };
-      }
-      return { success: false, msg: '쪽지 알림이 삭제되지 않았습니다.' };
-    } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -48,11 +39,11 @@ class Letter {
 
       if (letters[0]) {
         LetterUtil.checkHiddenFlag(letters);
-        return { success: true, msg: '쪽지 전체 조회 성공', letters };
+        return makeMsg(200, '쪽지 전체 조회 성공', letters);
       }
-      return { success: true, msg: '쪽지가 존재하지 않습니다.' };
+      return makeMsg(200, '쪽지가 존재하지 않습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -61,22 +52,14 @@ class Letter {
     const { groupNo } = this.params;
 
     try {
-      if (this.params.id !== id) {
-        return { success: false, msg: '본인만 열람 가능합니다.', status: 403 };
-      }
+      if (this.params.id !== id) return makeMsg(403, '본인만 열람 가능합니다.');
 
       const letterInfo = await LetterStorage.findLetterParticipantInfo({
         groupNo,
         id,
       });
 
-      if (!letterInfo) {
-        return {
-          success: false,
-          msg: '존재하지 않는 쪽지입니다.',
-          status: 404,
-        };
-      }
+      if (!letterInfo) return makeMsg(404, '존재하지 않는 쪽지입니다.');
 
       LetterUtil.divideId(letterInfo, id);
 
@@ -85,12 +68,12 @@ class Letter {
 
         if (letters) {
           LetterUtil.changeAnonymous(letters, id);
-          return { success: true, msg: '쪽지 대화 목록 조회 성공', letters };
+          return makeMsg(200, '쪽지 대화 목록 조회 성공', letters);
         }
       }
-      return { success: false, msg: '쪽지 대화 목록 조회 실패' };
+      return makeMsg(400, '쪽지 대화 목록 조회를 실패하였습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -107,7 +90,7 @@ class Letter {
       }
 
       if (id === data.recipientId) {
-        return { success: false, msg: '본인에게 쪽지를 보낼 수 없습니다.' };
+        return makeMsg(400, '본인에게 쪽지를 보낼 수 없습니다.');
       }
 
       const sendInfo = {
@@ -131,10 +114,10 @@ class Letter {
         groupNo,
       });
 
-      if (result) return { success: true, msg: '쪽지가 전송되었습니다.' };
-      return { success: false, msg: '쪽지가 전송되지 않았습니다.' };
+      if (result) return makeMsg(201, '쪽지가 전송되었습니다.');
+      return makeMsg(400, '쪽지가 전송되지 않았습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -167,10 +150,21 @@ class Letter {
         groupNo,
       });
 
-      if (result === 2) return { success: true, msg: '쪽지가 전송되었습니다.' };
-      return { success: false, msg: '쪽지가 전송되지 않았습니다.' };
+      if (result === 2) return makeMsg(201, '쪽지가 전송되었습니다.');
+      return makeMsg(400, '쪽지가 전송되지 않았습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
+    }
+  }
+
+  async deleteLetterNotifications() {
+    try {
+      if (await LetterStorage.deleteLetterNotifications(this.auth.id)) {
+        return makeMsg(200, '쪽지 알림이 모두 삭제되었습니다.');
+      }
+      return makeMsg(400, '쪽지 알림이 삭제되지 않았습니다.');
+    } catch (err) {
+      return Error.ctrl('', err);
     }
   }
 
@@ -182,11 +176,11 @@ class Letter {
       };
 
       if (await LetterStorage.deleteLettersByGroupNo(letterInfo)) {
-        return { success: true, msg: '쪽지 대화 전체 삭제 성공' };
+        return makeMsg(200, '쪽지가 모두 삭제되었습니다.');
       }
-      return { success: false, msg: '쪽지 대화 전체 삭제 실패' };
+      return makeMsg(400, '쪽지가 삭제되지 않았습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 }
