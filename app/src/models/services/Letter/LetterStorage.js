@@ -113,7 +113,8 @@ class LetterStorage {
       const query = `
         SELECT sender_id AS senderId, recipient_id AS recipientId, group_no AS groupNo
         FROM letters 
-        WHERE group_no = ? AND host_id = ?;`;
+        WHERE group_no = ? AND host_id = ?
+        LIMIT 1;`;
 
       const letterInfo = await conn.query(query, [
         groupInfo.groupNo,
@@ -220,6 +221,54 @@ class LetterStorage {
       ]);
 
       return groupNo;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findLetterByGroupNo(groupInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT sender_id AS senderId, recipient_id AS recipientId, IF (sender_id = ?, recipient_hidden_flag, writer_hidden_flag) AS otherHiddenFlag, IF (sender_id = ?, writer_hidden_flag, recipient_hidden_flag) AS myHiddenFlag
+        FROM letters 
+        WHERE group_no = ?
+        LIMIT 1;`;
+
+      const letterInfo = await conn.query(query, [
+        groupInfo.id,
+        groupInfo.id,
+        groupInfo.groupNo,
+      ]);
+
+      return letterInfo[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async XXfindLetterByGroupNo(groupNo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT sender_id AS senderId, recipient_id AS recipientId, writer_hidden_flag AS writerHiddenFlag, recipient_hidden_flag AS recipientHiddenFlag 
+        FROM letters 
+        WHERE group_no = ?
+        LIMIT 1;`;
+
+      const letterInfo = await conn.query(query, [groupNo]);
+
+      return letterInfo[0];
     } catch (err) {
       throw err;
     } finally {

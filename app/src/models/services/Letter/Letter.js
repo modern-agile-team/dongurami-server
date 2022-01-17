@@ -139,38 +139,33 @@ class Letter {
   }
 
   async createReplyLetter() {
-    const data = this.body;
     const { id } = this.auth;
     const { groupNo } = this.params;
 
     try {
-      let recipientHiddenFlag = 0;
-      // 수신자가 익명일 경우 => 해당 쪽지의 수신자, 발신자의 학번과 auth.id를 비교하여 수신자 찾아주기
-      if (!data.recipientId.length) {
-        recipientHiddenFlag = 1;
-        const recipientInfo = await LetterStorage.findLetterByGroupNo(groupNo);
+      const letterInfo = await LetterStorage.findLetterByGroupNo({
+        id,
+        groupNo,
+      });
 
-        data.recipientId =
-          recipientInfo.senderId === id
-            ? recipientInfo.recipientId
-            : recipientInfo.senderId;
-      }
+      LetterUtil.divideId(letterInfo, id);
 
       const sendInfo = {
-        recipientHiddenFlag,
-        senderId: id,
-        recipientId: data.recipientId,
-        description: data.description,
-        writerHiddenFlag: data.writerHiddenFlag,
+        senderId: letterInfo.id,
+        recipientId: letterInfo.otherId,
+        description: this.body.description,
+        recipientHiddenFlag: letterInfo.otherHiddenFlag,
+        writerHiddenFlag: letterInfo.myHiddenFlag,
       };
 
-      const { sender, recipient } = await LetterStorage.createLetter(sendInfo);
+      const { senderInsertNo, recipientInsertNo } =
+        await LetterStorage.createLetter(sendInfo);
 
-      const result = await LetterStorage.updateGroupNo(
-        sender,
-        recipient,
-        groupNo
-      );
+      const result = await LetterStorage.updateGroupNo({
+        senderInsertNo,
+        recipientInsertNo,
+        groupNo,
+      });
 
       if (result === 2) return { success: true, msg: '쪽지가 전송되었습니다.' };
       return { success: false, msg: '쪽지가 전송되지 않았습니다.' };
