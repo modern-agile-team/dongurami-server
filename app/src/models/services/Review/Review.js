@@ -49,7 +49,7 @@ class Review {
       const isReview = await ReviewStorage.findOneById(userInfo);
 
       if (!isReview) {
-        return await this.xxNewSaveReview();
+        return await this.saveReview();
       }
       return { success: false, msg: '이미 후기를 작성했습니다.' };
     } catch (err) {
@@ -57,7 +57,7 @@ class Review {
     }
   }
 
-  async xxNewSaveReview() {
+  async saveReview() {
     const review = this.body;
 
     const reviewInfo = {
