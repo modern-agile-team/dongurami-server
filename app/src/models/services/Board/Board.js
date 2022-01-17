@@ -211,6 +211,33 @@ class Board {
     }
   }
 
+  async updateOnlyHitByNum() {
+    const userId = this.auth && this.auth.id;
+    const boardInfo = {
+      category: boardCategory[this.params.category],
+      boardNum: this.params.boardNum,
+    };
+
+    try {
+      const writerCheck = await WriterCheck.ctrl(
+        userId,
+        boardInfo.boardNum,
+        'boards'
+      );
+
+      if (writerCheck.success) {
+        return makeResponse(202, '본인의 글은 조회수가 증가하지 않습니다.');
+      }
+
+      const isUpdate = await BoardStorage.updateOnlyHitByNum(boardInfo);
+
+      if (isUpdate === 0) return makeResponse(404, '해당 게시글이 없습니다.');
+      return makeResponse(200, '조회수 1 증가');
+    } catch (err) {
+      return Error.ctrl('', err);
+    }
+  }
+
   async deleteOneByBoardNum() {
     const user = this.auth;
     const boardInfo = {
@@ -242,33 +269,6 @@ class Board {
 
       if (isDelete === 0) return makeResponse(404, '해당 게시글이 없습니다.');
       return makeResponse(200, '게시글 삭제 성공');
-    } catch (err) {
-      return Error.ctrl('', err);
-    }
-  }
-
-  async updateOnlyHitByNum() {
-    const userId = this.auth && this.auth.id;
-    const boardInfo = {
-      category: boardCategory[this.params.category],
-      boardNum: this.params.boardNum,
-    };
-
-    try {
-      const writerCheck = await WriterCheck.ctrl(
-        userId,
-        boardInfo.boardNum,
-        'boards'
-      );
-
-      if (writerCheck.success) {
-        return makeResponse(202, '본인의 글은 조회수가 증가하지 않습니다.');
-      }
-
-      const isUpdate = await BoardStorage.updateOnlyHitByNum(boardInfo);
-
-      if (isUpdate === 0) return makeResponse(404, '해당 게시글이 없습니다.');
-      return makeResponse(200, '조회수 1 증가');
     } catch (err) {
       return Error.ctrl('', err);
     }

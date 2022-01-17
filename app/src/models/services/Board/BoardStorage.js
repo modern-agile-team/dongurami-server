@@ -201,30 +201,6 @@ class BoardStorage {
     }
   }
 
-  static async updateOnlyHitByNum(boardInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        UPDATE boards
-        SET hit = hit + 1
-        WHERE board_category_no = ? AND no = ?;`;
-
-      const board = await conn.query(query, [
-        boardInfo.category,
-        boardInfo.boardNum,
-      ]);
-
-      return board.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
   static async updateOneByBoardNum(boardInfo) {
     let conn;
 
@@ -242,6 +218,30 @@ class BoardStorage {
         boardInfo.hiddenFlag,
         boardInfo.boardNum,
         boardInfo.category,
+      ]);
+
+      return board.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateOnlyHitByNum(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE boards
+        SET hit = hit + 1
+        WHERE board_category_no = ? AND no = ?;`;
+
+      const board = await conn.query(query, [
+        boardInfo.category,
+        boardInfo.boardNum,
       ]);
 
       return board.affectedRows;
