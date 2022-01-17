@@ -28,6 +28,27 @@ class BoardStorage {
     }
   }
 
+  static async existOnlyBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT no
+        FROM boards
+        WHERE no = ?;`;
+
+      const board = await conn.query(query, [boardNum]);
+
+      return board[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findBoardAdminFlag(clubNum, id) {
     let conn;
 
@@ -189,6 +210,30 @@ class BoardStorage {
     }
   }
 
+  static async updateOnlyHitByNum(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE boards
+        SET hit = hit + 1
+        WHERE board_category_no = ? AND no = ?;`;
+
+      const board = await conn.query(query, [
+        boardInfo.category,
+        boardInfo.boardNum,
+      ]);
+
+      return board.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async updateOneByBoardNum(boardInfo) {
     let conn;
 
@@ -239,50 +284,7 @@ class BoardStorage {
     }
   }
 
-  static async existOnlyBoardNum(boardNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        SELECT no
-        FROM boards
-        WHERE no = ?;`;
-
-      const board = await conn.query(query, [boardNum]);
-
-      return board[0];
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async updateOnlyHitByNum(boardInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        UPDATE boards
-        SET hit = hit + 1
-        WHERE board_category_no = ? AND no = ?;`;
-
-      const board = await conn.query(query, [
-        boardInfo.category,
-        boardInfo.boardNum,
-      ]);
-
-      return board.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
+  // 여기부터 창훈이형 코드여서 일단 둠
 
   static async findAllSearch(searchInfo) {
     let conn;
