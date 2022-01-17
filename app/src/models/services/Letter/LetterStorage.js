@@ -75,35 +75,6 @@ class LetterStorage {
     }
   }
 
-  // delete flag 보류..
-  static async xxfindAllLetterList(id) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        SELECT l.no, s.name, l.description, group_no AS groupNo, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS hiddenFlag
-        FROM letters AS l
-        LEFT JOIN students AS s 
-        ON IF (sender_id = ?, recipient_id = s.id, sender_id = s.id)
-        WHERE no 
-        IN (SELECT MAX(no) 
-        FROM letters
-        WHERE host_id = ? AND delete_flag = 0 
-        GROUP BY group_no)
-        ORDER BY l.in_date DESC;`;
-
-      const letters = await conn.query(query, [id, id, id]);
-
-      return letters;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
   static async findLetterParticipantInfo(groupInfo) {
     let conn;
 
@@ -140,7 +111,7 @@ class LetterStorage {
         FROM letters AS l
         JOIN students AS s
         ON s.id = l.sender_id OR s.id = l.recipient_id 
-        WHERE l.host_id = ? AND s.id = ? AND group_no = ? AND delete_flag = 0
+        WHERE l.host_id = ? AND s.id = ? AND group_no = ?
         ORDER BY l.in_date DESC;`;
 
       const letters = await conn.query(query, [
