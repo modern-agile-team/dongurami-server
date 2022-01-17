@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors(options));
 app.use(morgan(':method :status :response-time ms', { stream: logger.stream }));
 
-const board = require('./src/apis/boards');
+const board = require('./src/apis/board');
 const root = require('./src/apis/root');
 const review = require('./src/apis/review');
 const home = require('./src/apis/home');
