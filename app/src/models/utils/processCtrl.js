@@ -2,7 +2,7 @@
 
 const logger = require('../../config/logger');
 
-function processCtrl(res, apiInfo) {
+function processCtrl(res, apiInfo, nextFlag = 0) {
   function createLoggerMsg() {
     if (apiInfo.response.status === undefined) {
       return `${apiInfo.method} ${apiInfo.path} 500: \n${apiInfo.response.errMsg.stack}`;
@@ -11,6 +11,7 @@ function processCtrl(res, apiInfo) {
   }
 
   function createLogger() {
+    if (nextFlag && apiInfo.response.status < 300) return true;
     if (apiInfo.response.status < 400) {
       return logger.info(createLoggerMsg());
     }
@@ -18,6 +19,7 @@ function processCtrl(res, apiInfo) {
   }
 
   function responseToClient(response) {
+    if (nextFlag && apiInfo.response.status < 300) return true;
     if (response.status === undefined) {
       return res.status(500).json(response.clientMsg);
     }
