@@ -1,4 +1,8 @@
+'use strict';
+
 const mariadb = require('../../../config/mariadb');
+
+const BoardUtil = require('./Utils');
 
 class BoardStorage {
   static async createBoardNum(boardInfo) {
@@ -81,7 +85,7 @@ class BoardStorage {
         FROM clubs
         WHERE no = ?;`;
 
-      const club = await conn.query(query, clubNum);
+      const club = await conn.query(query, [clubNum]);
 
       return club[0];
     } catch (err) {
@@ -132,22 +136,9 @@ class BoardStorage {
 
     try {
       conn = await mariadb.getConnection();
-      let whole = '';
-      let where = '';
-      let limit = '';
 
-      if (boardInfo.clubCategory !== undefined) {
-        whole = ` AND clubs.category = '${boardInfo.clubCategory}'`;
-      }
-      if (boardInfo.lastNum >= 0) {
-        limit = `LIMIT 8`;
-        if (boardInfo.lastNum > 0) {
-          where = ` AND bo.no < ${boardInfo.lastNum}`;
-        }
-        if (boardInfo.order === 'asc') {
-          where = ` AND bo.no > ${boardInfo.lastNum}`;
-        }
-      }
+      const { category, direction } =
+        BoardUtil.getAddQueryForPromotion(boardInfo);
 
       const query = `
         SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
@@ -162,10 +153,10 @@ class BoardStorage {
         ON bo.student_id = st.id
         JOIN clubs
         ON bo.club_no = clubs.no
-        WHERE bo.board_category_no = 4${whole}${where}
+        WHERE bo.board_category_no = 4${category}${direction}
         GROUP BY no
         ORDER BY ${boardInfo.sort} ${boardInfo.order}
-        ${limit};`;
+        LiMIT 8;`;
 
       const boards = await conn.query(query);
 

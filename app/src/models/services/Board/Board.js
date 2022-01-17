@@ -117,7 +117,7 @@ class Board {
   async findAllByPromotionCategory() {
     const boardInfo = {
       clubCategory: this.query.category,
-      lastNum: this.query.lastNum,
+      lastNum: this.query.lastNum || 0,
       sort: this.query.sort || 'inDate',
       order: this.query.order || 'desc',
     };
