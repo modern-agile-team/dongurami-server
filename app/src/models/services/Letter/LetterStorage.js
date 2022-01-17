@@ -315,15 +315,14 @@ class LetterStorage {
     }
   }
 
-  static async deleteLetters(letterInfo) {
+  static async deleteLettersByGroupNo(letterInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
       const query = `
-        UPDATE letters 
-        SET delete_flag = 1 
+        DELETE FROM letters 
         WHERE host_id = ? AND group_no = ?;`;
 
       const letter = await conn.query(query, [

@@ -113,23 +113,23 @@ const process = {
     return res.status(400).json(response);
   },
 
-  deleteLetters: async (req, res) => {
+  deleteLettersByGroupNo: async (req, res) => {
     const letter = new Letter(req);
     const { id } = req.params;
     const { groupNo } = req.params;
-    const response = await letter.deleteLetters();
+    const response = await letter.deleteLettersByGroupNo();
 
     if (response.success) {
-      logger.info(`PUT /api/letter/${id}/${groupNo} 200: ${response.msg}`);
+      logger.info(`DELETE /api/letter/${id}/${groupNo} 200: ${response.msg}`);
       return res.status(200).json(response);
     }
     if (response.isError) {
       logger.error(
-        `PUT /api/letter/${id}/${groupNo} 500: \n${response.errMsg.stack}`
+        `DELETE /api/letter/${id}/${groupNo} 500: \n${response.errMsg.stack}`
       );
       return res.status(500).json(response.clientMsg);
     }
-    logger.error(`PUT /api/letter/${id}/${groupNo} 400: ${response.msg}`);
+    logger.error(`DELETE /api/letter/${id}/${groupNo} 400: ${response.msg}`);
     return res.status(400).json(response);
   },
 };

@@ -36,21 +36,6 @@ class Letter {
     }
   }
 
-  async xxdeleteLetterNotifications() {
-    const { id } = this.auth;
-
-    try {
-      const response = await LetterStorage.deleteLetterNotifications(id);
-
-      if (response) {
-        return { success: true, msg: '쪽지 알림이 모두 삭제되었습니다.' };
-      }
-      return { success: false, msg: '쪽지 알림이 삭제되지 않았습니다.' };
-    } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
-    }
-  }
-
   async findAllLetterList() {
     const { id } = this.auth;
 
@@ -194,21 +179,17 @@ class Letter {
     }
   }
 
-  async deleteLetters() {
-    const { id } = this.auth;
-
+  async deleteLettersByGroupNo() {
     try {
       const letterInfo = {
-        id,
+        id: this.auth.id,
         groupNo: this.params.groupNo,
       };
 
-      const result = await LetterStorage.deleteLetters(letterInfo);
-
-      if (result) {
-        return { success: true, msg: '쪽지 대화 목록 전체 삭제 성공' };
+      if (await LetterStorage.deleteLettersByGroupNo(letterInfo)) {
+        return { success: true, msg: '쪽지 대화 전체 삭제 성공' };
       }
-      return { success: false, msg: '쪽지 대화 목록 전체 삭제 실패' };
+      return { success: false, msg: '쪽지 대화 전체 삭제 실패' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
