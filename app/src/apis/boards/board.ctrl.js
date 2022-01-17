@@ -4,6 +4,8 @@ const Board = require('../../models/services/Board/Board');
 const Comment = require('../../models/services/Board/Comment/Comment');
 const Image = require('../../models/services/Image/Image');
 const logger = require('../../config/logger');
+const getApiInfo = require('../../models/utils/getApiInfo');
+const processCtrl = require('../../models/utils/processCtrl');
 
 const process = {
   createBoardNum: async (req, res) => {
@@ -41,40 +43,17 @@ const process = {
   findAllByCategoryNum: async (req, res) => {
     const board = new Board(req);
     const response = await board.findAllByCategoryNum();
-    const { category } = req.params;
+    const apiInfo = getApiInfo('GET', response, req);
 
-    if (response.success) {
-      logger.info(`GET /api/board/${category} 200: ${response.msg}`);
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `GET /api/board/${category} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    if (response.msg === '해당 동아리에 가입하지 않았습니다.') {
-      logger.error(
-        `GET /api/club/board/${category}/${req.params.clubNum} 403: ${response.msg}`
-      );
-      return res.status(403).json(response);
-    }
-    logger.error(`GET /api/board/${category} 404: ${response.msg}`);
-    return res.status(404).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   findAllByPromotionCategory: async (req, res) => {
     const board = new Board(req);
     const response = await board.findAllByPromotionCategory();
+    const apiInfo = getApiInfo('GET', response, req);
 
-    if (response.success) {
-      logger.info(`GET /api/board/promotion/club 200: ${response.msg}`);
-      return res.status(200).json(response);
-    }
-    logger.error(
-      `GET /api/board/promotion/club 500: \n${response.errMsg.stack}`
-    );
-    return res.status(500).json(response.clientMsg);
+    return processCtrl(res, apiInfo);
   },
 
   findOneByBoardNum: async (req, res) => {
@@ -168,49 +147,17 @@ const process = {
   updateOnlyHitByNum: async (req, res) => {
     const board = new Board(req);
     const response = await board.updateOnlyHitByNum();
-    const { category } = req.params;
-    const { boardNum } = req.params;
+    const apiInfo = getApiInfo('PATCH', response, req);
 
-    if (response.success) {
-      logger.info(
-        `PATCH /api/board/${category}/${boardNum} 200: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `PATCH /api/board/${category}/${boardNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `PATCH /api/board/${category}/${boardNum} 404: ${response.msg}`
-    );
-    return res.status(404).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   deleteOneByBoardNum: async (req, res) => {
     const board = new Board(req);
     const response = await board.deleteOneByBoardNum();
-    const { category } = req.params;
-    const { boardNum } = req.params;
+    const apiInfo = getApiInfo('DELETE', response, req);
 
-    if (response.success) {
-      logger.info(
-        `DELETE /api/board/${category}/${boardNum} 200: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `DELETE /api/board/${category}/${boardNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `DELETE /api/board/${category}/${boardNum} 404: ${response.msg}`
-    );
-    return res.status(404).json(response);
+    return processCtrl(res, apiInfo);
   },
 };
 
