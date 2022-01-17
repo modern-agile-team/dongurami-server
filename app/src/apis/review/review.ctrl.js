@@ -25,7 +25,7 @@ const process = {
 
   createByReview: async (req, res) => {
     const review = new Review(req);
-    const response = await review.createByReivew();
+    const response = await review.createByReviewInfo();
     const { clubNum } = req.params;
 
     if (response.success) {

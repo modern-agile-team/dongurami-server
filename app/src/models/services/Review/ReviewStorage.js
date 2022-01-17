@@ -9,8 +9,9 @@ class ReviewStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'INSERT INTO reviews (club_no, student_id, description, score) VALUES (?, ?, ?, ?);';
+      const query = `
+        INSERT INTO reviews (club_no, student_id, description, score) 
+        VALUES (?, ?, ?, ?);`;
 
       await conn.query(query, [
         reviewInfo.clubNum,
@@ -33,16 +34,17 @@ class ReviewStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'SELECT * FROM reviews WHERE student_id = ? AND club_no = ?;';
+      const query = `
+        SELECT * 
+        FROM reviews 
+        WHERE student_id = ? AND club_no = ?;`;
 
       const review = await conn.query(query, [
         userInfo.studentId,
         userInfo.clubNum,
       ]);
 
-      if (!review[0]) return false;
-      return true;
+      return review[0];
     } catch (err) {
       throw err;
     } finally {
@@ -50,14 +52,17 @@ class ReviewStorage {
     }
   }
 
-  static async findOneByClubNum(clubNum) {
+  static async findReviewByClubNum(clubNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'SELECT no, student_id AS studentId, description, score, in_date AS inDate FROM reviews WHERE club_no = ? ORDER BY in_date DESC;';
+      const query = `
+        SELECT no, student_id AS studentId, description, score, in_date AS inDate 
+        FROM reviews 
+        WHERE club_no = ? 
+        ORDER BY in_date DESC;`;
 
       const reviewList = await conn.query(query, [clubNum]);
 
