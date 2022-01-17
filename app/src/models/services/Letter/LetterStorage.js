@@ -26,6 +26,27 @@ class LetterStorage {
     }
   }
 
+  static async deleteLetterNotifications(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE letters 
+        SET reading_flag = 1 
+        WHERE host_id = ? AND reading_flag = 0;`;
+
+      const letter = await conn.query(query, [id]);
+
+      return letter.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findAllLetterList(id) {
     let conn;
 
@@ -285,27 +306,6 @@ class LetterStorage {
         letterInfo.id,
         letterInfo.groupNo,
       ]);
-
-      return letter.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async deleteLetterNotifications(id) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        UPDATE letters 
-        SET reading_flag = 1 
-        WHERE host_id = ? AND reading_flag = 0;`;
-
-      const letter = await conn.query(query, [id]);
 
       return letter.affectedRows;
     } catch (err) {
