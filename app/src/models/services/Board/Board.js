@@ -192,7 +192,6 @@ class Board {
 
       if (!writerCheck.success) return writerCheck;
 
-      // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 수정 가능
       if (boardInfo.category === 5 || boardInfo.category === 6) {
         const boardAdminFlag = await AdminoOptionStorage.findBoardAdminFlag(
           this.params.clubNum,
@@ -229,7 +228,6 @@ class Board {
 
       if (!writerCheck.success) return writerCheck;
 
-      // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 삭제 가능
       if (boardInfo.category === 5 || boardInfo.category === 6) {
         const boardAdminFlag = await AdminoOptionStorage.findBoardAdminFlag(
           this.params.clubNum,
