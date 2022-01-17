@@ -32,7 +32,7 @@ class Letter {
 
     try {
       if (this.params.id !== id) {
-        return { success: false, msg: '본인만 열람 가능합니다.' };
+        return makeMsg(403, '본인만 열람 가능합니다.');
       }
 
       const letters = await LetterStorage.findAllLetterList(id);
@@ -98,6 +98,7 @@ class Letter {
         senderId: id,
         recipientId: data.recipientId,
         description: data.description,
+        boardNo: data.boardNo,
         writerHiddenFlag: data.writerHiddenFlag,
       };
 
@@ -137,6 +138,7 @@ class Letter {
         senderId: letterInfo.id,
         recipientId: letterInfo.otherId,
         description: this.body.description,
+        boardNo: letterInfo.boardNo,
         recipientHiddenFlag: letterInfo.otherHiddenFlag,
         writerHiddenFlag: letterInfo.myHiddenFlag,
       };

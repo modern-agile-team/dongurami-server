@@ -181,12 +181,13 @@ class LetterStorage {
       const query = `
         SELECT group_no AS groupNo 
         FROM letters 
-        WHERE host_id = ? AND recipient_id = ? AND writer_hidden_flag = ? AND recipient_hidden_flag = ? 
+        WHERE host_id = ? AND recipient_id = ? AND board_no = ? AND writer_hidden_flag = ? AND recipient_hidden_flag = ? 
         LIMIT 1;`;
 
       const groupNo = await conn.query(query, [
         sendInfo.senderId,
         sendInfo.recipientId,
+        sendInfo.boardNo,
         sendInfo.writerHiddenFlag,
         sendInfo.recipientHiddenFlag,
       ]);
@@ -206,7 +207,7 @@ class LetterStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT sender_id AS senderId, recipient_id AS recipientId, IF (sender_id = ?, recipient_hidden_flag, writer_hidden_flag) AS otherHiddenFlag, IF (sender_id = ?, writer_hidden_flag, recipient_hidden_flag) AS myHiddenFlag
+        SELECT sender_id AS senderId, recipient_id AS recipboard_noAS boardNo, IF (sender_id = ?, recipient_hidden_flag, writer_hidden_flag) AS otherHiddenFlag, IF (sender_id = ?, writer_hidden_flag, recipient_hidden_flag) AS myHiddenFlag
         FROM letters 
         WHERE group_no = ?
         LIMIT 1;`;
@@ -254,14 +255,15 @@ class LetterStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        INSERT INTO letters (sender_id, recipient_id, host_id, description, writer_hidden_flag, recipient_hidden_flag) 
-        VALUES (?, ?, ?, ?, ?, ?)`;
+        INSERT INTO letters (sender_id, recipient_id, host_id, description, board_no, writer_hidden_flag, recipient_hidden_flag) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
       const addLetterBySender = await conn.query(query, [
         sendInfo.senderId,
         sendInfo.recipientId,
         sendInfo.senderId,
         sendInfo.description,
+        sendInfo.boardNo,
         sendInfo.writerHiddenFlag,
         sendInfo.recipientHiddenFlag,
       ]);
@@ -271,6 +273,7 @@ class LetterStorage {
         sendInfo.recipientId,
         sendInfo.recipientId,
         sendInfo.description,
+        sendInfo.boardNo,
         sendInfo.writerHiddenFlag,
         sendInfo.recipientHiddenFlag,
       ]);
