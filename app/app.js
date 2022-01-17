@@ -41,6 +41,7 @@ const s3 = require('./src/apis/s3');
 const letter = require('./src/apis/letter');
 const naver = require('./src/apis/naver');
 const emotion = require('./src/apis/emotion');
+const comment = require('./src/apis/comment');
 
 app.use('/api/board', board);
 app.use('/api', root);
@@ -59,5 +60,6 @@ app.use('/api/s3', s3);
 app.use('/api/letter', letter);
 app.use('/api/naver', naver);
 app.use('/api/emotion', emotion);
+app.use('/api/comment', comment);
 
 module.exports = app;
