@@ -1,5 +1,7 @@
 'use strict';
 
+const LetterStorage = require('./LetterStorage');
+
 class LetterUtil {
   static checkHiddenFlagForNoti(letters) {
     letters.forEach((letter) => {
@@ -51,6 +53,10 @@ class LetterUtil {
     data.recipientId = data.boardFlag
       ? await LetterStorage.findRecipientByBoard(data.boardNo)
       : await LetterStorage.findRecipientByComment(data.commentNo);
+  }
+
+  static changeGroupNo(senderInsertNo, checkGroupNo) {
+    return checkGroupNo[0] ? checkGroupNo[0].groupNo : senderInsertNo;
   }
 }
 

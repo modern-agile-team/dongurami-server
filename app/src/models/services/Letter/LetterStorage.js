@@ -158,7 +158,7 @@ class LetterStorage {
     }
   }
 
-  static async findRecipientByComment(boardNo, commentNo) {
+  static async findRecipientByComment(commentNo) {
     let conn;
 
     try {
@@ -169,7 +169,7 @@ class LetterStorage {
         FROM comments 
         WHERE no = ?;`;
 
-      const recipientId = await conn.query(query, [boardNo, commentNo]);
+      const recipientId = await conn.query(query, [commentNo]);
 
       return recipientId[0].studentId;
     } catch (err) {
@@ -216,7 +216,6 @@ class LetterStorage {
         INSERT INTO letters (sender_id, recipient_id, host_id, description, writer_hidden_flag, recipient_hidden_flag) 
         VALUES (?, ?, ?, ?, ?, ?)`;
 
-      // 쪽지는 전송자와 수신자 모두 저장이 되어 있어야 각자 따로 메세지를 지울 수 있기 때문에 host_id COLUMN 값만 다르게 두번 저장
       const addLetterBySender = await conn.query(query, [
         sendInfo.senderId,
         sendInfo.recipientId,
@@ -236,8 +235,8 @@ class LetterStorage {
       ]);
 
       return {
-        sender: addLetterBySender.insertId,
-        recipient: addLetterByRecipient.insertId,
+        senderInsertNo: addLetterBySender.insertId,
+        recipientInsertNo: addLetterByRecipient.insertId,
       };
     } catch (err) {
       throw err;
@@ -246,7 +245,7 @@ class LetterStorage {
     }
   }
 
-  static async updateGroupNo(sender, recipient, groupNo) {
+  static async updateGroupNo(letterGroupInfo) {
     let conn;
 
     try {
@@ -258,9 +257,9 @@ class LetterStorage {
         WHERE no = ? OR no = ?;`;
 
       const resultSender = await conn.query(query, [
-        groupNo,
-        sender,
-        recipient,
+        letterGroupInfo.groupNo,
+        letterGroupInfo.senderInsertNo,
+        letterGroupInfo.recipientInsertNo,
       ]);
 
       return resultSender.affectedRows;
@@ -270,26 +269,6 @@ class LetterStorage {
       conn?.release();
     }
   }
-
-  // static async findLetterInfo(groupNo) {
-  //   let conn;
-
-  //   try {
-  //     conn = await mariadb.getConnection();
-
-  //     const query = `
-  //       SELECT sender_id AS senderId, recipient_id AS recipientId, group_no AS groupNo
-  //       FROM letters WHERE group_no = ?;`;
-
-  //     const letterInfo = await conn.query(query, [groupNo]);
-
-  //     return letterInfo[0];
-  //   } catch (err) {
-  //     throw err;
-  //   } finally {
-  //     conn?.release();
-  //   }
-  // }
 
   static async updateReadingFlag(letterInfo) {
     let conn;

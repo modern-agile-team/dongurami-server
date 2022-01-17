@@ -92,7 +92,7 @@ class Letter {
 
       if (!data.recipientId.length) {
         recipientHiddenFlag = 1;
-        LetterUtil.findRecipientId(data);
+        await LetterUtil.findRecipientId(data);
       }
 
       if (id === data.recipientId) {
@@ -109,17 +109,16 @@ class Letter {
 
       const checkGroupNo = await LetterStorage.findOneByGroupNo(sendInfo);
 
-      const { sender, recipient } = await LetterStorage.createLetter(sendInfo);
+      const { senderInsertNo, recipientInsertNo } =
+        await LetterStorage.createLetter(sendInfo);
 
-      let groupNo = sender;
+      const groupNo = LetterUtil.changeGroupNo(senderInsertNo, checkGroupNo);
 
-      if (checkGroupNo[0]) groupNo = checkGroupNo[0].groupNo;
-
-      const result = await LetterStorage.updateGroupNo(
-        sender,
-        recipient,
-        groupNo
-      );
+      const result = await LetterStorage.updateGroupNo({
+        senderInsertNo,
+        recipientInsertNo,
+        groupNo,
+      });
 
       if (result) return { success: true, msg: '쪽지가 전송되었습니다.' };
       return { success: false, msg: '쪽지가 전송되지 않았습니다.' };
