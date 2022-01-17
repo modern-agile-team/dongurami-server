@@ -11,15 +11,29 @@ class AdminOption {
     this.auth = req.auth;
   }
 
+  async checkLeader() {
+    const leader = await AdminOptionStorage.findLeaderByClubNum(
+      this.params.clubNum
+    );
+
+    if (leader !== this.auth.id) {
+      return {
+        status: 400,
+        success: false,
+        msg: '회장만 접근이 가능합니다.',
+      };
+    }
+    return { success: true };
+  }
+
   async checkClubAdmin() {
     const user = this.auth;
+    const clubAdminInfo = {
+      id: user.id,
+      clubNum: this.params.clubNum,
+    };
 
     try {
-      const clubAdminInfo = {
-        id: user.id,
-        clubNum: this.params.clubNum,
-      };
-
       const clubAdminId = await AdminOptionStorage.findOneById(clubAdminInfo);
 
       if (clubAdminId || user.isAdmin) {
@@ -37,21 +51,6 @@ class AdminOption {
     } catch (err) {
       return Error.ctrl('', err);
     }
-  }
-
-  async checkLeader() {
-    const leader = await AdminOptionStorage.findLeaderByClubNum(
-      this.params.clubNum
-    );
-
-    if (leader !== this.auth.id) {
-      return {
-        status: 400,
-        success: false,
-        msg: '회장만 접근이 가능합니다.',
-      };
-    }
-    return { success: true };
   }
 
   async findOneByClubNum() {
@@ -91,9 +90,9 @@ class AdminOption {
         clubNum
       );
 
-      const questionsAnswers = applicants.map((applicant) =>
-        questionAnswerInfo.filter((qAndA) => applicant.id === qAndA.id)
-      );
+      const questionsAnswers = applicants.map((applicant) => {
+        return questionAnswerInfo.filter((qAndA) => applicant.id === qAndA.id);
+      });
 
       return { success: true, applicantInfo, questionsAnswers };
     } catch (err) {
@@ -166,12 +165,12 @@ class AdminOption {
   }
 
   async createMemberById() {
-    try {
-      const applicantInfo = {
-        clubNum: this.params.clubNum,
-        applicant: this.body.applicant,
-      };
+    const applicantInfo = {
+      clubNum: this.params.clubNum,
+      applicant: this.body.applicant,
+    };
 
+    try {
       const isUpdate = await AdminOptionStorage.updateAcceptedApplicantById(
         applicantInfo
       );
@@ -196,12 +195,12 @@ class AdminOption {
   }
 
   async updateRejectedApplicantById() {
-    try {
-      const applicantInfo = {
-        clubNum: this.params.clubNum,
-        applicantId: this.body.applicant,
-      };
+    const applicantInfo = {
+      clubNum: this.params.clubNum,
+      applicantId: this.body.applicant,
+    };
 
+    try {
       const isUpdate = await AdminOptionStorage.updateRejectedApplicantById(
         applicantInfo
       );
