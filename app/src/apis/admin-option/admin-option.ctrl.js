@@ -17,6 +17,17 @@ const process = {
     return result;
   },
 
+  checkLeaderAdmin: async (req, res, next) => {
+    const adminOption = new AdminOption(req);
+    const response = await adminOption.checkLeaderAdmin();
+    const apiInfo = getApiInfo('POST', response, req);
+
+    const result = processCtrl(res, apiInfo, 1);
+
+    if (result) return next();
+    return result;
+  },
+
   findOneByClubNum: async (req, res) => {
     const adminOption = new AdminOption(req);
     const url = req.originalUrl;

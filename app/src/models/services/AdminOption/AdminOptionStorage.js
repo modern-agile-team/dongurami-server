@@ -79,7 +79,7 @@ class AdminoOptionStorage {
         FROM students AS s 
         JOIN clubs AS c 
         ON c.leader = s.id AND c.no = ?;`;
-      
+
       const leaderAndClubName = await conn.query(query, [clubNum]);
 
       return {
@@ -161,23 +161,20 @@ class AdminoOptionStorage {
     }
   }
 
-  static async updateAcceptedApplicantById(userInfo) {
+  static async findLeaderByClubNum(clubNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
       const query = `
-        UPDATE applicants 
-        SET reading_flag = 1 
-        WHERE club_no = ? AND student_id = ?;`;
+        SELECT leader 
+        FROM clubs 
+        WHERE no = ?;`;
 
-      const approvedApplicant = await conn.query(query, [
-        userInfo.clubNum,
-        userInfo.applicant,
-      ]);
+      const leader = await conn.query(query, [clubNum]);
 
-      return approvedApplicant.affectedRows;
+      return leader[0].leader;
     } catch (err) {
       throw err;
     } finally {
@@ -208,6 +205,30 @@ class AdminoOptionStorage {
     }
   }
 
+  static async updateAcceptedApplicantById(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE applicants 
+        SET reading_flag = 1 
+        WHERE club_no = ? AND student_id = ?;`;
+
+      const approvedApplicant = await conn.query(query, [
+        userInfo.clubNum,
+        userInfo.applicant,
+      ]);
+
+      return approvedApplicant.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async updateRejectedApplicantById(applicantInfo) {
     let conn;
 
@@ -225,27 +246,6 @@ class AdminoOptionStorage {
       ]);
 
       return updateRejectedApplicant.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findLeaderByClubNum(clubNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        SELECT leader 
-        FROM clubs 
-        WHERE no = ?;`;
-
-      const leader = await conn.query(query, [clubNum]);
-
-      return leader[0].leader;
     } catch (err) {
       throw err;
     } finally {
@@ -345,33 +345,7 @@ class AdminoOptionStorage {
         memberInfo.memberId,
       ]);
 
-      if (!deleteMember.affectedRows) return false;
-      return true;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async updateReadingFlagById(memberInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        UPDATE applicants 
-        SET reading_flag = 2 
-        WHERE club_no = ? AND student_id = ?;`;
-
-      const updateApplicant = await conn.query(query, [
-        memberInfo.clubNum,
-        memberInfo.memberId,
-      ]);
-
-      if (!updateApplicant.affectedRows) return false;
-      return true;
+      return deleteMember.affectedRows;
     } catch (err) {
       throw err;
     } finally {

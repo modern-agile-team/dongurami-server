@@ -28,6 +28,7 @@ router.put(
   '/:clubNum/leader',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  ctrl.process.checkLeaderAdmin,
   ctrl.process.updateLeaderById
 );
 
@@ -35,6 +36,7 @@ router.put(
   '/:clubNum/admin-functions',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  ctrl.process.checkLeaderAdmin,
   ctrl.process.updateAdminOptionById
 );
 
@@ -49,6 +51,7 @@ router.delete(
   '/:clubNum/:memberId',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
+  ctrl.process.checkLeaderAdmin,
   ctrl.process.deleteMemberById
 );
 
