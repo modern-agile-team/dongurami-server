@@ -7,7 +7,9 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO boards (board_category_no, student_id, club_no, title, description, writer_hidden_flag) VALUES (?, ?, ?, ?, ?, ?);`;
+      const query = `
+        INSERT INTO boards (board_category_no, student_id, club_no, title, description, writer_hidden_flag)
+        VALUES (?, ?, ?, ?, ?, ?);`;
 
       const board = await conn.query(query, [
         boardInfo.category,
@@ -32,8 +34,10 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT board_admin_flag AS boardAdminFlag FROM members 
-      WHERE club_no = ? AND student_id = ?;`;
+      const query = `
+        SELECT board_admin_flag AS boardAdminFlag
+        FROM members 
+        WHERE club_no = ? AND student_id = ?;`;
 
       const boardFlag = await conn.query(query, [clubNum, id]);
 
@@ -51,7 +55,11 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'SELECT no FROM clubs WHERE no = ?;';
+      const query = `
+        SELECT no
+        FROM clubs
+        WHERE no = ?;`;
+
       const club = await conn.query(query, clubNum);
 
       return club[0];
@@ -68,21 +76,22 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
-      (SELECT COUNT(no) FROM comments
-      WHERE board_no = bo.no) AS commentCount,
-      (SELECT COUNT(no) FROM board_emotions
-      WHERE board_no = bo.no) AS emotionCount
-      FROM boards AS bo
-      LEFT JOIN images AS img
-      ON bo.no = img.board_no
-      JOIN students AS st
-      ON bo.student_id = st.id
-      JOIN clubs
-      ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = ? AND bo.club_no = ?
-      GROUP BY no
-      ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
+      const query = `
+        SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
+        (SELECT COUNT(no) FROM comments
+        WHERE board_no = bo.no) AS commentCount,
+        (SELECT COUNT(no) FROM board_emotions
+        WHERE board_no = bo.no) AS emotionCount
+        FROM boards AS bo
+        LEFT JOIN images AS img
+        ON bo.no = img.board_no
+        JOIN students AS st
+        ON bo.student_id = st.id
+        JOIN clubs
+        ON bo.club_no = clubs.no
+        WHERE bo.board_category_no = ? AND bo.club_no = ?
+        GROUP BY no
+        ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
 
       const boardList = await conn.query(query, [
         criteriaRead.category,
@@ -119,22 +128,23 @@ class BoardStorage {
         }
       }
 
-      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
-      (SELECT COUNT(no) FROM comments
-      WHERE board_no = bo.no) AS commentCount,
-      (SELECT COUNT(no) FROM board_emotions
-      WHERE board_no = bo.no) AS emotionCount
-      FROM boards AS bo
-      LEFT JOIN images AS img
-      ON bo.no = img.board_no
-      JOIN students AS st
-      ON bo.student_id = st.id
-      JOIN clubs
-      ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = 4${whole}${where}
-      GROUP BY no
-      ORDER BY ${criteriaRead.sort} ${criteriaRead.order}
-      ${limit};`;
+      const query = `
+        SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
+        (SELECT COUNT(no) FROM comments
+        WHERE board_no = bo.no) AS commentCount,
+        (SELECT COUNT(no) FROM board_emotions
+        WHERE board_no = bo.no) AS emotionCount
+        FROM boards AS bo
+        LEFT JOIN images AS img
+        ON bo.no = img.board_no
+        JOIN students AS st
+        ON bo.student_id = st.id
+        JOIN clubs
+        ON bo.club_no = clubs.no
+        WHERE bo.board_category_no = 4${whole}${where}
+        GROUP BY no
+        ORDER BY ${criteriaRead.sort} ${criteriaRead.order}
+        ${limit};`;
 
       const boardList = await conn.query(query);
 
@@ -152,17 +162,18 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.hit, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
-      (SELECT COUNT(no) FROM board_emotions
-      WHERE board_no = bo.no) AS emotionCount,
-      (SELECT COUNT(no) FROM board_emotions
-      WHERE board_no = bo.no AND student_id = ?) AS likedFlag
-      FROM boards AS bo
-      JOIN students AS st
-      ON bo.student_id = st.id
-      JOIN clubs
-      ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = ? AND bo.no = ?;`;
+      const query = `
+        SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.hit, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
+        (SELECT COUNT(no) FROM board_emotions
+        WHERE board_no = bo.no) AS emotionCount,
+        (SELECT COUNT(no) FROM board_emotions
+        WHERE board_no = bo.no AND student_id = ?) AS likedFlag
+        FROM boards AS bo
+        JOIN students AS st
+        ON bo.student_id = st.id
+        JOIN clubs
+        ON bo.club_no = clubs.no
+        WHERE bo.board_category_no = ? AND bo.no = ?;`;
 
       const board = await conn.query(query, [
         boardInfo.studentId,
@@ -184,7 +195,10 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE boards SET title = ?, description = ?, writer_hidden_flag = ? WHERE no = ? AND board_category_no = ?;`;
+      const query = `
+        UPDATE boards
+        SET title = ?, description = ?, writer_hidden_flag = ?
+        WHERE no = ? AND board_category_no = ?;`;
 
       const board = await conn.query(query, [
         boardInfo.title,
@@ -208,7 +222,9 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `DELETE FROM boards WHERE no = ? AND board_category_no = ?;`;
+      const query = `
+        DELETE FROM boards
+        WHERE no = ? AND board_category_no = ?;`;
 
       const board = await conn.query(query, [
         boardInfo.boardNum,
@@ -229,7 +245,10 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no FROM boards WHERE no = ?;`;
+      const query = `
+        SELECT no
+        FROM boards
+        WHERE no = ?;`;
 
       const board = await conn.query(query, [boardNum]);
 
@@ -247,8 +266,10 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'UPDATE boards SET hit = hit + 1 WHERE board_category_no = ? AND no = ?;';
+      const query = `
+        UPDATE boards
+        SET hit = hit + 1
+        WHERE board_category_no = ? AND no = ?;`;
 
       const updateCnt = await conn.query(query, [
         boardInfo.category,
