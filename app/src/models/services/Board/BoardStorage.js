@@ -26,6 +26,25 @@ class BoardStorage {
     }
   }
 
+  static async findBoardAdminFlag(clubNum, id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `SELECT board_admin_flag AS boardAdminFlag FROM members 
+      WHERE club_no = ? AND student_id = ?;`;
+
+      const boardFlag = await conn.query(query, [clubNum, id]);
+
+      return boardFlag[0].boardAdminFlag;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findClub(clubNum) {
     let conn;
 

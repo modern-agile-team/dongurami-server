@@ -1,7 +1,6 @@
 'use strict';
 
 const BoardStorage = require('./BoardStorage');
-const AdminoOptionStorage = require('../AdminOption/AdminOptionStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const BoardUtil = require('./Utils');
@@ -193,7 +192,7 @@ class Board {
       if (!writerCheck.success) return writerCheck;
 
       if (boardInfo.category === 5 || boardInfo.category === 6) {
-        const boardAdminFlag = await AdminoOptionStorage.findBoardAdminFlag(
+        const boardAdminFlag = await BoardStorage.findBoardAdminFlag(
           this.params.clubNum,
           user.id
         );
@@ -229,7 +228,7 @@ class Board {
       if (!writerCheck.success) return writerCheck;
 
       if (boardInfo.category === 5 || boardInfo.category === 6) {
-        const boardAdminFlag = await AdminoOptionStorage.findBoardAdminFlag(
+        const boardAdminFlag = await BoardStorage.findBoardAdminFlag(
           this.params.clubNum,
           user.id
         );
