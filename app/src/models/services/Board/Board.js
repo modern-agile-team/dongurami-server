@@ -90,7 +90,7 @@ class Board {
 
     try {
       if (boardInfo.category === 5 || boardInfo.category === 6) {
-        const club = await BoardStorage.findClub(clubNum);
+        const club = await BoardStorage.findClubByClubNum(clubNum);
 
         if (!club) {
           return makeResponse(404, '존재하지 않는 동아리입니다.');

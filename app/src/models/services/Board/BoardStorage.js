@@ -39,9 +39,9 @@ class BoardStorage {
         FROM members 
         WHERE club_no = ? AND student_id = ?;`;
 
-      const boardFlag = await conn.query(query, [clubNum, id]);
+      const boardAdminFlag = await conn.query(query, [clubNum, id]);
 
-      return boardFlag[0].boardAdminFlag;
+      return boardAdminFlag[0].boardAdminFlag;
     } catch (err) {
       throw err;
     } finally {
@@ -49,7 +49,7 @@ class BoardStorage {
     }
   }
 
-  static async findClub(clubNum) {
+  static async findClubByClubNum(clubNum) {
     let conn;
 
     try {
@@ -70,7 +70,7 @@ class BoardStorage {
     }
   }
 
-  static async findAllByCategoryNum(criteriaRead) {
+  static async findAllByCategoryNum(boardInfo) {
     let conn;
 
     try {
@@ -91,14 +91,14 @@ class BoardStorage {
         ON bo.club_no = clubs.no
         WHERE bo.board_category_no = ? AND bo.club_no = ?
         GROUP BY no
-        ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
+        ORDER BY ${boardInfo.sort} ${boardInfo.order};`;
 
-      const boardList = await conn.query(query, [
-        criteriaRead.category,
-        criteriaRead.clubNum,
+      const boards = await conn.query(query, [
+        boardInfo.category,
+        boardInfo.clubNum,
       ]);
 
-      return boardList;
+      return boards;
     } catch (err) {
       throw err;
     } finally {
@@ -106,7 +106,7 @@ class BoardStorage {
     }
   }
 
-  static async findAllByPromotionCategory(criteriaRead) {
+  static async findAllByPromotionCategory(boardInfo) {
     let conn;
 
     try {
@@ -115,16 +115,16 @@ class BoardStorage {
       let where = '';
       let limit = '';
 
-      if (criteriaRead.clubCategory !== undefined) {
-        whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
+      if (boardInfo.clubCategory !== undefined) {
+        whole = ` AND clubs.category = '${boardInfo.clubCategory}'`;
       }
-      if (criteriaRead.lastNum >= 0) {
+      if (boardInfo.lastNum >= 0) {
         limit = `LIMIT 8`;
-        if (criteriaRead.lastNum > 0) {
-          where = ` AND bo.no < ${criteriaRead.lastNum}`;
+        if (boardInfo.lastNum > 0) {
+          where = ` AND bo.no < ${boardInfo.lastNum}`;
         }
-        if (criteriaRead.order === 'asc') {
-          where = ` AND bo.no > ${criteriaRead.lastNum}`;
+        if (boardInfo.order === 'asc') {
+          where = ` AND bo.no > ${boardInfo.lastNum}`;
         }
       }
 
@@ -143,12 +143,12 @@ class BoardStorage {
         ON bo.club_no = clubs.no
         WHERE bo.board_category_no = 4${whole}${where}
         GROUP BY no
-        ORDER BY ${criteriaRead.sort} ${criteriaRead.order}
+        ORDER BY ${boardInfo.sort} ${boardInfo.order}
         ${limit};`;
 
-      const boardList = await conn.query(query);
+      const boards = await conn.query(query);
 
-      return boardList;
+      return boards;
     } catch (err) {
       throw err;
     } finally {
@@ -271,12 +271,12 @@ class BoardStorage {
         SET hit = hit + 1
         WHERE board_category_no = ? AND no = ?;`;
 
-      const updateCnt = await conn.query(query, [
+      const board = await conn.query(query, [
         boardInfo.category,
         boardInfo.boardNum,
       ]);
 
-      return updateCnt.affectedRows;
+      return board.affectedRows;
     } catch (err) {
       throw err;
     } finally {
