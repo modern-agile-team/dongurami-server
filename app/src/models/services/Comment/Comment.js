@@ -272,22 +272,19 @@ class Comment {
         replyCmtInfo
       );
 
-      if (isDelete === 0) {
+      if (!isDelete) {
         return makeResponse(404, '존재하지 않는 답글입니다.');
       }
       const isExist = await CommentStorage.existOnlyReplyCmtNum(replyCmtInfo);
 
-      if (isExist === undefined) {
+      if (!isExist) {
         const isUpdate = await CommentStorage.updateOnlyReplyFlag(
+          0,
           replyCmtInfo.cmtNum
         );
 
-        if (isUpdate === 0) {
-          return Error.ctrl(
-            '서버에러입니다. 서버 개발자에게 얘기해주세요.',
-            err
-          );
-        }
+        if (!isUpdate) return Error.dbError();
+        return makeResponse(200, '답글 삭제 성공');
       }
       return makeResponse(200, '답글 삭제 성공');
     } catch (err) {
