@@ -207,7 +207,7 @@ class LetterStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT sender_id AS senderId, recipient_id AS recipboard_noAS boardNo, IF (sender_id = ?, recipient_hidden_flag, writer_hidden_flag) AS otherHiddenFlag, IF (sender_id = ?, writer_hidden_flag, recipient_hidden_flag) AS myHiddenFlag
+        SELECT sender_id AS senderId, recipient_id AS recipientId, board_no AS boardNo, IF (sender_id = ?, recipient_hidden_flag, writer_hidden_flag) AS otherHiddenFlag, IF (sender_id = ?, writer_hidden_flag, recipient_hidden_flag) AS myHiddenFlag
         FROM letters 
         WHERE group_no = ?
         LIMIT 1;`;
@@ -226,21 +226,24 @@ class LetterStorage {
     }
   }
 
-  static async XXfindLetterByGroupNo(groupNo) {
+  static async findBoardNo(sendInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT sender_id AS senderId, recipient_id AS recipientId, writer_hidden_flag AS writerHiddenFlag, recipient_hidden_flag AS recipientHiddenFlag 
+        SELECT board_no AS boardNo 
         FROM letters 
-        WHERE group_no = ?
-        LIMIT 1;`;
+        WHERE host_id = ? AND (recipient_id = ? OR sender_id = ?) AND recipient_hidden_flag = 0 AND writer_hidden_flag = 0;`;
 
-      const letterInfo = await conn.query(query, [groupNo]);
+      const boardNo = await conn.query(query, [
+        sendInfo.senderId,
+        sendInfo.recipientId,
+        sendInfo.recipientId,
+      ]);
 
-      return letterInfo[0];
+      return boardNo[0] ? boardNo[0].boardNo : sendInfo.boardNo;
     } catch (err) {
       throw err;
     } finally {

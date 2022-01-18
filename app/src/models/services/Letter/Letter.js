@@ -102,6 +102,55 @@ class Letter {
         writerHiddenFlag: data.writerHiddenFlag,
       };
 
+      if (!(recipientHiddenFlag || data.writerHiddenFlag)) {
+        sendInfo.boardNo = await LetterStorage.findBoardNo(sendInfo);
+      }
+
+      const checkGroupNo = await LetterStorage.findOneByGroupNo(sendInfo);
+
+      const { senderInsertNo, recipientInsertNo } =
+        await LetterStorage.createLetter(sendInfo);
+
+      const groupNo = LetterUtil.changeGroupNo(senderInsertNo, checkGroupNo);
+
+      const result = await LetterStorage.updateGroupNo({
+        senderInsertNo,
+        recipientInsertNo,
+        groupNo,
+      });
+
+      if (result) return makeMsg(201, '쪽지가 전송되었습니다.');
+      return makeMsg(400, '쪽지가 전송되지 않았습니다.');
+    } catch (err) {
+      return Error.ctrl('', err);
+    }
+  }
+
+  async xxcreateLetter() {
+    const data = this.body;
+    const { id } = this.auth;
+
+    try {
+      let recipientHiddenFlag = 0;
+
+      if (!data.recipientId.length) {
+        recipientHiddenFlag = 1;
+        await LetterUtil.findRecipientId(data);
+      }
+
+      if (id === data.recipientId) {
+        return makeMsg(400, '본인에게 쪽지를 보낼 수 없습니다.');
+      }
+
+      const sendInfo = {
+        recipientHiddenFlag,
+        senderId: id,
+        recipientId: data.recipientId,
+        description: data.description,
+        boardNo: data.boardNo,
+        writerHiddenFlag: data.writerHiddenFlag,
+      };
+
       const checkGroupNo = await LetterStorage.findOneByGroupNo(sendInfo);
 
       const { senderInsertNo, recipientInsertNo } =
