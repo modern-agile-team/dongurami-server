@@ -53,7 +53,7 @@
 <br/>
 <br/>
 
-## <img src="https://user-images.githubusercontent.com/75289370/120157070-968be700-c22d-11eb-970f-9b9e9fcc7778.png" width="30px;" />&nbsp; 우아한 애자일 2기
+## <img src="https://user-images.githubusercontent.com/75289370/120157070-968be700-c22d-11eb-970f-9b9e9fcc7778.png" width="30px;" />&nbsp; 모던 애자일 2기
 
 ### 회장
 
