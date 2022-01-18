@@ -1,6 +1,6 @@
 'use strict';
 
-const Comment = require('../../models/services/Board/Comment/Comment');
+const Comment = require('../../models/services/Comment/Comment');
 const logger = require('../../config/logger');
 
 const process = {

@@ -1,6 +1,6 @@
 'use strict';
 
-const mariadb = require('../../../../config/mariadb');
+const mariadb = require('../../../config/mariadb');
 
 class CommentStorage {
   static async createCommentNum(commentInfo) {

@@ -1,10 +1,11 @@
 'use strict';
 
 const CommentStorage = require('./CommentStorage');
-const BoardStorage = require('../BoardStorage');
-const Error = require('../../../utils/Error');
-const WriterCheck = require('../../../utils/WriterCheck');
-const boardCategory = require('../../Category/board');
+const BoardStorage = require('../Board/BoardStorage');
+const Error = require('../../utils/Error');
+const WriterCheck = require('../../utils/WriterCheck');
+const boardCategory = require('../Category/board');
+// const getRequestNullKey = require('../../utils/getRequestNullKey');
 
 class Comment {
   constructor(req) {
@@ -116,7 +117,7 @@ class Comment {
       };
       const anonymous = {};
 
-      const board = await BoardStorage.findOneByBoardNum(boardInfo);
+      const board = await BoardStorage.existOnlyBoardNum(boardInfo.boardNum);
 
       if (board.writerHiddenFlag) {
         anonymous[board.studentId] = '익명1';

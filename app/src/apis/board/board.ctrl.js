@@ -1,7 +1,7 @@
 'use strict';
 
 const Board = require('../../models/services/Board/Board');
-const Comment = require('../../models/services/Board/Comment/Comment');
+const Comment = require('../../models/services/Comment/Comment');
 const Image = require('../../models/services/Image/Image');
 const logger = require('../../config/logger');
 const getApiInfo = require('../../models/utils/getApiInfo');

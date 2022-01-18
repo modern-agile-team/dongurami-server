@@ -1,6 +1,6 @@
 'use strict';
 
-const Comment = require('../../models/services/Board/Comment/Comment');
+const Comment = require('../../models/services/Comment/Comment');
 const getApiInfo = require('../../models/utils/getApiInfo');
 const processCtrl = require('../../models/utils/processCtrl');
 
