@@ -3,7 +3,7 @@
 const mariadb = require('../../../config/mariadb');
 const Error = require('../../utils/Error');
 
-class ClubStorage {
+class ClubListStorage {
   static async readClubList() {
     let conn;
 
@@ -50,4 +50,4 @@ class ClubStorage {
   }
 }
 
-module.exports = ClubStorage;
+module.exports = ClubListStorage;
