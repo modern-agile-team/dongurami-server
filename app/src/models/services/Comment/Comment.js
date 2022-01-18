@@ -179,7 +179,7 @@ class Comment {
 
       const updateCmtCount = await CommentStorage.updateByCommentNum(cmtInfo);
 
-      if (updateCmtCount === 0) {
+      if (!updateCmtCount) {
         return makeResponse(404, '존재하지 않는 댓글입니다.');
       }
       return makeResponse(200, '댓글 수정 성공');
@@ -217,7 +217,7 @@ class Comment {
         replyCmtInfo
       );
 
-      if (isUpdate === 0) {
+      if (!isUpdate) {
         return makeResponse(404, '존재하지 않는 답글입니다.');
       }
       return makeResponse(200, '답글 수정 성공');
@@ -243,7 +243,7 @@ class Comment {
 
       const isDelete = await CommentStorage.deleteAllByGroupNum(cmtInfo);
 
-      if (isDelete === 0) {
+      if (!isDelete) {
         return makeResponse(404, '존재하지 않는 댓글입니다.');
       }
       return makeResponse(200, '댓글 삭제 성공 ');
