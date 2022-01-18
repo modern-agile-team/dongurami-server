@@ -182,9 +182,9 @@ class CommentStorage {
 
       const query = `UPDATE comments SET group_no = ? WHERE no = ?;`;
 
-      await conn.query(query, [groupNum, groupNum]);
+      const comment = await conn.query(query, [groupNum, groupNum]);
 
-      return;
+      return comment.affectedRows;
     } catch (err) {
       throw err;
     } finally {

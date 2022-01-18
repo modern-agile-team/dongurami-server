@@ -13,6 +13,7 @@ class Comment {
     this.req = req;
     this.body = req.body;
     this.params = req.params;
+    this.query = req.query;
     this.auth = req.auth;
   }
 
@@ -20,7 +21,7 @@ class Comment {
     const comment = this.body;
     const user = this.auth;
     const commentInfo = {
-      boardNum: this.params.boardNum,
+      boardNum: this.query.boardNum,
       id: user.id,
       description: comment.description,
       hiddenFlag: comment.hiddenFlag || 0,
@@ -33,25 +34,28 @@ class Comment {
     }
 
     try {
-      const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
+      const isExist = await BoardStorage.existOnlyBoardNum(
+        commentInfo.boardNum
+      );
 
-      if (exist === undefined) {
+      if (isExist === undefined) {
         return makeResponse(404, '해당 게시글이 존재하지 않습니다.');
       }
 
-      if (boardCategory[this.params.category] === 5 && commentInfo.hiddenFlag) {
+      if (boardCategory[this.query.category] === 5 && commentInfo.hiddenFlag) {
         return makeResponse(400, '해당 게시판에서 익명 사용이 불가능합니다.');
       }
 
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
 
-      await CommentStorage.updateOnlyGroupNum(commentNum);
+      const isUpdate = await CommentStorage.updateOnlyGroupNum(commentNum);
 
-      if (commentInfo.hiddenFlag) {
-        user.name = '익명';
-      }
+      // if (commentInfo.hiddenFlag) {
+      //   user.name = '익명';
+      // }
 
-      return makeResponse(201, '댓글 생성 성공');
+      if (isUpdate) return makeResponse(201, '댓글 생성 성공');
+      return makeResponse(400, '댓글 생성 실패');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -60,10 +64,10 @@ class Comment {
   async createReplyCommentNum() {
     const replyComment = this.body;
     const user = this.auth;
-    const { params } = this;
+    const { query } = this;
     const replyCommentInfo = {
-      boardNum: params.boardNum,
-      cmtNum: params.cmtNum,
+      boardNum: query.boardNum,
+      cmtNum: query.cmtNum,
       id: user.id,
       description: replyComment.description,
       hiddenFlag: replyComment.hiddenFlag || 0,
@@ -76,17 +80,17 @@ class Comment {
     }
 
     try {
-      const exist = await CommentStorage.existOnlyCmtNum(
+      const isExist = await CommentStorage.existOnlyCmtNum(
         replyCommentInfo.cmtNum,
         replyCommentInfo.boardNum
       );
 
-      if (exist === undefined) {
+      if (isExist === undefined) {
         return makeResponse(404, '해당 게시글이나 댓글이 없습니다.');
       }
 
       if (
-        boardCategory[this.params.category] === 5 &&
+        boardCategory[this.query.category] === 5 &&
         replyCommentInfo.hiddenFlag
       ) {
         return makeResponse(400, '해당 게시판에서는 익명 사용이 불가능합니다.');
@@ -107,9 +111,9 @@ class Comment {
   async findAllByBoardNum() {
     const user = this.auth;
     const boardInfo = {
-      boardNum: this.params.boardNum,
+      boardNum: this.query.boardNum,
       studentId: user ? user.id : 0,
-      category: boardCategory[this.params.category],
+      category: boardCategory[this.query.category],
     };
     const anonymous = {};
 
@@ -156,11 +160,10 @@ class Comment {
   }
 
   async updateByCommentNum() {
-    const { params } = this;
     const comment = this.body;
     const cmtInfo = {
-      boardNum: params.boardNum,
-      cmtNum: params.cmtNum,
+      boardNum: this.query.boardNum,
+      cmtNum: this.query.cmtNum,
       description: comment.description,
       hiddenFlag: comment.hiddenFlag || 0,
     };
@@ -192,12 +195,11 @@ class Comment {
   }
 
   async updateByReplyCommentNum() {
-    const { params } = this;
     const replyComment = this.body;
     const replyCmtInfo = {
-      boardNum: params.boardNum,
-      cmtNum: params.cmtNum,
-      replyCmtNum: params.replyCmtNum,
+      boardNum: this.query.boardNum,
+      cmtNum: this.query.cmtNum,
+      replyCmtNum: this.query.replyCmtNum,
       description: replyComment.description,
       hiddenFlag: replyComment.hiddenFlag || 0,
     };
@@ -217,11 +219,11 @@ class Comment {
 
       if (!writerCheck.success) return writerCheck;
 
-      const updateReplyCmtCount = await CommentStorage.updateByReplyCommentNum(
+      const isUpdate = await CommentStorage.updateByReplyCommentNum(
         replyCmtInfo
       );
 
-      if (updateReplyCmtCount === 0) {
+      if (isUpdate === 0) {
         return makeResponse(404, '존재하지 않는 답글입니다.');
       }
       return makeResponse(200, '답글 수정 성공');
@@ -231,10 +233,9 @@ class Comment {
   }
 
   async deleteAllByGroupNum() {
-    const { params } = this;
     const cmtInfo = {
-      boardNum: params.boardNum,
-      cmtNum: params.cmtNum,
+      boardNum: this.query.boardNum,
+      cmtNum: this.query.cmtNum,
     };
 
     try {
@@ -246,9 +247,9 @@ class Comment {
 
       if (!writerCheck.success) return writerCheck;
 
-      const deleteCmtCount = await CommentStorage.deleteAllByGroupNum(cmtInfo);
+      const isDelete = await CommentStorage.deleteAllByGroupNum(cmtInfo);
 
-      if (deleteCmtCount === 0) {
+      if (isDelete === 0) {
         return makeResponse(404, '존재하지 않는 댓글입니다.');
       }
       return makeResponse(200, '댓글 삭제 성공 ');
@@ -258,11 +259,10 @@ class Comment {
   }
 
   async deleteOneReplyCommentNum() {
-    const { params } = this;
     const replyCmtInfo = {
-      boardNum: params.boardNum,
-      cmtNum: params.cmtNum,
-      replyCmtNum: params.replyCmtNum,
+      boardNum: this.query.boardNum,
+      cmtNum: this.query.cmtNum,
+      replyCmtNum: this.query.replyCmtNum,
     };
 
     try {
@@ -274,23 +274,21 @@ class Comment {
 
       if (!writerCheck.success) return writerCheck;
 
-      const deleteReplyCmtCount = await CommentStorage.deleteOneReplyCommentNum(
+      const isDelete = await CommentStorage.deleteOneReplyCommentNum(
         replyCmtInfo
       );
 
-      if (deleteReplyCmtCount === 0) {
+      if (isDelete === 0) {
         return makeResponse(404, '존재하지 않는 답글입니다.');
       }
-      const replyCmtCount = await CommentStorage.existOnlyReplyCmtNum(
-        replyCmtInfo
-      );
+      const isExist = await CommentStorage.existOnlyReplyCmtNum(replyCmtInfo);
 
-      if (replyCmtCount === undefined) {
-        const replyCmt = await CommentStorage.updateOnlyReplyFlag(
+      if (isExist === undefined) {
+        const isUpdate = await CommentStorage.updateOnlyReplyFlag(
           replyCmtInfo.cmtNum
         );
 
-        if (replyCmt === 0) {
+        if (isUpdate === 0) {
           return Error.ctrl(
             '서버에러입니다. 서버 개발자에게 얘기해주세요.',
             err
