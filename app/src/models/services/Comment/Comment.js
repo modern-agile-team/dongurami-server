@@ -5,7 +5,8 @@ const BoardStorage = require('../Board/BoardStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
-// const getRequestNullKey = require('../../utils/getRequestNullKey');
+const getRequestNullKey = require('../../utils/getRequestNullKey');
+// const makeResponse = require('../../utils/makeResponse');
 
 class Comment {
   constructor(req) {
@@ -18,19 +19,20 @@ class Comment {
   async createCommentNum() {
     const comment = this.body;
     const user = this.auth;
+    const commentInfo = {
+      boardNum: this.params.boardNum,
+      id: user.id,
+      description: comment.description,
+      hiddenFlag: comment.hiddenFlag || 0,
+    };
+
+    const nullKey = getRequestNullKey(comment, ['description']);
+
+    if (nullKey) {
+      return { success: false, msg: `${nullKey}이(가) 존재하지 않습니다.` };
+    }
 
     try {
-      const commentInfo = {
-        boardNum: this.params.boardNum,
-        id: user.id,
-        description: comment.description,
-        hiddenFlag: comment.hiddenFlag || 0,
-      };
-
-      if (!comment.description) {
-        return { success: false, msg: '댓글 본문이 존재하지 않습니다.' };
-      }
-
       const exist = await BoardStorage.existOnlyBoardNum(commentInfo.boardNum);
 
       if (exist === undefined) {
