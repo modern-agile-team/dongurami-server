@@ -126,51 +126,6 @@ class Letter {
     }
   }
 
-  async xxcreateLetter() {
-    const data = this.body;
-    const { id } = this.auth;
-
-    try {
-      let recipientHiddenFlag = 0;
-
-      if (!data.recipientId.length) {
-        recipientHiddenFlag = 1;
-        await LetterUtil.findRecipientId(data);
-      }
-
-      if (id === data.recipientId) {
-        return makeMsg(400, '본인에게 쪽지를 보낼 수 없습니다.');
-      }
-
-      const sendInfo = {
-        recipientHiddenFlag,
-        senderId: id,
-        recipientId: data.recipientId,
-        description: data.description,
-        boardNo: data.boardNo,
-        writerHiddenFlag: data.writerHiddenFlag,
-      };
-
-      const checkGroupNo = await LetterStorage.findOneByGroupNo(sendInfo);
-
-      const { senderInsertNo, recipientInsertNo } =
-        await LetterStorage.createLetter(sendInfo);
-
-      const groupNo = LetterUtil.changeGroupNo(senderInsertNo, checkGroupNo);
-
-      const result = await LetterStorage.updateGroupNo({
-        senderInsertNo,
-        recipientInsertNo,
-        groupNo,
-      });
-
-      if (result) return makeMsg(201, '쪽지가 전송되었습니다.');
-      return makeMsg(400, '쪽지가 전송되지 않았습니다.');
-    } catch (err) {
-      return Error.ctrl('', err);
-    }
-  }
-
   async createReplyLetter() {
     const { id } = this.auth;
     const { groupNo } = this.params;
@@ -213,7 +168,7 @@ class Letter {
       if (await LetterStorage.deleteLetterNotifications(this.auth.id)) {
         return makeMsg(200, '쪽지 알림이 모두 삭제되었습니다.');
       }
-      return makeMsg(400, '쪽지 알림이 삭제되지 않았습니다.');
+      return makeMsg(400, '삭제할 쪽지 알림이 없습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
