@@ -168,7 +168,7 @@ class Letter {
       if (await LetterStorage.deleteLetterNotifications(this.auth.id)) {
         return makeMsg(200, '쪽지 알림이 모두 삭제되었습니다.');
       }
-      return makeMsg(400, '삭제할 쪽지 알림이 없습니다.');
+      return makeMsg(404, '삭제할 쪽지 알림이 없습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
