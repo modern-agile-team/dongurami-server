@@ -29,25 +29,6 @@ class ClubListStorage {
       conn?.release();
     }
   }
-
-  static async findAllClubList(name) {
-    let conn;
-
-    const keyword = `%${name.replace(/(\s*)/g, '')}%`;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT no, name, category, logo_url AS logoUrl FROM clubs WHERE REPLACE(name, ' ', '') like ?;`;
-      const result = await conn.query(query, [keyword]);
-
-      return result;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
 }
 
 module.exports = ClubListStorage;
