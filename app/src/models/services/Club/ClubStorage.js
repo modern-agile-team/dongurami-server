@@ -10,13 +10,21 @@ class ClubStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'SELECT no, name, category, logo_url AS logoUrl FROM clubs WHERE no > 1;';
-      const result = await conn.query(query);
+      const query = `
+        SELECT no, name, category, logo_url AS logoUrl 
+        FROM clubs 
+        WHERE no > 1;`;
 
-      return { success: true, msg: '동아리 목록 조회 성공', result };
+      const clubList = await conn.query(query);
+
+      return {
+        status: 200,
+        success: true,
+        msg: '동아리 목록 조회 성공',
+        clubList,
+      };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     } finally {
       conn?.release();
     }

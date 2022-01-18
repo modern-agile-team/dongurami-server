@@ -1,18 +1,15 @@
 'use strict';
 
 const ClubStorage = require('../../models/services/Club/ClubStorage');
-const logger = require('../../config/logger');
+const getApiInfo = require('../../models/utils/getApiInfo');
+const processCtrl = require('../../models/utils/processCtrl');
 
 const process = {
   readClubList: async (req, res) => {
     const response = await ClubStorage.readClubList();
+    const apiInfo = getApiInfo('GET', response, req);
 
-    if (response.isError) {
-      logger.error(`GET /api/club/list 500: \n${response.errMsg.stack}`);
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.info(`GET /api/club/list 200: ${response.msg}`);
-    return res.status(200).json(response);
+    return processCtrl(res, apiInfo);
   },
 };
 
