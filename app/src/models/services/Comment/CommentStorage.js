@@ -32,10 +32,9 @@ class CommentStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO comments (board_no, student_id, description, group_no, depth, writer_hidden_flag) VALUES (?, ?, ?, ?, 1, ?);
-      UPDATE comments SET reply_flag = 1 WHERE no = ?;`;
+      const query = `INSERT INTO comments (board_no, student_id, description, group_no, depth, writer_hidden_flag) VALUES (?, ?, ?, ?, 1, ?);`;
 
-      await conn.query(query, [
+      const replyComment = await conn.query(query, [
         replyCommentInfo.boardNum,
         replyCommentInfo.id,
         replyCommentInfo.description,
@@ -44,7 +43,7 @@ class CommentStorage {
         replyCommentInfo.cmtNum,
       ]);
 
-      return;
+      return replyComment.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -213,15 +212,15 @@ class CommentStorage {
     }
   }
 
-  static async updateOnlyReplyFlag(cmtNum) {
+  static async updateOnlyReplyFlag(flag, cmtNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE comments SET reply_flag = 0 WHERE no = ?;`;
+      const query = `UPDATE comments SET reply_flag = ? WHERE no = ?;`;
 
-      const replycmt = conn.query(query, [cmtNum]);
+      const replycmt = conn.query(query, [flag, cmtNum]);
 
       return replycmt.affectedRows;
     } catch (err) {
@@ -231,7 +230,7 @@ class CommentStorage {
     }
   }
 
-  static async existOnlyCmtNum(cmtNum, boardNum) {
+  static async existOnlyCmtNum(replyCmtInfo) {
     let conn;
 
     try {
@@ -239,7 +238,10 @@ class CommentStorage {
 
       const query = `SELECT no FROM comments WHERE no = ? AND board_no = ? AND depth = 0;`;
 
-      const cmt = await conn.query(query, [cmtNum, boardNum]);
+      const cmt = await conn.query(query, [
+        replyCmtInfo.cmtNum,
+        replyCmtInfo.boardNum,
+      ]);
 
       return cmt[0];
     } catch (err) {

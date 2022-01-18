@@ -17,8 +17,8 @@ class Comment {
   async createCommentNum() {
     const comment = this.body;
     const commentInfo = {
-      boardNum: this.query.boardNum,
       id: this.auth.id,
+      boardNum: this.query.boardNum,
       description: comment.description,
       hiddenFlag: comment.hiddenFlag || 0,
     };
@@ -44,25 +44,25 @@ class Comment {
 
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
 
-      if (!commentNum) return makeResponse(400, '댓글 생성 실패');
+      if (!commentNum) return Error.dbError();
+      //  return makeResponse(400, '댓글 생성 실패');
 
       const isUpdate = await CommentStorage.updateOnlyGroupNum(commentNum);
 
-      if (isUpdate) return makeResponse(201, '댓글 생성 성공');
-      return makeResponse(400, '댓글 생성 실패');
+      if (!isUpdate) return Error.dbError();
+      return makeResponse(201, '댓글 생성 성공');
     } catch (err) {
       return Error.ctrl('', err);
     }
   }
 
   async createReplyCommentNum() {
-    const replyComment = this.body;
-    const user = this.auth;
     const { query } = this;
+    const replyComment = this.body;
     const replyCommentInfo = {
+      id: this.user.id,
       boardNum: query.boardNum,
       cmtNum: query.cmtNum,
-      id: user.id,
       description: replyComment.description,
       hiddenFlag: replyComment.hiddenFlag || 0,
     };
@@ -73,29 +73,29 @@ class Comment {
       return makeResponse(400, `${nullKey}이(가) 존재하지 않습니다.`);
     }
 
+    if (boardCategory[query.category] === 5 && replyCommentInfo.hiddenFlag) {
+      return makeResponse(400, '해당 게시판에서는 익명 사용이 불가능합니다.');
+    }
+
     try {
-      const isExist = await CommentStorage.existOnlyCmtNum(
-        replyCommentInfo.cmtNum,
-        replyCommentInfo.boardNum
-      );
+      const isExist = await CommentStorage.existOnlyCmtNum(replyCommentInfo);
 
       if (isExist === undefined) {
         return makeResponse(404, '해당 게시글이나 댓글이 없습니다.');
       }
 
-      if (
-        boardCategory[this.query.category] === 5 &&
-        replyCommentInfo.hiddenFlag
-      ) {
-        return makeResponse(400, '해당 게시판에서는 익명 사용이 불가능합니다.');
-      }
+      const isCreate = await CommentStorage.createReplyCommentNum(
+        replyCommentInfo
+      );
 
-      await CommentStorage.createReplyCommentNum(replyCommentInfo);
+      if (!isCreate) return Error.dbError();
 
-      if (replyCommentInfo.hiddenFlag) {
-        user.name = '익명';
-      }
+      const isUpdate = await CommentStorage.updateOnlyReplyFlag(
+        1,
+        replyCommentInfo.cmtNum
+      );
 
+      if (!isUpdate) return Error.dbError();
       return makeResponse(201, '답글 생성 성공');
     } catch (err) {
       return Error.ctrl('', err);
