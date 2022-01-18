@@ -1,7 +1,6 @@
 'use strict';
 
 const CommentStorage = require('./CommentStorage');
-const BoardStorage = require('../Board/BoardStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
@@ -10,19 +9,16 @@ const makeResponse = require('../../utils/makeResponse');
 
 class Comment {
   constructor(req) {
-    this.req = req;
     this.body = req.body;
-    this.params = req.params;
     this.query = req.query;
     this.auth = req.auth;
   }
 
   async createCommentNum() {
     const comment = this.body;
-    const user = this.auth;
     const commentInfo = {
       boardNum: this.query.boardNum,
-      id: user.id,
+      id: this.auth.id,
       description: comment.description,
       hiddenFlag: comment.hiddenFlag || 0,
     };
@@ -33,8 +29,12 @@ class Comment {
       return makeResponse(400, `${nullKey}이(가) 존재하지 않습니다.`);
     }
 
+    if (boardCategory[this.query.category] === 5 && commentInfo.hiddenFlag) {
+      return makeResponse(400, '해당 게시판에서 익명 사용이 불가능합니다.');
+    }
+
     try {
-      const isExist = await BoardStorage.existOnlyBoardNum(
+      const isExist = await CommentStorage.existOnlyBoardNum(
         commentInfo.boardNum
       );
 
@@ -42,17 +42,11 @@ class Comment {
         return makeResponse(404, '해당 게시글이 존재하지 않습니다.');
       }
 
-      if (boardCategory[this.query.category] === 5 && commentInfo.hiddenFlag) {
-        return makeResponse(400, '해당 게시판에서 익명 사용이 불가능합니다.');
-      }
-
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
 
-      const isUpdate = await CommentStorage.updateOnlyGroupNum(commentNum);
+      if (!commentNum) return makeResponse(400, '댓글 생성 실패');
 
-      // if (commentInfo.hiddenFlag) {
-      //   user.name = '익명';
-      // }
+      const isUpdate = await CommentStorage.updateOnlyGroupNum(commentNum);
 
       if (isUpdate) return makeResponse(201, '댓글 생성 성공');
       return makeResponse(400, '댓글 생성 실패');
@@ -118,7 +112,7 @@ class Comment {
     const anonymous = {};
 
     try {
-      const board = await BoardStorage.existOnlyBoardNum(boardInfo.boardNum);
+      const board = await CommentStorage.existOnlyBoardNum(boardInfo.boardNum);
 
       if (board.writerHiddenFlag) {
         anonymous[board.studentId] = '익명1';
