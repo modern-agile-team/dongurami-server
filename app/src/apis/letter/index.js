@@ -18,7 +18,7 @@ router.get(
   '/:id',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
-  letterCtrl.process.findLetters
+  letterCtrl.process.findAllLetterList
 );
 
 router.get(
@@ -49,11 +49,11 @@ router.put(
   letterCtrl.process.deleteLetterNotifications
 );
 
-router.put(
+router.delete(
   '/:id/:groupNo',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
-  letterCtrl.process.deleteLetters
+  letterCtrl.process.deleteLettersByGroupNo
 );
 
 module.exports = router;
