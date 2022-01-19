@@ -105,7 +105,7 @@ class Letter {
       };
 
       if (!(recipientHiddenFlag || data.writerHiddenFlag)) {
-        sendInfo.boardNo = await LetterStorage.findBoardNo(sendInfo);
+        sendInfo.boardNo = await LetterUtil.changeBoardNo(sendInfo);
       }
 
       const checkGroupNo = await LetterStorage.findOneByGroupNo(sendInfo);

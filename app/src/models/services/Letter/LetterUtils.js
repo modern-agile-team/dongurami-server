@@ -66,6 +66,12 @@ class LetterUtil {
 
     return recipientId;
   }
+
+  static async changeBoardNo(sendInfo) {
+    const boardNo = await LetterStorage.findBoardNo(sendInfo);
+
+    return boardNo ? boardNo.boardNo : sendInfo.boardNo;
+  }
 }
 
 module.exports = LetterUtil;
