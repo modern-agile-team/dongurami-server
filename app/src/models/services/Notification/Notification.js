@@ -4,6 +4,7 @@ const NotificationStorage = require('./NotificationStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
+const makeResponse = require('../../utils/makeResponse');
 
 class Notification {
   constructor(req) {
@@ -21,17 +22,9 @@ class Notification {
 
         await this.sendBoardNotification(recipients);
 
-        return {
-          status: 201,
-          success: true,
-          msg: '전체공지 알림이 생성되었습니다.',
-        };
+        return makeResponse(201, '전체공지 알림이 생성되었습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '전체공지 생성 알림에 대한 요청이 아닙니다.',
-      };
+      return makeResponse(400, '전체공지 생성 알림에 대한 요청이 아닙니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -49,17 +42,9 @@ class Notification {
 
         await this.sendBoardNotification(recipients);
 
-        return {
-          status: 201,
-          success: true,
-          msg: '동아리공지 알림이 생성되었습니다.',
-        };
+        return makeResponse(201, '동아리공지 알림이 생성되었습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '동아리공지 생성 알림에 대한 요청이 아닙니다.',
-      };
+      return makeResponse(400, '동아리공지 생성 알림에 대한 요청이 아닙니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -115,17 +100,9 @@ class Notification {
 
         await this.sendLikeAndCmtNotification(notification);
 
-        return {
-          status: 201,
-          success: true,
-          msg: '댓글 알림이 생성되었습니다.',
-        };
+        return makeResponse(201, '댓글 알림이 생성되었습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '댓글 생성 알림에 대한 요청이 아닙니다.',
-      };
+      return makeResponse(400, '댓글 생성 알림에 대한 요청이 아닙니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -176,17 +153,9 @@ class Notification {
 
         await this.sendReplyCmtNotification(recipients);
 
-        return {
-          status: 201,
-          success: true,
-          msg: '답글 알림이 생성되었습니다.',
-        };
+        return makeResponse(201, '답글 알림이 생성되었습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '답글 생성 알림에 대한 요청이 아닙니다.',
-      };
+      return makeResponse(400, '답글 생성 알림에 대한 요청이 아닙니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -256,17 +225,9 @@ class Notification {
 
         await this.sendLikeAndCmtNotification(notification);
 
-        return {
-          status: 201,
-          success: true,
-          msg: '좋아요 알림이 생성되었습니다.',
-        };
+        return makeResponse(201, '좋아요 알림이 생성되었습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '좋아요 생성 알림에 대한 요청이 아닙니다.',
-      };
+      return makeResponse(400, '좋아요 생성 알림에 대한 요청이 아닙니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -326,11 +287,7 @@ class Notification {
 
         await this.sendJoinApproveNotification(recipients);
 
-        return {
-          status: 201,
-          success: true,
-          msg: '동아리가입 승인 알림이 생성되었습니다.',
-        };
+        return makeResponse(201, '동아리가입 승인 알림이 생성되었습니다.');
       }
 
       if (notiCategoryNum === 3) {
@@ -338,17 +295,9 @@ class Notification {
 
         await NotificationStorage.createNotification(notification);
 
-        return {
-          status: 201,
-          success: true,
-          msg: '동아리가입 거절 알림이 생성되었습니다.',
-        };
+        return makeResponse(201, '동아리가입 거절 알림이 생성되었습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '동아리가입 결과 알림에 대한 요청이 아닙니다.',
-      };
+      return makeResponse(400, '동아리가입 결과 알림에 대한 요청이 아닙니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -431,17 +380,9 @@ class Notification {
 
         await NotificationStorage.createNotification(notification);
 
-        return {
-          status: 201,
-          success: true,
-          msg: '가입 신청 알림이 생성되었습니다.',
-        };
+        return makeResponse(201, '가입 신청 알림이 생성되었습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '가입 신청 알림에 대한 요청이 아닙니다.',
-      };
+      return makeResponse(400, '가입 신청 알림에 대한 요청이 아닙니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -477,17 +418,9 @@ class Notification {
 
         await this.sendScheduleNotification(recipients);
 
-        return {
-          status: 201,
-          success: true,
-          msg: '일정에 대한 알림이 생성되었습니다.',
-        };
+        return makeResponse(201, '일정에 대한 알림이 생성되었습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '일정 알림에 대한 요청이 아닙니다.',
-      };
+      return makeResponse(400, '일정 알림에 대한 요청이 아닙니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -534,17 +467,9 @@ class Notification {
 
         await NotificationStorage.createNotification(notification);
 
-        return {
-          status: 201,
-          success: true,
-          msg: '동아리탈퇴 알림이 생성되었습니다.',
-        };
+        return makeResponse(201, '동아리탈퇴 알림이 생성되었습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '동아리탈퇴 알림에 대한 요청이 아닙니다.',
-      };
+      return makeResponse(400, '동아리탈퇴 알림에 대한 요청이 아닙니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -576,18 +501,16 @@ class Notification {
       );
 
       if (success) {
-        return {
-          status: 200,
-          success: true,
-          msg: '알림이 성공적으로 조회되었습니다.',
-          notifications,
-        };
+        return makeResponse(
+          200,
+          '알림이 성공적으로 조회되었습니다.',
+          notifications
+        );
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      return makeResponse(
+        400,
+        '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.'
+      );
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -612,18 +535,11 @@ class Notification {
         notificationNum
       );
 
-      if (isUpdate) {
-        return {
-          status: 200,
-          success: true,
-          msg: '읽은 알림이 삭제되었습니다.',
-        };
-      }
-      return {
-        status: 400,
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      if (isUpdate) return makeResponse(200, '읽은 알림이 삭제되었습니다.');
+      return makeResponse(
+        400,
+        '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.'
+      );
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -635,18 +551,11 @@ class Notification {
     try {
       const isUpdate = await NotificationStorage.updateAllById(studentName);
 
-      if (isUpdate) {
-        return {
-          status: 200,
-          success: true,
-          msg: '전체 알림이 삭제되었습니다.',
-        };
-      }
-      return {
-        status: 400,
-        success: false,
-        msg: '삭제 할 알림이 없거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      if (isUpdate) return makeResponse(200, '전체 알림이 삭제되었습니다.');
+      return makeResponse(
+        400,
+        '삭제 할 알림이 없거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.'
+      );
     } catch (err) {
       return Error.ctrl('', err);
     }

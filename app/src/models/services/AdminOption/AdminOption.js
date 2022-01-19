@@ -2,6 +2,7 @@
 
 const AdminOptionStorage = require('./AdminOptionStorage');
 const Error = require('../../utils/Error');
+const makeResponse = require('../../utils/makeResponse');
 
 class AdminOption {
   constructor(req) {
@@ -18,13 +19,9 @@ class AdminOption {
       );
 
       if (leader !== this.auth.id) {
-        return {
-          status: 400,
-          success: false,
-          msg: '회장만 접근이 가능합니다.',
-        };
+        return makeResponse(400, '회장만 접근이 가능합니다.');
       }
-      return { status: 200, success: true, msg: '권한 있음' };
+      return makeResponse(200, '권한 있음');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -40,18 +37,8 @@ class AdminOption {
     try {
       const clubAdminId = await AdminOptionStorage.findOneById(clubAdminInfo);
 
-      if (clubAdminId || user.isAdmin) {
-        return {
-          status: 200,
-          success: true,
-          msg: '권한 있음',
-        };
-      }
-      return {
-        status: 403,
-        success: false,
-        msg: '동아리 관리 페이지에 접근 권한이 없습니다.',
-      };
+      if (clubAdminId || user.isAdmin) return makeResponse(200, '권한 있음');
+      return makeResponse(403, '동아리 관리 페이지에 접근 권한이 없습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -120,13 +107,12 @@ class AdminOption {
       );
 
       if (isChangeLeader && isUpdate) {
-        return { status: 200, success: true, msg: '회장이 양도되었습니다.' };
+        return makeResponse(200, '회장이 양도되었습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      return makeResponse(
+        400,
+        '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.'
+      );
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -143,14 +129,11 @@ class AdminOption {
         adminInfo
       );
 
-      if (isUpdate) {
-        return { status: 200, success: true, msg: '권한이 수정되었습니다.' };
-      }
-      return {
-        status: 400,
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      if (isUpdate) return makeResponse(200, '권한이 수정되었습니다.');
+      return makeResponse(
+        400,
+        '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.'
+      );
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -170,17 +153,12 @@ class AdminOption {
       const isCreate = await AdminOptionStorage.createMemberById(applicantInfo);
 
       if (isUpdate && isCreate) {
-        return {
-          status: 201,
-          success: true,
-          msg: '동아리 가입 신청을 승인하셨습니다.',
-        };
+        return makeResponse(201, '동아리 가입 신청을 승인하셨습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '존재하지 않는 회원이거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      return makeResponse(
+        400,
+        '존재하지 않는 회원이거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.'
+      );
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -198,17 +176,12 @@ class AdminOption {
       );
 
       if (isUpdate) {
-        return {
-          status: 200,
-          success: true,
-          msg: '동아리 가입 신청을 거절했습니다.',
-        };
+        return makeResponse(200, '동아리 가입 신청을 거절했습니다.');
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      return makeResponse(
+        400,
+        '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.'
+      );
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -230,17 +203,12 @@ class AdminOption {
       );
 
       if (isDelete && isUpdate) {
-        return {
-          status: 200,
-          success: true,
-          msg: `${memberId}님이 추방되었습니다.`,
-        };
+        return makeResponse(200, `${memberId}님이 추방되었습니다.`);
       }
-      return {
-        status: 400,
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      return makeResponse(
+        400,
+        '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.'
+      );
     } catch (err) {
       return Error.ctrl('', err);
     }

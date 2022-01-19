@@ -3,6 +3,7 @@
 const ReviewStorage = require('./ReviewStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
+const makeResponse = require('../../utils/makeResponse');
 
 class Review {
   constructor(req) {
@@ -16,14 +17,10 @@ class Review {
       const reviewList = await ReviewStorage.findReviewByClubNum(
         this.params.clubNum
       );
-
-      return {
-        status: 200,
-        success: true,
-        msg: '동아리 후기 조회 성공',
+      return makeResponse(200, '동아리 후기 조회 성공', {
         reviewList,
         studentId: this.auth.id,
-      };
+      });
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -38,10 +35,8 @@ class Review {
     try {
       const isReview = await ReviewStorage.findOneById(userInfo);
 
-      if (!isReview) {
-        return await this.saveReview();
-      }
-      return { status: 400, success: false, msg: '이미 후기를 작성했습니다.' };
+      if (!isReview) return await this.saveReview();
+      return makeResponse(400, '이미 후기를 작성했습니다.');
     } catch (err) {
       return Error.ctrl('', err);
     }
@@ -57,14 +52,11 @@ class Review {
 
     const isReview = await ReviewStorage.saveReview(reviewInfo);
 
-    if (isReview) {
-      return { status: 201, success: true, msg: '후기 작성이 완료되었습니다.' };
-    }
-    return {
-      status: 400,
-      success: false,
-      msg: '',
-    };
+    if (isReview) return makeResponse(201, '후기 작성이 완료되었습니다.');
+    return makeResponse(
+      400,
+      '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.'
+    );
   }
 
   async updateById() {
@@ -91,18 +83,11 @@ class Review {
 
     const isUpdate = await ReviewStorage.updateOneById(reviewInfo);
 
-    if (isUpdate) {
-      return {
-        status: 200,
-        success: true,
-        msg: '후기가 수정되었습니다.',
-      };
-    }
-    return {
-      status: 400,
-      success: false,
-      msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-    };
+    if (isUpdate) return makeResponse(200, '후기가 수정되었습니다.');
+    return makeResponse(
+      400,
+      '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.'
+    );
   }
 
   async deleteByNum() {
@@ -123,18 +108,11 @@ class Review {
   async deleteReview() {
     const isDelete = await ReviewStorage.deleteOneByNum(this.params.num);
 
-    if (isDelete) {
-      return {
-        status: 200,
-        success: true,
-        msg: '작성된 후기가 삭제되었습니다.',
-      };
-    }
-    return {
-      status: 400,
-      success: false,
-      msg: '후기를 삭제하지 못했습니다. 서버 개발자에게 문의해주세요.',
-    };
+    if (isDelete) return makeResponse(200, '작성된 후기가 삭제되었습니다.');
+    return makeResponse(
+      400,
+      '후기를 삭제하지 못했습니다. 서버 개발자에게 문의해주세요.'
+    );
   }
 }
 
