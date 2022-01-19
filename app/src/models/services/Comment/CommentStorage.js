@@ -78,6 +78,54 @@ class CommentStorage {
     }
   }
 
+  static async existOnlyCmtNum(replyCmtInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT no
+        FROM comments
+        WHERE no = ? AND board_no = ? AND depth = 0;`;
+
+      const cmt = await conn.query(query, [
+        replyCmtInfo.cmtNum,
+        replyCmtInfo.boardNum,
+      ]);
+
+      return cmt[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async existOnlyReplyCmtNum(replyCmtInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT no 
+        FROM comments
+        WHERE board_no = ? AND group_no = ? AND depth = 1;`;
+
+      const replyCmt = await conn.query(query, [
+        replyCmtInfo.boardNum,
+        replyCmtInfo.cmtNum,
+      ]);
+
+      return replyCmt[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async findAllByBoardNum(boardInfo) {
     let conn;
 
@@ -111,6 +159,78 @@ class CommentStorage {
       ]);
 
       return comments;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllByCmtNum(cmtNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT st.name, st.id, cmt.description, cmt.board_no AS boardNum
+        FROM comments AS cmt
+        JOIN students AS st
+        ON cmt.student_id = st.id 
+        WHERE cmt.no = ?;`;
+
+      const comment = await conn.query(query, [cmtNum]);
+
+      const recipientInfo = {
+        id: comment[0].id,
+        name: comment[0].name,
+        description: comment[0].description,
+        boardNum: comment[0].boardNum,
+      };
+
+      return recipientInfo;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateOnlyGroupNum(groupNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE comments
+        SET group_no = ?
+        WHERE no = ?;`;
+
+      const comment = await conn.query(query, [groupNum, groupNum]);
+
+      return comment.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateOnlyReplyFlag(flag, cmtNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE comments
+        SET reply_flag = ?
+        WHERE no = ?;`;
+
+      const replycmt = conn.query(query, [flag, cmtNum]);
+
+      return replycmt.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -208,126 +328,6 @@ class CommentStorage {
       ]);
 
       return cmt.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async updateOnlyGroupNum(groupNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        UPDATE comments
-        SET group_no = ?
-        WHERE no = ?;`;
-
-      const comment = await conn.query(query, [groupNum, groupNum]);
-
-      return comment.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async updateOnlyReplyFlag(flag, cmtNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        UPDATE comments
-        SET reply_flag = ?
-        WHERE no = ?;`;
-
-      const replycmt = conn.query(query, [flag, cmtNum]);
-
-      return replycmt.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async existOnlyCmtNum(replyCmtInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        SELECT no
-        FROM comments
-        WHERE no = ? AND board_no = ? AND depth = 0;`;
-
-      const cmt = await conn.query(query, [
-        replyCmtInfo.cmtNum,
-        replyCmtInfo.boardNum,
-      ]);
-
-      return cmt[0];
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async existOnlyReplyCmtNum(replyCmtInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        SELECT no 
-        FROM comments
-        WHERE board_no = ? AND group_no = ? AND depth = 1;`;
-
-      const replyCmt = await conn.query(query, [
-        replyCmtInfo.boardNum,
-        replyCmtInfo.cmtNum,
-      ]);
-
-      return replyCmt[0];
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async findAllByCmtNum(cmtNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        SELECT st.name, st.id, cmt.description, cmt.board_no AS boardNum
-        FROM comments AS cmt
-        JOIN students AS st
-        ON cmt.student_id = st.id 
-        WHERE cmt.no = ?;`;
-
-      const comment = await conn.query(query, [cmtNum]);
-
-      const recipientInfo = {
-        id: comment[0].id,
-        name: comment[0].name,
-        description: comment[0].description,
-        boardNum: comment[0].boardNum,
-      };
-
-      return recipientInfo;
     } catch (err) {
       throw err;
     } finally {
