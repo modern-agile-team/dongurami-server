@@ -37,15 +37,12 @@ class Review {
   }
 
   async createByReviewInfo() {
-    const { clubNum } = this.params;
-    const user = this.auth;
+    const userInfo = {
+      clubNum: this.params.clubNum,
+      studentId: this.auth.id,
+    };
 
     try {
-      const userInfo = {
-        clubNum,
-        studentId: user.id,
-      };
-
       const isReview = await ReviewStorage.findOneById(userInfo);
 
       if (!isReview) {
@@ -58,14 +55,13 @@ class Review {
   }
 
   async saveReview() {
-    const review = this.body;
-
     const reviewInfo = {
       clubNum: this.params.clubNum,
       id: this.auth.id,
-      description: review.description,
-      score: review.score,
+      description: this.body.description,
+      score: this.body.score,
     };
+
     const success = await ReviewStorage.saveReview(reviewInfo);
 
     if (success) {
@@ -78,16 +74,14 @@ class Review {
   }
 
   async updateById() {
-    const review = this.body;
     const reviewNum = this.params.num;
+    const reviewInfo = {
+      num: reviewNum,
+      description: this.body.description,
+      score: this.body.score,
+    };
 
     try {
-      const reviewInfo = {
-        num: reviewNum,
-        description: review.description,
-        score: review.score,
-      };
-
       const isWriterCheck = await WriterCheck.ctrl(
         this.auth.id,
         reviewNum,
@@ -125,19 +119,24 @@ class Review {
       );
 
       if (!isWriterCheck.success) return isWriterCheck;
-
-      const isDelete = await ReviewStorage.deleteOneByNum(reviewNum);
-
-      if (isDelete) {
-        return { success: true, msg: '작성된 후기가 삭제되었습니다.' };
-      }
-      return {
-        success: false,
-        msg: '후기를 삭제하지 못했습니다. 서버 개발자에게 문의해주세요.',
-      };
+      return await this.deleteReview();
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
+  }
+
+  async deleteReview() {
+    const reviewNum = this.params.num;
+
+    const isDelete = await ReviewStorage.deleteOneByNum(reviewNum);
+
+    if (isDelete) {
+      return { success: true, msg: '작성된 후기가 삭제되었습니다.' };
+    }
+    return {
+      success: false,
+      msg: '후기를 삭제하지 못했습니다. 서버 개발자에게 문의해주세요.',
+    };
   }
 }
 
