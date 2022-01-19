@@ -166,36 +166,6 @@ class CommentStorage {
     }
   }
 
-  static async findAllByCmtNum(cmtNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        SELECT st.name, st.id, cmt.description, cmt.board_no AS boardNum
-        FROM comments AS cmt
-        JOIN students AS st
-        ON cmt.student_id = st.id 
-        WHERE cmt.no = ?;`;
-
-      const comment = await conn.query(query, [cmtNum]);
-
-      const recipientInfo = {
-        id: comment[0].id,
-        name: comment[0].name,
-        description: comment[0].description,
-        boardNum: comment[0].boardNum,
-      };
-
-      return recipientInfo;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
   static async updateOnlyGroupNum(groupNum) {
     let conn;
 
