@@ -50,7 +50,7 @@ class Comment {
         commentInfo.boardNum
       );
 
-      if (isExist === undefined) {
+      if (!isExist) {
         return makeResponse(404, '해당 게시글이 존재하지 않습니다.');
       }
 
@@ -89,7 +89,7 @@ class Comment {
       return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
     }
 
-    const bodyNullKey = getRequestNullKey(comment, ['description']);
+    const bodyNullKey = getRequestNullKey(replyComment, ['description']);
 
     if (bodyNullKey) {
       return makeResponse(400, `body의 ${bodyNullKey}이(가) 빈 값입니다.`);
@@ -102,7 +102,7 @@ class Comment {
     try {
       const isExist = await CommentStorage.existOnlyCmtNum(replyCommentInfo);
 
-      if (isExist === undefined) {
+      if (!isExist) {
         return makeResponse(404, '해당 게시글이나 댓글이 없습니다.');
       }
 
@@ -154,7 +154,7 @@ class Comment {
 
       const comments = await CommentStorage.findAllByBoardNum(boardInfo);
 
-      for (const comment of comments) {
+      comments.forEach((comment) => {
         comment.isWriter = boardInfo.studentId === comment.studentId;
 
         if (comment.writerHiddenFlag) {
@@ -168,7 +168,7 @@ class Comment {
             CommentUtil.newPersonAnonymization(anonymous, comment);
           }
         }
-      }
+      });
 
       return makeResponse(200, '댓글 조회 성공', { comments });
     } catch (err) {
@@ -244,7 +244,7 @@ class Comment {
       return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
     }
 
-    const bodyNullKey = getRequestNullKey(comment, ['description']);
+    const bodyNullKey = getRequestNullKey(replyComment, ['description']);
 
     if (bodyNullKey) {
       return makeResponse(400, `body의 ${bodyNullKey}이(가) 빈 값입니다.`);
