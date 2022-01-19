@@ -14,40 +14,24 @@ class MyPage {
     this.params = req.params;
   }
 
-  async findAllScraps() {
-    const userInfo = {
-      id: this.params.id,
-      clubNum: this.params.clubNum,
-    };
-    const scraps = await MyPageStorage.findAllScraps(userInfo);
-
-    return scraps;
-  }
-
-  async findAllMyPagePosts() {
-    const userInfo = {
-      id: this.params.id,
-      clubNum: this.params.clubNum,
-    };
-    const myPagePosts = await MyPageStorage.findAllMyPagePosts(userInfo);
-
-    return myPagePosts;
-  }
-
   async findAllScrapsAndMyPagePosts() {
-    const { params } = this;
+    const { id } = this.auth;
+    const { clubNum } = this.params;
 
     try {
-      if (params.id !== this.auth.id) {
+      if (params.id !== id) {
         return { succeess: false, msg: '본인만 열람 가능합니다.' };
       }
 
-      if (!(await MyPageStorage.existClub(this.params.clubNum))) {
+      if (!(await MyPageStorage.existClub(clubNum))) {
         return { success: false, msg: '존재하지 않는 동아리입니다.' };
       }
 
-      const scraps = await this.findAllScraps();
-      const myPagePosts = await this.findAllMyPagePosts();
+      const scraps = await MyPageStorage.findAllScraps({ id, clubNum });
+      const myPagePosts = await MyPageStorage.findAllMyPagePosts({
+        id,
+        clubNum,
+      });
 
       if (scraps || myPagePosts) {
         return { success: true, msg: '전체 글 조회 성공', scraps, myPagePosts };
