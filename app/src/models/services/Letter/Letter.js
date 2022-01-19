@@ -88,7 +88,7 @@ class Letter {
     try {
       if (!data.recipientId.length) {
         recipientHiddenFlag = 1;
-        await LetterUtil.findRecipientId(data);
+        data.recipientIdawait = await LetterUtil.findRecipientId(data);
       }
 
       if (id === data.recipientId) {

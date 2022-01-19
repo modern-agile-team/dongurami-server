@@ -60,9 +60,11 @@ class LetterUtil {
   }
 
   static async findRecipientId(data) {
-    data.recipientId = data.boardFlag
+    const recipientId = data.boardFlag
       ? await LetterStorage.findRecipientByBoard(data.boardNo)
       : await LetterStorage.findRecipientByComment(data.commentNo);
+
+    return recipientId;
   }
 }
 
