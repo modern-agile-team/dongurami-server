@@ -10,7 +10,8 @@ class LetterStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT l.no, s.name, l.description, l.writer_hidden_flag AS hiddenFlag, l.group_no AS groupNo FROM letters AS l
+        SELECT l.no, s.name, l.description, l.writer_hidden_flag AS hiddenFlag, l.group_no AS groupNo 
+        FROM letters AS l
         LEFT JOIN students as s 
         ON sender_id = s.id
         WHERE host_id = ? AND sender_id != ? AND reading_flag = 0
@@ -33,7 +34,7 @@ class LetterStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-      SELECT l.no, s.name, l.description, group_no AS groupNo, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS hiddenFlag
+        SELECT l.no, s.name, l.description, group_no AS groupNo, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS hiddenFlag
         FROM letters AS l
         LEFT JOIN students AS s 
         ON IF (sender_id = ?, recipient_id = s.id, sender_id = s.id)
@@ -61,10 +62,10 @@ class LetterStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-          SELECT sender_id AS senderId, recipient_id AS recipientId, group_no AS groupNo
-          FROM letters 
-          WHERE group_no = ? AND host_id = ?
-          LIMIT 1;`;
+        SELECT sender_id AS senderId, recipient_id AS recipientId, group_no AS groupNo
+        FROM letters 
+        WHERE group_no = ? AND host_id = ?
+        LIMIT 1;`;
 
       const letterInfo = await conn.query(query, [
         groupInfo.groupNo,
