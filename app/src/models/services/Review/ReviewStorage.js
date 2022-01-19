@@ -41,7 +41,7 @@ class ReviewStorage {
 
       const reviewList = await conn.query(query, [clubNum]);
 
-      return { success: true, reviewList };
+      return reviewList;
     } catch (err) {
       throw err;
     } finally {
@@ -59,14 +59,14 @@ class ReviewStorage {
         INSERT INTO reviews (club_no, student_id, description, score) 
         VALUES (?, ?, ?, ?);`;
 
-      await conn.query(query, [
+      const review = await conn.query(query, [
         reviewInfo.clubNum,
         reviewInfo.id,
         reviewInfo.description,
         reviewInfo.score,
       ]);
 
-      return true;
+      return review.insertId;
     } catch (err) {
       throw err;
     } finally {

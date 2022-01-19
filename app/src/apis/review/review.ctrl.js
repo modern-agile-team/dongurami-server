@@ -8,7 +8,6 @@ const process = {
   findOneByClubNum: async (req, res) => {
     const review = new Review(req);
     const response = await review.findOneByClubNum();
-
     const apiInfo = getApiInfo('GET', response, req);
 
     return processCtrl(res, apiInfo);
@@ -17,7 +16,6 @@ const process = {
   createByReview: async (req, res) => {
     const review = new Review(req);
     const response = await review.createByReviewInfo();
-
     const apiInfo = getApiInfo('POST', response, req);
 
     return processCtrl(res, apiInfo);
@@ -26,7 +24,6 @@ const process = {
   updateById: async (req, res) => {
     const review = new Review(req);
     const response = await review.updateById();
-
     const apiInfo = getApiInfo('PUT', response, req);
 
     return processCtrl(res, apiInfo);
@@ -35,7 +32,6 @@ const process = {
   deleteByNum: async (req, res) => {
     const review = new Review(req);
     const response = await review.deleteByNum();
-
     const apiInfo = getApiInfo('DELELTE', response, req);
 
     return processCtrl(res, apiInfo);

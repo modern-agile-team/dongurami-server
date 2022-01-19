@@ -13,23 +13,16 @@ class Review {
 
   async findOneByClubNum() {
     try {
-      const { success, reviewList } = await ReviewStorage.findReviewByClubNum(
+      const reviewList = await ReviewStorage.findReviewByClubNum(
         this.params.clubNum
       );
 
-      if (success) {
-        return {
-          status: 200,
-          success: true,
-          msg: '동아리 후기 조회 성공',
-          reviewList,
-          studentId: this.auth.id,
-        };
-      }
       return {
-        status: 400,
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+        status: 200,
+        success: true,
+        msg: '동아리 후기 조회 성공',
+        reviewList,
+        studentId: this.auth.id,
       };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
@@ -62,9 +55,9 @@ class Review {
       score: this.body.score,
     };
 
-    const success = await ReviewStorage.saveReview(reviewInfo);
+    const isReview = await ReviewStorage.saveReview(reviewInfo);
 
-    if (success) {
+    if (isReview) {
       return { status: 201, success: true, msg: '후기 작성이 완료되었습니다.' };
     }
     return {
