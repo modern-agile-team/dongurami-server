@@ -3,7 +3,7 @@
 const LetterStorage = require('./LetterStorage');
 
 class LetterUtil {
-  static makeMsg(status, msg, letters) {
+  static makeResponse(status, msg, letters) {
     return {
       status,
       success: status < 400,
