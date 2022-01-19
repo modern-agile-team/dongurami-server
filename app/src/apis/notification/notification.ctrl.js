@@ -1,333 +1,120 @@
 'use strict';
 
 const Notification = require('../../models/services/Notification/Notification');
-const logger = require('../../config/logger');
+const processCtrl = require('../../models/utils/processCtrl');
+const getApiInfo = require('../../models/utils/getApiInfo');
 
 const process = {
   createNoticeBoardNotification: async (req, res) => {
-    const { boardNum } = req.params;
     const notification = new Notification(req);
     const response = await notification.createNoticeBoardNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(
-        `POST /api/notification/board/notice/${boardNum} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/board/notice/${boardNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/board/notice/${boardNum} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createClubNoticeNotification: async (req, res) => {
-    const { boardNum } = req.params;
-    const { clubNum } = req.params;
     const notification = new Notification(req);
     const response = await notification.createClubNoticeBoardNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.succeess) {
-      logger.info(
-        `POST /api/notification/board/club-notice/${clubNum}/${boardNum} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/board/club-notice/${clubNum}/${boardNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/board/club-notice/${clubNum}/${boardNum} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createCmtNotification: async (req, res) => {
-    const { boardNum } = req.params;
-    const { category } = req.params;
     const notification = new Notification(req);
     const response = await notification.createCmtNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(
-        `POST /api/notification/comment/${category}/${boardNum} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/comment/${category}/${boardNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/comment/${category}/${boardNum} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createReplyCmtNotification: async (req, res) => {
-    const { boardNum } = req.params;
-    const { cmtNum } = req.params;
-    const { category } = req.params;
     const notification = new Notification(req);
     const response = await notification.createReplyCmtNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(
-        `POST /api/notification/reply-comment/${category}/${boardNum}/${cmtNum} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/reply-comment/${category}/${boardNum}/${cmtNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/reply-comment/${category}/${boardNum}/${cmtNum} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createLikeNotificationByBoardNum: async (req, res) => {
-    const { boardNum } = req.params;
-    const { category } = req.params;
     const notification = new Notification(req);
     const response = await notification.createLikeNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(
-        `POST /api/notification/like/board/${category}/${boardNum} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/like/board/${category}/${boardNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/like/board/${category}/${boardNum} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createLikeNotificationByCmtNum: async (req, res) => {
-    const { cmtNum } = req.params;
-    const { category } = req.params;
     const notification = new Notification(req);
     const response = await notification.createLikeNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(
-        `POST /api/notification/like/comment/${category}/${cmtNum} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/like/comemnt/${category}/${cmtNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/like/comemnt/${category}/${cmtNum} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createLikeNotificationByReplyCmtNum: async (req, res) => {
-    const { ReplyCmtNum } = req.params;
-    const { category } = req.params;
     const notification = new Notification(req);
     const response = await notification.createLikeNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(
-        `POST /api/notification/like/reply-comment/${category}/${ReplyCmtNum} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/like/reply-comment/${category}/${ReplyCmtNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/like/reply-comment/${category}/${ReplyCmtNum} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createJoinResultNotification: async (req, res) => {
-    const { clubNum } = req.params;
-    const { applicant } = req.params;
     const notification = new Notification(req);
     const response = await notification.createJoinResultNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(
-        `POST api/notification/join-club/result/${clubNum}/${applicant} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/join-club/result/${clubNum}/${applicant} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/join-club/result/${clubNum}/${applicant} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createJoinNotification: async (req, res) => {
-    const { clubNum } = req.params;
-    const { applicant } = req.params;
     const notification = new Notification(req);
     const response = await notification.createJoinNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(
-        `POST api/notification/join-club/result/${clubNum}/${applicant} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/join-club/result/${clubNum}/${applicant} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/join-club/result/${clubNum}/${applicant} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createScheduleNotification: async (req, res) => {
-    const { clubNum } = req.params;
     const notification = new Notification(req);
     const response = await notification.createScheduleNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(
-        `POST /api/notification/schedule/${clubNum} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/schedule/${clubNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/schedule/${clubNum} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   createClubResignNotification: async (req, res) => {
-    const { clubNum } = req.params;
     const notification = new Notification(req);
     const response = await notification.createClubResignNotification();
+    const apiInfo = getApiInfo('POST', response, req);
 
-    if (response.success) {
-      logger.info(
-        `POST /api/notification/club-resign/${clubNum} 201: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `POST /api/notification/club-resign/${clubNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `POST /api/notification/club-resign/${clubNum} 400: \n${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   findAllById: async (req, res) => {
     const notification = new Notification(req);
     const response = await notification.findAllById();
+    const apiInfo = getApiInfo('GET', response, req);
 
-    if (response.success) {
-      logger.info(`GET /api/notification/entire 200: ${response.msg}`);
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `GET /api/notification/entire 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(`GET /api/notification/entire 400: ${response.msg}`);
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   updateOneByNotificationNum: async (req, res) => {
     const notification = new Notification(req);
     const response = await notification.updateOneByNotificationNum();
-    const { notificationNum } = req.params;
+    const apiInfo = getApiInfo('PATCH', response, req);
 
-    if (response.success) {
-      logger.info(
-        `PATCH /api/notification/${notificationNum} 200: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `PATCH /api/notification/${notificationNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `PATCH /api/notification/${notificationNum} 400: ${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 
   updateAllById: async (req, res) => {
     const notification = new Notification(req);
     const response = await notification.updateAllById();
-    const { notificationNum } = req.params;
+    const apiInfo = getApiInfo('PUT', response, req);
 
-    if (response.success) {
-      logger.info(
-        `PUT /api/notification/${notificationNum} 200: ${response.msg}`
-      );
-      return res.status(200).json(response);
-    }
-    if (response.isError) {
-      logger.error(
-        `PUT /api/notification/${notificationNum} 500: \n${response.errMsg.stack}`
-      );
-      return res.status(500).json(response.clientMsg);
-    }
-    logger.error(
-      `PUT /api/notification/${notificationNum} 400: ${response.msg}`
-    );
-    return res.status(400).json(response);
+    return processCtrl(res, apiInfo);
   },
 };
 
