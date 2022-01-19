@@ -14,12 +14,6 @@ class MyPage {
     this.params = req.params;
   }
 
-  async existClub() {
-    const isClub = await MyPageStorage.existClub(this.params.clubNum);
-
-    return isClub;
-  }
-
   async findAllScraps() {
     const userInfo = {
       id: this.params.id,
@@ -48,9 +42,7 @@ class MyPage {
         return { succeess: false, msg: '본인만 열람 가능합니다.' };
       }
 
-      const isClub = await this.existClub();
-
-      if (!isClub) {
+      if (!(await MyPageStorage.existClub(this.params.clubNum))) {
         return { success: false, msg: '존재하지 않는 동아리입니다.' };
       }
 

@@ -10,21 +10,21 @@ const apiAuth = require('../../middlewares/api-auth');
 
 router.get(
   '/:id/personal/:clubNum',
-  apiAuth.apiAuth,
+
   loginAuth.loginCheck,
   myPageCtrl.process.findAllScrapsAndMyPagePosts
 );
 
 router.get(
   '/:id/my-post',
-  apiAuth.apiAuth,
+
   loginAuth.loginCheck,
   myPageCtrl.process.findAllBoardsAndComments
 );
 
 router.get(
   '/:id/personal/scrap/:clubNum/:scrapNum',
-  apiAuth.apiAuth,
+
   loginAuth.loginCheck,
   myPageCtrl.process.findOneScrap
 );
@@ -32,7 +32,7 @@ router.get(
 // category - > personal
 router.get(
   '/:id/:category/:clubNum/:boardNum',
-  apiAuth.apiAuth,
+
   loginAuth.loginCheck,
   boardCtrl.process.findOneByBoardNum
 );
