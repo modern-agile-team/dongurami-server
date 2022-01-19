@@ -18,7 +18,8 @@ class Letter {
       const letters = await LetterStorage.findLetterNotifications(this.auth.id);
 
       if (letters[0]) {
-        LetterUtil.checkHiddenFlagForNoti(letters);
+        LetterUtil.anonymization(letters);
+        LetterUtil.addUrl(letters);
         return makeResponse(200, '쪽지 알람 전체 조회 성공', letters);
       }
       return makeResponse(200, '생성된 쪽지가 없습니다.');
@@ -38,7 +39,7 @@ class Letter {
       const letters = await LetterStorage.findAllLetterList(id);
 
       if (letters[0]) {
-        LetterUtil.checkHiddenFlag(letters);
+        LetterUtil.anonymization(letters);
         return makeResponse(200, '쪽지 전체 조회 성공', letters);
       }
       return makeResponse(200, '쪽지가 존재하지 않습니다.');
