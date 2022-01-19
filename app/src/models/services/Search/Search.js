@@ -3,7 +3,7 @@
 const BoardStorage = require('../Board/BoardStorage');
 const boardCategory = require('../Category/board');
 const Error = require('../../utils/Error');
-const ClubStorage = require('../Club/ClubStorage');
+const ClubListStorage = require('../ClubList/ClubListStorage');
 
 class Search {
   constructor(req) {
@@ -123,7 +123,7 @@ class Search {
     const { name } = this.query;
 
     try {
-      const clubs = await ClubStorage.findAllClubList(name);
+      const clubs = await ClubListStorage.findAllClubList(name);
 
       return Search.makeResponseMsg(200, name, clubs);
     } catch (err) {
