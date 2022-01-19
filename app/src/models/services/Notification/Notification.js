@@ -501,11 +501,9 @@ class Notification {
       );
 
       if (success) {
-        return makeResponse(
-          200,
-          '알림이 성공적으로 조회되었습니다.',
-          notifications
-        );
+        return makeResponse(200, '알림이 성공적으로 조회되었습니다.', {
+          notifications,
+        });
       }
       return makeResponse(
         400,
