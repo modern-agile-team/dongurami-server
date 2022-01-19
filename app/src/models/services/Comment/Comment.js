@@ -6,6 +6,7 @@ const WriterCheck = require('../../utils/WriterCheck');
 const boardCategory = require('../Category/board');
 const getRequestNullKey = require('../../utils/getRequestNullKey');
 const makeResponse = require('../../utils/makeResponse');
+const CommentUtil = require('./Util');
 
 class Comment {
   constructor(req) {
@@ -45,7 +46,6 @@ class Comment {
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
 
       if (!commentNum) return Error.dbError();
-      //  return makeResponse(400, '댓글 생성 실패');
 
       const isUpdate = await CommentStorage.updateOnlyGroupNum(commentNum);
 
@@ -114,6 +114,8 @@ class Comment {
     try {
       const board = await CommentStorage.existOnlyBoardNum(boardInfo.boardNum);
 
+      if (!board) return makeResponse(400, '존재하지 않는 게시글입니다.');
+
       if (board.writerHiddenFlag) {
         anonymous[board.studentId] = '익명1';
       }
@@ -121,33 +123,22 @@ class Comment {
       const comments = await CommentStorage.findAllByBoardNum(boardInfo);
 
       for (const comment of comments) {
-        comment.isWriter = boardInfo.studentId === comment.studentId ? 1 : 0;
-        comment.likedFlag += comment.replyLikedFlag;
-        comment.emotionCount += comment.replyEmotionCount;
-        delete comment.replyLikedFlag;
-        delete comment.replyEmotionCount;
+        comment.isWriter = boardInfo.studentId === comment.studentId;
 
         if (comment.writerHiddenFlag) {
-          const samePersonIdx = Object.keys(anonymous).indexOf(
+          const samePersonFlag = Object.keys(anonymous).includes(
             comment.studentId
           );
 
-          if (samePersonIdx > -1) {
-            comment.studentName = anonymous[comment.studentId];
-            comment.studentId = anonymous[comment.studentId];
-            comment.profileImageUrl = null;
+          if (samePersonFlag) {
+            CommentUtil.samePersonAnonymization(anonymous, comment);
           } else {
-            const newPerson = `익명${Object.keys(anonymous).length + 1}`;
-
-            anonymous[comment.studentId] = newPerson;
-            comment.studentId = newPerson;
-            comment.studentName = newPerson;
-            comment.profileImageUrl = null;
+            CommentUtil.newPersonAnonymization(anonymous, comment);
           }
         }
       }
 
-      return comments;
+      return makeResponse(200, '댓글 조회 성공', { comments });
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
     }
@@ -217,9 +208,7 @@ class Comment {
         replyCmtInfo
       );
 
-      if (!isUpdate) {
-        return makeResponse(404, '존재하지 않는 답글입니다.');
-      }
+      if (!isUpdate) return makeResponse(404, '존재하지 않는 답글입니다.');
       return makeResponse(200, '답글 수정 성공');
     } catch (err) {
       return Error.ctrl('', err);
@@ -243,9 +232,7 @@ class Comment {
 
       const isDelete = await CommentStorage.deleteAllByGroupNum(cmtInfo);
 
-      if (!isDelete) {
-        return makeResponse(404, '존재하지 않는 댓글입니다.');
-      }
+      if (!isDelete) return makeResponse(404, '존재하지 않는 댓글입니다.');
       return makeResponse(200, '댓글 삭제 성공 ');
     } catch (err) {
       return Error.ctrl('', err);
@@ -272,9 +259,8 @@ class Comment {
         replyCmtInfo
       );
 
-      if (!isDelete) {
-        return makeResponse(404, '존재하지 않는 답글입니다.');
-      }
+      if (!isDelete) return makeResponse(404, '존재하지 않는 답글입니다.');
+
       const isExist = await CommentStorage.existOnlyReplyCmtNum(replyCmtInfo);
 
       if (!isExist) {

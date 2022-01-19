@@ -153,7 +153,7 @@ class Board {
       }
       board.isWriter = boardInfo.studentId === board.studentId;
 
-      BoardUtil.changeAnonymous(board);
+      BoardUtil.changeAnonymous([board]);
 
       return makeResponse(200, '게시글 조회 성공', { board });
     } catch (err) {
