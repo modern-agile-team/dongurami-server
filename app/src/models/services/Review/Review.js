@@ -12,8 +12,6 @@ class Review {
   }
 
   async findOneByClubNum() {
-    const user = this.auth;
-
     try {
       const { success, reviewList } = await ReviewStorage.findReviewByClubNum(
         this.params.clubNum
@@ -21,13 +19,15 @@ class Review {
 
       if (success) {
         return {
+          status: 200,
           success: true,
           msg: '동아리 후기 조회 성공',
           reviewList,
-          studentId: user.id,
+          studentId: this.auth.id,
         };
       }
       return {
+        status: 400,
         success: false,
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
@@ -48,7 +48,7 @@ class Review {
       if (!isReview) {
         return await this.saveReview();
       }
-      return { success: false, msg: '이미 후기를 작성했습니다.' };
+      return { status: 400, success: false, msg: '이미 후기를 작성했습니다.' };
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
@@ -65,56 +65,58 @@ class Review {
     const success = await ReviewStorage.saveReview(reviewInfo);
 
     if (success) {
-      return { success: true, msg: '후기 작성이 완료되었습니다.' };
+      return { status: 201, success: true, msg: '후기 작성이 완료되었습니다.' };
     }
     return {
+      status: 400,
       success: false,
       msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
     };
   }
 
   async updateById() {
-    const reviewNum = this.params.num;
-    const reviewInfo = {
-      num: reviewNum,
-      description: this.body.description,
-      score: this.body.score,
-    };
-
     try {
       const isWriterCheck = await WriterCheck.ctrl(
         this.auth.id,
-        reviewNum,
+        this.params.num,
         'reviews'
       );
 
       if (!isWriterCheck.success) return isWriterCheck;
-
-      const isUpdate = await ReviewStorage.updateOneById(reviewInfo);
-
-      if (isUpdate) {
-        return {
-          success: true,
-          msg: '후기가 수정되었습니다.',
-        };
-      }
-      return {
-        success: false,
-        msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
-      };
+      return await this.updateReview();
     } catch (err) {
       return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
     }
   }
 
-  async deleteByNum() {
-    const reviewNum = this.params.num;
-    const user = this.auth;
+  async updateReview() {
+    const reviewInfo = {
+      num: this.params.num,
+      description: this.body.description,
+      score: this.body.score,
+    };
 
+    const isUpdate = await ReviewStorage.updateOneById(reviewInfo);
+
+    if (isUpdate) {
+      return {
+        status: 200,
+        success: true,
+        msg: '후기가 수정되었습니다.',
+      };
+    }
+    return {
+      status: 400,
+      success: false,
+      msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+    };
+  }
+
+  async deleteByNum() {
     try {
       const isWriterCheck = await WriterCheck.ctrl(
-        user.id,
-        reviewNum,
+        this.auth.id,
+        this.params.num,
         'reviews'
       );
 
@@ -126,14 +128,17 @@ class Review {
   }
 
   async deleteReview() {
-    const reviewNum = this.params.num;
-
-    const isDelete = await ReviewStorage.deleteOneByNum(reviewNum);
+    const isDelete = await ReviewStorage.deleteOneByNum(this.params.num);
 
     if (isDelete) {
-      return { success: true, msg: '작성된 후기가 삭제되었습니다.' };
+      return {
+        status: 200,
+        success: true,
+        msg: '작성된 후기가 삭제되었습니다.',
+      };
     }
     return {
+      status: 400,
       success: false,
       msg: '후기를 삭제하지 못했습니다. 서버 개발자에게 문의해주세요.',
     };

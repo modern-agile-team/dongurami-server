@@ -107,7 +107,7 @@ class ReviewStorage {
 
       const query = `
         DELETE FROM reviews 
-          WHERE no = ?;`;
+        WHERE no = ?;`;
 
       const deleteReview = await conn.query(query, [reviewNum]);
 
