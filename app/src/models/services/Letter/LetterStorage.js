@@ -26,27 +26,6 @@ class LetterStorage {
     }
   }
 
-  static async deleteLetterNotifications(id) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `
-        UPDATE letters 
-        SET reading_flag = 1 
-        WHERE host_id = ? AND reading_flag = 0;`;
-
-      const letter = await conn.query(query, [id]);
-
-      return letter.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
   static async findAllLetterList(id) {
     let conn;
 
@@ -54,7 +33,7 @@ class LetterStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT l.no, s.name, l.description, group_no AS groupNo, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS hiddenFlag
+      SELECT l.no, s.name, l.description, group_no AS groupNo, l.in_date AS inDate, IF (sender_id = ?, l.recipient_hidden_flag, l.writer_hidden_flag) AS hiddenFlag
         FROM letters AS l
         LEFT JOIN students AS s 
         ON IF (sender_id = ?, recipient_id = s.id, sender_id = s.id)
@@ -82,10 +61,10 @@ class LetterStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT sender_id AS senderId, recipient_id AS recipientId, group_no AS groupNo
-        FROM letters 
-        WHERE group_no = ? AND host_id = ?
-        LIMIT 1;`;
+          SELECT sender_id AS senderId, recipient_id AS recipientId, group_no AS groupNo
+          FROM letters 
+          WHERE group_no = ? AND host_id = ?
+          LIMIT 1;`;
 
       const letterInfo = await conn.query(query, [
         groupInfo.groupNo,
@@ -285,6 +264,27 @@ class LetterStorage {
         senderInsertNo: addLetterBySender.insertId,
         recipientInsertNo: addLetterByRecipient.insertId,
       };
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteLetterNotifications(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE letters 
+        SET reading_flag = 1 
+        WHERE host_id = ? AND reading_flag = 0;`;
+
+      const letter = await conn.query(query, [id]);
+
+      return letter.affectedRows;
     } catch (err) {
       throw err;
     } finally {
