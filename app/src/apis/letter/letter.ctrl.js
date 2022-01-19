@@ -9,6 +9,7 @@ const process = {
     const letter = new Letter(req);
     const response = await letter.findLetterNotifications();
     const apiInfo = getApiInfo('GET', response, req);
+
     return processCtrl(res, apiInfo);
   },
 
@@ -16,6 +17,7 @@ const process = {
     const letter = new Letter(req);
     const response = await letter.findAllLetterList();
     const apiInfo = getApiInfo('GET', response, req);
+
     return processCtrl(res, apiInfo);
   },
 
@@ -23,6 +25,7 @@ const process = {
     const letter = new Letter(req);
     const response = await letter.findLettersByGroup();
     const apiInfo = getApiInfo('GET', response, req);
+
     return processCtrl(res, apiInfo);
   },
 
@@ -30,6 +33,7 @@ const process = {
     const letter = new Letter(req);
     const response = await letter.createLetter();
     const apiInfo = getApiInfo('POST', response, req);
+
     return processCtrl(res, apiInfo);
   },
 
@@ -37,6 +41,7 @@ const process = {
     const letter = new Letter(req);
     const response = await letter.createReplyLetter();
     const apiInfo = getApiInfo('POST', response, req);
+
     return processCtrl(res, apiInfo);
   },
 
@@ -44,6 +49,7 @@ const process = {
     const letter = new Letter(req);
     const response = await letter.deleteLetterNotifications();
     const apiInfo = getApiInfo('PUT', response, req);
+
     return processCtrl(res, apiInfo);
   },
 
@@ -51,6 +57,7 @@ const process = {
     const letter = new Letter(req);
     const response = await letter.deleteLettersByGroupNo();
     const apiInfo = getApiInfo('DELETE', response, req);
+
     return processCtrl(res, apiInfo);
   },
 };
