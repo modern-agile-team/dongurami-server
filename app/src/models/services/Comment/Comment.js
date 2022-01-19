@@ -3,10 +3,10 @@
 const CommentStorage = require('./CommentStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
-const boardCategory = require('../Category/board');
+const CommentUtil = require('./Util');
 const getRequestNullKey = require('../../utils/getRequestNullKey');
 const makeResponse = require('../../utils/makeResponse');
-const CommentUtil = require('./Util');
+const boardCategory = require('../Category/board');
 
 class Comment {
   constructor(req) {
@@ -26,10 +26,19 @@ class Comment {
       hiddenFlag: comment.hiddenFlag || 0,
     };
 
-    const nullKey = getRequestNullKey(comment, ['description']);
+    const queryNullKey = getRequestNullKey(query, [
+      'boardCategory',
+      'boardNum',
+    ]);
 
-    if (nullKey) {
-      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
+    if (queryNullKey) {
+      return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
+    }
+
+    const bodyNullKey = getRequestNullKey(comment, ['description']);
+
+    if (bodyNullKey) {
+      return makeResponse(400, `body의 ${bodyNullKey}이(가) 빈 값입니다.`);
     }
 
     if (category === 5 && commentInfo.hiddenFlag) {
@@ -70,10 +79,20 @@ class Comment {
       hiddenFlag: replyComment.hiddenFlag || 0,
     };
 
-    const nullKey = getRequestNullKey(replyComment, ['description']);
+    const queryNullKey = getRequestNullKey(query, [
+      'boardCategory',
+      'boardNum',
+      'cmtNum',
+    ]);
 
-    if (nullKey) {
-      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
+    if (queryNullKey) {
+      return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
+    }
+
+    const bodyNullKey = getRequestNullKey(comment, ['description']);
+
+    if (bodyNullKey) {
+      return makeResponse(400, `body의 ${bodyNullKey}이(가) 빈 값입니다.`);
     }
 
     if (category === 5 && replyCommentInfo.hiddenFlag) {
@@ -106,13 +125,23 @@ class Comment {
   }
 
   async findAllByBoardNum() {
+    const { query } = this;
     const user = this.auth;
     const boardInfo = {
-      boardNum: this.query.boardNum,
+      boardNum: query.boardNum,
       studentId: user ? user.id : 0,
-      category: boardCategory[this.query.boardCategory],
+      category: boardCategory[query.boardCategory],
     };
     const anonymous = {};
+
+    const queryNullKey = getRequestNullKey(query, [
+      'boardCategory',
+      'boardNum',
+    ]);
+
+    if (queryNullKey) {
+      return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
+    }
 
     try {
       const board = await CommentStorage.existOnlyBoardNum(boardInfo.boardNum);
@@ -148,18 +177,29 @@ class Comment {
   }
 
   async updateByCommentNum() {
+    const { query } = this;
     const comment = this.body;
     const cmtInfo = {
-      boardNum: this.query.boardNum,
-      cmtNum: this.query.cmtNum,
+      boardNum: query.boardNum,
+      cmtNum: query.cmtNum,
       description: comment.description,
       hiddenFlag: comment.hiddenFlag || 0,
     };
 
-    const nullKey = getRequestNullKey(comment, ['description']);
+    const queryNullKey = getRequestNullKey(query, [
+      'boardCategory',
+      'boardNum',
+      'cmtNum',
+    ]);
 
-    if (nullKey) {
-      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
+    if (queryNullKey) {
+      return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
+    }
+
+    const bodyNullKey = getRequestNullKey(comment, ['description']);
+
+    if (bodyNullKey) {
+      return makeResponse(400, `body의 ${bodyNullKey}이(가) 빈 값입니다.`);
     }
 
     try {
@@ -183,19 +223,31 @@ class Comment {
   }
 
   async updateByReplyCommentNum() {
+    const { query } = this;
     const replyComment = this.body;
     const replyCmtInfo = {
-      boardNum: this.query.boardNum,
-      cmtNum: this.query.cmtNum,
-      replyCmtNum: this.query.replyCmtNum,
+      boardNum: query.boardNum,
+      cmtNum: query.cmtNum,
+      replyCmtNum: query.replyCmtNum,
       description: replyComment.description,
       hiddenFlag: replyComment.hiddenFlag || 0,
     };
 
-    const nullKey = getRequestNullKey(replyComment, ['description']);
+    const queryNullKey = getRequestNullKey(query, [
+      'boardCategory',
+      'boardNum',
+      'cmtNum',
+      'replyCmtNum',
+    ]);
 
-    if (nullKey) {
-      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
+    if (queryNullKey) {
+      return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
+    }
+
+    const bodyNullKey = getRequestNullKey(comment, ['description']);
+
+    if (bodyNullKey) {
+      return makeResponse(400, `body의 ${bodyNullKey}이(가) 빈 값입니다.`);
     }
 
     try {
@@ -219,10 +271,21 @@ class Comment {
   }
 
   async deleteAllByGroupNum() {
+    const { query } = this;
     const cmtInfo = {
-      boardNum: this.query.boardNum,
-      cmtNum: this.query.cmtNum,
+      boardNum: query.boardNum,
+      cmtNum: query.cmtNum,
     };
+
+    const queryNullKey = getRequestNullKey(query, [
+      'boardCategory',
+      'boardNum',
+      'cmtNum',
+    ]);
+
+    if (queryNullKey) {
+      return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
+    }
 
     try {
       const writerCheck = await WriterCheck.ctrl(
@@ -243,11 +306,23 @@ class Comment {
   }
 
   async deleteOneReplyCommentNum() {
+    const { query } = this;
     const replyCmtInfo = {
-      boardNum: this.query.boardNum,
-      cmtNum: this.query.cmtNum,
-      replyCmtNum: this.query.replyCmtNum,
+      boardNum: query.boardNum,
+      cmtNum: query.cmtNum,
+      replyCmtNum: query.replyCmtNum,
     };
+
+    const queryNullKey = getRequestNullKey(query, [
+      'boardCategory',
+      'boardNum',
+      'cmtNum',
+      'replyCmtNum',
+    ]);
+
+    if (queryNullKey) {
+      return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
+    }
 
     try {
       const writerCheck = await WriterCheck.ctrl(
