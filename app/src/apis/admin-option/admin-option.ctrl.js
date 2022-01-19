@@ -1,9 +1,9 @@
 'use strict';
 
 const AdminOption = require('../../models/services/AdminOption/AdminOption');
+const logger = require('../../config/logger');
 const processCtrl = require('../../models/utils/processCtrl');
 const getApiInfo = require('../../models/utils/getApiInfo');
-const logger = require('../../config/logger');
 
 const process = {
   checkClubAdmin: async (req, res, next) => {
