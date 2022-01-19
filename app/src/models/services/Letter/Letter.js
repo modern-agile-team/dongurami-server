@@ -80,10 +80,9 @@ class Letter {
   async createLetter() {
     const data = this.body;
     const { id } = this.auth;
+    let recipientHiddenFlag = 0;
 
     try {
-      let recipientHiddenFlag = 0;
-
       if (!data.recipientId.length) {
         recipientHiddenFlag = 1;
         await LetterUtil.findRecipientId(data);
@@ -113,13 +112,13 @@ class Letter {
 
       const groupNo = LetterUtil.changeGroupNo(senderInsertNo, checkGroupNo);
 
-      const result = await LetterStorage.updateGroupNo({
+      const isUpdateGroupNo = await LetterStorage.updateGroupNo({
         senderInsertNo,
         recipientInsertNo,
         groupNo,
       });
 
-      if (result) return makeMsg(201, '쪽지가 전송되었습니다.');
+      if (isUpdateGroupNo) return makeMsg(201, '쪽지가 전송되었습니다.');
       return makeMsg(400, '쪽지가 전송되지 않았습니다.');
     } catch (err) {
       return Error.ctrl('', err);
@@ -150,13 +149,13 @@ class Letter {
       const { senderInsertNo, recipientInsertNo } =
         await LetterStorage.createLetter(sendInfo);
 
-      const result = await LetterStorage.updateGroupNo({
+      const isUpdeateGroupNo = await LetterStorage.updateGroupNo({
         senderInsertNo,
         recipientInsertNo,
         groupNo,
       });
 
-      if (result === 2) return makeMsg(201, '쪽지가 전송되었습니다.');
+      if (isUpdeateGroupNo === 2) return makeMsg(201, '쪽지가 전송되었습니다.');
       return makeMsg(400, '쪽지가 전송되지 않았습니다.');
     } catch (err) {
       return Error.ctrl('', err);
