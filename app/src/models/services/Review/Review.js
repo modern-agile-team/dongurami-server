@@ -80,7 +80,6 @@ class Review {
   async updateById() {
     const review = this.body;
     const reviewNum = this.params.num;
-    const user = this.auth;
 
     try {
       const reviewInfo = {
@@ -90,8 +89,8 @@ class Review {
       };
 
       const isWriterCheck = await WriterCheck.ctrl(
-        user.id,
-        reviewInfo.num,
+        this.auth.id,
+        reviewNum,
         'reviews'
       );
 
