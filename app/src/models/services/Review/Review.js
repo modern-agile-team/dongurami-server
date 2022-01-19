@@ -25,7 +25,7 @@ class Review {
         studentId: this.auth.id,
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -43,7 +43,7 @@ class Review {
       }
       return { status: 400, success: false, msg: '이미 후기를 작성했습니다.' };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -63,7 +63,7 @@ class Review {
     return {
       status: 400,
       success: false,
-      msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
+      msg: '',
     };
   }
 
@@ -78,7 +78,7 @@ class Review {
       if (!isWriterCheck.success) return isWriterCheck;
       return await this.updateReview();
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -116,7 +116,7 @@ class Review {
       if (!isWriterCheck.success) return isWriterCheck;
       return await this.deleteReview();
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 

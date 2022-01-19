@@ -33,7 +33,7 @@ class Notification {
         msg: '전체공지 생성 알림에 대한 요청이 아닙니다.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -61,7 +61,7 @@ class Notification {
         msg: '동아리공지 생성 알림에 대한 요청이 아닙니다.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -127,7 +127,7 @@ class Notification {
         msg: '댓글 생성 알림에 대한 요청이 아닙니다.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -188,7 +188,7 @@ class Notification {
         msg: '답글 생성 알림에 대한 요청이 아닙니다.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -268,7 +268,7 @@ class Notification {
         msg: '좋아요 생성 알림에 대한 요청이 아닙니다.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -350,7 +350,7 @@ class Notification {
         msg: '동아리가입 결과 알림에 대한 요청이 아닙니다.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -443,7 +443,7 @@ class Notification {
         msg: '가입 신청 알림에 대한 요청이 아닙니다.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -489,7 +489,7 @@ class Notification {
         msg: '일정 알림에 대한 요청이 아닙니다.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -546,7 +546,7 @@ class Notification {
         msg: '동아리탈퇴 알림에 대한 요청이 아닙니다.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -589,7 +589,7 @@ class Notification {
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -625,7 +625,7 @@ class Notification {
         msg: '알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -648,7 +648,7 @@ class Notification {
         msg: '삭제 할 알림이 없거나 알 수 없는 에러입니다. 서버 개발자에게 문의해주세요.',
       };
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 문의해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 }
