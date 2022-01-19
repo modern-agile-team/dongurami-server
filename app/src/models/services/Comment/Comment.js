@@ -16,10 +16,12 @@ class Comment {
   }
 
   async createCommentNum() {
+    const { query } = this;
     const comment = this.body;
+    const category = boardCategory[query.boardCategory];
     const commentInfo = {
       id: this.auth.id,
-      boardNum: this.query.boardNum,
+      boardNum: query.boardNum,
       description: comment.description,
       hiddenFlag: comment.hiddenFlag || 0,
     };
@@ -27,10 +29,10 @@ class Comment {
     const nullKey = getRequestNullKey(comment, ['description']);
 
     if (nullKey) {
-      return makeResponse(400, `${nullKey}이(가) 존재하지 않습니다.`);
+      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
     }
 
-    if (boardCategory[this.query.category] === 5 && commentInfo.hiddenFlag) {
+    if (category === 5 && commentInfo.hiddenFlag) {
       return makeResponse(400, '해당 게시판에서 익명 사용이 불가능합니다.');
     }
 
@@ -59,6 +61,7 @@ class Comment {
   async createReplyCommentNum() {
     const { query } = this;
     const replyComment = this.body;
+    const category = boardCategory[this.query.boardCategory];
     const replyCommentInfo = {
       id: this.user.id,
       boardNum: query.boardNum,
@@ -70,10 +73,10 @@ class Comment {
     const nullKey = getRequestNullKey(replyComment, ['description']);
 
     if (nullKey) {
-      return makeResponse(400, `${nullKey}이(가) 존재하지 않습니다.`);
+      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
     }
 
-    if (boardCategory[query.category] === 5 && replyCommentInfo.hiddenFlag) {
+    if (category === 5 && replyCommentInfo.hiddenFlag) {
       return makeResponse(400, '해당 게시판에서는 익명 사용이 불가능합니다.');
     }
 
@@ -107,7 +110,7 @@ class Comment {
     const boardInfo = {
       boardNum: this.query.boardNum,
       studentId: user ? user.id : 0,
-      category: boardCategory[this.query.category],
+      category: boardCategory[this.query.boardCategory],
     };
     const anonymous = {};
 
@@ -140,7 +143,7 @@ class Comment {
 
       return makeResponse(200, '댓글 조회 성공', { comments });
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -156,7 +159,7 @@ class Comment {
     const nullKey = getRequestNullKey(comment, ['description']);
 
     if (nullKey) {
-      return makeResponse(400, `${nullKey}이(가) 존재하지 않습니다.`);
+      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
     }
 
     try {
@@ -192,7 +195,7 @@ class Comment {
     const nullKey = getRequestNullKey(replyComment, ['description']);
 
     if (nullKey) {
-      return makeResponse(400, `${nullKey}이(가) 존재하지 않습니다.`);
+      return makeResponse(400, `${nullKey}이(가) 빈 값입니다.`);
     }
 
     try {
