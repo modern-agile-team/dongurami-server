@@ -6,6 +6,7 @@ const WriterCheck = require('../../utils/WriterCheck');
 const AdminOptionStorage = require('../AdminOption/AdminOptionStorage');
 const StudentStorage = require('../Student/StudentStorage');
 const Error = require('../../utils/Error');
+const MyPageUtil = require('./MyPageUtils');
 
 class MyPage {
   constructor(req) {
@@ -42,6 +43,24 @@ class MyPage {
     }
   }
 
+  async findOneScrap() {
+    const { params } = this;
+
+    try {
+      const userInfo = {
+        id: params.id,
+        scrapNum: params.scrapNum,
+      };
+
+      const scrap = await MyPageStorage.findOneScrap(userInfo);
+
+      if (scrap) return { success: true, msg: '스크랩 상세 조회 성공', scrap };
+      return { success: false, msg: '존재하지 않는 글입니다.' };
+    } catch (err) {
+      return Error.ctrl('개발자에게 문의해주세요.', err);
+    }
+  }
+
   async findAllBoardsAndComments() {
     const { id } = this.params;
 
@@ -68,25 +87,37 @@ class MyPage {
     }
   }
 
-  async findOneScrap() {
-    const { params } = this;
+  async createScrapNum() {
+    const data = this.body;
+
+    if (!data.title) {
+      return { success: false, msg: '제목이 존재하지 않습니다.' };
+    }
+
+    const fileUrl = MyPageUtil.extractThumbnail(
+      data.scrapDescription + data.boardDescription
+    );
+
+    const scrapInfo = {
+      fileUrl,
+      id: this.auth.id,
+      clubNum: this.params.clubNum,
+      title: data.title,
+      scrapDescription: data.scrapDescription,
+      boardDescription: data.boardDescription,
+    };
 
     try {
-      const userInfo = {
-        id: params.id,
-        scrapNum: params.scrapNum,
-      };
+      const scrap = await MyPageStorage.createScrapNum(scrapInfo);
 
-      const scrap = await MyPageStorage.findOneScrap(userInfo);
-
-      if (scrap) return { success: true, msg: '스크랩 상세 조회 성공', scrap };
-      return { success: false, msg: '존재하지 않는 글입니다.' };
+      if (scrap) return { success: true, msg: '스크랩글이 생성되었습니다.' };
+      return { suuccess: false, msg: '글이 스크랩되지 않았습니다.' };
     } catch (err) {
       return Error.ctrl('개발자에게 문의해주세요.', err);
     }
   }
 
-  async createScrapNum() {
+  async XXcreateScrapNum() {
     const data = this.body;
 
     try {

@@ -12,13 +12,13 @@ const router = express.Router();
 
 router.get(
   '/:category/:clubNum',
-  apiAuth.apiAuth,
+
   loginCheck.loginCheck,
   boardCtrl.process.findAllByCategoryNum
 );
 router.get(
   '/:category/:clubNum/:boardNum',
-  apiAuth.apiAuth,
+
   loginCheck.loginCheck,
   boardCtrl.process.findOneByBoardNum
 );
@@ -45,7 +45,7 @@ router.post(
 // 동아리 별 활동 일지 스크랩 요청 API
 router.post(
   '/:category/personal/scrap/:clubNum/:boardNum',
-  apiAuth.apiAuth,
+
   loginCheck.loginCheck,
   clubJoinCheck.clubJoinCheck,
   myPageCtrl.process.createScrapNum
