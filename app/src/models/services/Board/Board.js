@@ -122,6 +122,8 @@ class Board {
       order: this.query.order || 'desc',
     };
 
+    console.log(boardInfo);
+
     try {
       const boards = await BoardStorage.findAllByPromotionCategory(boardInfo);
 
@@ -138,6 +140,7 @@ class Board {
       boardNum: this.params.boardNum,
       studentId: user ? user.id : 0,
     };
+    const anonymous = {};
 
     if (boardInfo.category === 5 && !user.isAdmin) {
       if (!user.clubNum.includes(Number(clubNum))) {
@@ -155,7 +158,27 @@ class Board {
 
       BoardUtil.changeAnonymous([board]);
 
-      return makeResponse(200, '게시글 조회 성공', { board });
+      const images = await BoardStorage.findAllByBoardImg(boardInfo.boardNum);
+
+      const comments = await BoardStorage.findAllByBoardNum(boardInfo);
+
+      comments.forEach((comment) => {
+        comment.isWriter = boardInfo.studentId === comment.studentId;
+
+        if (comment.writerHiddenFlag) {
+          const samePersonFlag = Object.keys(anonymous).includes(
+            comment.studentId
+          );
+
+          if (samePersonFlag) {
+            BoardUtil.samePersonAnonymization(anonymous, comment);
+          } else {
+            BoardUtil.newPersonAnonymization(anonymous, comment);
+          }
+        }
+      });
+
+      return makeResponse(200, '게시글 조회 성공', { board, comments, images });
     } catch (err) {
       return Error.ctrl('', err);
     }

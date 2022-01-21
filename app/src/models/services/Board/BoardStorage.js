@@ -140,6 +140,8 @@ class BoardStorage {
       const { category, direction } =
         BoardUtil.getAddQueryForPromotion(boardInfo);
 
+      console.log(category, direction);
+
       const query = `
         SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
         (SELECT COUNT(no) FROM comments
@@ -157,6 +159,8 @@ class BoardStorage {
         GROUP BY no
         ORDER BY ${boardInfo.sort} ${boardInfo.order}
         LiMIT 8;`;
+
+      console.log(query);
 
       const boards = await conn.query(query);
 
@@ -194,6 +198,65 @@ class BoardStorage {
       ]);
 
       return board[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllByBoardNum(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT cmt.student_id AS studentId, st.name AS studentName, cmt.no, cmt.description, cmt.depth, cmt.group_no AS groupNo, cmt.reply_flag AS replyFlag, cmt.in_date AS inDate, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
+        (SELECT COUNT(no)
+        FROM comment_emotions
+        WHERE comment_no = cmt.no) +
+        (SELECT COUNT(no)
+        FROM reply_comment_emotions
+        WHERE reply_comment_no = cmt.no) AS emotionCount,
+        (SELECT COUNT(no)
+        FROM comment_emotions
+        WHERE comment_no = cmt.no AND student_id = ? AND depth = 0) +
+        (SELECT COUNT(no)
+        FROM reply_comment_emotions
+        WHERE reply_comment_no = cmt.no AND student_id = ? AND depth = 1) AS likedFlag
+        FROM comments AS cmt
+        JOIN students AS st
+        ON cmt.student_id = st.id
+        WHERE cmt.board_no = ?
+        ORDER BY cmt.group_no, inDate;`;
+
+      const comments = await conn.query(query, [
+        boardInfo.studentId,
+        boardInfo.studentId,
+        boardInfo.boardNum,
+      ]);
+
+      return comments;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllByBoardImg(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query =
+        'SELECT url AS imgPath FROM images WHERE images.board_no = ?;';
+
+      const imgPath = await conn.query(query, [boardNum]);
+
+      return imgPath;
     } catch (err) {
       throw err;
     } finally {
