@@ -2,7 +2,6 @@
 
 const express = require('express');
 const commentCtrl = require('./comment.ctrl');
-const identityCheck = require('../../middlewares/identify-auth');
 const loginCheck = require('../../middlewares/login-auth');
 const apiAuth = require('../../middlewares/api-auth');
 
@@ -19,13 +18,6 @@ router.post(
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.createReplyCommentNum
-);
-
-router.get(
-  '/',
-  apiAuth.apiAuth,
-  identityCheck.identityCheck,
-  commentCtrl.process.findAllByBoardNum
 );
 
 router.put(
