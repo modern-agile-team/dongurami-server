@@ -42,12 +42,7 @@ class Board {
 
     if (clubNum !== undefined && clubNum > 1) boardInfo.clubNum = clubNum;
 
-    if (boardInfo.category === 4) {
-      if (boardInfo.images.length === 0) {
-        return makeResponse(400, '사진을 첨부해주세요');
-      }
-      boardInfo.clubNum = board.clubNo;
-    }
+    if (boardInfo.category === 4) boardInfo.clubNum = board.clubNo;
 
     if (boardInfo.category === 5 || boardInfo.category === 6) {
       if (!user.clubNum.includes(Number(clubNum))) {
@@ -122,8 +117,6 @@ class Board {
       order: this.query.order || 'desc',
     };
 
-    console.log(boardInfo);
-
     try {
       const boards = await BoardStorage.findAllByPromotionCategory(boardInfo);
 
@@ -191,7 +184,6 @@ class Board {
       description: this.body.description,
       boardNum: this.params.boardNum,
       category: boardCategory[this.params.category],
-      images: this.body.images || [],
       hiddenFlag: this.body.hiddenFlag || 0,
     };
 
@@ -199,10 +191,6 @@ class Board {
 
     if (nullKey) {
       return makeResponse(404, `${nullKey}(가) 존재하지 않습니다.`);
-    }
-
-    if (boardInfo.category === 4 && boardInfo.images.length === 0) {
-      return makeResponse(400, '사진을 첨부해주세요');
     }
 
     try {
