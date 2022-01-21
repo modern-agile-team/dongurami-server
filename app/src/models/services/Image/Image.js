@@ -59,18 +59,6 @@ class Image {
     }
   }
 
-  async findAllByBoardImg() {
-    const { boardNum } = this.params;
-
-    try {
-      const imgInfo = await ImageStorage.findAllByBoardImg(boardNum);
-
-      return imgInfo;
-    } catch (err) {
-      return Error.ctrl('', err);
-    }
-  }
-
   async updateBoardImg() {
     const { query } = this;
     const newImages = this.body.images;

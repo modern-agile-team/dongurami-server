@@ -20,14 +20,6 @@ const process = {
 
     return processCtrl(res, apiInfo);
   },
-
-  deleteBoardImg: async (req, res) => {
-    const image = new Image(req);
-    const response = await image.deleteBoardImg();
-    const apiInfo = getApiInfo('DELETE', response, req);
-
-    return processCtrl(res, apiInfo);
-  },
 };
 
 module.exports = { process };
