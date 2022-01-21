@@ -119,8 +119,6 @@ class BoardStorage {
       const { category, direction } =
         BoardUtil.getAddQueryForPromotion(boardInfo);
 
-      console.log(category, direction);
-
       const query = `
         SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
         (SELECT COUNT(no) FROM comments
@@ -138,8 +136,6 @@ class BoardStorage {
         GROUP BY no
         ORDER BY ${boardInfo.sort} ${boardInfo.order}
         LiMIT 8;`;
-
-      console.log(query);
 
       const boards = await conn.query(query);
 
@@ -184,7 +180,7 @@ class BoardStorage {
     }
   }
 
-  static async findAllByBoardNum(boardInfo) {
+  static async findCmtAllByBoardNum(boardInfo) {
     let conn;
 
     try {
@@ -224,14 +220,16 @@ class BoardStorage {
     }
   }
 
-  static async findAllByBoardImg(boardNum) {
+  static async findAllImgByBoardNum(boardNum) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'SELECT url AS imgPath FROM images WHERE images.board_no = ?;';
+      const query = `
+        SELECT url AS imgPath
+        FROM images
+        WHERE images.board_no = ?;`;
 
       const imgPath = await conn.query(query, [boardNum]);
 

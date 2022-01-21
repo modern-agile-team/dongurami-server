@@ -46,7 +46,8 @@ class Comment {
 
     try {
       const isExist = await CommentStorage.existOnlyBoardNum(
-        commentInfo.boardNum
+        query.boardNum,
+        category
       );
 
       if (!isExist) {
@@ -150,6 +151,10 @@ class Comment {
     }
 
     try {
+      const isExist = await CommentStorage.existOnlyCmtNum(query);
+
+      if (!isExist) return makeResponse(404, '존재하지 않는 댓글입니다.');
+
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
         cmtInfo.cmtNum,
@@ -235,6 +240,10 @@ class Comment {
     }
 
     try {
+      const isExist = await CommentStorage.existOnlyCmtNum(query);
+
+      if (!isExist) return makeResponse(404, '존재하지 않는 댓글입니다.');
+
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
         cmtInfo.cmtNum,

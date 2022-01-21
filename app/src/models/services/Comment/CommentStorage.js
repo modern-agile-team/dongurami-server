@@ -57,7 +57,7 @@ class CommentStorage {
     }
   }
 
-  static async existOnlyBoardNum(boardNum) {
+  static async existOnlyBoardNum(boardNum, boardCategory) {
     let conn;
 
     try {
@@ -66,9 +66,9 @@ class CommentStorage {
       const query = `
         SELECT no
         FROM boards
-        WHERE no = ?;`;
+        WHERE no = ? AND board_category_no = ?;`;
 
-      const board = await conn.query(query, [boardNum]);
+      const board = await conn.query(query, [boardNum, boardCategory]);
 
       return board[0];
     } catch (err) {
@@ -78,7 +78,7 @@ class CommentStorage {
     }
   }
 
-  static async existOnlyCmtNum(replyCmtInfo) {
+  static async existOnlyCmtNum(cmtInfo) {
     let conn;
 
     try {
@@ -89,10 +89,7 @@ class CommentStorage {
         FROM comments
         WHERE no = ? AND board_no = ? AND depth = 0;`;
 
-      const cmt = await conn.query(query, [
-        replyCmtInfo.cmtNum,
-        replyCmtInfo.boardNum,
-      ]);
+      const cmt = await conn.query(query, [cmtInfo.cmtNum, cmtInfo.boardNum]);
 
       return cmt[0];
     } catch (err) {

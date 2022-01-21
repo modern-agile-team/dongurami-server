@@ -151,9 +151,11 @@ class Board {
 
       BoardUtil.changeAnonymous([board]);
 
-      const images = await BoardStorage.findAllByBoardImg(boardInfo.boardNum);
+      const images = await BoardStorage.findAllImgByBoardNum(
+        boardInfo.boardNum
+      );
 
-      const comments = await BoardStorage.findAllByBoardNum(boardInfo);
+      const comments = await BoardStorage.findCmtAllByBoardNum(boardInfo);
 
       comments.forEach((comment) => {
         comment.isWriter = boardInfo.studentId === comment.studentId;

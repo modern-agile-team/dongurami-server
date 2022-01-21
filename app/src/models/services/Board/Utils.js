@@ -12,8 +12,8 @@ class BoardUtil {
   }
 
   static samePersonAnonymization(anonymous, comment) {
-    comment.studentId = anonymous[comment.studentId];
     comment.studentName = anonymous[comment.studentId];
+    comment.studentId = anonymous[comment.studentId];
     comment.profileImageUrl = null;
   }
 
