@@ -21,14 +21,6 @@ const process = {
     return processCtrl(res, apiInfo);
   },
 
-  findAllByBoardNum: async (req, res) => {
-    const comment = new Comment(req);
-    const response = await comment.findAllByBoardNum();
-    const apiInfo = getApiInfo('GET', response, req);
-
-    return processCtrl(res, apiInfo);
-  },
-
   updateByCommentNum: async (req, res) => {
     const comment = new Comment(req);
     const response = await comment.updateByCommentNum();

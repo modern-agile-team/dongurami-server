@@ -3,7 +3,6 @@
 const CommentStorage = require('./CommentStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
-const CommentUtil = require('./Util');
 const getRequestNullKey = require('../../utils/getRequestNullKey');
 const makeResponse = require('../../utils/makeResponse');
 const boardCategory = require('../Category/board');
@@ -119,58 +118,6 @@ class Comment {
 
       if (!isUpdate) return Error.dbError();
       return makeResponse(201, '답글 생성 성공');
-    } catch (err) {
-      return Error.ctrl('', err);
-    }
-  }
-
-  async findAllByBoardNum() {
-    const { query } = this;
-    const user = this.auth;
-    const boardInfo = {
-      boardNum: query.boardNum,
-      studentId: user ? user.id : 0,
-      category: boardCategory[query.boardCategory],
-    };
-    const anonymous = {};
-
-    const queryNullKey = getRequestNullKey(query, [
-      'boardCategory',
-      'boardNum',
-    ]);
-
-    if (queryNullKey) {
-      return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
-    }
-
-    try {
-      const board = await CommentStorage.existOnlyBoardNum(boardInfo.boardNum);
-
-      if (!board) return makeResponse(400, '존재하지 않는 게시글입니다.');
-
-      if (board.writerHiddenFlag) {
-        anonymous[board.studentId] = '익명1';
-      }
-
-      const comments = await CommentStorage.findAllByBoardNum(boardInfo);
-
-      comments.forEach((comment) => {
-        comment.isWriter = boardInfo.studentId === comment.studentId;
-
-        if (comment.writerHiddenFlag) {
-          const samePersonFlag = Object.keys(anonymous).includes(
-            comment.studentId
-          );
-
-          if (samePersonFlag) {
-            CommentUtil.samePersonAnonymization(anonymous, comment);
-          } else {
-            CommentUtil.newPersonAnonymization(anonymous, comment);
-          }
-        }
-      });
-
-      return makeResponse(200, '댓글 조회 성공', { comments });
     } catch (err) {
       return Error.ctrl('', err);
     }
