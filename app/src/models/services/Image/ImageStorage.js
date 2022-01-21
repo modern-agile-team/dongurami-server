@@ -14,9 +14,9 @@ class ImageStorage {
       for (let i = 1; i < imgInfo.length; i += 1) query += ', (?)';
       query += ';';
 
-      await conn.query(query, imgInfo);
+      const image = await conn.query(query, imgInfo);
 
-      return;
+      return image;
     } catch (err) {
       throw err;
     } finally {

@@ -16,40 +16,37 @@ class Image {
     const category = boardCategory[this.params.category];
     const imgInfo = [];
 
-    // 이미지, 썸네일 저장 필요 x 게시판
-    if (category < 4) return makeResponse(400, '잘못된 접근입니다.');
+    if (!images.length) return makeResponse(400, '이미지가 존재하지 않습니다.');
+    if (category !== 4) return makeResponse(400, '잘못된 접근입니다.');
+    if (!Array.isArray(images)) {
+      return makeResponse(400, '잘못된 형식입니다.');
+    }
+
+    for (const image of images) {
+      imgInfo.push([boardNum, image]);
+    }
 
     try {
       // 홍보 게시판 => 이미지 따로 저장
-      if (category === 4) {
-        if (!Array.isArray(images)) {
-          return makeResponse(400, '잘못된 형식입니다.');
-        }
-
-        for (const image of images) {
-          imgInfo.push([boardNum, image]);
-        }
-      }
       // 동아리별 활동일지 및 my-page 글 => 썸네일 지정
-      if (category <= 6) {
-        const { description } = this.body;
-        const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/i;
+      // if (category <= 6) {
+      //   const { description } = this.body;
+      //   const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/i;
 
-        imgReg.test(description);
+      //   imgReg.test(description);
 
-        const thumbnail = RegExp.$2;
+      //   const thumbnail = RegExp.$2;
 
-        if (thumbnail.length) imgInfo.push([boardNum, thumbnail]);
-      }
+      //   if (thumbnail.length) imgInfo.push([boardNum, thumbnail]);
+      // }
 
       // 저장될 이미지가 있을때만 images 테이블에 저장
-      if (imgInfo.length) {
-        await ImageStorage.saveBoardImg(imgInfo);
-      }
-      // 이미지의 여부와는 상관없이 글이 생성되므로 항상 true를 반환한다.
-      return { success: true };
+      const image = await ImageStorage.saveBoardImg(imgInfo);
+
+      if (!image.affectedRows) return Error.dbError();
+      return makeResponse(200, '이미지 생성 성공');
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
