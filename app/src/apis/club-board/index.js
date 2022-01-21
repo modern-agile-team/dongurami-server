@@ -2,7 +2,7 @@
 
 const express = require('express');
 const boardCtrl = require('../board/board.ctrl');
-const commentCtrl = require('../board/comment.ctrl');
+const commentCtrl = require('../comment/comment.ctrl');
 const myPageCtrl = require('../my-page/my-page.ctrl');
 const apiAuth = require('../../middlewares/api-auth');
 const loginCheck = require('../../middlewares/login-auth');
