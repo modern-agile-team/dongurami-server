@@ -250,7 +250,7 @@ class BoardStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-      SLECET no
+      SELECT no
       FROM boards
       WHERE no = ? AND board_category_no = ?;`;
 
@@ -259,7 +259,7 @@ class BoardStorage {
         boardInfo.category,
       ]);
 
-      return board;
+      return board[0];
     } catch (err) {
       throw err;
     } finally {
