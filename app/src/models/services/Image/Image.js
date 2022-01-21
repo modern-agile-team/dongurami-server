@@ -3,18 +3,20 @@
 const ImageStorage = require('./ImageStorage');
 const Error = require('../../utils/Error');
 const makeResponse = require('../../utils/makeResponse');
+const getRequestNullKey = require('../../utils/getRequestNullKey');
 const boardCategory = require('../Category/board');
+const ImageUtil = require('./Util');
 
 class Image {
   constructor(req) {
     this.body = req.body;
-    this.params = req.params;
+    this.query = req.query;
   }
 
   async saveBoardImg(boardNum) {
     const { images } = this.body;
+    const { query } = this;
     const category = boardCategory[this.params.category];
-    const imgInfo = [];
 
     if (category !== 4) return makeResponse(400, '잘못된 접근입니다.');
     if (!images.length) return makeResponse(400, '이미지가 존재하지 않습니다.');
@@ -22,9 +24,16 @@ class Image {
       return makeResponse(400, '잘못된 형식입니다.');
     }
 
-    for (const image of images) {
-      imgInfo.push([boardNum, image]);
+    const queryNullKey = getRequestNullKey(query, [
+      'boardCategory',
+      'boardNum',
+    ]);
+
+    if (queryNullKey) {
+      return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
     }
+
+    const imgInfo = ImageUtil.getimageInfo(images, boardNum);
 
     try {
       // 홍보 게시판 => 이미지 따로 저장
@@ -41,9 +50,9 @@ class Image {
       // }
 
       // 저장될 이미지가 있을때만 images 테이블에 저장
-      const image = await ImageStorage.saveBoardImg(imgInfo);
+      const saveCnt = await ImageStorage.saveBoardImg(imgInfo);
 
-      if (!image.affectedRows) return Error.dbError();
+      if (saveCnt) return Error.dbError();
       return makeResponse(200, '이미지 생성 성공');
     } catch (err) {
       return Error.ctrl('', err);
@@ -63,37 +72,45 @@ class Image {
   }
 
   async updateBoardImg() {
-    const { boardNum } = this.params;
+    const { query } = this;
     const newImages = this.body.images;
-    const existingImages = [];
-    const addImageInfo = [];
     const category = boardCategory[this.params.category];
-    const images = await ImageStorage.findAllByBoardImg(boardNum);
 
     if (category !== 4) return makeResponse(400, '잘못된 접근입니다.');
-    if (!images.length) return makeResponse(400, '이미지가 존재하지 않습니다.');
+    if (!newImages.length) {
+      return makeResponse(400, '이미지가 존재하지 않습니다.');
+    }
     if (!Array.isArray(newImages)) {
       return makeResponse(400, '잘못된 형식입니다.');
     }
 
-    for (const image of images) {
-      existingImages.push(image.imgPath);
+    const queryNullKey = getRequestNullKey(query, [
+      'boardCategory',
+      'boardNum',
+    ]);
+
+    if (queryNullKey) {
+      return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
     }
 
-    const addImages = newImages.filter((image) => {
-      return !existingImages.includes(image);
-    });
-    const deleteImages = existingImages.filter((image) => {
-      return !newImages.includes(image);
-    });
-
-    addImages.forEach((image) => addImageInfo.push([boardNum, image]));
-
     try {
+      const images = await ImageStorage.findAllByBoardImg(query.boardNum);
+
+      const currentlyImages = images.map((image) => image.imgPath);
+
+      const addImages = newImages.filter((image) => {
+        return !currentlyImages.includes(image);
+      });
+      const deleteImages = currentlyImages.filter((image) => {
+        return !newImages.includes(image);
+      });
+
+      const addImageInfo = ImageUtil.getimageInfo(addImages, query.boardNum);
+
       if (addImageInfo.length) {
         const saveCnt = await ImageStorage.saveBoardImg(addImageInfo);
 
-        if (addImageInfo.length !== saveCnt.affectedRows) {
+        if (addImageInfo.length !== saveCnt) {
           return Error.dbError();
         }
       }

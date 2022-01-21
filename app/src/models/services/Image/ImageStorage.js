@@ -16,7 +16,7 @@ class ImageStorage {
 
       const image = await conn.query(query, imgInfo);
 
-      return image;
+      return image.affectedRows;
     } catch (err) {
       throw err;
     } finally {
