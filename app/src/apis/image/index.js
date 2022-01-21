@@ -21,11 +21,4 @@ router.put(
   imageCtrl.process.updateBoardImg
 );
 
-router.delete(
-  '/',
-  apiAuth.apiAuth,
-  loginCheck.loginCheck,
-  imageCtrl.process.deleteBoardImg
-);
-
 module.exports = router;
