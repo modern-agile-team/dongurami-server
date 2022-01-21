@@ -158,7 +158,7 @@ class BoardStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.hit, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
+        SELECT bo.no, bo.student_id AS studentId, st.name AS studentName, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.hit, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
         (SELECT COUNT(no) FROM board_emotions
         WHERE board_no = bo.no) AS emotionCount,
         (SELECT COUNT(no) FROM board_emotions
@@ -236,6 +236,30 @@ class BoardStorage {
       const imgPath = await conn.query(query, [boardNum]);
 
       return imgPath;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async existOnlyByBoardNum(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+      SLECET no
+      FROM boards
+      WHERE no = ? AND board_category_no = ?;`;
+
+      const board = await conn.query(query, [
+        boardInfo.boardNum,
+        boardInfo.category,
+      ]);
+
+      return board;
     } catch (err) {
       throw err;
     } finally {

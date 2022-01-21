@@ -37,7 +37,7 @@ class Board {
     }
 
     if (boardInfo.category === 1 && user.isAdmin === 0) {
-      return makeResponse(400, '전체공지는 관리자만 작성 가능합니다.');
+      return makeResponse(403, '전체공지는 관리자만 작성 가능합니다.');
     }
 
     if (clubNum !== undefined && clubNum > 1) boardInfo.clubNum = clubNum;
@@ -194,6 +194,12 @@ class Board {
     }
 
     try {
+      const isExist = await BoardStorage.existOnlyByBoardNum(boardInfo);
+
+      if (!isExist) {
+        return makeResponse(404, '해당 게시글이 존재하지 않습니다.');
+      }
+
       const writerCheck = await WriterCheck.ctrl(
         user.id,
         boardInfo.boardNum,
@@ -230,6 +236,12 @@ class Board {
     };
 
     try {
+      const isExist = await BoardStorage.existOnlyByBoardNum(boardInfo);
+
+      if (!isExist) {
+        return makeResponse(404, '해당 게시글이 존재하지 않습니다.');
+      }
+
       const writerCheck = await WriterCheck.ctrl(
         userId,
         boardInfo.boardNum,
@@ -257,6 +269,12 @@ class Board {
     };
 
     try {
+      const isExist = await BoardStorage.existOnlyByBoardNum(boardInfo);
+
+      if (!isExist) {
+        return makeResponse(404, '해당 게시글이 존재하지 않습니다.');
+      }
+
       const writerCheck = await WriterCheck.ctrl(
         user.id,
         boardInfo.boardNum,
@@ -272,7 +290,7 @@ class Board {
         );
 
         if (!boardAdminFlag) {
-          return makeResponse(403, '게시글 수정 권한이 없습니다.');
+          return makeResponse(403, '게시글 삭제 권한이 없습니다.');
         }
       }
 
