@@ -223,7 +223,7 @@ class LetterStorage {
         sendInfo.recipientId,
       ]);
 
-      return boardNo[0] ? boardNo[0].boardNo : sendInfo.boardNo;
+      return boardNo[0];
     } catch (err) {
       throw err;
     } finally {
