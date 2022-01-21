@@ -42,6 +42,7 @@ const letter = require('./src/apis/letter');
 const naver = require('./src/apis/naver');
 const emotion = require('./src/apis/emotion');
 const comment = require('./src/apis/comment');
+const image = require('./src/apis/image');
 
 app.use('/api/board', board);
 app.use('/api', root);
@@ -61,5 +62,6 @@ app.use('/api/letter', letter);
 app.use('/api/naver', naver);
 app.use('/api/emotion', emotion);
 app.use('/api/comment', comment);
+app.use('/api/image', image);
 
 module.exports = app;

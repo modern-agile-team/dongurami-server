@@ -2,6 +2,7 @@
 
 const ImageStorage = require('./ImageStorage');
 const Error = require('../../utils/Error');
+const makeResponse = require('../../utils/makeResponse');
 const boardCategory = require('../Category/board');
 
 class Image {
@@ -11,19 +12,18 @@ class Image {
   }
 
   async saveBoardImg(boardNum) {
+    const { images } = this.body;
     const category = boardCategory[this.params.category];
     const imgInfo = [];
 
     // 이미지, 썸네일 저장 필요 x 게시판
-    if (category < 4) return { success: true };
+    if (category < 4) return makeResponse(400, '잘못된 접근입니다.');
 
     try {
       // 홍보 게시판 => 이미지 따로 저장
       if (category === 4) {
-        const { images } = this.body;
-
         if (!Array.isArray(images)) {
-          return { success: false, msg: '잘못된 형식입니다.' };
+          return makeResponse(400, '잘못된 형식입니다.');
         }
 
         for (const image of images) {
