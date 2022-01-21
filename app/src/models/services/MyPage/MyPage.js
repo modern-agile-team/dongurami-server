@@ -7,6 +7,7 @@ const AdminOptionStorage = require('../AdminOption/AdminOptionStorage');
 const StudentStorage = require('../Student/StudentStorage');
 const Error = require('../../utils/Error');
 const MyPageUtil = require('./MyPageUtils');
+const { makeResponse } = require('./MyPageUtils');
 
 class MyPage {
   constructor(req) {
@@ -20,12 +21,10 @@ class MyPage {
     const { clubNum } = this.params;
 
     try {
-      if (params.id !== id) {
-        return { succeess: false, msg: '본인만 열람 가능합니다.' };
-      }
+      if (params.id !== id) return makeResponse(403, '본인만 열람 가능합니다.');
 
       if (!(await MyPageStorage.existClub(clubNum))) {
-        return { success: false, msg: '존재하지 않는 동아리입니다.' };
+        return makeResponse(404, '존재하지 않는 동아리입니다.');
       }
 
       const scraps = await MyPageStorage.findAllScraps({ id, clubNum });
@@ -35,11 +34,11 @@ class MyPage {
       });
 
       if (scraps || myPagePosts) {
-        return { success: true, msg: '전체 글 조회 성공', scraps, myPagePosts };
+        return makeResponse(200, '전체 글 조회 성공', { scraps, myPagePosts });
       }
-      return { success: true, msg: '글 내역이 존재하지 않습니다.' };
+      return makeResponse(200, '글 내역이 존재하지 않습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -54,10 +53,10 @@ class MyPage {
 
       const scrap = await MyPageStorage.findOneScrap(userInfo);
 
-      if (scrap) return { success: true, msg: '스크랩 상세 조회 성공', scrap };
-      return { success: false, msg: '존재하지 않는 글입니다.' };
+      if (scrap) return makeResponse(200, '스크랩 상세 조회 성공', scrap);
+      return makeResponse(404, '존재하지 않는 글입니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -74,25 +73,21 @@ class MyPage {
       );
 
       if (boards.length || comments.length) {
-        return {
-          success: true,
-          msg: '작성글 및 댓글 내역 조회 성공',
+        return makeResponse(200, '작성 글 및 댓글 내역 조회 성공', {
           boards,
           comments,
-        };
+        });
       }
-      return { success: true, msg: '작성글 및 댓글 내역이 존재하지 않습니다.' };
+      return makeResponse(200, '작성글 및 댓글 내역이 존재하지 않습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async createScrapNum() {
     const data = this.body;
 
-    if (!data.title) {
-      return { success: false, msg: '제목이 존재하지 않습니다.' };
-    }
+    if (!data.title) return makeResponse(400, '제목이 존재하지 않습니다.');
 
     const fileUrl = MyPageUtil.extractThumbnail(
       data.scrapDescription + data.boardDescription
@@ -110,10 +105,10 @@ class MyPage {
     try {
       const scrap = await MyPageStorage.createScrapNum(scrapInfo);
 
-      if (scrap) return { success: true, msg: '스크랩글이 생성되었습니다.' };
-      return { suuccess: false, msg: '글이 스크랩되지 않았습니다.' };
+      if (scrap) return makeResponse(201, '스크랩글이 생성되었습니다.');
+      return makeResponse(400, '글이 스크랩되지 않았습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -146,7 +141,7 @@ class MyPage {
       if (scrap) return { success: true, msg: '스크랩글이 생성되었습니다.' };
       return { suuccess: false, msg: '글이 스크랩되지 않았습니다.' };
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -155,9 +150,7 @@ class MyPage {
     const data = this.body;
 
     try {
-      if (!data.title) {
-        return { success: false, msg: '제목이 존재하지 않습니다.' };
-      }
+      if (!data.title) return makeResponse(400, '제목이 존재하지 않습니다.');
 
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
@@ -188,10 +181,10 @@ class MyPage {
 
       const scrap = await MyPageStorage.updateOneByScrapNum(scrapInfo);
 
-      if (scrap) return { success: true, msg: '글이 수정되었습니다.' };
-      return { success: false, msg: '글이 수정되지 않았습니다.' };
+      if (scrap) return makeResponse(200, '글이 수정되었습니다.');
+      return makeResponse(400, '글이 수정되지 않았습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -209,10 +202,10 @@ class MyPage {
 
       const scrap = await MyPageStorage.deleteOneByScrapNum(scrapNum);
 
-      if (scrap) return { success: true, msg: '글이 삭제되었습니다.' };
-      return { success: false, msg: '글이 삭제되지 않았습니다.' };
+      if (scrap) return makeResponse(200, '글이 삭제되었습니다.');
+      return makeResponse(400, '글이 삭제되지 않았습니다.');
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
@@ -223,13 +216,13 @@ class MyPage {
 
     try {
       if (user.id !== id) {
-        return {
-          success: false,
-          msg: '로그인 계정과 삭제 요청자가 일치하지 않습니다.',
-        };
+        return makeResponse(
+          403,
+          '로그인 계정과 삭제 요청자가 일치하지 않습니다.'
+        );
       }
       if (!user.clubNum.includes(Number(clubNum))) {
-        return { success: false, msg: '가입된 동아리가 아닙니다.' };
+        return makeResponse(403, '가입된 동아리가 아닙니다.');
       }
 
       const userInfo = {
@@ -245,29 +238,29 @@ class MyPage {
         );
 
         if (!isUpdate) {
-          return {
-            success: false,
-            msg: '동아리 탈퇴에 실패하였습니다. 관리자에게 문의해주세요.',
-          };
+          return makeResponse(
+            400,
+            '동아리 탈퇴에 실패하였습니다. 관리자에게 문의해주세요'
+          );
         }
 
         const isDelete = await AdminOptionStorage.deleteMemberById(userInfo);
 
         if (!isDelete) {
-          return { success: false, msg: '동아리 탈퇴에 실패하였습니다.' };
+          return makeResponse(400, '동아리 탈퇴에 실패하였습니다.');
         }
         const checkedId = await StudentStorage.findOneById(user.id);
         const clubs = await StudentStorage.findOneByLoginedId(user.id);
         const jwt = await Auth.createJWT(checkedId, clubs);
 
-        return { success: true, msg: '동아리 탈퇴에 성공하였습니다.', jwt };
+        return makeResponse(200, '동아리 탈퇴에 성공하였습니다.', jwt);
       }
-      return {
-        success: false,
-        msg: '동아리 회장은 탈퇴가 불가능합니다. 회장을 위임한 후 탈퇴해주세요.',
-      };
+      return makeResponse(
+        400,
+        '동아리 회장은 탈퇴가 불가능합니다. 회장을 위임한 후 탈퇴해주세요.'
+      );
     } catch (err) {
-      return Error.ctrl('개발자에게 문의해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 }
