@@ -29,7 +29,6 @@ router.get(
   myPageCtrl.process.findOneScrap
 );
 
-// category - > personal
 router.get(
   '/:id/:category/:clubNum/:boardNum',
   apiAuth.apiAuth,
@@ -37,7 +36,6 @@ router.get(
   boardCtrl.process.findOneByBoardNum
 );
 
-// category - > personal
 router.post(
   '/:id/:category/:clubNum',
   apiAuth.apiAuth,
@@ -45,7 +43,6 @@ router.post(
   boardCtrl.process.createBoardNum
 );
 
-// category - > personal
 router.put(
   '/:id/:category/:clubNum/:boardNum',
   apiAuth.apiAuth,
