@@ -158,7 +158,9 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO scraps (student_id, club_no, title, scrap_description, board_description, file_url) VALUES (?, ?, ?, ?, ?, ?);`;
+      const query = `
+        INSERT INTO scraps (student_id, club_no, title, scrap_description, board_description, file_url) 
+        VALUES (?, ?, ?, ?, ?, ?);`;
 
       const scrap = await conn.query(query, [
         scrapInfo.id,
@@ -183,9 +185,12 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT board_description AS description FROM scraps WHERE no = ?;`;
+      const query = `
+        SELECT board_description AS description 
+        FROM scraps 
+        WHERE no = ?;`;
 
-      const board = await conn.query(query, scrapNum);
+      const board = await conn.query(query, [scrapNum]);
 
       return board[0].description;
     } catch (err) {
@@ -201,7 +206,9 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE scraps SET title = ?, scrap_description = ? , file_url = ? WHERE no = ?;`;
+      const query = `
+        UPDATE scraps 
+        SET title = ?, scrap_description = ? , file_url = ? WHERE no = ?;`;
 
       const scrap = await conn.query(query, [
         scrapInfo.title,
@@ -224,9 +231,11 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'DELETE FROM scraps WHERE no = ?;';
+      const query = `
+      DELETE FROM scraps 
+      WHERE no = ?;`;
 
-      const scrap = await conn.query(query, scrapNum);
+      const scrap = await conn.query(query, [scrapNum]);
 
       return scrap.affectedRows;
     } catch (err) {
@@ -236,13 +245,16 @@ class MyPageStorage {
     }
   }
 
-  static async findOneByClubLeader(userInfo) {
+  static async findClubLeader(userInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'SELECT leader FROM clubs WHERE leader = ? AND no = ?;';
+      const query = `
+        SELECT leader 
+        FROM clubs 
+        WHERE leader = ? AND no = ?;`;
 
       const result = await conn.query(query, [
         userInfo.memberId,
@@ -250,6 +262,95 @@ class MyPageStorage {
       ]);
 
       return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async updateRejectedApplicant(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE applicants
+        UPDATE applicants 
+        SET reading_flag = 2 
+        WHERE club_no = ? AND student_id = ?;`;
+
+      const isUpdate = await conn.query(query, [userInfo.clubNum, userInfo.id]);
+
+      return isUpdate.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async deleteMemberById(userInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        DELETE FROM members 
+        WHERE club_no = ? AND student_id = ?;`;
+
+      const isDelete = await conn.query(query, [userInfo.clubNum, userInfo.id]);
+
+      return isDelete.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findUserInfoById(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT id, name, admin_flag AS adminFlag, profile_image_url AS profileImageUrl 
+        FROM students
+        WHERE id = ?;`;
+
+      const result = await conn.query(query, [id]);
+
+      return result[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findJoinedClubsById(studentId) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT club_no AS clubNum
+        FROM members
+        WHERE student_id = ?;`;
+
+      const clubList = await conn.query(query, [studentId]);
+
+      const clubs = [];
+
+      for (let i = 0; i < clubList.length; i += 1) {
+        clubs.push(clubList[i].clubNum);
+      }
+      return clubs;
     } catch (err) {
       throw err;
     } finally {
