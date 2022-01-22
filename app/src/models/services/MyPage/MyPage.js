@@ -67,9 +67,8 @@ class MyPage {
     }
 
     try {
-      const { boards, comments } = await MyPageStorage.findAllBoardsAndComments(
-        id
-      );
+      const boards = await MyPageStorage.findAllBoards(id);
+      const comments = await MyPageStorage.findAllComments(id);
 
       if (boards.length || comments.length) {
         return makeResponse(200, '작성 글 및 댓글 내역 조회 성공', {
@@ -111,39 +110,6 @@ class MyPage {
     }
   }
 
-  async XXcreateScrapNum() {
-    const data = this.body;
-
-    try {
-      if (!data.title) {
-        return { success: false, msg: '제목이 존재하지 않습니다.' };
-      }
-
-      const descriptions = data.scrapDescription + data.boardDescription;
-      const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/i;
-
-      imgReg.test(descriptions);
-
-      const fileUrl = RegExp.$2;
-
-      const scrapInfo = {
-        fileUrl,
-        id: this.auth.id,
-        clubNum: this.params.clubNum,
-        title: data.title,
-        scrapDescription: data.scrapDescription,
-        boardDescription: data.boardDescription,
-      };
-
-      const scrap = await MyPageStorage.createScrapNum(scrapInfo);
-
-      if (scrap) return { success: true, msg: '스크랩글이 생성되었습니다.' };
-      return { suuccess: false, msg: '글이 스크랩되지 않았습니다.' };
-    } catch (err) {
-      return Error.ctrl('', err);
-    }
-  }
-
   async updateOneByScrapNum() {
     const { scrapNum } = this.params;
     const scrpaPost = this.body;
@@ -173,49 +139,6 @@ class MyPage {
         scrapNum,
         title: scrpaPost.title,
         description: scrpaPost.description,
-        fileUrl,
-      };
-
-      const scrap = await MyPageStorage.updateOneByScrapNum(scrapInfo);
-
-      if (scrap) return makeResponse(200, '글이 수정되었습니다.');
-      return makeResponse(400, '글이 수정되지 않았습니다.');
-    } catch (err) {
-      return Error.ctrl('', err);
-    }
-  }
-
-  async xxupdateOneByScrapNum() {
-    const { scrapNum } = this.params;
-    const data = this.body;
-
-    try {
-      if (!data.title) return makeResponse(400, '제목이 존재하지 않습니다.');
-
-      const writerCheck = await WriterCheck.ctrl(
-        this.auth.id,
-        scrapNum,
-        'scraps'
-      );
-
-      if (!writerCheck.success) return writerCheck;
-
-      const boardDescription = await MyPageStorage.findBoardDescription(
-        scrapNum
-      );
-
-      const descriptions = data.description + boardDescription;
-
-      const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/gi;
-
-      imgReg.test(descriptions);
-
-      const fileUrl = RegExp.$2;
-
-      const scrapInfo = {
-        scrapNum,
-        title: data.title,
-        description: data.description,
         fileUrl,
       };
 
