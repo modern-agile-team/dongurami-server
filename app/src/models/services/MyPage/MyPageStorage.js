@@ -80,22 +80,45 @@ class MyPageStorage {
     }
   }
 
-  static async findAllBoardsAndComments(id) {
+  static async findAllBoards(id) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const board = `SELECT no, club_no AS clubNo, board_category_no AS boardCategoryNum, title, LEFT(in_date, 10) AS inDate FROM boards WHERE student_id = ? AND board_category_no < 7 ORDER BY in_date DESC;`;
-      const comment = `SELECT b.no, b.club_no AS clubNo, b.board_category_no AS boardCategoryNum, b.title, c.description, LEFT(c.in_date, 10) AS inDate 
-      FROM comments AS c
-      JOIN boards AS b ON c.board_no = b.no
-      WHERE c.student_id = ? ORDER BY c.in_date DESC;`;
+      const board = `
+        SELECT no, club_no AS clubNo, board_category_no AS boardCategoryNum, title, LEFT(in_date, 10) AS inDate
+        FROM boards 
+        WHERE student_id = ? AND board_category_no < 7 
+        ORDER BY in_date DESC;`;
 
-      const boards = await conn.query(board, id);
-      const comments = await conn.query(comment, id);
+      const boards = await conn.query(board, [id]);
 
-      return { boards, comments };
+      return boards;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllComments(id) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const comment = `
+        SELECT b.no, b.club_no AS clubNo, b.board_category_no AS boardCategoryNum, b.title, c.description, LEFT(c.in_date, 10) AS inDate 
+        FROM comments AS c
+        JOIN boards AS b 
+        ON c.board_no = b.no
+        WHERE c.student_id = ? 
+        ORDER BY c.in_date DESC;`;
+
+      const comments = await conn.query(comment, [id]);
+
+      return comments;
     } catch (err) {
       throw err;
     } finally {
