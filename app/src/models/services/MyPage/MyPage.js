@@ -20,9 +20,11 @@ class MyPage {
     const { id } = this.auth;
     const { clubNum } = this.params;
 
-    try {
-      if (params.id !== id) return makeResponse(403, '본인만 열람 가능합니다.');
+    if (this.params.id !== id) {
+      return makeResponse(403, '본인만 열람 가능합니다.');
+    }
 
+    try {
       if (!(await MyPageStorage.existClub(clubNum))) {
         return makeResponse(404, '존재하지 않는 동아리입니다.');
       }
@@ -44,13 +46,12 @@ class MyPage {
 
   async findOneScrap() {
     const { params } = this;
+    const userInfo = {
+      id: params.id,
+      scrapNum: params.scrapNum,
+    };
 
     try {
-      const userInfo = {
-        id: params.id,
-        scrapNum: params.scrapNum,
-      };
-
       const scrap = await MyPageStorage.findOneScrap(userInfo);
 
       if (scrap) return makeResponse(200, '스크랩 상세 조회 성공', scrap);
@@ -61,13 +62,11 @@ class MyPage {
   }
 
   async findAllBoardsAndComments() {
-    const { id } = this.params;
+    if (this.params.id !== this.auth.id) {
+      return makeResponse(403, '본인만 열람 가능합니다.');
+    }
 
     try {
-      if (id !== this.auth.id) {
-        return { success: false, msg: '본인만 열람 가능합니다.' };
-      }
-
       const { boards, comments } = await MyPageStorage.findAllBoardsAndComments(
         id
       );
@@ -85,21 +84,21 @@ class MyPage {
   }
 
   async createScrapNum() {
-    const data = this.body;
+    const scrapPost = this.body;
 
-    if (!data.title) return makeResponse(400, '제목이 존재하지 않습니다.');
+    if (!scrapPost.title) return makeResponse(400, '제목이 존재하지 않습니다.');
 
     const fileUrl = MyPageUtil.extractThumbnail(
-      data.scrapDescription + data.boardDescription
+      scrapPost.scrapDescription + scrapPost.boardDescription
     );
 
     const scrapInfo = {
       fileUrl,
       id: this.auth.id,
       clubNum: this.params.clubNum,
-      title: data.title,
-      scrapDescription: data.scrapDescription,
-      boardDescription: data.boardDescription,
+      title: scrapPost.title,
+      scrapDescription: scrapPost.scrapDescription,
+      boardDescription: scrapPost.boardDescription,
     };
 
     try {
@@ -146,6 +145,47 @@ class MyPage {
   }
 
   async updateOneByScrapNum() {
+    const { scrapNum } = this.params;
+    const scrpaPost = this.body;
+
+    if (!scrpaPost.title) {
+      return makeResponse(400, '제목이 존재하지 않습니다.');
+    }
+
+    try {
+      const writerCheck = await WriterCheck.ctrl(
+        this.auth.id,
+        scrapNum,
+        'scraps'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
+      const boardDescription = await MyPageStorage.findBoardDescription(
+        scrapNum
+      );
+
+      const descriptions = scrpaPost.description + boardDescription;
+
+      const fileUrl = MyPageUtil.extractThumbnail(descriptions);
+
+      const scrapInfo = {
+        scrapNum,
+        title: scrpaPost.title,
+        description: scrpaPost.description,
+        fileUrl,
+      };
+
+      const scrap = await MyPageStorage.updateOneByScrapNum(scrapInfo);
+
+      if (scrap) return makeResponse(200, '글이 수정되었습니다.');
+      return makeResponse(400, '글이 수정되지 않았습니다.');
+    } catch (err) {
+      return Error.ctrl('', err);
+    }
+  }
+
+  async xxupdateOneByScrapNum() {
     const { scrapNum } = this.params;
     const data = this.body;
 
