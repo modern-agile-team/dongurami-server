@@ -111,9 +111,9 @@ class MyPage {
 
   async updateOneByScrapNum() {
     const { scrapNum } = this.params;
-    const scrpaPost = this.body;
+    const scrapPost = this.body;
 
-    if (!scrpaPost.title) {
+    if (!scrapPost.title) {
       return makeResponse(400, '제목이 존재하지 않습니다.');
     }
 
@@ -130,14 +130,14 @@ class MyPage {
         scrapNum
       );
 
-      const descriptions = scrpaPost.description + boardDescription;
+      const descriptions = scrapPost.description + boardDescription;
 
       const fileUrl = MyPageUtil.extractThumbnail(descriptions);
 
       const scrapInfo = {
         scrapNum,
-        title: scrpaPost.title,
-        description: scrpaPost.description,
+        title: scrapPost.title,
+        description: scrapPost.description,
         fileUrl,
       };
 
