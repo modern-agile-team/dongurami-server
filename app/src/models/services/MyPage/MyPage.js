@@ -43,10 +43,9 @@ class MyPage {
   }
 
   async findOneScrap() {
-    const { params } = this;
     const userInfo = {
-      id: params.id,
-      scrapNum: params.scrapNum,
+      id: this.params.id,
+      scrapNum: this.params.scrapNum,
     };
 
     try {
