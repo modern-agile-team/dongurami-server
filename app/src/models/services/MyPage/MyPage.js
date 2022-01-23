@@ -60,7 +60,9 @@ class MyPage {
   }
 
   async findAllBoardsAndComments() {
-    if (this.params.id !== this.auth.id) {
+    const { id } = this.auth;
+
+    if (this.params.id !== id) {
       return makeResponse(403, '본인만 열람 가능합니다.');
     }
 
