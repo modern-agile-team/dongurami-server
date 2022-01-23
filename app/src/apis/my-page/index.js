@@ -49,6 +49,7 @@ router.put(
   loginAuth.loginCheck,
   boardCtrl.process.updateOneByBoardNum
 );
+
 router.put(
   '/:id/personal/scrap/:clubNum/:scrapNum',
   apiAuth.apiAuth,
@@ -56,19 +57,18 @@ router.put(
   myPageCtrl.process.updateOneByScrapNum
 );
 
-// category -> personal
-router.delete(
-  '/:id/:category/:clubNum/:boardNum',
-  apiAuth.apiAuth,
-  loginAuth.loginCheck,
-  boardCtrl.process.deleteOneByBoardNum
-);
-
 router.delete(
   '/:id/personal/scrap/:clubNum/:scrapNum',
   apiAuth.apiAuth,
   loginAuth.loginCheck,
   myPageCtrl.process.deleteOneByScrapNum
+);
+
+router.delete(
+  '/:id/:category/:clubNum/:boardNum',
+  apiAuth.apiAuth,
+  loginAuth.loginCheck,
+  boardCtrl.process.deleteOneByBoardNum
 );
 
 router.delete(
