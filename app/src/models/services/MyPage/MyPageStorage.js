@@ -184,10 +184,7 @@ class MyPageStorage {
         FROM clubs 
         WHERE leader = ? AND no = ?;`;
 
-      const result = await conn.query(query, [
-        userInfo.memberId,
-        userInfo.clubNum,
-      ]);
+      const result = await conn.query(query, [userInfo.id, userInfo.clubNum]);
 
       return result[0];
     } catch (err) {
@@ -303,7 +300,6 @@ class MyPageStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        UPDATE applicants
         UPDATE applicants 
         SET reading_flag = 2 
         WHERE club_no = ? AND student_id = ?;`;

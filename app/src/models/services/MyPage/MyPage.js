@@ -186,7 +186,7 @@ class MyPage {
     }
 
     try {
-      const clubLeader = await MyPageStorage.findOneByClubLeader({
+      const clubLeader = await MyPageStorage.findClubLeader({
         clubNum,
         id,
       });
