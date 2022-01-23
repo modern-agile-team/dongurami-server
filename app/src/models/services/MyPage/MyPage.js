@@ -130,9 +130,9 @@ class MyPage {
         scrapNum
       );
 
-      const descriptions = scrapPost.description + boardDescription;
-
-      const fileUrl = MyPageUtil.extractThumbnail(descriptions);
+      const fileUrl = MyPageUtil.extractThumbnail(
+        scrapPost.description + boardDescription
+      );
 
       const scrapInfo = {
         scrapNum,
