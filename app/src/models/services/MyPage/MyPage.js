@@ -136,9 +136,9 @@ class MyPage {
 
       const scrapInfo = {
         scrapNum,
+        fileUrl,
         title: scrapPost.title,
         description: scrapPost.description,
-        fileUrl,
       };
 
       const scrap = await MyPageStorage.updateOneByScrapNum(scrapInfo);
