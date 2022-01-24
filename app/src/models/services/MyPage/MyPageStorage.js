@@ -233,6 +233,7 @@ class MyPageStorage {
       for (let i = 0; i < clubList.length; i += 1) {
         clubs.push(clubList[i].clubNum);
       }
+
       return clubs;
     } catch (err) {
       throw err;
