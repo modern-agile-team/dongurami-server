@@ -72,7 +72,7 @@ class Comment {
     const replyComment = this.body;
     const category = boardCategory[this.query.boardCategory];
     const replyCommentInfo = {
-      id: this.user.id,
+      id: this.auth.id,
       boardNum: query.boardNum,
       cmtNum: query.cmtNum,
       description: replyComment.description,
@@ -106,18 +106,15 @@ class Comment {
         return makeResponse(404, '해당 게시글이나 댓글이 없습니다.');
       }
 
-      const isCreate = await CommentStorage.createReplyCommentNum(
+      const commentNum = await CommentStorage.createReplyCommentNum(
         replyCommentInfo
       );
 
-      if (!isCreate) return Error.dbError();
+      if (!commentNum) return Error.dbError();
 
-      const isUpdate = await CommentStorage.updateOnlyReplyFlag(
-        1,
-        replyCommentInfo.cmtNum
-      );
+      const isUpdate = await CommentStorage.updateOnlyReplyFlag(1, commentNum);
 
-      if (!isUpdate) return Error.dbError();
+      if (!isUpdate) return makeResponse(404, '알수없는 에러가 발생했습니다.');
       return makeResponse(201, '답글 생성 성공');
     } catch (err) {
       return Error.ctrl('', err);

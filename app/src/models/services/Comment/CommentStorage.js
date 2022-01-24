@@ -49,7 +49,7 @@ class CommentStorage {
         replyCommentInfo.cmtNum,
       ]);
 
-      return replyComment.affectedRows;
+      return replyComment.insertId;
     } catch (err) {
       throw err;
     } finally {
@@ -155,7 +155,7 @@ class CommentStorage {
         SET reply_flag = ?
         WHERE no = ?;`;
 
-      const replycmt = conn.query(query, [flag, cmtNum]);
+      const replycmt = await conn.query(query, [flag, cmtNum]);
 
       return replycmt.affectedRows;
     } catch (err) {
