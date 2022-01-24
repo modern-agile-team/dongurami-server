@@ -277,7 +277,8 @@ class MyPageStorage {
 
       const query = `
         UPDATE scraps 
-        SET title = ?, scrap_description = ? , file_url = ? WHERE no = ?;`;
+        SET title = ?, scrap_description = ? , file_url = ?
+        WHERE no = ?;`;
 
       const scrap = await conn.query(query, [
         scrapInfo.title,
