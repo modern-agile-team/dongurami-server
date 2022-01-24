@@ -42,11 +42,16 @@
   <img src="https://img.shields.io/badge/Node.js-339933?style=flat&logo=Node.js&logoColor=white"/>
   <img src="https://img.shields.io/badge/Express-000000?style=flat&logo=Express&logoColor=white"/>
   <img src="https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=flat&logo=JavaScript&logoColor=white"/>
-  <img src= "https://img.shields.io/badge/JavaScript-ES6-yellow?logo=javascript"/>
+  
+<br/>
+
   <img src="https://img.shields.io/badge/MariaDB-003545?style=flat&logo=MariaDB&logoColor=white"/>
   <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white"/>
   <img src="https://img.shields.io/badge/MongoDB-DDE072?style=flat&logo=MongoDB&logoColor=white"/>
   <img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=Redis&logoColor=white"/>
+ 
+<br/>
+  
   <img src="https://img.shields.io/badge/AWS-232F3E?style=flat&logo=Amazon%20AWS&logoColor=white"/>
   <img src="https://img.shields.io/badge/Linux(Ubuntu)-E95420?style=flat&logo=Ubuntu&logoColor=white"/>
   <img src="https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGINX&logoColor=white"/>
