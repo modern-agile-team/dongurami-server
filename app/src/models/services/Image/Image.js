@@ -19,10 +19,10 @@ class Image {
     const category = boardCategory[query.boardCategory];
 
     if (category !== 4) return makeResponse(400, '잘못된 접근입니다.');
-    if (!images.length) return makeResponse(400, '이미지가 존재하지 않습니다.');
     if (!Array.isArray(images)) {
       return makeResponse(400, '잘못된 형식입니다.');
     }
+    if (!images.length) return makeResponse(400, '이미지가 존재하지 않습니다.');
 
     const queryNullKey = getRequestNullKey(query, [
       'boardCategory',
@@ -67,11 +67,11 @@ class Image {
     const category = boardCategory[query.boardCategory];
 
     if (category !== 4) return makeResponse(400, '잘못된 접근입니다.');
-    if (!newImages.length) {
-      return makeResponse(400, '이미지가 존재하지 않습니다.');
-    }
     if (!Array.isArray(newImages)) {
       return makeResponse(400, '잘못된 형식입니다.');
+    }
+    if (!newImages.length) {
+      return makeResponse(400, '이미지가 존재하지 않습니다.');
     }
 
     const queryNullKey = getRequestNullKey(query, [
