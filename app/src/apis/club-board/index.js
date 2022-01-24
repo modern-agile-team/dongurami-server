@@ -1,8 +1,8 @@
 'use strict';
 
 const express = require('express');
-const boardCtrl = require('../boards/board.ctrl');
-const commentCtrl = require('../boards/comment.ctrl');
+const boardCtrl = require('../board/board.ctrl');
+const commentCtrl = require('../comment/comment.ctrl');
 const myPageCtrl = require('../my-page/my-page.ctrl');
 const apiAuth = require('../../middlewares/api-auth');
 const loginCheck = require('../../middlewares/login-auth');
