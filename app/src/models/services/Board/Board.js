@@ -44,12 +44,14 @@ class Board {
 
     if (boardInfo.category === 4) boardInfo.clubNum = board.clubNo;
 
-    if (boardInfo.category === 5 || boardInfo.category === 6) {
-      if (!user.clubNum.includes(Number(clubNum))) {
-        return makeResponse(403, '동아리원만 작성할 수 있습니다.');
-      }
+    if (boardInfo.category > 3) {
       if (boardInfo.hiddenFlag) {
         return makeResponse(403, '해당 게시판에서 익명 사용이 불가능합니다.');
+      }
+      if (boardInfo.category === 5 || boardInfo.category === 6) {
+        if (!user.clubNum.includes(Number(clubNum))) {
+          return makeResponse(403, '동아리원만 작성할 수 있습니다.');
+        }
       }
     }
 
@@ -134,6 +136,8 @@ class Board {
       studentId: user ? user.id : 0,
     };
     const anonymous = {};
+    let images;
+    let comments;
 
     if (boardInfo.category === 5 && !user.isAdmin) {
       if (!user.clubNum.includes(Number(clubNum))) {
@@ -149,29 +153,35 @@ class Board {
       }
       board.isWriter = boardInfo.studentId === board.studentId;
 
-      BoardUtil.changeAnonymous([board]);
+      if (boardInfo.category === 2 || boardInfo.category === 3) {
+        BoardUtil.changeAnonymous([board]);
+      }
 
-      const images = await BoardStorage.findAllImgByBoardNum(
-        boardInfo.boardNum
-      );
+      if (boardInfo.category === 4 || boardInfo.category === 6) {
+        images = await BoardStorage.findAllImgByBoardNum(boardInfo.boardNum);
+      }
 
-      const comments = await BoardStorage.findCmtAllByBoardNum(boardInfo);
+      if (boardInfo.category < 6) {
+        comments = await BoardStorage.findCmtAllByBoardNum(boardInfo);
 
-      comments.forEach((comment) => {
-        comment.isWriter = boardInfo.studentId === comment.studentId;
+        if (boardInfo.category < 5) {
+          comments.forEach((comment) => {
+            comment.isWriter = boardInfo.studentId === comment.studentId;
 
-        if (comment.writerHiddenFlag) {
-          const samePersonFlag = Object.keys(anonymous).includes(
-            comment.studentId
-          );
+            if (comment.writerHiddenFlag) {
+              const samePersonFlag = Object.keys(anonymous).includes(
+                comment.studentId
+              );
 
-          if (samePersonFlag) {
-            BoardUtil.samePersonAnonymization(anonymous, comment);
-          } else {
-            BoardUtil.newPersonAnonymization(anonymous, comment);
-          }
+              if (samePersonFlag) {
+                BoardUtil.samePersonAnonymization(anonymous, comment);
+              } else {
+                BoardUtil.newPersonAnonymization(anonymous, comment);
+              }
+            }
+          });
         }
-      });
+      }
 
       return makeResponse(200, '게시글 조회 성공', { board, comments, images });
     } catch (err) {
