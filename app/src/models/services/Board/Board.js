@@ -220,14 +220,20 @@ class Board {
 
       if (!writerCheck.success) return writerCheck;
 
-      if (boardInfo.category === 5 || boardInfo.category === 6) {
-        const boardAdminFlag = await BoardStorage.findBoardAdminFlag({
-          clubNum: this.params.clubNum,
-          studentId: user.id,
-        });
+      if (boardInfo.category > 3) {
+        if (boardInfo.hiddenFlag) {
+          return makeResponse(403, '해당 게시판에서 익명 사용이 불가능합니다.');
+        }
 
-        if (!boardAdminFlag) {
-          return makeResponse(403, '게시글 수정 권한이 없습니다.');
+        if (boardInfo.category === 5 || boardInfo.category === 6) {
+          const boardAdminFlag = await BoardStorage.findBoardAdminFlag({
+            clubNum: this.params.clubNum,
+            studentId: user.id,
+          });
+
+          if (!boardAdminFlag) {
+            return makeResponse(403, '게시글 수정 권한이 없습니다.');
+          }
         }
       }
 
