@@ -46,7 +46,6 @@ class CommentStorage {
         replyCommentInfo.description,
         replyCommentInfo.cmtNum,
         replyCommentInfo.hiddenFlag,
-        replyCommentInfo.cmtNum,
       ]);
 
       return replyComment.insertId;
