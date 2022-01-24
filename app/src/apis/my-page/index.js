@@ -5,7 +5,7 @@ const express = require('express');
 const router = express.Router();
 const myPageCtrl = require('./my-page.ctrl');
 const loginAuth = require('../../middlewares/login-auth');
-const boardCtrl = require('../boards/board.ctrl');
+const boardCtrl = require('../board/board.ctrl');
 const apiAuth = require('../../middlewares/api-auth');
 
 router.get(

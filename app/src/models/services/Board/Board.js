@@ -1,10 +1,12 @@
 'use strict';
 
 const BoardStorage = require('./BoardStorage');
-const AdminoOptionStorage = require('../AdminOption/AdminOptionStorage');
 const Error = require('../../utils/Error');
 const WriterCheck = require('../../utils/WriterCheck');
+const BoardUtil = require('./Utils');
 const boardCategory = require('../Category/board');
+const makeResponse = require('../../utils/makeResponse');
+const getRequestNullKey = require('../../utils/getRequestNullKey');
 
 class Board {
   constructor(req) {
@@ -19,236 +21,185 @@ class Board {
     const user = this.auth;
     const board = this.body;
     const { clubNum } = this.params;
-    const category = boardCategory[this.params.category];
+    const boardInfo = {
+      clubNum: 1,
+      id: user.id,
+      title: board.title,
+      description: board.description,
+      category: boardCategory[this.params.category],
+      hiddenFlag: board.hiddenFlag || 0,
+    };
+
+    const nullKey = getRequestNullKey(board, ['title', 'description']);
+
+    if (nullKey) {
+      return makeResponse(404, `${nullKey}(가) 존재하지 않습니다.`);
+    }
+
+    if (boardInfo.category === 1 && !user.isAdmin) {
+      return makeResponse(403, '전체공지는 관리자만 작성 가능합니다.');
+    }
+
+    if (clubNum !== undefined && clubNum > 1) boardInfo.clubNum = clubNum;
+
+    if (boardInfo.category === 4) boardInfo.clubNum = board.clubNo;
+
+    if (boardInfo.category === 5 || boardInfo.category === 6) {
+      if (!user.clubNum.includes(Number(clubNum))) {
+        return makeResponse(403, '동아리원만 작성할 수 있습니다.');
+      }
+      if (boardInfo.hiddenFlag) {
+        return makeResponse(403, '해당 게시판에서 익명 사용이 불가능합니다.');
+      }
+    }
 
     try {
-      const boardInfo = {
-        category,
-        clubNum: 1,
-        id: user.id,
-        title: board.title,
-        description: board.description,
-        hiddenFlag: board.hiddenFlag || 0,
-      };
-
-      if (category === 1 && user.isAdmin === 0) {
-        return {
-          success: false,
-          msg: '전체공지는 관리자만 작성 가능합니다.',
-          status: 403,
-        };
-      }
-
-      if (!(board.title && board.description)) {
-        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
-      }
-
-      if (clubNum !== undefined && this.params.clubNum > 1) {
-        boardInfo.clubNum = clubNum;
-      } else if (category === 4) {
-        if (board.images.length === 0) {
-          return { success: false, msg: '사진을 첨부해주세요' };
-        }
-        boardInfo.clubNum = board.clubNo;
-      }
-
-      if (category === 5 || category === 6) {
-        if (!user.clubNum.includes(Number(clubNum))) {
-          return {
-            success: false,
-            msg: '동아리원만 작성할 수 있습니다.',
-            status: 403,
-          };
-        }
-        if (boardInfo.hiddenFlag) {
-          return {
-            success: false,
-            msg: '해당 게시판에서 익명 사용이 불가능합니다.',
-          };
-        }
-      }
-
       const boardNum = await BoardStorage.createBoardNum(boardInfo);
 
-      return { success: true, msg: '게시글 생성 성공', boardNum };
+      if (boardNum) return makeResponse(201, '게시글 생성 성공', { boardNum });
+      return makeResponse(400, '게시글 생성 실패');
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async findAllByCategoryNum() {
-    const category = boardCategory[this.params.category];
-    const { clubNum } = this.params;
     const user = this.auth;
-    const { query } = this;
-    const criteriaRead = {
-      category,
+    const { clubNum } = this.params;
+    const boardInfo = {
       clubNum: 1,
-      sort: query.sort || 'inDate',
-      order: query.order || 'desc',
+      category: boardCategory[this.params.category],
+      sort: this.query.sort || 'inDate',
+      order: this.query.order || 'desc',
     };
 
-    try {
-      if (category === undefined) {
-        return { success: false, msg: '존재하지 않는 게시판 입니다.' };
-      }
-      if (category === 4 || category === 7) {
-        return { success: false, msg: '잘못된 URL의 접근입니다' };
-      }
-      if (category === 5 || category === 6) {
-        const isClub = await BoardStorage.findClub(clubNum);
+    if (boardInfo.category === undefined) {
+      return makeResponse(404, '존재하지 않는 게시판 입니다.');
+    }
+    if (boardInfo.category === 4 || boardInfo.category === 7) {
+      return makeResponse(400, '잘못된 URL의 접근입니다.');
+    }
+    if (boardInfo.category < 5 && clubNum !== undefined) {
+      return makeResponse(400, '잘못된 URL의 접근입니다.');
+    }
 
-        if (!isClub) {
-          return { success: false, msg: '존재하지 않는 동아리입니다.' };
+    try {
+      if (boardInfo.category === 5 || boardInfo.category === 6) {
+        const club = await BoardStorage.findClubByClubNum(clubNum);
+
+        if (!club) {
+          return makeResponse(404, '존재하지 않는 동아리입니다.');
         }
-        if (category === 5 && !user.isAdmin) {
+
+        if (boardInfo.category === 5 && !user.isAdmin) {
           if (!user.clubNum.includes(Number(clubNum))) {
-            return {
-              success: false,
-              msg: '해당 동아리에 가입하지 않았습니다.',
-            };
+            return makeResponse(403, '해당 동아리에 가입하지 않았습니다.');
           }
         }
-        criteriaRead.clubNum = clubNum;
-      }
-      if (category < 5 && this.params.clubNum !== undefined) {
-        return { success: false, msg: '잘못된 URL의 접근입니다.' };
+        boardInfo.clubNum = clubNum;
       }
 
-      const boards = await BoardStorage.findAllByCategoryNum(criteriaRead);
+      const boards = await BoardStorage.findAllByCategoryNum(boardInfo);
 
-      for (const board of boards) {
-        if (board.writerHiddenFlag) {
-          board.studentId = '익명';
-          board.studentName = '익명';
-          board.profileImageUrl = null;
-        }
-      }
+      BoardUtil.changeAnonymous(boards);
 
-      let userInfo = '비로그인 회원입니다.';
-
-      if (user) {
-        userInfo = {
-          id: user.id,
-          isAdmin: user.isAdmin,
-        };
-      }
-
-      return { success: true, msg: '게시판 조회 성공', userInfo, boards };
+      return makeResponse(200, '게시판 조회 성공', { boards });
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async findAllByPromotionCategory() {
-    const user = this.auth;
-    const { query } = this;
+    const boardInfo = {
+      clubCategory: this.query.category,
+      lastNum: this.query.lastNum || 0,
+      sort: this.query.sort || 'inDate',
+      order: this.query.order || 'desc',
+    };
 
     try {
-      const criteriaRead = {
-        clubCategory: query.category,
-        lastNum: query.lastNum,
-        sort: query.sort || 'inDate',
-        order: query.order || 'desc',
-      };
+      const boards = await BoardStorage.findAllByPromotionCategory(boardInfo);
 
-      const boards = await BoardStorage.findAllByPromotionCategory(
-        criteriaRead
-      );
-
-      let userInfo = '비로그인 회원입니다.';
-
-      if (user) {
-        userInfo = {
-          id: user.id,
-          isAdmin: user.isAdmin,
-          club: user.clubNum,
-        };
-      }
-
-      return { success: true, msg: '장르별 조회 성공', userInfo, boards };
+      return makeResponse(200, '장르별 조회 성공', { boards });
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async findOneByBoardNum() {
     const user = this.auth;
-    const { params } = this;
+    const boardInfo = {
+      category: boardCategory[this.params.category],
+      boardNum: this.params.boardNum,
+      studentId: user ? user.id : 0,
+    };
+    const anonymous = {};
+
+    if (boardInfo.category === 5 && !user.isAdmin) {
+      if (!user.clubNum.includes(Number(clubNum))) {
+        return makeResponse(403, '해당 동아리에 가입하지 않았습니다.');
+      }
+    }
 
     try {
-      const category = boardCategory[params.category];
-      const boardInfo = {
-        category,
-        boardNum: params.boardNum,
-        studentId: user ? user.id : 0,
-      };
-
-      if (category === 5 && !user.isAdmin) {
-        if (!user.clubNum.includes(Number(clubNum))) {
-          return {
-            success: false,
-            msg: '해당 동아리에 가입하지 않았습니다.',
-          };
-        }
-      }
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
-      if (board === undefined) {
-        return {
-          success: false,
-          msg: '해당 게시판에 존재하지 않는 글 입니다.',
-        };
+      if (!board) {
+        return makeResponse(404, '해당 게시판에 존재하지 않는 글입니다.');
       }
-      board.isWriter = boardInfo.studentId === board.studentId ? 1 : 0;
+      board.isWriter = boardInfo.studentId === board.studentId;
 
-      if (board.writerHiddenFlag === 1) {
-        board.name = '익명1';
-        board.studentId = '익명1';
-        board.profileImageUrl = null;
-      }
+      BoardUtil.changeAnonymous([board]);
 
-      let userInfo = '비로그인 회원입니다.';
+      const images = await BoardStorage.findAllImgByBoardNum(
+        boardInfo.boardNum
+      );
 
-      if (user) {
-        userInfo = {
-          id: user.id,
-          isAdmin: user.isAdmin,
-        };
-      }
+      const comments = await BoardStorage.findCmtAllByBoardNum(boardInfo);
 
-      return {
-        success: true,
-        msg: '게시글 조회 성공',
-        userInfo,
-        category,
-        board,
-      };
+      comments.forEach((comment) => {
+        comment.isWriter = boardInfo.studentId === comment.studentId;
+
+        if (comment.writerHiddenFlag) {
+          const samePersonFlag = Object.keys(anonymous).includes(
+            comment.studentId
+          );
+
+          if (samePersonFlag) {
+            BoardUtil.samePersonAnonymization(anonymous, comment);
+          } else {
+            BoardUtil.newPersonAnonymization(anonymous, comment);
+          }
+        }
+      });
+
+      return makeResponse(200, '게시글 조회 성공', { board, comments, images });
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
     }
   }
 
   async updateOneByBoardNum() {
     const user = this.auth;
-    const board = this.body;
-    const { params } = this;
+    const boardInfo = {
+      title: this.body.title,
+      description: this.body.description,
+      boardNum: this.params.boardNum,
+      category: boardCategory[this.params.category],
+      hiddenFlag: this.body.hiddenFlag || 0,
+    };
+
+    const nullKey = getRequestNullKey(this.body, ['title', 'description']);
+
+    if (nullKey) {
+      return makeResponse(404, `${nullKey}(가) 존재하지 않습니다.`);
+    }
 
     try {
-      const category = boardCategory[params.category];
-      const boardInfo = {
-        category,
-        title: board.title,
-        description: board.description,
-        boardNum: params.boardNum,
-        hiddenFlag: board.hiddenFlag || 0,
-      };
+      const isExist = await BoardStorage.existOnlyByBoardNum(boardInfo);
 
-      if (!(board.title && board.description)) {
-        return { success: false, msg: '제목이나 본문이 존재하지 않습니다.' };
-      }
-      if (category === 4 && board.images.length === 0) {
-        return { success: false, msg: '사진을 첨부해주세요' };
+      if (!isExist) {
+        return makeResponse(404, '해당 게시글이 존재하지 않습니다.');
       }
 
       const writerCheck = await WriterCheck.ctrl(
@@ -257,82 +208,41 @@ class Board {
         'boards'
       );
 
-      // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 수정 가능
-      if (category === 5 || category === 6) {
-        const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
-          params.clubNum,
-          user.id
-        );
+      if (!writerCheck.success) return writerCheck;
 
-        if (!writerCheck.success) {
-          if (!boardFlag) {
-            return { success: false, msg: '게시글 수정 권한이 없습니다.' };
-          }
-          return writerCheck;
+      if (boardInfo.category === 5 || boardInfo.category === 6) {
+        const boardAdminFlag = await BoardStorage.findBoardAdminFlag({
+          clubNum: this.params.clubNum,
+          studentId: user.id,
+        });
+
+        if (!boardAdminFlag) {
+          return makeResponse(403, '게시글 수정 권한이 없습니다.');
         }
-      } else if (!writerCheck.success) return writerCheck;
-
-      const updateBoardCnt = await BoardStorage.updateOneByBoardNum(boardInfo);
-
-      if (updateBoardCnt === 0) {
-        return { success: false, msg: '해당 게시글이 없습니다.' };
       }
-      return { success: true, msg: '게시글 수정 성공' };
+
+      const isUpdate = await BoardStorage.updateOneByBoardNum(boardInfo);
+
+      if (!isUpdate) return makeResponse(400, '알수없는 에러가 발생했습니다.');
+      return makeResponse(200, '게시글 수정 성공');
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요', err);
+      return Error.ctrl('', err);
     }
   }
 
-  async deleteOneByBoardNum() {
-    const user = this.auth;
-    const { params } = this;
+  async updateOnlyHitByBoardNum() {
+    const userId = this.auth && this.auth.id;
+    const boardInfo = {
+      category: boardCategory[this.params.category],
+      boardNum: this.params.boardNum,
+    };
 
     try {
-      const category = boardCategory[params.category];
-      const boardInfo = {
-        category,
-        boardNum: params.boardNum,
-      };
+      const isExist = await BoardStorage.existOnlyByBoardNum(boardInfo);
 
-      const writerCheck = await WriterCheck.ctrl(
-        user.id,
-        boardInfo.boardNum,
-        'boards'
-      );
-
-      // 동아리 공지, 동아리 활동 내역은 자신이 작성한 글이 아니더라도, 게시글 편집 권한이 있다면 삭제 가능
-      if (category === 5 || category === 6) {
-        const boardFlag = await AdminoOptionStorage.findBoardAdminFlag(
-          params.clubNum,
-          user.id
-        );
-
-        if (!writerCheck.success) {
-          if (!boardFlag) {
-            return { success: false, msg: '게시글 수정 권한이 없습니다.' };
-          }
-          return writerCheck;
-        }
-      } else if (!writerCheck.success) return writerCheck;
-
-      const deleteBoardCnt = await BoardStorage.deleteOneByBoardNum(boardInfo);
-
-      if (deleteBoardCnt === 0) {
-        return { success: false, msg: '해당 게시글이 없습니다.' };
+      if (!isExist) {
+        return makeResponse(404, '해당 게시글이 존재하지 않습니다.');
       }
-      return { success: true, msg: '게시글 삭제 성공' };
-    } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
-    }
-  }
-
-  async updateOnlyHitByNum() {
-    try {
-      const boardInfo = {
-        category: boardCategory[this.params.category],
-        boardNum: this.params.boardNum,
-      };
-      const userId = this.auth && this.auth.id;
 
       const writerCheck = await WriterCheck.ctrl(
         userId,
@@ -340,20 +250,58 @@ class Board {
         'boards'
       );
 
-      if (writerCheck.success)
-        return {
-          success: true,
-          msg: '본인의 글은 조회수가 증가하지 않습니다.',
-        };
-
-      const updateBoardCnt = await BoardStorage.updateOnlyHitByNum(boardInfo);
-
-      if (updateBoardCnt === 0) {
-        return { success: false, msg: '해당 게시글이 없습니다.' };
+      if (writerCheck.success) {
+        return makeResponse(202, '본인의 글은 조회수가 증가하지 않습니다.');
       }
-      return { success: true, msg: '조회수 1 증가' };
+
+      const isUpdate = await BoardStorage.updateOnlyHitByBoardNum(boardInfo);
+
+      if (!isUpdate) return makeResponse(400, '알수없는 에러가 발생했습니다.');
+      return makeResponse(200, '조회수 1 증가');
     } catch (err) {
-      return Error.ctrl('서버 에러입니다. 서버 개발자에게 얘기해주세요.', err);
+      return Error.ctrl('', err);
+    }
+  }
+
+  async deleteOneByBoardNum() {
+    const user = this.auth;
+    const boardInfo = {
+      category: boardCategory[this.params.category],
+      boardNum: this.params.boardNum,
+    };
+
+    try {
+      const isExist = await BoardStorage.existOnlyByBoardNum(boardInfo);
+
+      if (!isExist) {
+        return makeResponse(404, '해당 게시글이 존재하지 않습니다.');
+      }
+
+      const writerCheck = await WriterCheck.ctrl(
+        user.id,
+        boardInfo.boardNum,
+        'boards'
+      );
+
+      if (!writerCheck.success) return writerCheck;
+
+      if (boardInfo.category === 5 || boardInfo.category === 6) {
+        const boardAdminFlag = await BoardStorage.findBoardAdminFlag(
+          this.params.clubNum,
+          user.id
+        );
+
+        if (!boardAdminFlag) {
+          return makeResponse(403, '게시글 삭제 권한이 없습니다.');
+        }
+      }
+
+      const isDelete = await BoardStorage.deleteOneByBoardNum(boardInfo);
+
+      if (!isDelete) return makeResponse(400, '알수없는 에러가 발생했습니다.');
+      return makeResponse(200, '게시글 삭제 성공');
+    } catch (err) {
+      return Error.ctrl('', err);
     }
   }
 }
