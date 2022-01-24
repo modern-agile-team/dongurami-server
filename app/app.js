@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors(options));
 app.use(morgan(':method :status :response-time ms', { stream: logger.stream }));
 
-const board = require('./src/apis/boards');
+const board = require('./src/apis/board');
 const root = require('./src/apis/root');
 const review = require('./src/apis/review');
 const home = require('./src/apis/home');
@@ -41,6 +41,8 @@ const s3 = require('./src/apis/s3');
 const letter = require('./src/apis/letter');
 const naver = require('./src/apis/naver');
 const emotion = require('./src/apis/emotion');
+const comment = require('./src/apis/comment');
+const image = require('./src/apis/image');
 
 app.use('/api/board', board);
 app.use('/api', root);
@@ -59,5 +61,7 @@ app.use('/api/s3', s3);
 app.use('/api/letter', letter);
 app.use('/api/naver', naver);
 app.use('/api/emotion', emotion);
+app.use('/api/comment', comment);
+app.use('/api/image', image);
 
 module.exports = app;

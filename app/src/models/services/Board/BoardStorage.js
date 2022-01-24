@@ -1,4 +1,8 @@
+'use strict';
+
 const mariadb = require('../../../config/mariadb');
+
+const BoardUtil = require('./Utils');
 
 class BoardStorage {
   static async createBoardNum(boardInfo) {
@@ -7,7 +11,9 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `INSERT INTO boards (board_category_no, student_id, club_no, title, description, writer_hidden_flag) VALUES (?, ?, ?, ?, ?, ?);`;
+      const query = `
+        INSERT INTO boards (board_category_no, student_id, club_no, title, description, writer_hidden_flag)
+        VALUES (?, ?, ?, ?, ?, ?);`;
 
       const board = await conn.query(query, [
         boardInfo.category,
@@ -26,14 +32,42 @@ class BoardStorage {
     }
   }
 
-  static async findClub(clubNum) {
+  static async findBoardAdminFlag(clubInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'SELECT no FROM clubs WHERE no = ?;';
-      const club = await conn.query(query, clubNum);
+      const query = `
+        SELECT board_admin_flag AS boardAdminFlag
+        FROM members 
+        WHERE club_no = ? AND student_id = ?;`;
+
+      const boardAdminFlag = await conn.query(query, [
+        clubInfo.clubNum,
+        clubInfo.studentId,
+      ]);
+
+      return boardAdminFlag[0].boardAdminFlag;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findClubByClubNum(clubNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT no
+        FROM clubs
+        WHERE no = ?;`;
+
+      const club = await conn.query(query, [clubNum]);
 
       return club[0];
     } catch (err) {
@@ -43,34 +77,35 @@ class BoardStorage {
     }
   }
 
-  static async findAllByCategoryNum(criteriaRead) {
+  static async findAllByCategoryNum(boardInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
-      (SELECT COUNT(no) FROM comments
-      WHERE board_no = bo.no) AS commentCount,
-      (SELECT COUNT(no) FROM board_emotions
-      WHERE board_no = bo.no) AS emotionCount
-      FROM boards AS bo
-      LEFT JOIN images AS img
-      ON bo.no = img.board_no
-      JOIN students AS st
-      ON bo.student_id = st.id
-      JOIN clubs
-      ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = ? AND bo.club_no = ?
-      GROUP BY no
-      ORDER BY ${criteriaRead.sort} ${criteriaRead.order};`;
+      const query = `
+        SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, st.profile_image_url AS profileImageUrl, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
+        (SELECT COUNT(no) FROM comments
+        WHERE board_no = bo.no) AS commentCount,
+        (SELECT COUNT(no) FROM board_emotions
+        WHERE board_no = bo.no) AS emotionCount
+        FROM boards AS bo
+        LEFT JOIN images AS img
+        ON bo.no = img.board_no
+        JOIN students AS st
+        ON bo.student_id = st.id
+        JOIN clubs
+        ON bo.club_no = clubs.no
+        WHERE bo.board_category_no = ? AND bo.club_no = ?
+        GROUP BY no
+        ORDER BY ${boardInfo.sort} ${boardInfo.order};`;
 
-      const boardList = await conn.query(query, [
-        criteriaRead.category,
-        criteriaRead.clubNum,
+      const boards = await conn.query(query, [
+        boardInfo.category,
+        boardInfo.clubNum,
       ]);
 
-      return boardList;
+      return boards;
     } catch (err) {
       throw err;
     } finally {
@@ -78,48 +113,36 @@ class BoardStorage {
     }
   }
 
-  static async findAllByPromotionCategory(criteriaRead) {
+  static async findAllByPromotionCategory(boardInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
-      let whole = '';
-      let where = '';
-      let limit = '';
 
-      if (criteriaRead.clubCategory !== undefined) {
-        whole = ` AND clubs.category = '${criteriaRead.clubCategory}'`;
-      }
-      if (criteriaRead.lastNum >= 0) {
-        limit = `LIMIT 8`;
-        if (criteriaRead.lastNum > 0) {
-          where = ` AND bo.no < ${criteriaRead.lastNum}`;
-        }
-        if (criteriaRead.order === 'asc') {
-          where = ` AND bo.no > ${criteriaRead.lastNum}`;
-        }
-      }
+      const { category, direction } =
+        BoardUtil.getAddQueryForPromotion(boardInfo);
 
-      const query = `SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
-      (SELECT COUNT(no) FROM comments
-      WHERE board_no = bo.no) AS commentCount,
-      (SELECT COUNT(no) FROM board_emotions
-      WHERE board_no = bo.no) AS emotionCount
-      FROM boards AS bo
-      LEFT JOIN images AS img
-      ON bo.no = img.board_no
-      JOIN students AS st
-      ON bo.student_id = st.id
-      JOIN clubs
-      ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = 4${whole}${where}
-      GROUP BY no
-      ORDER BY ${criteriaRead.sort} ${criteriaRead.order}
-      ${limit};`;
+      const query = `
+        SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, st.profile_image_url AS profileImageUrl, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
+        (SELECT COUNT(no) FROM comments
+        WHERE board_no = bo.no) AS commentCount,
+        (SELECT COUNT(no) FROM board_emotions
+        WHERE board_no = bo.no) AS emotionCount
+        FROM boards AS bo
+        LEFT JOIN images AS img
+        ON bo.no = img.board_no
+        JOIN students AS st
+        ON bo.student_id = st.id
+        JOIN clubs
+        ON bo.club_no = clubs.no
+        WHERE bo.board_category_no = 4${category}${direction}
+        GROUP BY no
+        ORDER BY ${boardInfo.sort} ${boardInfo.order}
+        LiMIT 8;`;
 
-      const boardList = await conn.query(query);
+      const boards = await conn.query(query);
 
-      return boardList;
+      return boards;
     } catch (err) {
       throw err;
     } finally {
@@ -133,22 +156,108 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT bo.no, bo.student_id AS studentId, st.name, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.hit, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
-      (SELECT COUNT(no) FROM board_emotions
-      WHERE board_no = bo.no) AS emotionCount,
-      (SELECT COUNT(no) FROM board_emotions
-      WHERE board_no = bo.no AND student_id = ?) AS likedFlag
-      FROM boards AS bo
-      JOIN students AS st
-      ON bo.student_id = st.id
-      JOIN clubs
-      ON bo.club_no = clubs.no
-      WHERE bo.board_category_no = ? AND bo.no = ?;`;
+      const query = `
+        SELECT bo.no, bo.student_id AS studentId, st.name AS studentName, bo.title, bo.description, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, bo.hit, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
+        (SELECT COUNT(no) FROM board_emotions
+        WHERE board_no = bo.no) AS emotionCount,
+        (SELECT COUNT(no) FROM board_emotions
+        WHERE board_no = bo.no AND student_id = ?) AS likedFlag
+        FROM boards AS bo
+        JOIN students AS st
+        ON bo.student_id = st.id
+        JOIN clubs
+        ON bo.club_no = clubs.no
+        WHERE bo.board_category_no = ? AND bo.no = ?;`;
 
       const board = await conn.query(query, [
         boardInfo.studentId,
         boardInfo.category,
         boardInfo.boardNum,
+      ]);
+
+      return board[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findCmtAllByBoardNum(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT cmt.student_id AS studentId, st.name AS studentName, cmt.no, cmt.description, cmt.depth, cmt.group_no AS groupNo, cmt.reply_flag AS replyFlag, cmt.in_date AS inDate, st.profile_image_url AS profileImageUrl, writer_hidden_flag AS writerHiddenFlag,
+        (SELECT COUNT(no)
+        FROM comment_emotions
+        WHERE comment_no = cmt.no) +
+        (SELECT COUNT(no)
+        FROM reply_comment_emotions
+        WHERE reply_comment_no = cmt.no) AS emotionCount,
+        (SELECT COUNT(no)
+        FROM comment_emotions
+        WHERE comment_no = cmt.no AND student_id = ? AND depth = 0) +
+        (SELECT COUNT(no)
+        FROM reply_comment_emotions
+        WHERE reply_comment_no = cmt.no AND student_id = ? AND depth = 1) AS likedFlag
+        FROM comments AS cmt
+        JOIN students AS st
+        ON cmt.student_id = st.id
+        WHERE cmt.board_no = ?
+        ORDER BY cmt.group_no, inDate;`;
+
+      const comments = await conn.query(query, [
+        boardInfo.studentId,
+        boardInfo.studentId,
+        boardInfo.boardNum,
+      ]);
+
+      return comments;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async findAllImgByBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT url AS imgPath
+        FROM images
+        WHERE images.board_no = ?;`;
+
+      const imgPath = await conn.query(query, [boardNum]);
+
+      return imgPath;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async existOnlyByBoardNum(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+      SELECT no
+      FROM boards
+      WHERE no = ? AND board_category_no = ?;`;
+
+      const board = await conn.query(query, [
+        boardInfo.boardNum,
+        boardInfo.category,
       ]);
 
       return board[0];
@@ -165,7 +274,10 @@ class BoardStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE boards SET title = ?, description = ?, writer_hidden_flag = ? WHERE no = ? AND board_category_no = ?;`;
+      const query = `
+        UPDATE boards
+        SET title = ?, description = ?, writer_hidden_flag = ?
+        WHERE no = ? AND board_category_no = ?;`;
 
       const board = await conn.query(query, [
         boardInfo.title,
@@ -183,13 +295,39 @@ class BoardStorage {
     }
   }
 
+  static async updateOnlyHitByBoardNum(boardInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        UPDATE boards
+        SET hit = hit + 1
+        WHERE board_category_no = ? AND no = ?;`;
+
+      const board = await conn.query(query, [
+        boardInfo.category,
+        boardInfo.boardNum,
+      ]);
+
+      return board.affectedRows;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
   static async deleteOneByBoardNum(boardInfo) {
     let conn;
 
     try {
       conn = await mariadb.getConnection();
 
-      const query = `DELETE FROM boards WHERE no = ? AND board_category_no = ?;`;
+      const query = `
+        DELETE FROM boards
+        WHERE no = ? AND board_category_no = ?;`;
 
       const board = await conn.query(query, [
         boardInfo.boardNum,
@@ -204,45 +342,7 @@ class BoardStorage {
     }
   }
 
-  static async existOnlyBoardNum(boardNum) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query = `SELECT no FROM boards WHERE no = ?;`;
-
-      const board = await conn.query(query, [boardNum]);
-
-      return board[0];
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
-
-  static async updateOnlyHitByNum(boardInfo) {
-    let conn;
-
-    try {
-      conn = await mariadb.getConnection();
-
-      const query =
-        'UPDATE boards SET hit = hit + 1 WHERE board_category_no = ? AND no = ?;';
-
-      const updateCnt = await conn.query(query, [
-        boardInfo.category,
-        boardInfo.boardNum,
-      ]);
-
-      return updateCnt.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
+  // 여기부터 창훈이형 코드여서 일단 둠
 
   static async findAllSearch(searchInfo) {
     let conn;
