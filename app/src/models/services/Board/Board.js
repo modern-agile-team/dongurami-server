@@ -230,7 +230,7 @@ class Board {
     }
   }
 
-  async updateOnlyHitByNum() {
+  async updateOnlyHitByBoardNum() {
     const userId = this.auth && this.auth.id;
     const boardInfo = {
       category: boardCategory[this.params.category],
@@ -254,7 +254,7 @@ class Board {
         return makeResponse(202, '본인의 글은 조회수가 증가하지 않습니다.');
       }
 
-      const isUpdate = await BoardStorage.updateOnlyHitByNum(boardInfo);
+      const isUpdate = await BoardStorage.updateOnlyHitByBoardNum(boardInfo);
 
       if (!isUpdate) return makeResponse(404, '해당 게시글이 없습니다.');
       return makeResponse(200, '조회수 1 증가');

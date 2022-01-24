@@ -295,7 +295,7 @@ class BoardStorage {
     }
   }
 
-  static async updateOnlyHitByNum(boardInfo) {
+  static async updateOnlyHitByBoardNum(boardInfo) {
     let conn;
 
     try {

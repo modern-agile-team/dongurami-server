@@ -45,9 +45,9 @@ const process = {
     return processCtrl(res, apiInfo);
   },
 
-  updateOnlyHitByNum: async (req, res) => {
+  updateOnlyHitByBoardNum: async (req, res) => {
     const board = new Board(req);
-    const response = await board.updateOnlyHitByNum();
+    const response = await board.updateOnlyHitByBoardNum();
     const apiInfo = getApiInfo('PATCH', response, req);
 
     return processCtrl(res, apiInfo);
