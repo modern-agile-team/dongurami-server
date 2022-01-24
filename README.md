@@ -40,6 +40,7 @@
 <p align="center">  
   <img src= "https://img.shields.io/badge/Node-green?logo=node-dot-js&logoColor=white"/>
   <img src= "https://img.shields.io/badge/Express-blue?logo=express"/>
+  <img src= "https://img.shields.io/badge/JavaScript-ES6-yellow?logo=javascript"/>
 </p>
 
 <h3 align="center">  
