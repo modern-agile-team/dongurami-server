@@ -144,7 +144,7 @@ class Board {
     try {
       const board = await BoardStorage.findOneByBoardNum(boardInfo);
 
-      if (board === undefined) {
+      if (!board) {
         return makeResponse(404, '해당 게시판에 존재하지 않는 글입니다.');
       }
       board.isWriter = boardInfo.studentId === board.studentId;
@@ -223,7 +223,7 @@ class Board {
 
       const isUpdate = await BoardStorage.updateOneByBoardNum(boardInfo);
 
-      if (!isUpdate) return makeResponse(404, '해당 게시글이 없습니다.');
+      if (!isUpdate) return Error.dbError();
       return makeResponse(200, '게시글 수정 성공');
     } catch (err) {
       return Error.ctrl('', err);
@@ -256,7 +256,7 @@ class Board {
 
       const isUpdate = await BoardStorage.updateOnlyHitByBoardNum(boardInfo);
 
-      if (!isUpdate) return makeResponse(404, '해당 게시글이 없습니다.');
+      if (!isUpdate) return Error.dbError();
       return makeResponse(200, '조회수 1 증가');
     } catch (err) {
       return Error.ctrl('', err);
@@ -298,7 +298,7 @@ class Board {
 
       const isDelete = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
-      if (isDelete === 0) return makeResponse(404, '해당 게시글이 없습니다.');
+      if (!isDelete) return Error.dbError();
       return makeResponse(200, '게시글 삭제 성공');
     } catch (err) {
       return Error.ctrl('', err);
