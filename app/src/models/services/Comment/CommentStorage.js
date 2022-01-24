@@ -99,7 +99,32 @@ class CommentStorage {
     }
   }
 
-  static async existOnlyReplyCmtNum(replyCmtInfo) {
+  static async existOnlyReplyCmtNum(cmtInfo) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT no
+        FROM comments
+        WHERE no = ? AND board_no = ? AND group_no = ? AND depth = 1;`;
+
+      const cmt = await conn.query(query, [
+        cmtInfo.replyCmtNum,
+        cmtInfo.boardNum,
+        cmtInfo.cmtNum,
+      ]);
+
+      return cmt[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
+
+  static async existOnlyReplyCmtNumByGroupNum(replyCmtInfo) {
     let conn;
 
     try {

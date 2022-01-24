@@ -56,11 +56,13 @@ class Comment {
 
       const commentNum = await CommentStorage.createCommentNum(commentInfo);
 
-      if (!commentNum) return Error.dbError();
+      if (!commentNum) {
+        return makeResponse(400, '알수없는 에러가 발생했습니다.');
+      }
 
       const isUpdate = await CommentStorage.updateOnlyGroupNum(commentNum);
 
-      if (!isUpdate) return Error.dbError();
+      if (!isUpdate) return makeResponse(400, '알수없는 에러가 발생했습니다.');
       return makeResponse(201, '댓글 생성 성공');
     } catch (err) {
       return Error.ctrl('', err);
@@ -110,11 +112,16 @@ class Comment {
         replyCommentInfo
       );
 
-      if (!commentNum) return Error.dbError();
+      if (!commentNum) {
+        return makeResponse(400, '알수없는 에러가 발생했습니다.');
+      }
 
-      const isUpdate = await CommentStorage.updateOnlyReplyFlag(1, commentNum);
+      const isUpdate = await CommentStorage.updateOnlyReplyFlag(
+        1,
+        replyCommentInfo.cmtNum
+      );
 
-      if (!isUpdate) return makeResponse(404, '알수없는 에러가 발생했습니다.');
+      if (!isUpdate) return makeResponse(400, '알수없는 에러가 발생했습니다.');
       return makeResponse(201, '답글 생성 성공');
     } catch (err) {
       return Error.ctrl('', err);
@@ -278,6 +285,10 @@ class Comment {
     }
 
     try {
+      const isExist = await CommentStorage.existOnlyReplyCmtNum(query);
+
+      if (!isExist) return makeResponse(404, '존재하지 않는 답글입니다.');
+
       const writerCheck = await WriterCheck.ctrl(
         this.auth.id,
         replyCmtInfo.replyCmtNum,
@@ -292,16 +303,19 @@ class Comment {
 
       if (!isDelete) return makeResponse(404, '존재하지 않는 답글입니다.');
 
-      const isExist = await CommentStorage.existOnlyReplyCmtNum(replyCmtInfo);
+      const replyCmt = await CommentStorage.existOnlyReplyCmtNumByGroupNum(
+        replyCmtInfo
+      );
 
-      if (!isExist) {
+      if (!replyCmt) {
         const isUpdate = await CommentStorage.updateOnlyReplyFlag(
           0,
           replyCmtInfo.cmtNum
         );
 
-        if (!isUpdate) return Error.dbError();
-        return makeResponse(200, '답글 삭제 성공');
+        if (!isUpdate) {
+          return makeResponse(400, '알수없는 에러가 발생했습니다.');
+        }
       }
       return makeResponse(200, '답글 삭제 성공');
     } catch (err) {

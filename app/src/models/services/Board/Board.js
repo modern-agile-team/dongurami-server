@@ -223,7 +223,7 @@ class Board {
 
       const isUpdate = await BoardStorage.updateOneByBoardNum(boardInfo);
 
-      if (!isUpdate) return Error.dbError();
+      if (!isUpdate) return makeResponse(400, '알수없는 에러가 발생했습니다.');
       return makeResponse(200, '게시글 수정 성공');
     } catch (err) {
       return Error.ctrl('', err);
@@ -256,7 +256,7 @@ class Board {
 
       const isUpdate = await BoardStorage.updateOnlyHitByBoardNum(boardInfo);
 
-      if (!isUpdate) return Error.dbError();
+      if (!isUpdate) return makeResponse(400, '알수없는 에러가 발생했습니다.');
       return makeResponse(200, '조회수 1 증가');
     } catch (err) {
       return Error.ctrl('', err);
@@ -298,7 +298,7 @@ class Board {
 
       const isDelete = await BoardStorage.deleteOneByBoardNum(boardInfo);
 
-      if (!isDelete) return Error.dbError();
+      if (!isDelete) return makeResponse(400, '알수없는 에러가 발생했습니다.');
       return makeResponse(200, '게시글 삭제 성공');
     } catch (err) {
       return Error.ctrl('', err);
