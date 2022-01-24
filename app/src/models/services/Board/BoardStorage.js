@@ -32,7 +32,7 @@ class BoardStorage {
     }
   }
 
-  static async findBoardAdminFlag(clubNum, id) {
+  static async findBoardAdminFlag(clubInfo) {
     let conn;
 
     try {
@@ -43,7 +43,10 @@ class BoardStorage {
         FROM members 
         WHERE club_no = ? AND student_id = ?;`;
 
-      const boardAdminFlag = await conn.query(query, [clubNum, id]);
+      const boardAdminFlag = await conn.query(query, [
+        clubInfo.clubNum,
+        clubInfo.studentId,
+      ]);
 
       return boardAdminFlag[0].boardAdminFlag;
     } catch (err) {

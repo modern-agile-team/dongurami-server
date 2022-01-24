@@ -211,10 +211,10 @@ class Board {
       if (!writerCheck.success) return writerCheck;
 
       if (boardInfo.category === 5 || boardInfo.category === 6) {
-        const boardAdminFlag = await BoardStorage.findBoardAdminFlag(
-          this.params.clubNum,
-          user.id
-        );
+        const boardAdminFlag = await BoardStorage.findBoardAdminFlag({
+          clubNum: this.params.clubNum,
+          studentId: user.id,
+        });
 
         if (!boardAdminFlag) {
           return makeResponse(403, '게시글 수정 권한이 없습니다.');
