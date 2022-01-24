@@ -36,7 +36,7 @@ class Board {
       return makeResponse(404, `${nullKey}(가) 존재하지 않습니다.`);
     }
 
-    if (boardInfo.category === 1 && user.isAdmin === 0) {
+    if (boardInfo.category === 1 && !user.isAdmin) {
       return makeResponse(403, '전체공지는 관리자만 작성 가능합니다.');
     }
 
@@ -223,7 +223,7 @@ class Board {
 
       const isUpdate = await BoardStorage.updateOneByBoardNum(boardInfo);
 
-      if (isUpdate === 0) return makeResponse(404, '해당 게시글이 없습니다.');
+      if (!isUpdate) return makeResponse(404, '해당 게시글이 없습니다.');
       return makeResponse(200, '게시글 수정 성공');
     } catch (err) {
       return Error.ctrl('', err);
@@ -256,7 +256,7 @@ class Board {
 
       const isUpdate = await BoardStorage.updateOnlyHitByNum(boardInfo);
 
-      if (isUpdate === 0) return makeResponse(404, '해당 게시글이 없습니다.');
+      if (!isUpdate) return makeResponse(404, '해당 게시글이 없습니다.');
       return makeResponse(200, '조회수 1 증가');
     } catch (err) {
       return Error.ctrl('', err);
