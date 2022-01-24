@@ -15,10 +15,10 @@ class MyPage {
   }
 
   async findAllScrapsAndMyPagePosts() {
-    const { id } = this.auth;
+    const user = this.auth;
     const { clubNum } = this.params;
 
-    if (this.params.id !== id) {
+    if (this.params.id !== user.id) {
       return makeResponse(403, '본인만 열람 가능합니다.');
     }
 
@@ -27,10 +27,13 @@ class MyPage {
         return makeResponse(404, '존재하지 않는 동아리입니다.');
       }
 
-      const scraps = await MyPageStorage.findAllScraps({ id, clubNum });
-      const myPagePosts = await MyPageStorage.findAllMyPagePosts({
-        id,
+      const scraps = await MyPageStorage.findAllScraps({
         clubNum,
+        id: user.id,
+      });
+      const myPagePosts = await MyPageStorage.findAllMyPagePosts({
+        clubNum,
+        id: user.id,
       });
 
       if (scraps || myPagePosts) {
@@ -59,15 +62,15 @@ class MyPage {
   }
 
   async findAllBoardsAndComments() {
-    const { id } = this.auth;
+    const user = this.auth;
 
-    if (this.params.id !== id) {
+    if (this.params.id !== user.id) {
       return makeResponse(403, '본인만 열람 가능합니다.');
     }
 
     try {
-      const boards = await MyPageStorage.findAllBoards(id);
-      const comments = await MyPageStorage.findAllComments(id);
+      const boards = await MyPageStorage.findAllBoards(user.id);
+      const comments = await MyPageStorage.findAllComments(user.id);
 
       if (boards.length || comments.length) {
         return makeResponse(200, '작성 글 및 댓글 내역 조회 성공', {
