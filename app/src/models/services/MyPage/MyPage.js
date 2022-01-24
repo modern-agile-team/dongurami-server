@@ -172,38 +172,41 @@ class MyPage {
   }
 
   async deleteOneByJoinedClub() {
-    const { id } = this.auth;
+    const user = this.auth;
     const { clubNum } = this.params;
 
-    if (id !== this.params.id) {
+    if (user.id !== this.params.id) {
       return makeResponse(
         403,
         '로그인 계정과 삭제 요청자가 일치하지 않습니다.'
       );
     }
-    if (!this.auth.clubNum.includes(Number(clubNum))) {
+    if (!user.clubNum.includes(Number(clubNum))) {
       return makeResponse(403, '가입된 동아리가 아닙니다.');
     }
 
     try {
       const clubLeader = await MyPageStorage.findClubLeader({
         clubNum,
-        id,
+        id: user.id,
       });
 
       if (!clubLeader) {
         const isUpdate = await MyPageStorage.updateRejectedApplicant({
           clubNum,
-          id,
+          id: user.id,
         });
 
-        const isDelete = await MyPageStorage.deleteMemberById({ clubNum, id });
+        const isDelete = await MyPageStorage.deleteMemberById({
+          clubNum,
+          id: user.id,
+        });
 
         if (!isUpdate || !isDelete) {
           return makeResponse(400, '동아리 탈퇴에 실패하였습니다.');
         }
-        const checkedId = await MyPageStorage.findUserInfoById(id);
-        const clubs = await MyPageStorage.findJoinedClubsById(id);
+        const checkedId = await MyPageStorage.findUserInfoById(user.id);
+        const clubs = await MyPageStorage.findJoinedClubsById(user.id);
         const jwt = await Auth.createJWT(checkedId, clubs);
 
         return makeResponse(200, '동아리 탈퇴에 성공하였습니다.', jwt);
