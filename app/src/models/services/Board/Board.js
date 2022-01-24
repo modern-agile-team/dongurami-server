@@ -44,12 +44,14 @@ class Board {
 
     if (boardInfo.category === 4) boardInfo.clubNum = board.clubNo;
 
-    if (boardInfo.category === 5 || boardInfo.category === 6) {
-      if (!user.clubNum.includes(Number(clubNum))) {
-        return makeResponse(403, '동아리원만 작성할 수 있습니다.');
-      }
+    if (boardInfo.category > 3) {
       if (boardInfo.hiddenFlag) {
         return makeResponse(403, '해당 게시판에서 익명 사용이 불가능합니다.');
+      }
+      if (boardInfo.category === 5 || boardInfo.category === 6) {
+        if (!user.clubNum.includes(Number(clubNum))) {
+          return makeResponse(403, '동아리원만 작성할 수 있습니다.');
+        }
       }
     }
 
