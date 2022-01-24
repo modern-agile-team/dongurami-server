@@ -42,8 +42,16 @@
   <img src= "https://img.shields.io/badge/Node-green?logo=node-dot-js&logoColor=white"/>
   <img src= "https://img.shields.io/badge/Express-blue?logo=express"/>
   <img src= "https://img.shields.io/badge/JavaScript-ES6-yellow?logo=javascript"/>
-  <img src= "https://img.shields.io/badge/-mariaDB-lightgrey" />
   <img src="https://img.shields.io/badge/MariaDB-003545?style=flat&logo=MariaDB&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MongoDB-DDE072?style=flat&logo=MongoDB&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=Redis&logoColor=white"/>
+  <img src="https://img.shields.io/badge/AWS-232F3E?style=flat&logo=Amazon%20AWS&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Linux(Ubuntu)-E95420?style=flat&logo=Ubuntu&logoColor=white"/>
+  <img src="https://img.shields.io/badge/NGINX-009639?style=flat&logo=NGINX&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=Jenkins&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=Docker&logoColor=white"/>
+  <img src="https://img.shields.io/badge/RestFul-EF2D5E?style=flat&logoColor=white"/>
 
 </p>
 
@@ -54,6 +62,8 @@
   <img src="https://img.shields.io/badge/GitHub-100000?logo=github" />
   <img src= "https://img.shields.io/badge/Git-FF4500?logo=git&logoColor=white"/>
   <img src="https://img.shields.io/badge/KakaoWork-white?logo=kakao&logoColor=yellow"/>
+  <img src="https://img.shields.io/badge/Kanban-FF9E0F?style=flat&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Agile-246FDB?style=flat&logoColor=white"/>
 </p>
 <br/>
 <br/>
