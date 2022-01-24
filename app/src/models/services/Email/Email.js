@@ -1,10 +1,11 @@
 'use strict';
 
 const nodemailer = require('nodemailer');
-const Student = require('../Student/Student');
 const EmailAuth = require('../Auth/EmailAuth/EmailAuth');
 const Error = require('../../utils/Error');
 const mailConfig = require('../../../config/mail');
+const util = require('../Student/Util');
+const makeResponse = require('../../utils/makeResponse');
 
 const { CHANGE_PASSWORD_URL } = process.env;
 
@@ -17,12 +18,12 @@ class Email {
     const client = this.body;
 
     try {
-      const existInfo = await Student.checkExistIdAndEmail(client);
+      const existInfo = await util.checkExistIdAndEmail(client);
       if (!existInfo.success) return existInfo;
 
       const tokenInfo = await EmailAuth.createToken(client.id);
       if (!tokenInfo.success) {
-        return Student.makeResponseMsg(400, '입력된 정보의 오류입니다.');
+        return makeResponse(400, '입력된 정보의 오류입니다.');
       }
 
       const message = {
@@ -35,7 +36,7 @@ class Email {
       const transporter = nodemailer.createTransport(mailConfig);
       transporter.sendMail(message);
 
-      return Student.makeResponseMsg(200, '성공적으로 메일을 발송했습니다.', {
+      return makeResponse(200, '성공적으로 메일을 발송했습니다.', {
         token: tokenInfo.token,
       });
     } catch (err) {
