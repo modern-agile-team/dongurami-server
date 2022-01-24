@@ -102,10 +102,8 @@
        
 ## 📄 데이터베이스 ERD
 
-<img width="1274" alt="스크린샷 2021-08-12 오후 3 43 36" src="https://user-images.githubusercontent.com/79014269/129150164-15494aea-846c-4c17-b155-3021f5e9308e.png">
-<img width="981" alt="스크린샷 2021-08-11 오전 10 44 51" src="https://user-images.githubusercontent.com/79014269/128978313-f1106646-7bd3-408d-b50b-15195db899a2.png">
+<img width="1340" alt="스크린샷 2022-01-24 오후 1 58 54" src="https://user-images.githubusercontent.com/79014269/150724560-e4ce9ace-3654-4bea-a1fe-e55eadb09e21.png">
 
-       
 <br/>
 <br/>
        
