@@ -86,13 +86,13 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const board = `
+      const query = `
         SELECT no, club_no AS clubNum, board_category_no AS boardCategoryNum, title, LEFT(in_date, 10) AS inDate
         FROM boards 
         WHERE student_id = ? AND board_category_no < 7 
         ORDER BY in_date DESC;`;
 
-      const boards = await conn.query(board, [id]);
+      const boards = await conn.query(query, [id]);
 
       return boards;
     } catch (err) {
@@ -108,7 +108,7 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const comment = `
+      const query = `
         SELECT b.no, b.club_no AS clubNum, b.board_category_no AS boardCategoryNum, b.title, c.description, LEFT(c.in_date, 10) AS inDate 
         FROM comments AS c
         JOIN boards AS b 
@@ -116,7 +116,7 @@ class MyPageStorage {
         WHERE c.student_id = ? 
         ORDER BY c.in_date DESC;`;
 
-      const comments = await conn.query(comment, [id]);
+      const comments = await conn.query(query, [id]);
 
       return comments;
     } catch (err) {
@@ -132,17 +132,14 @@ class MyPageStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const findScrap = `
+      const query = `
         SELECT no, student_id AS studentId, st.name, st.profile_image_url AS profileImageUrl, title, scrap_description AS scrapDescription, board_description AS boardDescription, LEFT(s.in_date, 10) AS inDate
         FROM scraps AS s
         INNER JOIN students AS st 
         ON st.id = student_id
         WHERE student_id = ? AND no = ?;`;
 
-      const scrap = await conn.query(findScrap, [
-        userInfo.id,
-        userInfo.scrapNum,
-      ]);
+      const scrap = await conn.query(query, [userInfo.id, userInfo.scrapNum]);
 
       return scrap[0];
     } catch (err) {
