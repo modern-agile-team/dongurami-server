@@ -32,6 +32,8 @@
   <img src= "https://img.shields.io/badge/React-blue?logo=react"/>
   <img src= "https://img.shields.io/badge/Next.js-black?logo=next-dot-js&logoColor=white"/>
   <img src= "https://img.shields.io/badge/JavaScript-ES6-yellow?logo=javascript"/>
+  <img src= "https://img.shields.io/badge/-mariaDB-lightgrey" />
+  
 </p>
 
 <h3 align="center">  
