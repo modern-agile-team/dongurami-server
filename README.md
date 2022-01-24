@@ -32,7 +32,6 @@
   <img src= "https://img.shields.io/badge/React-blue?logo=react"/>
   <img src= "https://img.shields.io/badge/Next.js-black?logo=next-dot-js&logoColor=white"/>
   <img src= "https://img.shields.io/badge/JavaScript-ES6-yellow?logo=javascript"/>
-  <img src= "https://img.shields.io/badge/-mariaDB-lightgrey" />
   
 </p>
 
@@ -43,6 +42,9 @@
   <img src= "https://img.shields.io/badge/Node-green?logo=node-dot-js&logoColor=white"/>
   <img src= "https://img.shields.io/badge/Express-blue?logo=express"/>
   <img src= "https://img.shields.io/badge/JavaScript-ES6-yellow?logo=javascript"/>
+  <img src= "https://img.shields.io/badge/-mariaDB-lightgrey" />
+  <img src="https://img.shields.io/badge/mariaDB-#003545?style=for-the-badge&logo=mariaDB&logoColor=white">
+
 </p>
 
 <h3 align="center">  
