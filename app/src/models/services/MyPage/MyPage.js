@@ -17,6 +17,10 @@ class MyPage {
   async findAllScrapsAndMyPagePosts() {
     const user = this.auth;
     const { clubNum } = this.params;
+    const userInfo = {
+      clubNum,
+      id: user.id,
+    };
 
     if (this.params.id !== user.id) {
       return makeResponse(403, '본인만 열람 가능합니다.');
@@ -27,14 +31,8 @@ class MyPage {
         return makeResponse(404, '존재하지 않는 동아리입니다.');
       }
 
-      const scraps = await MyPageStorage.findAllScraps({
-        clubNum,
-        id: user.id,
-      });
-      const myPagePosts = await MyPageStorage.findAllMyPagePosts({
-        clubNum,
-        id: user.id,
-      });
+      const scraps = await MyPageStorage.findAllScraps(userInfo);
+      const myPagePosts = await MyPageStorage.findAllMyPagePosts(userInfo);
 
       if (scraps || myPagePosts) {
         return makeResponse(200, '전체 글 조회 성공', { scraps, myPagePosts });
@@ -177,6 +175,10 @@ class MyPage {
   async deleteOneByJoinedClub() {
     const user = this.auth;
     const { clubNum } = this.params;
+    const userInfo = {
+      clubNum,
+      id: user.id,
+    };
 
     if (user.id !== this.params.id) {
       return makeResponse(
@@ -189,21 +191,12 @@ class MyPage {
     }
 
     try {
-      const clubLeader = await MyPageStorage.findClubLeader({
-        clubNum,
-        id: user.id,
-      });
+      const clubLeader = await MyPageStorage.findClubLeader(userInfo);
 
       if (!clubLeader) {
-        const isUpdate = await MyPageStorage.updateRejectedApplicant({
-          clubNum,
-          id: user.id,
-        });
+        const isUpdate = await MyPageStorage.updateRejectedApplicant(userInfo);
 
-        const isDelete = await MyPageStorage.deleteMemberById({
-          clubNum,
-          id: user.id,
-        });
+        const isDelete = await MyPageStorage.deleteMemberById(userInfo);
 
         if (!isUpdate || !isDelete) {
           return makeResponse(400, '동아리 탈퇴에 실패하였습니다.');
