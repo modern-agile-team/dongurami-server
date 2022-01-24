@@ -86,12 +86,15 @@ class Image {
 
       const currentlyImages = images.map((image) => image.imgPath);
 
-      const addImages = newImages.filter((image) => {
-        return !currentlyImages.includes(image);
-      });
-      const deleteImages = currentlyImages.filter((image) => {
-        return !newImages.includes(image);
-      });
+      const addImages = ImageUtil.getNotIncludeImages(
+        currentlyImages,
+        newImages
+      );
+
+      const deleteImages = ImageUtil.getNotIncludeImages(
+        newImages,
+        currentlyImages
+      );
 
       const addImageInfo = ImageUtil.getimageInfo(addImages, query.boardNum);
 
