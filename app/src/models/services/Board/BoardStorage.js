@@ -84,7 +84,7 @@ class BoardStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
+        SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, st.profile_image_url AS profileImageUrl, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
         (SELECT COUNT(no) FROM comments
         WHERE board_no = bo.no) AS commentCount,
         (SELECT COUNT(no) FROM board_emotions
@@ -123,7 +123,7 @@ class BoardStorage {
         BoardUtil.getAddQueryForPromotion(boardInfo);
 
       const query = `
-        SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
+        SELECT bo.no, bo.title, bo.student_id AS studentId, st.name AS studentName, st.profile_image_url AS profileImageUrl, clubs.no AS clubNo, clubs.name AS clubName, clubs.category, bo.in_date AS inDate, img.url, bo.hit, writer_hidden_flag AS writerHiddenFlag,
         (SELECT COUNT(no) FROM comments
         WHERE board_no = bo.no) AS commentCount,
         (SELECT COUNT(no) FROM board_emotions
