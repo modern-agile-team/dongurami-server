@@ -49,7 +49,7 @@ class Board {
         return makeResponse(403, '동아리원만 작성할 수 있습니다.');
       }
       if (boardInfo.hiddenFlag) {
-        return makeResponse(400, '해당 게시판에서 익명 사용이 불가능합니다.');
+        return makeResponse(403, '해당 게시판에서 익명 사용이 불가능합니다.');
       }
     }
 
