@@ -48,29 +48,29 @@ class ImageStorage {
     }
   }
 
-  static async updateBoardImg(newThumbnailInfo) {
-    let conn;
+  // static async updateBoardImg(newThumbnailInfo) {
+  //   let conn;
 
-    try {
-      conn = await mariadb.getConnection();
+  //   try {
+  //     conn = await mariadb.getConnection();
 
-      const query = `
-        UPDATE images
-        SET url = ?
-        WHERE board_no = ?;`;
+  //     const query = `
+  //       UPDATE images
+  //       SET url = ?
+  //       WHERE board_no = ?;`;
 
-      const image = await conn.query(query, [
-        newThumbnailInfo.newThumbnail,
-        newThumbnailInfo.boardNum,
-      ]);
+  //     const image = await conn.query(query, [
+  //       newThumbnailInfo.newThumbnail,
+  //       newThumbnailInfo.boardNum,
+  //     ]);
 
-      return image.affectedRows;
-    } catch (err) {
-      throw err;
-    } finally {
-      conn?.release();
-    }
-  }
+  //     return image.affectedRows;
+  //   } catch (err) {
+  //     throw err;
+  //   } finally {
+  //     conn?.release();
+  //   }
+  // }
 
   static async deleteBoardImg(boardInfo) {
     let conn;

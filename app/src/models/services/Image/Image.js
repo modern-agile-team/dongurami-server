@@ -13,10 +13,10 @@ class Image {
     this.query = req.query;
   }
 
-  async saveBoardImg(boardNum) {
-    const { images } = this.body;
+  async saveBoardImg() {
     const { query } = this;
-    const category = boardCategory[this.params.category];
+    const { images } = this.body;
+    const category = boardCategory[query.boardCategory];
 
     if (category !== 4) return makeResponse(400, '잘못된 접근입니다.');
     if (!images.length) return makeResponse(400, '이미지가 존재하지 않습니다.');
@@ -33,7 +33,7 @@ class Image {
       return makeResponse(400, `query의 ${queryNullKey}이(가) 빈 값입니다.`);
     }
 
-    const imgInfo = ImageUtil.getimageInfo(images, boardNum);
+    const imgInfo = ImageUtil.getimageInfo(images, query.boardNum);
 
     try {
       // 홍보 게시판 => 이미지 따로 저장
@@ -52,7 +52,9 @@ class Image {
       // 저장될 이미지가 있을때만 images 테이블에 저장
       const saveCnt = await ImageStorage.saveBoardImg(imgInfo);
 
-      if (saveCnt) return Error.dbError();
+      if (saveCnt !== imgInfo.length) {
+        return makeResponse(400, '알수없는 에러가 발생했습니다.');
+      }
       return makeResponse(200, '이미지 생성 성공');
     } catch (err) {
       return Error.ctrl('', err);
@@ -62,7 +64,7 @@ class Image {
   async updateBoardImg() {
     const { query } = this;
     const newImages = this.body.images;
-    const category = boardCategory[this.params.category];
+    const category = boardCategory[query.boardCategory];
 
     if (category !== 4) return makeResponse(400, '잘못된 접근입니다.');
     if (!newImages.length) {
@@ -102,14 +104,16 @@ class Image {
         const saveCnt = await ImageStorage.saveBoardImg(addImageInfo);
 
         if (addImageInfo.length !== saveCnt) {
-          return Error.dbError();
+          return makeResponse(400, '알수없는 에러가 발생했습니다.');
         }
       }
 
       if (deleteImages.length) {
-        const isDelete = await ImageStorage.deleteBoardImg(deleteImages);
+        const deleteCnt = await ImageStorage.deleteBoardImg(deleteImages);
 
-        if (!isDelete) return Error.dbError();
+        if (deleteImages.length !== deleteCnt) {
+          return makeResponse(400, '알수없는 에러가 발생했습니다.');
+        }
       }
       return makeResponse(200, '이미지 수정 성공');
 
