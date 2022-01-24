@@ -31,7 +31,7 @@ class MyPageStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT no AS scrapNo, title, in_date AS inDate, file_url AS imgPath
+        SELECT no AS scrapNum, title, in_date AS inDate, file_url AS imgPath
         FROM scraps
         WHERE student_id = ? AND club_no = ? 
         ORDER BY in_date DESC;`;
@@ -53,13 +53,13 @@ class MyPageStorage {
       conn = await mariadb.getConnection();
 
       const query = `
-        SELECT b.no AS boardNo, title, in_date AS inDate, url AS imgPath
+        SELECT b.no AS boardNum, title, in_date AS inDate, url AS imgPath
         FROM boards AS b 
         LEFT JOIN images 
         ON b.no = board_no 
         WHERE board_category_no = 7 AND student_id = ? AND club_no = ?
         UNION
-        SELECT b.no AS boardNo, title, in_date AS inDate, url AS imgPath
+        SELECT b.no AS boardNum, title, in_date AS inDate, url AS imgPath
         FROM images 
         RIGTH JOIN boards AS b 
         ON b.no = board_no 
@@ -87,7 +87,7 @@ class MyPageStorage {
       conn = await mariadb.getConnection();
 
       const board = `
-        SELECT no, club_no AS clubNo, board_category_no AS boardCategoryNum, title, LEFT(in_date, 10) AS inDate
+        SELECT no, club_no AS clubNum, board_category_no AS boardCategoryNum, title, LEFT(in_date, 10) AS inDate
         FROM boards 
         WHERE student_id = ? AND board_category_no < 7 
         ORDER BY in_date DESC;`;
@@ -109,7 +109,7 @@ class MyPageStorage {
       conn = await mariadb.getConnection();
 
       const comment = `
-        SELECT b.no, b.club_no AS clubNo, b.board_category_no AS boardCategoryNum, b.title, c.description, LEFT(c.in_date, 10) AS inDate 
+        SELECT b.no, b.club_no AS clubNum, b.board_category_no AS boardCategoryNum, b.title, c.description, LEFT(c.in_date, 10) AS inDate 
         FROM comments AS c
         JOIN boards AS b 
         ON c.board_no = b.no
