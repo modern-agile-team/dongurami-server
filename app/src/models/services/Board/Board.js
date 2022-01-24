@@ -136,8 +136,8 @@ class Board {
       studentId: user ? user.id : 0,
     };
     const anonymous = {};
-    let images;
-    let comments;
+    const images = [];
+    const comments = [];
 
     if (boardInfo.category === 5 && !user.isAdmin) {
       if (!user.clubNum.includes(Number(clubNum))) {
@@ -158,11 +158,13 @@ class Board {
       }
 
       if (boardInfo.category === 4 || boardInfo.category === 6) {
-        images = await BoardStorage.findAllImgByBoardNum(boardInfo.boardNum);
+        images.push(
+          ...(await BoardStorage.findAllImgByBoardNum(boardInfo.boardNum))
+        );
       }
 
       if (boardInfo.category < 6) {
-        comments = await BoardStorage.findCmtAllByBoardNum(boardInfo);
+        comments.push(...(await BoardStorage.findCmtAllByBoardNum(boardInfo)));
 
         if (boardInfo.category < 5) {
           comments.forEach((comment) => {
