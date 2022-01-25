@@ -42,7 +42,6 @@ router.post(
   commentCtrl.process.createReplyCommentNum
 );
 
-// 동아리 별 활동 일지 스크랩 요청 API
 router.post(
   '/:category/personal/scrap/:clubNum/:boardNum',
   apiAuth.apiAuth,
