@@ -103,7 +103,9 @@ class Board {
 
       const boards = await BoardStorage.findAllByCategoryNum(boardInfo);
 
-      BoardUtil.changeAnonymous(boards);
+      if (boardInfo.category === 2 || boardInfo.category === 3) {
+        BoardUtil.changeAnonymous(boards);
+      }
 
       return makeResponse(200, '게시판 조회 성공', { boards });
     } catch (err) {
