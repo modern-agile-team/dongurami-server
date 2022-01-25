@@ -44,7 +44,7 @@ class Image {
       if (saveCnt !== imgInfo.length) {
         return makeResponse(400, '알수없는 에러가 발생했습니다.');
       }
-      return makeResponse(200, '이미지 생성 성공');
+      return makeResponse(201, '이미지 생성 성공');
     } catch (err) {
       return Error.ctrl('', err);
     }

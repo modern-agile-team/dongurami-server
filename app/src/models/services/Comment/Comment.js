@@ -170,7 +170,7 @@ class Comment {
       const updateCmtCount = await CommentStorage.updateByCommentNum(cmtInfo);
 
       if (!updateCmtCount) {
-        return makeResponse(404, '존재하지 않는 댓글입니다.');
+        return makeResponse(400, '알수없는 에러가 발생했습니다.');
       }
       return makeResponse(200, '댓글 수정 성공');
     } catch (err) {
@@ -258,7 +258,7 @@ class Comment {
 
       const isDelete = await CommentStorage.deleteAllByGroupNum(cmtInfo);
 
-      if (!isDelete) return makeResponse(404, '존재하지 않는 댓글입니다.');
+      if (!isDelete) return makeResponse(400, '알수없는 에러가 발생했습니다.');
       return makeResponse(200, '댓글 삭제 성공 ');
     } catch (err) {
       return Error.ctrl('', err);
@@ -301,7 +301,7 @@ class Comment {
         replyCmtInfo
       );
 
-      if (!isDelete) return makeResponse(404, '존재하지 않는 답글입니다.');
+      if (!isDelete) return makeResponse(400, '알수없는 에러가 발생했습니다.');
 
       const replyCmt = await CommentStorage.existOnlyReplyCmtNumByGroupNum(
         replyCmtInfo
