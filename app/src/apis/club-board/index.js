@@ -36,7 +36,7 @@ router.post(
   commentCtrl.process.createCommentNum
 );
 router.post(
-  '/:cmtNum/reply-comment',
+  '/:clubNum/reply-comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.createReplyCommentNum
