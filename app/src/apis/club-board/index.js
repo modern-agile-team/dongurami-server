@@ -36,7 +36,7 @@ router.post(
   commentCtrl.process.createCommentNum
 );
 router.post(
-  '/:clubNum/reply-comment',
+  '/:clubNum/comment/reply-comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.createReplyCommentNum
@@ -63,7 +63,7 @@ router.put(
   commentCtrl.process.updateByCommentNum
 );
 router.put(
-  '/:clubNum/reply-comment',
+  '/:clubNum/comment/reply-comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.updateByReplyCommentNum
@@ -82,7 +82,7 @@ router.delete(
   commentCtrl.process.deleteAllByGroupNum
 );
 router.delete(
-  '/:clubNum/reply-comment',
+  '/:clubNum/comment/reply-comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.deleteOneReplyCommentNum
