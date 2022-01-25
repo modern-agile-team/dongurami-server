@@ -30,19 +30,18 @@ router.post(
   boardCtrl.process.createBoardNum
 );
 router.post(
-  '/:category/:clubNum/:boardNum',
+  '/:clubNum/comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.createCommentNum
 );
 router.post(
-  '/:category/:clubNum/:boardNum/:cmtNum',
+  '/:clubNum/comment/reply-comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.createReplyCommentNum
 );
 
-// 동아리 별 활동 일지 스크랩 요청 API
 router.post(
   '/:category/personal/scrap/:clubNum/:boardNum',
   apiAuth.apiAuth,
@@ -58,13 +57,13 @@ router.put(
   boardCtrl.process.updateOneByBoardNum
 );
 router.put(
-  '/:category/:clubNum/:boardNum/:cmtNum',
+  '/:clubNum/comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.updateByCommentNum
 );
 router.put(
-  '/:category/:clubNum/:boardNum/:cmtNum/:replyCmtNum',
+  '/:clubNum/comment/reply-comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.updateByReplyCommentNum
@@ -77,13 +76,13 @@ router.delete(
   boardCtrl.process.deleteOneByBoardNum
 );
 router.delete(
-  '/:category/:clubNum/:boardNum/:cmtNum',
+  '/:clubNum/comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.deleteAllByGroupNum
 );
 router.delete(
-  '/:category/:clubNum/:boardNum/:cmtNum/:replyCmtNum',
+  '/:clubNum/comment/reply-comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.deleteOneReplyCommentNum

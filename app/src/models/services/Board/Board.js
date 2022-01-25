@@ -33,7 +33,7 @@ class Board {
     const nullKey = getRequestNullKey(board, ['title', 'description']);
 
     if (nullKey) {
-      return makeResponse(404, `${nullKey}(가) 존재하지 않습니다.`);
+      return makeResponse(400, `${nullKey}이(가) 존재하지 않습니다.`);
     }
 
     if (boardInfo.category === 1 && !user.isAdmin) {
@@ -103,7 +103,9 @@ class Board {
 
       const boards = await BoardStorage.findAllByCategoryNum(boardInfo);
 
-      BoardUtil.changeAnonymous(boards);
+      if (boardInfo.category === 2 || boardInfo.category === 3) {
+        BoardUtil.changeAnonymous(boards);
+      }
 
       return makeResponse(200, '게시판 조회 성공', { boards });
     } catch (err) {
@@ -204,7 +206,7 @@ class Board {
     const nullKey = getRequestNullKey(this.body, ['title', 'description']);
 
     if (nullKey) {
-      return makeResponse(404, `${nullKey}(가) 존재하지 않습니다.`);
+      return makeResponse(400, `${nullKey}이(가) 존재하지 않습니다.`);
     }
 
     try {
