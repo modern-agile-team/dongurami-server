@@ -18,7 +18,10 @@ class Image {
     const { images } = this.body;
     const category = boardCategory[query.boardCategory];
 
-    if (category !== 4) return makeResponse(400, '잘못된 접근입니다.');
+    if (category !== 4 && category !== 6) {
+      return makeResponse(400, '잘못된 접근입니다.');
+    }
+
     if (!Array.isArray(images)) {
       return makeResponse(400, '잘못된 형식입니다.');
     }
@@ -36,20 +39,6 @@ class Image {
     const imgInfo = ImageUtil.getimageInfo(images, query.boardNum);
 
     try {
-      // 홍보 게시판 => 이미지 따로 저장
-      // 동아리별 활동일지 및 my-page 글 => 썸네일 지정
-      // if (category <= 6) {
-      //   const { description } = this.body;
-      //   const imgReg = /<img[^>]*src=(["']?([^>"']+)["']?[^>]*)>/i;
-
-      //   imgReg.test(description);
-
-      //   const thumbnail = RegExp.$2;
-
-      //   if (thumbnail.length) imgInfo.push([boardNum, thumbnail]);
-      // }
-
-      // 저장될 이미지가 있을때만 images 테이블에 저장
       const saveCnt = await ImageStorage.saveBoardImg(imgInfo);
 
       if (saveCnt !== imgInfo.length) {
