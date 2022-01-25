@@ -33,7 +33,7 @@ class Board {
     const nullKey = getRequestNullKey(board, ['title', 'description']);
 
     if (nullKey) {
-      return makeResponse(404, `${nullKey}(가) 존재하지 않습니다.`);
+      return makeResponse(400, `${nullKey}이(가) 존재하지 않습니다.`);
     }
 
     if (boardInfo.category === 1 && !user.isAdmin) {
@@ -204,7 +204,7 @@ class Board {
     const nullKey = getRequestNullKey(this.body, ['title', 'description']);
 
     if (nullKey) {
-      return makeResponse(404, `${nullKey}(가) 존재하지 않습니다.`);
+      return makeResponse(400, `${nullKey}이(가) 존재하지 않습니다.`);
     }
 
     try {
