@@ -168,10 +168,9 @@ class Board {
       if (boardInfo.category < 6) {
         comments.push(...(await BoardStorage.findCmtAllByBoardNum(boardInfo)));
 
-        if (boardInfo.category < 5) {
-          comments.forEach((comment) => {
-            comment.isWriter = boardInfo.studentId === comment.studentId;
-
+        comments.forEach((comment) => {
+          comment.isWriter = boardInfo.studentId === comment.studentId;
+          if (boardInfo.category < 5) {
             if (comment.writerHiddenFlag) {
               const samePersonFlag = Object.keys(anonymous).includes(
                 comment.studentId
@@ -183,8 +182,8 @@ class Board {
                 BoardUtil.newPersonAnonymization(anonymous, comment);
               }
             }
-          });
-        }
+          }
+        });
       }
 
       return makeResponse(200, '게시글 조회 성공', { board, comments, images });
