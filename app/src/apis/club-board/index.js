@@ -24,12 +24,6 @@ router.get(
 );
 
 router.post(
-  '/:category/:clubNum',
-  apiAuth.apiAuth,
-  loginCheck.loginCheck,
-  boardCtrl.process.createBoardNum
-);
-router.post(
   '/:clubNum/comment',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
@@ -41,7 +35,12 @@ router.post(
   loginCheck.loginCheck,
   commentCtrl.process.createReplyCommentNum
 );
-
+router.post(
+  '/:category/:clubNum',
+  apiAuth.apiAuth,
+  loginCheck.loginCheck,
+  boardCtrl.process.createBoardNum
+);
 router.post(
   '/:category/personal/scrap/:clubNum/:boardNum',
   apiAuth.apiAuth,
@@ -50,12 +49,6 @@ router.post(
   myPageCtrl.process.createScrapNum
 );
 
-router.put(
-  '/:category/:clubNum/:boardNum',
-  apiAuth.apiAuth,
-  loginCheck.loginCheck,
-  boardCtrl.process.updateOneByBoardNum
-);
 router.put(
   '/:clubNum/comment',
   apiAuth.apiAuth,
@@ -68,13 +61,13 @@ router.put(
   loginCheck.loginCheck,
   commentCtrl.process.updateByReplyCommentNum
 );
-
-router.delete(
+router.put(
   '/:category/:clubNum/:boardNum',
   apiAuth.apiAuth,
   loginCheck.loginCheck,
-  boardCtrl.process.deleteOneByBoardNum
+  boardCtrl.process.updateOneByBoardNum
 );
+
 router.delete(
   '/:clubNum/comment',
   apiAuth.apiAuth,
@@ -86,6 +79,12 @@ router.delete(
   apiAuth.apiAuth,
   loginCheck.loginCheck,
   commentCtrl.process.deleteOneReplyCommentNum
+);
+router.delete(
+  '/:category/:clubNum/:boardNum',
+  apiAuth.apiAuth,
+  loginCheck.loginCheck,
+  boardCtrl.process.deleteOneByBoardNum
 );
 
 module.exports = router;
