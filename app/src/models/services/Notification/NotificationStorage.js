@@ -9,8 +9,9 @@ class NotificationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT no, no.sender, no.content, no.title, no.url, no.notification_category_no AS notiCategoryNum, 
-        no.in_date AS inDate FROM notifications AS no 
+      const query = `
+        SELECT no, no.sender, no.content, no.title, no.url, no.notification_category_no AS notiCategoryNum, no.in_date AS inDate 
+        FROM notifications AS no 
         WHERE no.recipient = (SELECT name FROM students WHERE id = ?) AND no.reading_flag = 0
         ORDER BY inDate DESC;`;
 
@@ -37,7 +38,7 @@ class NotificationStorage {
         ON m.student_id = s.id 
         WHERE m.club_no = ?;`;
 
-      const members = await conn.query(query, clubNum);
+      const members = await conn.query(query, [clubNum]);
 
       return members;
     } catch (err) {
@@ -60,7 +61,7 @@ class NotificationStorage {
         ON c.leader = s.id 
         WHERE c.no = ?;`;
 
-      const club = await conn.query(query, clubNum);
+      const club = await conn.query(query, [clubNum]);
 
       return {
         clubName: club[0].clubName,
@@ -106,12 +107,14 @@ class NotificationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = 'UPDATE notifications SET reading_flag = 1 WHERE no = ?;';
+      const query = `
+        UPDATE notifications 
+        SET reading_flag = 1 
+        WHERE no = ?;`;
 
-      const notification = await conn.query(query, notificationNum);
+      const notification = await conn.query(query, [notificationNum]);
 
-      if (notification.affectedRows) return true;
-      return false;
+      return notification.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -125,13 +128,14 @@ class NotificationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'UPDATE notifications SET reading_flag = 1 WHERE recipient = ?;';
+      const query = `
+        UPDATE notifications 
+        SET reading_flag = 1 
+        WHERE recipient = ?;`;
 
-      const notification = await conn.query(query, studentName);
+      const notification = await conn.query(query, [studentName]);
 
-      if (notification.affectedRows) return true;
-      return false;
+      return notification.affectedRows;
     } catch (err) {
       throw err;
     } finally {
@@ -145,7 +149,9 @@ class NotificationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT id, name FROM students;`;
+      const query = `
+        SELECT id, name 
+        FROM students;`;
 
       const students = await conn.query(query);
 
@@ -221,8 +227,12 @@ class NotificationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query =
-        'SELECT s.name FROM applicants AS a JOIN students AS s ON a.student_id = s.id WHERE a.student_id = ? AND a.club_no = ?;';
+      const query = `
+        SELECT s.name 
+        FROM applicants AS a 
+        JOIN students AS s 
+        ON a.student_id = s.id 
+        WHERE a.student_id = ? AND a.club_no = ?;`;
 
       const applicant = await conn.query(query, [
         userInfo.id,
@@ -243,8 +253,11 @@ class NotificationStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `SELECT DISTINCT s.name, s.id, c.description FROM comments AS c 
-        JOIN students AS s ON c.student_id = s.id 
+      const query = `
+        SELECT DISTINCT s.name, s.id, c.description 
+        FROM comments AS c 
+        JOIN students AS s 
+        ON c.student_id = s.id 
         WHERE c.board_no = ? AND c.group_no = ?;`;
 
       const recipients = await conn.query(query, [boardNum, cmtNum]);

@@ -58,42 +58,49 @@ router.post(
 
 router.post(
   '/like/board/:category/:boardNum',
+  apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createLikeNotificationByBoardNum
 );
 
 router.post(
   '/like/comment/:category/:cmtNum',
+  apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createLikeNotificationByCmtNum
 );
 
 router.post(
   '/like/reply-comment/:category/:replyCmtNum',
+  apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createLikeNotificationByReplyCmtNum
 );
 
 router.post(
   '/join-club/result/:clubNum',
+  apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createJoinResultNotification
 );
 
 router.post(
   '/join-club/:clubNum',
+  apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createJoinNotification
 );
 
 router.post(
   '/schedule/:clubNum',
+  apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createScheduleNotification
 );
 
 router.post(
   '/resign-club/:clubNum',
+  apiAuth.apiAuth,
   loginAuth.loginCheck,
   ctrl.process.createClubResignNotification
 );
