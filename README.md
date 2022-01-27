@@ -179,4 +179,5 @@
 
 - 개발 서버도 아래와 동일하다
 - Jenkins와 Docker를 사용하여 **배포 자동화**를 구현하였다.
-- 추가 예정
+
+![](https://user-images.githubusercontent.com/46591459/151274712-b07115b1-fd64-45e2-823b-94d182c28dae.png)
