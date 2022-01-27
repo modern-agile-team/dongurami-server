@@ -100,7 +100,7 @@ class Letter {
         senderId: id,
         recipientId: data.recipientId,
         description: data.description,
-        boardNo: data.boardNo,
+        boardNo: data.boardNo || 0,
         writerHiddenFlag: data.writerHiddenFlag,
       };
 
