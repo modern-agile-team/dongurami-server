@@ -138,7 +138,7 @@ class BoardStorage {
         WHERE bo.board_category_no = 4${category}${direction}
         GROUP BY no
         ORDER BY ${boardInfo.sort} ${boardInfo.order}
-        LiMIT 8;`;
+        LiMIT 10;`;
 
       const boards = await conn.query(query);
 
@@ -395,7 +395,7 @@ class BoardStorage {
       let limit = '';
 
       if (searchInfo.lastNum >= 0) {
-        limit = `LIMIT 8`;
+        limit = `LIMIT 10`;
         if (searchInfo.lastNum > 0) {
           where = ` AND bo.no < ${searchInfo.lastNum}`;
         }
