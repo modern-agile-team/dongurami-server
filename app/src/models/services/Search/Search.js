@@ -123,7 +123,7 @@ class Search {
     const { name } = this.query;
 
     try {
-      const clubs = await ClubListStorage.findAllClubList(name);
+      const clubs = await ClubListStorage.clubListSearch(name);
 
       return Search.makeResponseMsg(200, name, clubs);
     } catch (err) {
