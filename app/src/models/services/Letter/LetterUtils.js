@@ -43,16 +43,6 @@ class LetterUtil {
         }
       });
     }
-
-    if (letters[0].myHiddenFlag) {
-      letters.forEach((letter) => {
-        if (letter.senderId !== id) {
-          letter.recipient = '익명';
-        } else {
-          letter.senderId = '익명';
-        }
-      });
-    }
   }
 
   static changeGroupNo(senderInsertNo, checkGroupNo) {
