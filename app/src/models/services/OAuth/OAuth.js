@@ -14,8 +14,10 @@ class OAuth {
 
   findOneByInformation() {
     return new Promise((resolve, reject) => {
-      const token = this.query;
-      const header = `Bearer ${token.token}`;
+      // const token = this.query;
+      const token = Object.keys(this.query)[0];
+      // const header = `Bearer ${token.token}`;
+      const header = `Bearer ${token}`;
       const options = {
         uri: 'https://openapi.naver.com/v1/nid/me',
         headers: { Authorization: `${header}` },

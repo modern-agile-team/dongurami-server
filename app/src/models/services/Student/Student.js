@@ -209,9 +209,9 @@ class Student {
     const saveInfo = this.body;
 
     try {
-      const checkedIdAndEmail = await Util.checkIdAndEmail(client);
+      const checkedIdAndEmail = await Util.checkIdAndEmail(saveInfo);
 
-      if (checkedIdAndEmail.saveable) {
+      if (checkedIdAndEmail.success) {
         saveInfo.hash = '';
         saveInfo.passwordSalt = '';
 
