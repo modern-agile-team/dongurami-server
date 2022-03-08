@@ -359,7 +359,10 @@ class AdminoOptionStorage {
     try {
       conn = await mariadb.getConnection();
 
-      const query = `UPDATE applicants SET reading_flag = 2 WHERE club_no = ? AND student_id = ?;`;
+      const query = `
+        UPDATE applicants 
+        SET reading_flag = 2 
+        WHERE club_no = ? AND student_id = ?;`;
 
       const updateApplicant = await conn.query(query, [
         memberInfo.clubNum,
