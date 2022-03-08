@@ -68,6 +68,7 @@ class Notification {
       no: this.params.boardNum,
       title: this.body.boardTitle,
       notiCategoryNum: this.body.notiCategoryNum,
+      hiddenFlag: this.body.hiddenFlag,
     };
 
     const notification = {
@@ -79,6 +80,8 @@ class Notification {
       url: `notice/${board.no}`,
       notiCategoryNum: board.notiCategoryNum,
     };
+
+    if (board.hiddenFlag === 1) notification.senderName = '익명';
 
     if (clubNum) {
       const { clubName } = await NotificationStorage.findClubInfoByClubNum(
@@ -114,6 +117,7 @@ class Notification {
     const comment = {
       description: this.body.cmtDescription,
       notiCategoryNum: this.body.notiCategoryNum,
+      hiddenFlag: this.body.hiddenFlag,
     };
     const recipient = await NotificationStorage.findBoardInfoByBoardNum(
       params.boardNum
@@ -128,6 +132,8 @@ class Notification {
       url: `${params.category}/${params.boardNum}`,
       notiCategoryNum: comment.notiCategoryNum,
     };
+
+    if (comment.hiddenFlag === 1) notification.senderName = '익명';
 
     if (category === 4) {
       notification.url = `${params.category}?id=${params.boardNum}`;
@@ -191,6 +197,7 @@ class Notification {
     const replyCmt = {
       description: this.body.replyCmtDescription,
       notiCategoryNum: this.body.notiCategoryNum,
+      hiddenFlag: this.body.hiddenFlag,
     };
 
     const notification = {
@@ -202,6 +209,8 @@ class Notification {
       url: `${params.category}/${params.boardNum}`,
       notiCategoryNum: replyCmt.notiCategoryNum,
     };
+
+    if (replyCmt.hiddenFlag === 1) notification.senderName = '익명';
 
     if (category === 4) {
       notification.url = `${params.category}?id=${params.boardNum}`;
