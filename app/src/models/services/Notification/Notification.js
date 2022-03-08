@@ -68,7 +68,6 @@ class Notification {
       no: this.params.boardNum,
       title: this.body.boardTitle,
       notiCategoryNum: this.body.notiCategoryNum,
-      hiddenFlag: this.body.hiddenFlag,
     };
 
     const notification = {
@@ -80,8 +79,6 @@ class Notification {
       url: `notice/${board.no}`,
       notiCategoryNum: board.notiCategoryNum,
     };
-
-    if (board.hiddenFlag === 1) notification.senderName = '익명';
 
     if (clubNum) {
       const { clubName } = await NotificationStorage.findClubInfoByClubNum(
